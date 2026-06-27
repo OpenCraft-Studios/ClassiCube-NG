@@ -18,13 +18,17 @@ jobs:
     container:
       image: ghcr.io/ps2dev/ps2sdk:latest
     steps:
-      - uses: actions/checkout@v5
       - name: Install prerequisites
         run: |
-          apk add make mpc1 curl
+          apk add make mpc1 curl git
+      
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
 
       - name: Compile PS2 build
         run: |
+          export MAKEFLAGS="$MAKEFLAGS $(nproc)"
           make ps2
           
           

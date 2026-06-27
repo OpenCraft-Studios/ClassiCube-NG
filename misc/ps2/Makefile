@@ -40,7 +40,7 @@ EE_OBJS = $(OBJS) $(patsubst %.o, $(BUILD_DIR)/%.o, $(IOP_MODS))
 EE_LIBS = -lpatches -lpad -ldma -lgraph -lc -lps2ip -lnetman -lmc -lmouse -lkbd
 
 EE_INCS 	:= -I$(PS2SDK)/ee/include -I$(PS2SDK)/common/include
-EE_CFLAGS 	:= -D_EE -G0 -O2 -Wall -gdwarf-2 -gz -DPLAT_PS2
+EE_CFLAGS 	:= -pipe -D_EE -G0 -O2 -Wall -gdwarf-2 -gz -DPLAT_PS2
 EE_LDFLAGS 	:= -L$(PS2SDK)/ee/lib -Wl,-zmax-page-size=128
 EE_LINKFILE := $(PS2SDK)/ee/startup/linkfile
 

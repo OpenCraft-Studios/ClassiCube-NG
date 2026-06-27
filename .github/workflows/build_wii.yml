@@ -21,6 +21,7 @@ jobs:
       - uses: actions/checkout@v5
       - name: Compile Wii build
         run: |
+          export MAKEFLAGS="$MAKEFLAGS $(nproc)"
           make wii
           
       - name: Create Wii homebrew

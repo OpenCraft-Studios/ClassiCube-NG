@@ -18,14 +18,18 @@ jobs:
     container:
       image: ghcr.io/xboxdev/nxdk:git-e955705a
     steps:
-      - uses: actions/checkout@v5
       - name: Install prerequisites
         run: |
-          apk add curl curl-dev
+          apk add curl curl-dev git
+      
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
 
       - name: Compile Xbox build
         run: |
           eval $(/usr/src/nxdk/bin/activate -s)
+          export MAKEFLAGS="$MAKEFLAGS $(nproc)"
           make xbox
           
           

@@ -33,7 +33,7 @@ DEPFILES := $(OBJS:%.o=%.d)
 #---------------------------------------------------------------------------------
 
 MACHDEP = -DGEKKO -mogc -mcpu=750 -meabi -msdata=sysv -mhard-float
-CFLAGS	= -g -O2 -Wall $(MACHDEP) -I$(DEVKITPRO)/libogc2/gamecube/include -DPLAT_GAMECUBE
+CFLAGS	= -g -pipe -O2 -Wall $(MACHDEP) -I$(DEVKITPRO)/libogc2/gamecube/include -DPLAT_GAMECUBE
 
 LDFLAGS	= -g $(MACHDEP) -L$(DEVKITPRO)/libogc2/gamecube/lib
 # Additional libraries to link against

@@ -18,14 +18,18 @@ jobs:
     container:
       image: skylyrac/blocksds:dev-latest
     steps:
-      - uses: actions/checkout@v5
       - name: Install prerequisites
         run: |
-          apt-get update
-          apt-get -y install curl
+          apt-get update -y
+          apt-get -y install curl git
+      
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
 
       - name: Compile NDS build
         run: |
+          export MAKEFLAGS="$MAKEFLAGS -j$(nproc)"
           make ds
           export BUILD_NONET=1
           make ds

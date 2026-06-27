@@ -18,14 +18,18 @@ jobs:
     container:
       image: ijacquez/yaul:latest
     steps:
-      - uses: actions/checkout@v5
       - name: Install prerequisites
         run: |
-          apt-get --allow-releaseinfo-change update
-          apt-get install -y curl
+          apt-get --allow-releaseinfo-change -y update
+          apt-get install -y curl git
+
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
 
       - name: Compile Saturn build
         run: |
+          export MAKEFLAGS="$MAKEFLAGS $(nproc)"
           make saturn
           
           

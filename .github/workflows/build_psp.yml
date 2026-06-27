@@ -18,13 +18,17 @@ jobs:
     container:
       image: pspdev/pspdev:latest
     steps:
-      - uses: actions/checkout@v5
       - name: Install prerequisites
         run: |
-          apk add curl curl-dev
+          apk add curl curl-dev git
+
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
 
       - name: Compile PSP build
         run: |
+          export MAKEFLAGS="$MAKEFLAGS $(nproc)"
           make psp
           
           

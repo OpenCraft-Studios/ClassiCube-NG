@@ -18,18 +18,21 @@ jobs:
     container:
       image: ghcr.io/classicube/minimal-psl1ght:latest
     steps:
-      - uses: actions/checkout@v5
       - name: Install prerequisites
         run: |
-          apt-get update
-          apt-get install -y curl
+          apt-get update -y
+          apt-get install -y curl git
+
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
 
       - name: Compile PS3 build
         run: |
           export PS3DEV=/usr/local/ps3dev
           export PSL1GHT=/usr/local/ps3dev
-          export PATH=$PATH:$PS3DEV/bin
-          export PATH=$PATH:$PS3DEV/ppu/bin
+          export PATH=$PATH:$PS3DEV/bin:$PS3DEV/ppu/bin
+          export MAKEFLAGS="$MAKEFLAGS $(nproc)"
           make ps3
 
 

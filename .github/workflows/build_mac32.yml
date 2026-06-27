@@ -28,7 +28,7 @@ jobs:
         env: 
           LIBS: "-framework Security -framework Cocoa -framework OpenGL -framework IOKit -lobjc -lgcc_s.1"
           SRCS: "src/*.c src/Window_cocoa.m third_party/bearssl/*.c"
-          FLAGS: "-O1 -s -fno-stack-protector -fno-math-errno -Qn -fvisibility=hidden -rdynamic"
+          FLAGS: "-O1 -pipe -s -fno-stack-protector -fno-math-errno -Qn -fvisibility=hidden -rdynamic"
         run: |
           LATEST_FLAG=-DCC_COMMIT_SHA=\"${GITHUB_SHA::9}\"
  

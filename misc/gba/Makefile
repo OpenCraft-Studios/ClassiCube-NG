@@ -36,7 +36,7 @@ DEPFILES := $(OBJS:%.o=%.d)
 # Code generation
 #---------------------------------------------------------------------------------
 ARCH	= -mthumb -mthumb-interwork
-CFLAGS	= -g -gdwarf-4 -Wall -O2 -DPLAT_GBA -ffunction-sections -fdata-sections -mcpu=arm7tdmi -mtune=arm7tdmi $(ARCH)
+CFLAGS	= -g -pipe -gdwarf-4 -Wall -O2 -DPLAT_GBA -ffunction-sections -fdata-sections -mcpu=arm7tdmi -mtune=arm7tdmi $(ARCH)
 ASFLAGS	= -g $(ARCH)
 
 LDFLAGS	= -specs=gba.specs -g $(ARCH)

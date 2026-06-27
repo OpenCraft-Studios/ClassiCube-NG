@@ -47,7 +47,7 @@ DEPFILES := $(SH_OBJS:%.o=%.d)
 #---------------------------------------------------------------------------------
 # Code generation
 #---------------------------------------------------------------------------------
-SH_CFLAGS = -Os -DPLAT_SATURN -Wstrict-aliasing \
+SH_CFLAGS = -Os -pipe -DPLAT_SATURN -Wstrict-aliasing \
 	-I$(YAUL_INSTALL_ROOT)/$(YAUL_ARCH_SH_PREFIX)/include/yaul
 
 SH_LDFLAGS = -static -Wl,--gc-sections \

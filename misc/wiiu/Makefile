@@ -48,7 +48,7 @@ DEPFILES := $(OBJS:%.o=%.d)
 # Code generation
 #---------------------------------------------------------------------------------
 MACHDEP	= -DESPRESSO -mcpu=750 -meabi -mhard-float
-CFLAGS	= -g -Wall -O2 -ffunction-sections -fno-math-errno $(MACHDEP) \
+CFLAGS	= -g -pipe -Wall -O2 -ffunction-sections -fno-math-errno $(MACHDEP) \
 			-I $(DEVKITPRO)/wut/include \
 			-D__WIIU__ -D__WUT__ -DPLAT_WIIU
 
