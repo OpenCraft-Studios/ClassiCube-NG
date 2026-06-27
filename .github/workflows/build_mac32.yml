@@ -22,6 +22,8 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          submodules: recursive
 
       - name: Compile 32 bit macOS builds
         shell: bash

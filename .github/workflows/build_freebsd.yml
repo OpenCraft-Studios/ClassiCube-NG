@@ -19,6 +19,8 @@ jobs:
       image: empterdose/freebsd-cross-build:11.4
     steps:
       - uses: actions/checkout@v5
+        with:
+          submodules: recursive
 
       - name: Install prerequisites
         run: apk add bash wget curl

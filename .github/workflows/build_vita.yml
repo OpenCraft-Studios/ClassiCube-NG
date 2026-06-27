@@ -19,6 +19,8 @@ jobs:
       image: vitasdk/vitasdk:latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          submodules: recursive
       - name: Compile Vita build
         run: |
           make vita

@@ -20,6 +20,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - name: Compile Mac classic build
+        with:
+          submodules: recursive
         run: |
           make macclassic_ppc RETRO68=/Retro68-build/toolchain
           make macclassic_68k RETRO68=/Retro68-build/toolchain

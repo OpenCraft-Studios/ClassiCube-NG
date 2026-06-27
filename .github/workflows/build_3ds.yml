@@ -20,6 +20,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - name: Compile 3DS build
+        with:
+          submodules: recursive
         run: |
           make 3ds
           

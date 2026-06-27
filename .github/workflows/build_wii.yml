@@ -19,6 +19,8 @@ jobs:
       image: devkitpro/devkitppc:latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          submodules: recursive
       - name: Compile Wii build
         run: |
           make wii

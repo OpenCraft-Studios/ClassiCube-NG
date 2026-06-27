@@ -19,6 +19,8 @@ jobs:
       image: ghcr.io/classicube/minimal-kos:latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          submodules: recursive
 
       - name: Compile Dreamcast build
         shell: bash

@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          submodules: recursive
       # Download resources
       - name: Retrieve classicube texture pack
         run: |
