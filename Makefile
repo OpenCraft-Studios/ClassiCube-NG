@@ -313,8 +313,6 @@ switch:
 
 os/2:
 	$(MAKE) -f misc/os2/Makefile
-dos:
-	$(MAKE) -f misc/msdos/Makefile
 macclassic_68k:
 	$(MAKE) -f misc/macclassic/Makefile_68k
 macclassic_ppc:
