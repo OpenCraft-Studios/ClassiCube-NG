@@ -20,8 +20,6 @@ jobs:
   build-32:
     timeout-minutes: 10
     runs-on: ubuntu-latest
-    container:
-      image: ubuntu:20.04
     steps:
       - uses: actions/checkout@v5
 
@@ -80,8 +78,6 @@ jobs:
   build-64:
     timeout-minutes: 10
     runs-on: ubuntu-latest
-    container:
-      image: ubuntu:20.04
     steps:
       - uses: actions/checkout@v5
 
