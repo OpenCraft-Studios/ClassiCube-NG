@@ -29,7 +29,7 @@ jobs:
 
       - name: Compile Saturn build
         run: |
-          export MAKEFLAGS="$MAKEFLAGS $(nproc)"
+          export MAKEFLAGS="$MAKEFLAGS -j$(nproc)"
           make saturn
           
           

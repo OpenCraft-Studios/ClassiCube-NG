@@ -32,7 +32,7 @@ jobs:
         run: |
           export DEVKITXENON=/usr/local/xenon
           export PATH=$PATH:$DEVKITXENON/bin:$DEVKITXENON/usr/bin
-          export MAKEFLAGS="$MAKEFLAGS $(nproc)"
+          export MAKEFLAGS="$MAKEFLAGS -j$(nproc)"
           make xbox360
           
           

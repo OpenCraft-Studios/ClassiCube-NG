@@ -28,7 +28,7 @@ jobs:
 
       - name: Compile PSP build
         run: |
-          export MAKEFLAGS="$MAKEFLAGS $(nproc)"
+          export MAKEFLAGS="$MAKEFLAGS -j$(nproc)"
           make psp
           
           

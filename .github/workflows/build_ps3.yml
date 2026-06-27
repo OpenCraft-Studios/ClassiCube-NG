@@ -32,7 +32,7 @@ jobs:
           export PS3DEV=/usr/local/ps3dev
           export PSL1GHT=/usr/local/ps3dev
           export PATH=$PATH:$PS3DEV/bin:$PS3DEV/ppu/bin
-          export MAKEFLAGS="$MAKEFLAGS $(nproc)"
+          export MAKEFLAGS="$MAKEFLAGS -j$(nproc)"
           make ps3
 
 

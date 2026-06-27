@@ -28,7 +28,7 @@ jobs:
 
       - name: Compile PS2 build
         run: |
-          export MAKEFLAGS="$MAKEFLAGS $(nproc)"
+          export MAKEFLAGS="$MAKEFLAGS -j$(nproc)"
           make ps2
           
           

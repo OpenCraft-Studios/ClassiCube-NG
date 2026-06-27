@@ -29,7 +29,7 @@ jobs:
       - name: Compile Xbox build
         run: |
           eval $(/usr/src/nxdk/bin/activate -s)
-          export MAKEFLAGS="$MAKEFLAGS $(nproc)"
+          export MAKEFLAGS="$MAKEFLAGS -j$(nproc)"
           make xbox
           
           
