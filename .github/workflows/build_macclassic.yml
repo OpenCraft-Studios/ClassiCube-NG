@@ -22,8 +22,8 @@ jobs:
       - name: Compile Mac classic build
         run: |
           export RETRO68=/Retro68-build/toolchain
-          make -j$(nproc) macclassic_ppc
           export MAKEFLAGS="$MAKEFLAGS -j$(nproc)"
+          make macclassic_ppc
           make macclassic_68k
           make macclassic_68k ARCH_68040=1
 

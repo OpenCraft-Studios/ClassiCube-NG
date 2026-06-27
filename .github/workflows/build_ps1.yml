@@ -30,7 +30,7 @@ jobs:
       - name: Compile PS1 build
         run: |
           export PSN00BSDK_ROOT=/usr/local/psnoob
-          export MAKEFLAGS="-j$(nproc)"
+          export MAKEFLAGS="$MAKEFLAGS -j$(nproc)"
           make ps1
 
 
