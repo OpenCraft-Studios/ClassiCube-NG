@@ -21,19 +21,20 @@ jobs:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-
       - name: Install packages
         shell: bash
         run: |
-          apt-get -y update
-          apt-get -y install gcc-multilib wget curl unzip
+          sudo apt-get -y update
+          sudo apt-get -y install git gcc-multilib curl unzip
+
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
 
       - name: Retrieve dependencies
         shell: bash
         run: |
-          wget https://github.com/ClassiCube/rpi-compiling-stuff/raw/main/linux32.zip
-          unzip linux32.zip
+          unzip <(curl -L https://github.com/ClassiCube/rpi-compiling-stuff/raw/main/linux32.zip)
 
       - name: Compile 32 bit Linux builds
         shell: bash
@@ -79,19 +80,20 @@ jobs:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-
       - name: Install packages
         shell: bash
         run: |
-          apt-get -y update
-          apt-get -y install gcc wget curl unzip
+          sudo apt-get -y update
+          sudo apt-get -y install git gcc curl unzip
+
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
 
       - name: Retrieve dependencies
         shell: bash
         run: |
-          wget https://github.com/ClassiCube/rpi-compiling-stuff/raw/main/linux64.zip
-          unzip linux64.zip
+          unzip <(curl -L https://github.com/ClassiCube/rpi-compiling-stuff/raw/main/linux64.zip)
 
       - name: Compile 64 bit Linux builds
         shell: bash
