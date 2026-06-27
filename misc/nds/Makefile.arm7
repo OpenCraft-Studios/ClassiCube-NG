@@ -82,10 +82,10 @@ clean:
 
 # Rules
 # -----
-$(BUILDDIR)/%.o : %.s
+$(BUILDDIR)/%.o : %.s | $(BUILD_DIR)
 	$(CC) $(ASFLAGS) -MMD -MP -c -o $@ $<
 
-$(BUILDDIR)/%.o : %.c
+$(BUILDDIR)/%.o : %.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -MMD -MP -c -o $@ $<
 
 # Include dependency files if they exist
