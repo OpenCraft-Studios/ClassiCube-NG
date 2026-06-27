@@ -19,6 +19,8 @@ jobs:
       image: trzeci/emscripten-fastcomp:1.39.0
     steps:
       - uses: actions/checkout@v5
+        with:
+          submodules: recursive
       - name: Compiles webclient
         env:
           SRCS: "src/*.c src/webclient/*.c"

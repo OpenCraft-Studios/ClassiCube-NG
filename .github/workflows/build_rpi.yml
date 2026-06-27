@@ -22,6 +22,8 @@ jobs:
       image: dockcross/linux-armv6-lts
     steps:
       - uses: actions/checkout@v5
+        with:
+          submodules: recursive
 
       - name: Retrieve OpenGL and X11 dev files
         run: |

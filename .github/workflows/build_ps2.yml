@@ -20,6 +20,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - name: Install prerequisites
+        with:
+          submodules: recursive
         run: |
           apk add make mpc1 curl
 

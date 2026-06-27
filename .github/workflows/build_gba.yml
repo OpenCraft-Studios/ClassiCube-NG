@@ -20,6 +20,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - name: Compile GBA build
+        with:
+          submodules: recursive
         run: |
           make gba
           

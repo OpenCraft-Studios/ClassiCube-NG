@@ -22,6 +22,8 @@ jobs:
       image: dockcross/windows-armv7
     steps:
       - uses: actions/checkout@v5
+        with:
+          submodules: recursive
       - name: Compile ARM32 Windows builds
         shell: bash
         env:

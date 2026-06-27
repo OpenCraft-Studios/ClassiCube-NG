@@ -19,6 +19,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - name: Setup environment
+        with:
+          submodules: recursive
         run: |
           sudo xcode-select -s /Applications/Xcode_15.0.1.app/Contents/Developer
           echo "XCODE_APP=Xcode_15.0.1.app" >> "$GITHUB_ENV"
