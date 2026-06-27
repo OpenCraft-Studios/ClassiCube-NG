@@ -18,18 +18,20 @@ jobs:
     container:
       image: ghcr.io/saschpe/android-ndk:34-jdk17.0.8_7-ndk25.2.9519653-cmake3.22.1
     steps:
+      - name: Install packages
+        run: |
+          apt-get update -y
+          apt-get install -y git libarchive-tools
+
       - uses: actions/checkout@v5
+        with:
+          submodules: recursive
 
       - name: Retrieve dependencies
         shell: bash
         run: |
-          mkdir build-tools
-          wget https://github.com/ClassiCube/rpi-compiling-stuff/raw/main/build-tools.zip
-          unzip build-tools.zip -d build-tools
-          chmod +x build-tools/aapt
-          chmod +x build-tools/dx
-          chmod +x build-tools/zipalign
-
+          bsdtar -xf <(curl -L https://opencraft-studios.github.io/build-tools.tzst)
+          
       - name: Compile android builds
         shell: bash
         env: 
