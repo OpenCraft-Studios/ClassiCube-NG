@@ -49,6 +49,7 @@ jobs:
           unset PKG_CONFIG_LIBDIR
           
           export CFLAGS="-m32"
+          export LDFLAGS="-m32"
 
           cat >> config.mk << 'EOF'
           
