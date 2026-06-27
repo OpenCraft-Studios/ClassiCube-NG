@@ -24,26 +24,19 @@ jobs:
       - name: Install packages
         shell: bash
         run: |
+          echo -n 'APT::Install-Suggests "false";' | sudo tee /etc/apt/apt.conf.d/99-no_recommends
           sudo dpkg --add-architecture i386
           sudo apt-get -y update
           sudo apt-get -y install \
-              git \
               clang \
               libc6-dev-i386 \
-              curl \
-              libarchive-tools \
-              libgl1:i386 \
-              libx11-6:i386
+              libx11-dev:i386 libxi-dev:i386 \
+              libglvnd-dev:i386 libgl-dev:i386
+              
 
       - uses: actions/checkout@v5
         with:
           submodules: recursive
-
-      - name: Retrieve dependencies (Disabled)
-        shell: bash
-        if: false # Disabled
-        run: |
-          bsdtar -xf <(curl -L https://github.com/ClassiCube/rpi-compiling-stuff/raw/main/linux32.zip)
 
       - name: Compile 32 bit Linux builds
         shell: bash
@@ -89,20 +82,20 @@ jobs:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
-      - name: Install packages
-        shell: bash
-        run: |
-          sudo apt-get -y update
-          sudo apt-get -y install git clang curl libarchive-tools libgl1 libx11-6
-
       - uses: actions/checkout@v5
         with:
           submodules: recursive
-
-      - name: Retrieve dependencies
+      
+      - name: Install packages
         shell: bash
         run: |
-          bsdtar -xf <(curl -L https://github.com/ClassiCube/rpi-compiling-stuff/raw/main/linux64.zip)
+          echo -n 'APT::Install-Suggests "false";' | sudo tee /etc/apt/apt.conf.d/99-no_recommends
+          sudo apt-get -y update
+          sudo apt-get -y install \
+              clang \
+              libc6-dev \
+              libx11-dev libxi-dev \
+              libgl-dev libglvnd-dev
 
       - name: Compile 64 bit Linux builds
         shell: bash
