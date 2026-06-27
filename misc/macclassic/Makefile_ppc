@@ -49,14 +49,11 @@ $(TARGET).elf: $(C_OBJECTS)
 $(TARGET).pef: $(TARGET).elf
 	$(MakePEF) $(TARGET).elf -o $(TARGET).pef
 
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
-
 
 #---------------------------------------------------------------------------------
 # object generation
 #---------------------------------------------------------------------------------
-$(C_OBJECTS): $(BUILD_DIR)/%.o : $(SOURCE_DIR)/%.c
+$(C_OBJECTS): $(BUILD_DIR)/%.o : $(SOURCE_DIR)/%.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) $(DEPFLAGS) -c $< -o $@
 
 # Dependency tracking

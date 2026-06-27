@@ -57,7 +57,7 @@ $(TARGET).code.bin: $(C_OBJECTS)
 #---------------------------------------------------------------------------------
 # object generation
 #---------------------------------------------------------------------------------
-$(C_OBJECTS): $(BUILD_DIR)/%.o : $(SOURCE_DIR)/%.c
+$(C_OBJECTS): $(BUILD_DIR)/%.o : $(SOURCE_DIR)/%.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) $(DEPFLAGS) -c $< -o $@
 
 # Dependency tracking
