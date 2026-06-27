@@ -25,7 +25,7 @@ jobs:
         shell: bash
         run: |
           sudo apt-get -y update
-          sudo apt-get -y install git gcc-multilib curl unzip
+          sudo apt-get -y install git gcc-multilib curl libarchive-tools
 
       - uses: actions/checkout@v5
         with:
@@ -34,7 +34,7 @@ jobs:
       - name: Retrieve dependencies
         shell: bash
         run: |
-          unzip <(curl -L https://github.com/ClassiCube/rpi-compiling-stuff/raw/main/linux32.zip)
+          bsdtar -xf <(curl -L https://github.com/ClassiCube/rpi-compiling-stuff/raw/main/linux32.zip)
 
       - name: Compile 32 bit Linux builds
         shell: bash
@@ -84,7 +84,7 @@ jobs:
         shell: bash
         run: |
           sudo apt-get -y update
-          sudo apt-get -y install git gcc curl unzip
+          sudo apt-get -y install git gcc curl libarchive-tools
 
       - uses: actions/checkout@v5
         with:
@@ -93,7 +93,7 @@ jobs:
       - name: Retrieve dependencies
         shell: bash
         run: |
-          unzip <(curl -L https://github.com/ClassiCube/rpi-compiling-stuff/raw/main/linux64.zip)
+          bsdtar -xf <(curl -L https://github.com/ClassiCube/rpi-compiling-stuff/raw/main/linux64.zip)
 
       - name: Compile 64 bit Linux builds
         shell: bash
