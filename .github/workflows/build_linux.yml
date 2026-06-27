@@ -48,12 +48,14 @@ jobs:
           export PKG_CONFIG_PATH=/usr/lib/i386-linux-gnu/pkgconfig:/usr/share/pkgconfig:/usr/lib/pkgconfig
           unset PKG_CONFIG_LIBDIR
           
+          export CFLAGS="-m32"
+
           cat >> config.mk << 'EOF'
           
-          CFLAGS += $(pkg-config --cflags x11 gl xi) -m32 -DCC_COMMIT_SHA="${GITHUB_SHA::9}"
+          CFLAGS += $(shell pkg-config --cflags x11 gl xi) -DCC_COMMIT_SHA="${GITHUB_SHA::9}"
           CFLAGS += -O1 -s -fno-stack-protector -fno-math-errno -Werror -fvisibility=hidden -rdynamic -Werror
           CFLAGS += -no-pie -fno-pie -fcf-protection=none -Wl,--unresolved-symbols=ignore-in-shared-libs
-          LIBS   += $(pkg-config --libs x11 gl xi) -lm -ldl -lpthread
+          LIBS   += $(shell pkg-config --libs x11 gl xi) -lm -ldl -lpthread
 
           EOF
 
