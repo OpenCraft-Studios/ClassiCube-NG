@@ -40,16 +40,20 @@ jobs:
 
       - name: Compile 32 bit Linux builds
         shell: bash
-        env: 
-          LIBS: "$(pkg-config --libs x11 gl xi) -lm -ldl -lpthread"
-          SRCS: "src/*.c third_party/bearssl/*.c"
-          FLAGS: "$(pkg-config --cflags x11 gl xi) -O1 -pipe -s -fno-stack-protector -fno-math-errno -Werror -fvisibility=hidden -rdynamic -Werror"
-          NIX32_FLAGS:  "-no-pie -fno-pie -m32 -fcf-protection=none -Wl,--unresolved-symbols=ignore-in-shared-libs"
         run: |
-          LATEST_FLAG=-DCC_COMMIT_SHA=\"${GITHUB_SHA::9}\"
-          
-          clang ${{ env.SRCS }} ${{ env.FLAGS }} ${{ env.NIX32_FLAGS }} $LATEST_FLAG -o cc-nix32-gl1 ${{ env.LIBS }}
-          clang ${{ env.SRCS }} ${{ env.FLAGS }} ${{ env.NIX32_FLAGS }} $LATEST_FLAG -DCC_GFX_BACKEND=CC_GFX_BACKEND_GL2 -o cc-nix32-gl2 ${{ env.LIBS }}
+          # Enable support for i386
+          export PKG_CONFIG_SYSROOT_DIR=/
+          export PKG_CONFIG_LIBDIR=/usr/lib/i386-linux-gnu/pkgconfig
+
+          LIBS="$(pkg-config --libs x11 gl xi) -lm -ldl -lpthread"
+          SRCS="src/*.c third_party/bearssl/*.c"
+          FLAGS="$(pkg-config --cflags x11 gl xi) -O1 -pipe -s -fno-stack-protector -fno-math-errno -Werror -fvisibility=hidden -rdynamic -Werror"
+          NIX32_FLAGS="-no-pie -fno-pie -m32 -fcf-protection=none -Wl,--unresolved-symbols=ignore-in-shared-libs"
+        
+          LATEST_FLAG="-DCC_COMMIT_SHA=\"${GITHUB_SHA::9}\""
+      
+          clang $SRCS $FLAGS $NIX32_FLAGS $LATEST_FLAG -o cc-nix32-gl1 $LIBS
+          clang $SRCS $FLAGS $NIX32_FLAGS $LATEST_FLAG -DCC_GFX_BACKEND=CC_GFX_BACKEND_GL2 -o cc-nix32-gl2 $LIBS
       
       
       - uses: ./.github/actions/upload_build
