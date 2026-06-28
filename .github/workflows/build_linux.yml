@@ -55,14 +55,14 @@ jobs:
           cat >> config.mk << 'EOF'
           
           CFLAGS += $(shell pkg-config --cflags x11 gl xi) -DCC_COMMIT_SHA="${GITHUB_SHA::9}"
-          CFLAGS += -O1 -s -fno-stack-protector -fno-math-errno -Werror -fvisibility=hidden -rdynamic -Werror
-          CFLAGS += -no-pie -fno-pie -fcf-protection=none -Wl,--unresolved-symbols=ignore-in-shared-libs
+          CFLAGS += -O1 -s -fno-stack-protector -Werror -fvisibility=hidden -rdynamic -Werror
+          CFLAGS += -fcf-protection=none -Wl,--unresolved-symbols=ignore-in-shared-libs
           LIBS   += $(shell pkg-config --libs x11 gl xi) -lm -ldl -lpthread
 
           EOF
           
           make -fNewMakefile.mk target=cc-nix32-gl1 platform=linux-gl1
-          make -fNewMakefile.mk target=cc-nix32-gl2 platform=linux-gl2 CFLAGS="-DCC_GFX_BACKEND=CC_GFX_BACKEND_GL2"
+          make -fNewMakefile.mk target=cc-nix32-gl2 platform=linux-gl2 EXTRA_CFLAGS="-DCC_GFX_BACKEND=CC_GFX_BACKEND_GL2"
       
       - uses: ./.github/actions/upload_build
         with:

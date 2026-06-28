@@ -16,13 +16,10 @@
   MAKE ?= make
   MAKEFLAGS += -j$(shell nproc) --no-print-directory
   
-  CFLAGS  += -pipe -fno-math-errno
-  LDFLAGS += -no-pie
-  LIBS    += 
+  CFLAGS  += -fno-pie -pipe -fno-math-errno $(EXTRA_CFLAGS)
+  LDFLAGS += -no-pie $(EXTRA_LDFLAGS)
 
 -include config.mk
-
-
 
 $(info -- LINKER		$(LD) $(LDFLAGS) OBJECTS -o TARGET $(LIBS))
 target := OpenCraft
