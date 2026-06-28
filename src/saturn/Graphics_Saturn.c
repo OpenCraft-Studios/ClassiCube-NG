@@ -407,17 +407,20 @@ static void LoadTransformMatrix(struct Matrix* src) {
 	mvp_.w.col3 = ToFixed(src->row3.w);
 }
 
-void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
-	if (type == MATRIX_VIEW) _view = *matrix;
-	if (type == MATRIX_PROJ) _proj = *matrix;
+void gfxProjectionMatrix(const struct Matrix* matrix) {
+	_proj = *matrix;
 
 	struct Matrix mvp;
-	if (matrix == &Matrix_Identity && type == MATRIX_VIEW) {
-		mvp = _proj; // 2D mode uses identity view matrix
-	} else {
-		Matrix_Mul(&mvp, &_view, &_proj);
-	}
+	Matrix_Mul(&mvp, &_view, &_proj);
+	LoadTransformMatrix(&mvp);
+}
+
+void gfxModelViewMatrix(const struct Matrix* matrix) {
+	_view = *matrix;
 	
+	struct Matrix mvp;
+	if (matrix == &Matrix_Identity) mvp = _proj; // 2D mode uses identity view matrix
+	else Matrix_Mul(&mvp, &_view, &_proj);
 	LoadTransformMatrix(&mvp);
 }
 

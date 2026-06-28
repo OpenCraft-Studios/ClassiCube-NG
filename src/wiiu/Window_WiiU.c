@@ -396,8 +396,8 @@ void Window_AllocFramebuffer(struct Bitmap* bmp, int width, int height) {
 }
 
 static void DrawLauncher(void) {
-	Gfx_LoadMatrix(MATRIX_VIEW, &Matrix_Identity);
-	Gfx_LoadMatrix(MATRIX_PROJ, &Matrix_Identity);
+	gfxModelViewMatrix(&Matrix_Identity);
+	gfxProjectionMatrix(&Matrix_Identity);
 	Gfx_SetDepthTest(false);
 
 	Gfx_SetVertexFormat(VERTEX_FORMAT_COLOURED);

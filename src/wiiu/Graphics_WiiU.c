@@ -452,17 +452,21 @@ void Gfx_DrawIndexedTris_T2fC4b(int verticesCount, int startVertex, DrawHints hi
 static struct Matrix _view, _proj;
 static struct Matrix _mvp CC_ALIGNED(64);
 
-void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
-	if (type == MATRIX_VIEW) _view = *matrix;
-	if (type == MATRIX_PROJ) _proj = *matrix;
-	
+void gfxProjectionMatrix(const struct Matrix* matrix) {
+	_proj = *matrix;
+	Matrix_Mul(&_mvp, &_view, &_proj);
+	GX2SetVertexUniformReg(VS_UNI_OFFSET_MVP, VS_UNI_COUNT_MVP, &_mvp);
+}
+
+void gfxModelViewMatrix(const struct Matrix* matrix) {
+	_view = *matrix;
 	Matrix_Mul(&_mvp, &_view, &_proj);
 	GX2SetVertexUniformReg(VS_UNI_OFFSET_MVP, VS_UNI_COUNT_MVP, &_mvp);
 }
 
 void Gfx_LoadMVP(const struct Matrix* view, const struct Matrix* proj, struct Matrix* mvp) {
-	Gfx_LoadMatrix(MATRIX_VIEW, view);
-	Gfx_LoadMatrix(MATRIX_PROJ, proj);
+	gfxModelViewMatrix(view);
+	gfxProjectionMatrix(proj);
 	Matrix_Mul(mvp, view, proj);
 }
 
@@ -582,3 +586,4 @@ void Gfx_3DS_SetRenderScreen1(enum Screen3DS screen) {
 	
 	GX2SetContextState(screen == TOP_SCREEN ? tv_state : drc_state);
 }
+

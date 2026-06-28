@@ -725,16 +725,20 @@ void Gfx_DrawIndexedTris_T2fC4b(int verticesCount, int startVertex, DrawHints hi
 /*########################################################################################################################*
 *---------------------------------------------------------Matrices--------------------------------------------------------*
 *#########################################################################################################################*/
-static D3DTRANSFORMSTATETYPE matrix_modes[2] = { D3DTS_PROJECTION, D3DTS_VIEW };
 
-void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
+void gfxProjectionMatrix(const struct Matrix* matrix) {
 	if (Gfx.LostContext) return;
-	IDirect3DDevice9_SetTransform(device, matrix_modes[type], (const D3DMATRIX*)matrix);
+	IDirect3DDevice9_SetTransform(device, D3DTS_PROJECTION, (const D3DMATRIX*)matrix);
+}
+
+void gfxModelViewMatrix(const struct Matrix* matrix) {
+	if (Gfx.LostContext) return;
+	IDirect3DDevice9_SetTransform(device, D3DTS_VIEW, (const D3DMATRIX*)matrix);
 }
 
 void Gfx_LoadMVP(const struct Matrix* view, const struct Matrix* proj, struct Matrix* mvp) {
-	Gfx_LoadMatrix(MATRIX_VIEW, view);
-	Gfx_LoadMatrix(MATRIX_PROJ, proj);
+	gfxModelViewMatrix(view);
+	gfxProjectionMatrix(proj);
 	Matrix_Mul(mvp, view, proj);
 }
 

@@ -506,18 +506,26 @@ void Gfx_DepthOnlyRendering(cc_bool depthOnly) {
 /*########################################################################################################################*
 *---------------------------------------------------------Matrices--------------------------------------------------------*
 *#########################################################################################################################*/
-void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
-	if (type == MATRIX_VIEW) _view = *matrix;
-	if (type == MATRIX_PROJ) _proj = *matrix;
+void gfxProjectionMatrix(const struct Matrix* matrix) {
+	_proj = *matrix;
+	Matrix_Mul(&_mvp, &_view, &_proj);
+	DirtyUniform(UNI_MVP_MATRIX);
+	ReloadUniforms();
+}
 
+void gfxModelViewMatrix(const struct Matrix* matrix) {
+	_view = *matrix;
 	Matrix_Mul(&_mvp, &_view, &_proj);
 	DirtyUniform(UNI_MVP_MATRIX);
 	ReloadUniforms();
 }
 
 void Gfx_LoadMVP(const struct Matrix* view, const struct Matrix* proj, struct Matrix* mvp) {
-	Gfx_LoadMatrix(MATRIX_VIEW, view);
-	Gfx_LoadMatrix(MATRIX_PROJ, proj);
+	_view = *view;
+	_proj = *proj;
+	Matrix_Mul(&_mvp, &_view, &_proj);
+	DirtyUniform(UNI_MVP_MATRIX);
+	ReloadUniforms();
 	Matrix_Mul(mvp, view, proj);
 }
 

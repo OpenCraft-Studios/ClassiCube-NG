@@ -838,8 +838,25 @@ void Gfx_CalcPerspectiveMatrix(struct Matrix* matrix, float fov, float aspect, f
 	matrix->row3.z =  1.0f * zNear / (zNear - zFar);
 }
 
-void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
-	C3D_Mtx* dst = type == MATRIX_VIEW ? &_view : &_proj;
+void gfxProjectionMatrix(const struct Matrix* matrix) {
+	C3D_Mtx* dst = &_proj;
+	float* src   = (float*)matrix;
+	
+	// Transpose
+	for (int i = 0; i < 4; i++)
+	{
+		dst->r[i].x = src[0  + i];
+		dst->r[i].y = src[4  + i];
+		dst->r[i].z = src[8  + i];
+		dst->r[i].w = src[12 + i];
+	}
+
+	Mtx_Multiply(&_mvp, &_proj, &_view);
+	pica_upload_mat4_constant(CONST_MVP, &_mvp);
+}
+
+void gfxModelViewMatrix(const struct Matrix* matrix) {
+	C3D_Mtx* dst = &_view;
 	float* src   = (float*)matrix;
 	
 	// Transpose
@@ -856,30 +873,32 @@ void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
 }
 
 
-/*void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
-	if (type == MATRIX_VIEW) _view = *matrix;
-	
+/*
+void gfxProjectionMatrix(const struct Matrix* matrix) {
 	// Provided projection matrix assumes landscape display, but 3DS framebuffer
 	//  is a rotated portrait display, so need to swap pixel X/Y values to correct that
 	// 
 	// This can be done by rotating the projection matrix 90 degrees around Z axis
 	// https://open.gl/transformations
-	if (type == MATRIX_PROJ) {
-		struct Matrix rot = Matrix_Identity;
-		rot.row1.x =  0; rot.row1.y = 1;
-		rot.row2.x = -1; rot.row2.y = 0;
-		//Matrix_RotateZ(&rot, 90 * MATH_DEG2RAD);
-		//Matrix_Mul(&_proj, &_proj, &rot); // TODO avoid Matrix_Mul ??
-		Matrix_Mul(&_proj, matrix, &rot); // TODO avoid Matrix_Mul ?
-	}
+	struct Matrix rot = Matrix_Identity;
+	rot.row1.x =  0; rot.row1.y = 1;
+	rot.row2.x = -1; rot.row2.y = 0;
+	//Matrix_RotateZ(&rot, 90 * MATH_DEG2RAD);
+	//Matrix_Mul(&_proj, &_proj, &rot); // TODO avoid Matrix_Mul ??
+	Matrix_Mul(&_proj, matrix, &rot); // TODO avoid Matrix_Mul ?
+	Mtx_Multiply(&_mvp, &_proj, &_view);
+	UpdateMVP();
+}
 
+void gfxModelViewMatrix(const struct Matrix* matrix) {
+	if (type == MATRIX_VIEW) _view = *matrix;
 	Mtx_Multiply(&_mvp, &_proj, &_view);
 	UpdateMVP();
 }*/
 
 void Gfx_LoadMVP(const struct Matrix* view, const struct Matrix* proj, struct Matrix* mvp) {
-	Gfx_LoadMatrix(MATRIX_VIEW, view);
-	Gfx_LoadMatrix(MATRIX_PROJ, proj);
+	gfxModelViewMatrix(view);
+	gfxProjectionMatrix(proj);
 	Matrix_Mul(mvp, view, proj);
 }
 

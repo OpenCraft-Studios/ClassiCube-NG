@@ -234,10 +234,12 @@ void Gfx_UnlockVb(GfxResourceID vb) { }
 static float texOffsetX, texOffsetY;
 static struct Matrix _view, _proj, _mvp;
 
-void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
-	if (type == MATRIX_VIEW) _view = *matrix;
-	if (type == MATRIX_PROJ) _proj = *matrix;
-
+void gfxProjectionMatrix(const struct Matrix* matrix) {
+	_proj = *matrix;
+	Matrix_Mul(&_mvp, &_view, &_proj);
+}
+void gfxModelViewMatrix(const struct Matrix* matrix) {
+	_view = *matrix;
 	Matrix_Mul(&_mvp, &_view, &_proj);
 }
 

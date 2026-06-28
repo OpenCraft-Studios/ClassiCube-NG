@@ -1081,10 +1081,7 @@ void Gfx_SetDepthTest(cc_bool enabled) {
 *#########################################################################################################################*/
 static struct Matrix _view, _proj;
 
-void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
-	if (type == MATRIX_VIEW) _view = *matrix;
-	if (type == MATRIX_PROJ) _proj = *matrix;
-
+void _gfxReloadMatrices() {
 	struct Matrix mvp CC_ALIGNED(64);
 	Matrix_Mul(&mvp, &_view, &_proj);
 	float* m = (float*)&mvp;
@@ -1102,9 +1099,20 @@ void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
 	VP_ReloadUniforms();
 }
 
+void gfxModelViewMatrix(const struct Matrix* view) {
+	_view = *view;
+	_gfxReloadMatrices();
+}
+
+void gfxProjectionMatrix(const struct Matrix* proj) {
+	_proj = *proj;
+	_gfxReloadMatrices();
+}
+
 void Gfx_LoadMVP(const struct Matrix* view, const struct Matrix* proj, struct Matrix* mvp) {
-	Gfx_LoadMatrix(MATRIX_VIEW, view);
-	Gfx_LoadMatrix(MATRIX_PROJ, proj);
+	_view = *view;
+	_proj = *proj;
+	_gfxReloadMatrices();
 	Matrix_Mul(mvp, view, proj);
 }
 
@@ -1176,8 +1184,8 @@ void Gfx_ClearBuffers(GfxBuffers buffers) {
 	Gfx_SetDepthTest(false);
 	
 	Gfx_SetVertexFormat(VERTEX_FORMAT_COLOURED);
-	Gfx_LoadMatrix(MATRIX_VIEW, &Matrix_Identity);
-	Gfx_LoadMatrix(MATRIX_PROJ, &Matrix_Identity);
+	gfxModelViewMatrix(&Matrix_Identity);
+	gfxProjectionMatrix(&Matrix_Identity);
 	Gfx_BindVb(clearVB);
 	Gfx_DrawVb_IndexedTris(4);
 	

@@ -518,7 +518,7 @@ void Gfx_CalcPerspectiveMatrix(struct Matrix* matrix, float fov, float aspect, f
 	matrix->row4.w =  0.0f;
 }
 
-void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
+void gfxProjectionMatrix(const struct Matrix* matrix) {
 	const float* m = (const float*)matrix;
 	Mtx44 dst;
 	float* tmp = (float*)dst;
@@ -532,18 +532,30 @@ void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
 		tmp[i * 4 + 3] = m[12 + i];
 	}
 		
-	if (type == MATRIX_PROJ) {
-		GX_LoadProjectionMtx(dst,
-			tmp[3*4+3] == 0.0f ? GX_PERSPECTIVE : GX_ORTHOGRAPHIC);
-	} else {
-		XF_SetMatrix_3x4((GX_matrix_3x4*)&dst, XF_POS_MATRIX0);
+	GX_LoadProjectionMtx(dst,
+		tmp[3*4+3] == 0.0f ? GX_PERSPECTIVE : GX_ORTHOGRAPHIC);
+}
+void gfxModelViewMatrix(const struct Matrix* matrix) {
+	const float* m = (const float*)matrix;
+	Mtx44 dst;
+	float* tmp = (float*)dst;
+	
+	// Transpose matrix
+	for (int i = 0; i < 4; i++)
+	{
+		tmp[i * 4 + 0] = m[0  + i];
+		tmp[i * 4 + 1] = m[4  + i];
+		tmp[i * 4 + 2] = m[8  + i];
+		tmp[i * 4 + 3] = m[12 + i];
 	}
+	
+	XF_SetMatrix_3x4((GX_matrix_3x4*)&dst, XF_POS_MATRIX0);
 }
 extern void Matrix_Mul2(struct Matrix* result, const struct Matrix* left, const struct Matrix* right);
 
 void Gfx_LoadMVP(const struct Matrix* view, const struct Matrix* proj, struct Matrix* mvp) {
-	Gfx_LoadMatrix(MATRIX_VIEW, view);
-	Gfx_LoadMatrix(MATRIX_PROJ, proj);
+	gfxModelViewMatrix(view);
+	gfxProjectionMatrix(proj);
 	Matrix_Mul(mvp, view, proj);
 }
 

@@ -6,15 +6,15 @@
 #include "Constants.h"
 CC_BEGIN_HEADER
 
-typedef struct { float x, y; } CC_ALIGNED(4) vec2;
-typedef struct { float x, y, z; } CC_ALIGNED(4) vec3;
-typedef struct { int x, y, z; } CC_ALIGNED(4) vec3i;
+typedef struct CC_ALIGNED(4) { float x, y; } vec2;
+typedef struct CC_ALIGNED(4) { float x, y, z; } vec3;
+typedef struct CC_ALIGNED(4) { int x, y, z; } vec3i;
 
-struct Vec4 { float x, y, z, w; } CC_ALIGNED(4);
+struct CC_ALIGNED(4) Vec4 { float x, y, z, w; };
 
-struct Matrix {
+struct CC_ALIGNED(32) Matrix {
 	struct Vec4 row1, row2, row3, row4;
-} CC_ALIGNED(16);
+};
 
 #define Matrix_IdentityValue \
 { \
@@ -42,11 +42,7 @@ static CC_INLINE vec3 Vec3_Create3(float x, float y, float z) {
 /**
  * Set the x, y and z components of this 3d vector to the supplied values.
  */
-static CC_INLINE void Vec3_Set(vec3 self, float x, float y, float z) {
-	self.x = x;
-	self.y = y;
-	self.z = z;
-}
+#define Vec3_Set(self, X, Y, Z) (self).x = X; (self).y = Y; (self.z) = Z;
 
 /* Whether all components of a 3D vector are 0 */
 #define Vec3_IsZero(v) ((v).x == 0 && (v).y == 0 && (v).z == 0)

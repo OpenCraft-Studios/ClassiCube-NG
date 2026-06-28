@@ -258,8 +258,8 @@ void Gfx_Begin2D(int width, int height) {
 
 	/* intentionally biased more towards positive Z to reduce 2D clipping issues on the DS */
 	Gfx_CalcOrthoMatrix(&ortho, (float)width, (float)height, -100.0f, 1000.0f);
-	Gfx_LoadMatrix(MATRIX_PROJ, &ortho);
-	Gfx_LoadMatrix(MATRIX_VIEW, &Matrix_Identity);
+	gfxProjectionMatrix(&ortho);
+	gfxModelViewMatrix(&Matrix_Identity);
 
 	Gfx_SetDepthTest(false);
 	Gfx_SetDepthWrite(false);

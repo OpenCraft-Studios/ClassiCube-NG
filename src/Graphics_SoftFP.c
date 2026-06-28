@@ -367,23 +367,20 @@ static void MatrixMulFixed(FixedMatrix* dst, const FixedMatrix* a, const FixedMa
     }
 }
 
-void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
-    if (type == MATRIX_VIEW) {
-        MatrixToFixed(&_view_fp, matrix);
-    }
-    if (type == MATRIX_PROJ) {
-        MatrixToFixed(&_proj_fp, matrix);
-    }
+void gfxModelViewMatrix(const struct Matrix* matrix) {
+    MatrixToFixed(&_view_fp, matrix);
+    MatrixMulFixed(&_mvp_fp, &_view_fp, &_proj_fp);
+}
 
+void gfxProjectionMatrix(const struct Matrix* matrix) {
+    MatrixToFixed(&_proj_fp, matrix);
     MatrixMulFixed(&_mvp_fp, &_view_fp, &_proj_fp);
 }
 
 void Gfx_LoadMVP(const struct Matrix* view, const struct Matrix* proj, struct Matrix* mvp) {
     MatrixToFixed(&_view_fp, view);
     MatrixToFixed(&_proj_fp, proj);
-
     MatrixMulFixed(&_mvp_fp, &_view_fp, &_proj_fp);
-    
     Matrix_Mul(mvp, view, proj);
 }
 

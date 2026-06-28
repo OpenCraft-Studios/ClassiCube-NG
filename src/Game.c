@@ -492,8 +492,8 @@ static void Render3DFrame(float delta, float t) {
 	vec3 pos;
 
 	Camera.Active->GetView(&Gfx.View);
-	/*Gfx_LoadMatrix(MATRIX_PROJ, &Gfx.Projection);
-	Gfx_LoadMatrix(MATRIX_VIEW, &Gfx.View);
+	/*gfxProjectionMatrix(&Gfx.Projection);
+	gfxModelViewMatrix(&Gfx.View);
 	Frustum_CalcPlanes(&Gfx.Projection, &Gfx.View);*/
 	Gfx_LoadMVP(&Gfx.View, &Gfx.Projection, &mvp);
 	Frustum_CalcPlanes(&mvp);

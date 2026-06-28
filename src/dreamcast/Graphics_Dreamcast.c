@@ -841,9 +841,16 @@ static matrix_t CC_ALIGNED(32) mat_vp;
 static float textureOffsetX, textureOffsetY;
 static int textureOffset;
 
-void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
-	if (type == MATRIX_PROJ) memcpy(&_proj, matrix, sizeof(struct Matrix));
-	if (type == MATRIX_VIEW) memcpy(&_view, matrix, sizeof(struct Matrix));
+void gfxProjectionMatrix(const struct Matrix* proj) {
+	memcpy(&_proj, proj, sizeof(struct Matrix));
+	
+	mat_load(&mat_vp);
+	mat_apply(&_proj);
+	mat_apply(&_view);
+}
+
+void gfxModelViewMatrix(const struct Matrix* view) {
+	memcpy(&_view, view, sizeof(struct Matrix));
 
 	mat_load(&mat_vp);
 	mat_apply(&_proj);
@@ -851,8 +858,13 @@ void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
 }
 
 void Gfx_LoadMVP(const struct Matrix* view, const struct Matrix* proj, struct Matrix* mvp) {
-	Gfx_LoadMatrix(MATRIX_VIEW, view);
-	Gfx_LoadMatrix(MATRIX_PROJ, proj);
+	memcpy(&_proj, proj, sizeof(struct Matrix));
+	memcpy(&_view, view, sizeof(struct Matrix));
+	
+	mat_load(&mat_vp);
+	mat_apply(&_proj);
+	mat_apply(&_view);
+
 	Matrix_Mul(mvp, view, proj);
 	CalcNearFrustumPlane(mvp);
 }

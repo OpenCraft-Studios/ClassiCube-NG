@@ -570,10 +570,17 @@ void Gfx_DepthOnlyRendering(cc_bool depthOnly) {
 *#########################################################################################################################*/
 static struct Matrix _view, _proj;
 
-void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
-	if (type == MATRIX_VIEW) _view = *matrix;
-	if (type == MATRIX_PROJ) _proj = *matrix;
+void gfxProjectionMatrix(const struct Matrix* matrix) {
+	_proj = *matrix;
 
+	struct Matrix mvp CC_ALIGNED(64);	
+	Matrix_Mul(&mvp, &_view, &_proj);
+	gpuLoadMatrix((const float*)&mvp);
+}
+
+void gfxModelViewMatrix(const struct Matrix* matrix) {
+	_view = *matrix;
+	
 	struct Matrix mvp CC_ALIGNED(64);	
 	Matrix_Mul(&mvp, &_view, &_proj);
 	gpuLoadMatrix((const float*)&mvp);

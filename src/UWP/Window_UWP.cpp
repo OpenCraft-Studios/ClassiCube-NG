@@ -235,8 +235,8 @@ void Window_DrawFramebuffer(Rect2D r, struct Bitmap* bmp) {
 	Gfx_BindIb(Gfx.DefaultIb);
 	Gfx_UpdateTexture(fb_tex, r.x, r.y, &part, bmp->width, false);
 
-	Gfx_LoadMatrix(MATRIX_VIEW, &Matrix_Identity);
-	Gfx_LoadMatrix(MATRIX_PROJ, &Matrix_Identity);
+	gfxModelViewMatrix(&Matrix_Identity);
+	gfxProjectionMatrix(&Matrix_Identity);
 	Gfx_SetDepthTest(false);
 	Gfx_SetAlphaTest(false);
 	Gfx_SetAlphaBlending(false);

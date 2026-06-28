@@ -720,17 +720,24 @@ void Gfx_SetFogMode(FogFunc func) {/* TODO */
 *#########################################################################################################################*/
 static struct Matrix _view, _proj;
 
-void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
-	struct Matrix* dst = type == MATRIX_PROJ ? &_proj : &_view;
-	*dst = *matrix;
+void gfxProjectionMatrix(const struct Matrix* matrix) {
+	_proj = *matrix;
+	Matrix_Mul(&mvp, &_view, &_proj);
+	VP_UpdateUniforms();
+}
 
+void gfxModelViewMatrix(const struct Matrix* matrix) {
+	_view = *matrix;
 	Matrix_Mul(&mvp, &_view, &_proj);
 	VP_UpdateUniforms();
 }
 
 void Gfx_LoadMVP(const struct Matrix* view, const struct Matrix* proj, struct Matrix* mvp) {
-	Gfx_LoadMatrix(MATRIX_VIEW, view);
-	Gfx_LoadMatrix(MATRIX_PROJ, proj);
+	_proj = *proj;
+	_view = *view;
+	Matrix_Mul(&mvp, &_view, &_proj);
+	VP_UpdateUniforms();
+	
 	Matrix_Mul(mvp, view, proj);
 }
 

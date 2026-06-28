@@ -229,7 +229,7 @@ void HeldBlockRenderer_Render(float delta) {
 	held_block  = Inventory_SelectedBlock;
 	view = Gfx.View;
 
-	Gfx_LoadMatrix(MATRIX_PROJ, &held_blockProj);
+	gfxProjectionMatrix(&held_blockProj);
 	SetMatrix();
 
 	ResetHeldState();
@@ -238,7 +238,7 @@ void HeldBlockRenderer_Render(float delta) {
 	if (!Camera.Active->isThirdPerson) HeldBlockRenderer_RenderModel();
 
 	Gfx.View = view;
-	Gfx_LoadMatrix(MATRIX_PROJ, &Gfx.Projection);
+	gfxProjectionMatrix(&Gfx.Projection);
 }
 
 

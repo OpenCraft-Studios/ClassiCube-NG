@@ -11,7 +11,6 @@
 #define DS_MAT_MODELVIEW  2
 #define DS_MAT_TEXTURE    3
 
-static int matrix_modes[] = { DS_MAT_PROJECTION, DS_MAT_MODELVIEW };
 static int lastMatrix;
 
 
@@ -64,7 +63,7 @@ void ResetGPU(void) {
 	// Reset texture matrix to identity
     MATRIX_CONTROL  = DS_MAT_TEXTURE;
 	MATRIX_IDENTITY = 0;
-	MATRIX_CONTROL  = matrix_modes[lastMatrix];
+	MATRIX_CONTROL  = lastMatrix;
 }
 
 void Gfx_Create(void) {
@@ -208,7 +207,7 @@ static void UpdateTextureMatrix(void) {
 		MATRIX_TRANSLATE = 0;          // Z
 	}
 
-	MATRIX_CONTROL = matrix_modes[lastMatrix];
+	MATRIX_CONTROL = lastMatrix;
 }
 
 void Gfx_EnableTextureOffset(float x, float y) {
@@ -719,11 +718,9 @@ void Gfx_DepthOnlyRendering(cc_bool depthOnly) {
 /*########################################################################################################################*
 *---------------------------------------------------------Matrices--------------------------------------------------------*
 *#########################################################################################################################*/
-void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
-	if (type != lastMatrix) { 
-		lastMatrix	   = type; 
-		MATRIX_CONTROL = matrix_modes[type]; 
-	}
+void gfxProjectionMatrix(const struct Matrix* matrix) {
+	if (lastMatrix != DS_MAT_PROJECTION)
+		MATRIX_CONTROL = (lastMatrix = DS_MAT_PROJECTION);
 	
 	// loads 4x4 identity matrix
 	if (matrix == &Matrix_Identity) {
@@ -734,8 +731,24 @@ void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
 
 	// loads 4x4 matrix from memory
 	const float* src = (const float*)matrix;
-	for (int i = 0; i < 4 * 4; i++)
-	{
+	for (int i = 0; i < 4 * 4; i++) {
+		MATRIX_LOAD4x4 = floattof32(src[i]);
+	}
+}
+void gfxModelViewMatrix(const struct Matrix* matrix) {
+	if (lastMatrix != DS_MAT_MODELVIEW)
+		MATRIX_CONTROL = (lastMatrix = DS_MAT_MODELVIEW);
+	
+	// loads 4x4 identity matrix
+	if (matrix == &Matrix_Identity) {
+		MATRIX_IDENTITY = 0;
+		return;
+		// TODO still scale?
+	}
+
+	// loads 4x4 matrix from memory
+	const float* src = (const float*)matrix;
+	for (int i = 0; i < 4 * 4; i++) {
 		MATRIX_LOAD4x4 = floattof32(src[i]);
 	}
 
@@ -743,16 +756,14 @@ void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
 	//  aka only from -8.0 to 8.0
 	// That's way too small to be useful, so counteract that by scaling down
 	//  vertices and then scaling up the matrix multiplication
-	if (type == MATRIX_VIEW) {
-		MATRIX_SCALE = floattof32(64.0f); // X scale
-		MATRIX_SCALE = floattof32(64.0f); // Y scale
-		MATRIX_SCALE = floattof32(64.0f); // Z scale
-	}
+	MATRIX_SCALE = floattof32(64.0f); // X scale
+	MATRIX_SCALE = floattof32(64.0f); // Y scale
+	MATRIX_SCALE = floattof32(64.0f); // Z scale
 }
 
 void Gfx_LoadMVP(const struct Matrix* view, const struct Matrix* proj, struct Matrix* mvp) {
-	Gfx_LoadMatrix(MATRIX_VIEW, view);
-	Gfx_LoadMatrix(MATRIX_PROJ, proj);
+	gfxModelViewMatrix(view);
+	gfxProjectionMatrix(proj);
 	Matrix_Mul(mvp, view, proj);
 }
 

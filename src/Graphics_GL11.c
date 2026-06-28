@@ -287,29 +287,50 @@ void Gfx_DepthOnlyRendering(cc_bool depthOnly) {
 static GLenum matrix_modes[] = { GL_PROJECTION, GL_MODELVIEW, GL_TEXTURE };
 static int lastMatrix;
 
-void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
-	if (type != lastMatrix) { lastMatrix = type; glMatrixMode(matrix_modes[type]); }
+#define GL_SET_MATRIX(matrix) do {  \
+		if (matrix == &Matrix_Identity) { glLoadIdentity(); break; } \
+		glLoadMatrixf((const float*) matrix);\
+	} while (0);
 
-	if (matrix == &Matrix_Identity) {
-		glLoadIdentity();
-	} else {
-		glLoadMatrixf((const float*)matrix);
-	}
+void gfxModelViewMatrix(const struct Matrix* matrix) {
+	if (lastMatrix != GL_MODELVIEW)
+		glMatrixMode(lastMatrix = GL_MODELVIEW);
+
+	GL_SET_MATRIX(matrix);
 }
 
+void gfxProjectionMatrix(const struct Matrix* matrix) {
+	if (lastMatrix != GL_PROJECTION)
+		glMatrixMode(lastMatrix = GL_PROJECTION);
+
+	GL_SET_MATRIX(matrix);
+}
+
+void _gfxTextureMatrix(const struct Matrix* matrix) {
+	if (lastMatrix != GL_TEXTURE)
+		glMatrixMode(lastMatrix = GL_TEXTURE);
+
+	GL_SET_TEXTURE(matrix);
+}
+
+#undef GL_SET_MATRIX
+
 void Gfx_LoadMVP(const struct Matrix* view, const struct Matrix* proj, struct Matrix* mvp) {
-	Gfx_LoadMatrix(MATRIX_VIEW, view);
-	Gfx_LoadMatrix(MATRIX_PROJ, proj);
+	glMatrixMode(GL_PROJECTION);
+		glLoadMatrixf((const float*) proj);
+	glMatrixMode(GL_MODELVIEW);
+		glLoadMatrixf((const float*) view);
+	
 	Matrix_Mul(mvp, view, proj);
 }
 
 static struct Matrix texMatrix = Matrix_IdentityValue;
 void Gfx_EnableTextureOffset(float x, float y) {
 	texMatrix.row4.x = x; texMatrix.row4.y = y;
-	Gfx_LoadMatrix(2, &texMatrix);
+	_gfxTextureMatrix(&texMatrix);
 }
 
-void Gfx_DisableTextureOffset(void) { Gfx_LoadMatrix(2, &Matrix_Identity); }
+void Gfx_DisableTextureOffset(void) { _gfxTextureMatrix(&Matrix_Identity); }
 
 
 /*########################################################################################################################*

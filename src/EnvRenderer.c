@@ -288,9 +288,9 @@ void EnvRenderer_RenderSky(void) {
 		m.row4.x += dy * m.row2.x; m.row4.y += dy * m.row2.y;
 		m.row4.z += dy * m.row2.z; m.row4.w += dy * m.row2.w;
 
-		Gfx_LoadMatrix(MATRIX_VIEW, &m);
+		gfxModelViewMatrix(&m);
 		Gfx_DrawVb_IndexedTris(sky_vertices);
-		Gfx_LoadMatrix(MATRIX_VIEW, &Gfx.View);
+		gfxModelViewMatrix(&Gfx.View);
 	}
 }
 
@@ -363,11 +363,11 @@ void EnvRenderer_RenderSkybox(void) {
 	Matrix_MulBy(&m, &view);
 	Camera.CurrentPos = pos;
 
-	Gfx_LoadMatrix(MATRIX_VIEW, &m);
+	gfxModelViewMatrix(&m);
 	Gfx_BindVb(skybox_vb);
 	Gfx_DrawVb_IndexedTris(SKYBOX_COUNT);
 
-	Gfx_LoadMatrix(MATRIX_VIEW, &Gfx.View);
+	gfxModelViewMatrix(&Gfx.View);
 	Gfx_SetDepthWrite(true);
 }
 

@@ -108,9 +108,9 @@ void Model_Render(struct Model* model, struct Entity* e) {
 	Model_GetEntityTransform(model, e, &transform);
 	Matrix_Mul(&m, &transform, &Gfx.View);
 
-	Gfx_LoadMatrix(MATRIX_VIEW, &m);
+	gfxModelViewMatrix(&m);
 	model->Draw(e);
-	Gfx_LoadMatrix(MATRIX_VIEW, &Gfx.View);
+	gfxModelViewMatrix(&Gfx.View);
 }
 
 void Model_SetupState(struct Model* model, struct Entity* e) {
@@ -306,11 +306,11 @@ void Model_RenderArm(struct Model* model, struct Entity* e) {
 	Matrix_Mul(&m, &m,         &Gfx.View);
 	Matrix_Mul(&m, &translate, &m);
 
-	Gfx_LoadMatrix(MATRIX_VIEW, &m);
+	gfxModelViewMatrix(&m);
 	Models.Rotation = ROTATE_ORDER_YZX;
 	model->DrawArm(e);
 	Models.Rotation = ROTATE_ORDER_ZYX;
-	Gfx_LoadMatrix(MATRIX_VIEW, &Gfx.View);
+	gfxModelViewMatrix(&Gfx.View);
 }
 
 void Model_DrawArmPart(struct ModelPart* part) {
@@ -2339,7 +2339,7 @@ static void DrawBlockTransform(struct Entity* e, float dispX, float dispY, float
 	Matrix_Mul(&m, &temp, &m);
 
 	Model_SetupState(&block_model, e);
-	Gfx_LoadMatrix(MATRIX_VIEW, &m);
+	gfxModelViewMatrix(&m);
 	block_model.Draw(e);
 }
 

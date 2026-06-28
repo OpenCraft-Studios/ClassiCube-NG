@@ -818,28 +818,28 @@ static CC_NOINLINE void RecalcClipping(void) {
 	Clip_RescaleMVPtoGuardband();
 }
 
-static void LoadMatrix(MatrixType type, const struct Matrix* matrix) {
-	const float* m = (const float*)matrix;
-
-	if (type == MATRIX_PROJ) {
-		GE_upload_proj_matrix(m);
-		Clip_LoadProj(m);
-	} else {
-		GE_upload_view_matrix(m);
-		Clip_LoadView(m);
-	}
+void gfxProjectionMatrix(const struct Matrix* matrix) {
+	clipping_dirty = true;
+	GE_upload_proj_matrix((const float*) matrix);
+	Clip_LoadProj((const float*) matrix);
+	Clip_RecalcMVP();
 }
 
-void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
-	LoadMatrix(type, matrix);
-	Clip_RecalcMVP();
+void gfxModelViewMatrix(const struct Matrix* matrix) {
 	clipping_dirty = true;
+	GE_upload_view_matrix((const float*) matrix);
+	Clip_LoadView((const float*) matrix);
+	Clip_RecalcMVP();
 }
 
 void Gfx_LoadMVP(const struct Matrix* view, const struct Matrix* proj, struct Matrix* mvp) {
-	LoadMatrix(MATRIX_VIEW, view);
-	LoadMatrix(MATRIX_PROJ, proj);
-
+	clipping_dirty = true;
+	
+	GE_upload_proj_matrix((const float*) proj);
+	Clip_LoadProj((const float*) proj);
+	GE_upload_view_matrix((const float*) view);
+	Clip_LoadView((const float*) view);
+	
 	Clip_RecalcMVP();
 	Clip_StoreMVP((float*)mvp);
 	RecalcClipping();

@@ -491,9 +491,7 @@ static struct Matrix _view, _proj, _mvp;
 // TODO Upload constants too
 // if necessary, look at vs.inl output for 'c[5]' etc..
 
-void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
-	struct Matrix* dst = type == MATRIX_PROJ ? &_proj : &_view;
-	*dst = *matrix;
+void _gfxReloadMatrices() {
 	Matrix_Mul(&_mvp, &_view, &_proj);
 
 	struct Matrix final;
@@ -514,9 +512,20 @@ void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
 	pb_end(p);
 }
 
+void gfxModelViewMatrix(const struct Matrix* view) {
+	_view = *view;
+	_gfxReloadMatrices();
+}
+
+void gfxProjectionMatrix(const struct Matrix* proj) {
+	_proj = *proj;
+	_gfxReloadMatrices();
+}
+
 void Gfx_LoadMVP(const struct Matrix* view, const struct Matrix* proj, struct Matrix* mvp) {
-	Gfx_LoadMatrix(MATRIX_VIEW, view);
-	Gfx_LoadMatrix(MATRIX_PROJ, proj);
+	_view = *view;
+	_proj = *proj;
+	_gfxReloadMatrices();
 	Mem_Copy(mvp, &_mvp, sizeof(struct Matrix));
 }
 

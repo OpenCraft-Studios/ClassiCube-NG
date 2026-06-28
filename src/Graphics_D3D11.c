@@ -680,17 +680,23 @@ static void VS_Free(void) {
 }
 
 static struct Matrix _view, _proj;
-void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
-	if (type == MATRIX_VIEW) _view = *matrix;
-	if (type == MATRIX_PROJ) _proj = *matrix;
+void gfxProjectionMatrix(const struct Matrix* proj) {
+	_proj = *proj;
+	Matrix_Mul(&vs_constants.mvp, &_view, &_proj);
+	VS_UpdateConstants();
+}
 
+void gfxModelViewMatrix(const struct Matrix* view) {
+	_view = *view;
 	Matrix_Mul(&vs_constants.mvp, &_view, &_proj);
 	VS_UpdateConstants();
 }
 
 void Gfx_LoadMVP(const struct Matrix* view, const struct Matrix* proj, struct Matrix* mvp) {
-	Gfx_LoadMatrix(MATRIX_VIEW, view);
-	Gfx_LoadMatrix(MATRIX_PROJ, proj);
+	_view = *view;
+	_proj = *proj;
+	Matrix_Mul(&vs_constants.mvp, view, proj);
+	VS_UpdateConstants();
 	Matrix_Mul(mvp, view, proj);
 }
 

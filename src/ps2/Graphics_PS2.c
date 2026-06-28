@@ -953,20 +953,25 @@ void Gfx_UnlockVb(GfxResourceID vb) {
 *#########################################################################################################################*/
 static struct Matrix _view, _proj;
 
-void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
-	if (type == MATRIX_VIEW) _view = *matrix;
-	if (type == MATRIX_PROJ) _proj = *matrix;
-
+void gfxProjectionMatrix(const struct Matrix* proj) {
+	_proj = *proj;
 	Matrix_Mul(&mvp, &_view, &_proj);
 	// TODO	
 	LoadMvpMatrix(&mvp);
 }
 
-void Gfx_LoadMVP(const struct Matrix* view, const struct Matrix* proj, struct Matrix* mvp) {
-	Gfx_LoadMatrix(MATRIX_VIEW, view);
-	Gfx_LoadMatrix(MATRIX_PROJ, proj);
+void gfxModelViewMatrix(const struct Matrix* view) {
+	_view = *view;
+	Matrix_Mul(&mvp, &_view, &_proj);
+	// TODO	
+	LoadMvpMatrix(&mvp);
+}
 
-	Matrix_Mul(mvp, view, proj);
+void Gfx_LoadMVP(const struct Matrix* view, const struct Matrix* proj, struct Matrix* mvp_dest) {
+	_proj = *view;
+	_view = *proj;
+	Matrix_Mul(mvp_dest, view, proj);
+	LoadMvpMatrix(&mvp);
 }
 
 void Gfx_EnableTextureOffset(float x, float y) {

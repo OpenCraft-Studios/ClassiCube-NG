@@ -417,7 +417,8 @@ typedef enum MatrixType_ {
 } MatrixType;
 
 /* Sets the currently active matrix projection or modelview matrix */
-CC_API void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix);
+CC_API void gfxModelViewMatrix(const struct Matrix* const matrix);
+CC_API void gfxProjectionMatrix(const struct Matrix* const matrix);
 /* Sets the texture U/V translation (not normally used) */
 CC_API void Gfx_EnableTextureOffset(float x, float y);
 /* Disables texture U/V translation */
