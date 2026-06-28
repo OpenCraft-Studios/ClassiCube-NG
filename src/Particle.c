@@ -25,10 +25,10 @@ static RNGState rnd;
 static cc_bool hitTerrain;
 typedef cc_bool (*CanPassThroughFunc)(BlockID b);
 
-void Particle_DoRender(const Vec2* size, const Vec3* pos, const TextureRec* rec, PackedCol col, struct VertexTextured* v) {
+void Particle_DoRender(const vec2* size, const vec3* pos, const TextureRec* rec, PackedCol col, struct VertexTextured* v) {
 	struct Matrix* view;
 	float sX, sY;
-	Vec3 centre;
+	vec3 centre;
 	float aX, aY, aZ, bX, bY, bZ;
 
 	sX = size->x * 0.5f; sY = size->y * 0.5f;
@@ -44,9 +44,9 @@ void Particle_DoRender(const Vec2* size, const Vec3* pos, const TextureRec* rec,
 	v->x = centre.x + aX - bX; v->y = centre.y + aY - bY; v->z = centre.z + aZ - bZ; v->Col = col; v->U = rec->u2; v->V = rec->v2; v++;
 }
 
-static cc_bool CollidesHor(Vec3* nextPos, BlockID block) {
-	Vec3 horPos = Vec3_Create3((float)Math_Floor(nextPos->x), 0.0f, (float)Math_Floor(nextPos->z));
-	Vec3 min, max;
+static cc_bool CollidesHor(vec3* nextPos, BlockID block) {
+	vec3 horPos = Vec3_Create3((float)Math_Floor(nextPos->x), 0.0f, (float)Math_Floor(nextPos->z));
+	vec3 min, max;
 	Vec3_Add(&min, &Blocks.MinBB[block], &horPos);
 	Vec3_Add(&max, &Blocks.MaxBB[block], &horPos);
 	return nextPos->x >= min.x && nextPos->z >= min.z && nextPos->x < max.x && nextPos->z < max.z;
@@ -62,7 +62,7 @@ static BlockID GetBlock(int x, int y, int z) {
 
 static cc_bool ClipY(struct Particle* p, int y, cc_bool topFace, CanPassThroughFunc canPassThrough) {
 	BlockID block;
-	Vec3 minBB, maxBB;
+	vec3 minBB, maxBB;
 	float collideY;
 	cc_bool collideVer;
 
@@ -103,7 +103,7 @@ static cc_bool IntersectsBlock(struct Particle* p, CanPassThroughFunc canPassThr
 }
 
 static cc_bool PhysicsTick(struct Particle* p, float gravity, CanPassThroughFunc canPassThrough, float delta) {
-	Vec3 velocity;
+	vec3 velocity;
 	int y, begY, endY;
 
 	p->lastPos = p->nextPos;
@@ -146,8 +146,8 @@ static cc_bool RainParticle_Tick(struct Particle* p, float delta) {
 }
 
 static void RainParticle_Render(struct Particle* p, float t, struct VertexTextured* vertices) {
-	Vec3 pos;
-	Vec2 size;
+	vec3 pos;
+	vec2 size;
 	PackedCol col;
 	int x, y, z;
 
@@ -243,8 +243,8 @@ static cc_bool TerrainParticle_Tick(struct TerrainParticle* p, float delta) {
 
 static void TerrainParticle_Render(struct TerrainParticle* p, float t, struct VertexTextured* vertices) {
 	PackedCol col = PACKEDCOL_WHITE;
-	Vec3 pos;
-	Vec2 size;
+	vec3 pos;
+	vec2 size;
 	int x, y, z;
 
 	Vec3_Lerp(&pos, &p->base.lastPos, &p->base.nextPos, t);
@@ -324,12 +324,12 @@ static void Terrain_Tick(float delta) {
 	}
 }
 
-void Particles_BreakBlockEffect(IVec3 coords, BlockID old, BlockID now) {
+void Particles_BreakBlockEffect(vec3i coords, BlockID old, BlockID now) {
 	struct TerrainParticle* p;
 	TextureLoc loc;
 	int texIndex;
 	TextureRec baseRec, rec;
-	Vec3 origin, minBB, maxBB;
+	vec3 origin, minBB, maxBB;
 
 	/* texture UV variables */
 	float uScale, vScale, maxU2, maxV2;
@@ -339,7 +339,7 @@ void Particles_BreakBlockEffect(IVec3 coords, BlockID old, BlockID now) {
 	
 	/* per-particle variables */
 	float cellX, cellY, cellZ;
-	Vec3 cell;
+	vec3 cell;
 	int x, y, z, type;
 
 	if (now != BLOCK_AIR || Blocks.Draw[old] == DRAW_GAS) return;
@@ -448,8 +448,8 @@ static cc_bool CustomParticle_Tick(struct CustomParticle* p, float delta) {
 
 static void CustomParticle_Render(struct CustomParticle* p, float t, struct VertexTextured* vertices) {
 	struct CustomParticleEffect* e = &Particles_CustomEffects[p->effectId];
-	Vec3 pos;
-	Vec2 size;
+	vec3 pos;
+	vec2 size;
 	PackedCol col;
 	TextureRec rec = e->rec;
 	int x, y, z;
@@ -508,7 +508,7 @@ void Particles_CustomEffect(int effectID, float x, float y, float z, float origi
 	struct CustomParticle* p;
 	struct CustomParticleEffect* e = &Particles_CustomEffects[effectID];
 	int i, count = e->particleCount;
-	Vec3 offset, delta, origin;
+	vec3 offset, delta, origin;
 	float d;
 
 	origin.x = originX; origin.y = originY; origin.z = originZ;
@@ -606,7 +606,7 @@ static void OnContextLost(void* obj) {
 	Gfx_DeleteTexture(&particles_TexId);
 }
 
-static void OnBreakBlockEffect_Handler(void* obj, IVec3 coords, BlockID old, BlockID now) {
+static void OnBreakBlockEffect_Handler(void* obj, vec3i coords, BlockID old, BlockID now) {
 	Particles_BreakBlockEffect(coords, old, now);
 }
 

@@ -318,7 +318,7 @@ static void PlaceCommand_Execute(const cc_string* args, int argsCount) {
 	cc_string name;
 	cc_uint8 off;
 	int block;
-	IVec3 pos;
+	vec3i pos;
 	
 	if (argsCount == 2) {
 		Chat_AddRaw("&eToo few arguments.");
@@ -371,12 +371,12 @@ static struct ChatCommand PlaceCommand = {
 /*########################################################################################################################*
 *-------------------------------------------------------DrawOpCommand-----------------------------------------------------*
 *#########################################################################################################################*/
-static IVec3 drawOp_mark1, drawOp_mark2;
+static vec3i drawOp_mark1, drawOp_mark2;
 static cc_bool drawOp_persist, drawOp_hooked, drawOp_hasMark1;
 static const char* drawOp_name;
-static void (*drawOp_Func)(IVec3 min, IVec3 max);
+static void (*drawOp_Func)(vec3i min, vec3i max);
 
-static void DrawOpCommand_BlockChanged(void* obj, IVec3 coords, BlockID old, BlockID now);
+static void DrawOpCommand_BlockChanged(void* obj, vec3i coords, BlockID old, BlockID now);
 static void DrawOpCommand_ResetState(void) {
 	if (drawOp_hooked) {
 		Event_Unregister_(&UserEvents.BlockChanged, NULL, DrawOpCommand_BlockChanged);
@@ -399,7 +399,7 @@ static void DrawOpCommand_Begin(void) {
 
 
 static void DrawOpCommand_Execute(void) {
-	IVec3 min, max;
+	vec3i min, max;
 
 	IVec3_Min(&min, &drawOp_mark1, &drawOp_mark2);
 	IVec3_Max(&max, &drawOp_mark1, &drawOp_mark2);
@@ -409,7 +409,7 @@ static void DrawOpCommand_Execute(void) {
 	drawOp_Func(min, max);
 }
 
-static void DrawOpCommand_BlockChanged(void* obj, IVec3 coords, BlockID old, BlockID now) {
+static void DrawOpCommand_BlockChanged(void* obj, vec3i coords, BlockID old, BlockID now) {
 	cc_string msg; char msgBuffer[STRING_SIZE];
 	String_InitArray(msg, msgBuffer);
 	Game_UpdateBlock(coords.x, coords.y, coords.z, old);
@@ -466,7 +466,7 @@ static int DrawOpCommand_ParseBlock(const cc_string* arg) {
 *#########################################################################################################################*/
 static int cuboid_block;
 
-static void CuboidCommand_Draw(IVec3 min, IVec3 max) {
+static void CuboidCommand_Draw(vec3i min, vec3i max) {
 	BlockID toPlace;
 	int x, y, z;
 
@@ -518,7 +518,7 @@ static struct ChatCommand CuboidCommand = {
 *#########################################################################################################################*/
 static int replace_source, replace_target;
 
-static void ReplaceCommand_Draw(IVec3 min, IVec3 max) {
+static void ReplaceCommand_Draw(vec3i min, vec3i max) {
 	BlockID cur, source, toPlace;
 	int x, y, z;
 
@@ -584,7 +584,7 @@ static struct ChatCommand ReplaceCommand = {
 static void TeleportCommand_Execute(const cc_string* args, int argsCount) {
 	struct Entity* e = &Entities.CurPlayer->Base;
 	struct LocationUpdate update;
-	Vec3 v;
+	vec3 v;
 
 	if (argsCount != 3) {
 		Chat_AddRaw("&e/client teleport: &cYou didn't specify X, Y and Z coordinates.");
@@ -630,9 +630,9 @@ static cc_bool BlockEditCommand_GetTexture(const cc_string* str, int* tex) {
 	return BlockEditCommand_GetInt(str, "Texture", tex, 0, ATLAS1D_MAX_ATLASES - 1);
 }
 
-static cc_bool BlockEditCommand_GetCoords(const cc_string* str, Vec3* coords) {
+static cc_bool BlockEditCommand_GetCoords(const cc_string* str, vec3* coords) {
 	cc_string parts[3];
-	IVec3 xyz;
+	vec3i xyz;
 
 	int numParts = String_UNSAFE_Split(str, ' ', parts, 3);
 	if (numParts != 3) {
@@ -672,7 +672,7 @@ static void BlockEditCommand_Execute(const cc_string* args, int argsCount__) {
 	cc_string* value;
 	int argsCount, block, v;
 	cc_bool b;
-	Vec3 coords;
+	vec3 coords;
 
 	if (String_CaselessEqualsConst(args, "properties")) {
 		Chat_AddRaw("&eEditable block properties:");

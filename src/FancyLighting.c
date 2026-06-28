@@ -14,7 +14,7 @@
 #include "Queue.h"
 
 struct LightNode {
-	IVec3 coords; /* 12 bytes */
+	vec3i coords; /* 12 bytes */
 	cc_uint8 brightness; /* 1 byte */
 	/* char padding[3]; */
 };
@@ -399,7 +399,7 @@ static void CalcUnlight(int x, int y, int z, cc_uint8 brightness, cc_bool isLamp
 	int count = 0;
 	struct LightNode curNode, otherNode;
 	cc_uint8 neighborBrightness, neighborBlockBrightness;
-	IVec3 neighborCoords;
+	vec3i neighborCoords;
 	BlockID thisBlockTrue, thisBlock;
 
 	SetBrightness(0, x, y, z, isLamp, true);

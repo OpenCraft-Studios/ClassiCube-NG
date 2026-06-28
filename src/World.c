@@ -276,7 +276,7 @@ float Respawn_HighestSolidY(struct AABB* bb) {
 
 	BlockID block;
 	struct AABB blockBB;
-	Vec3 v;
+	vec3 v;
 	int x, y, z;	
 
 	for (y = minY; y <= maxY; y++) { v.y = (float)y;
@@ -300,8 +300,8 @@ float Respawn_HighestSolidY(struct AABB* bb) {
 	return highestY;
 }
 
-Vec3 Respawn_FindSpawnPosition(float x, float z, Vec3 modelSize) {
-	Vec3 spawn;
+vec3 Respawn_FindSpawnPosition(float x, float z, vec3 modelSize) {
+	vec3 spawn;
 	struct AABB bb;
 	float highestY;
 	int y;

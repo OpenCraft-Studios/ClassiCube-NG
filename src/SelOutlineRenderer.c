@@ -41,10 +41,10 @@ static void BuildMesh(struct RayTracer* selected) {
 	
 	struct VertexColoured* ptr;
 	int i;
-	Vec3 delta;
+	vec3 delta;
 	float dist, offset;
 	float size, scale;
-	Vec3 coords[4];
+	vec3 coords[4];
 
 	Vec3_Sub(&delta, &Camera.CurrentPos, &selected->Min);
 	dist = Vec3_LengthSquared(&delta);

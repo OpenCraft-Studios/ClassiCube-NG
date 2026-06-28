@@ -1,16 +1,15 @@
 #include "Vectors.h"
 #include "ExtMath.h"
 #include "Funcs.h"
-#include "Constants.h"
 #include "Core.h"
 
-void Vec3_Lerp(Vec3* result, const Vec3* a, const Vec3* b, float blend) {
+void Vec3_Lerp(vec3* result, const vec3* a, const vec3* b, float blend) {
 	result->x = blend * (b->x - a->x) + a->x;
 	result->y = blend * (b->y - a->y) + a->y;
 	result->z = blend * (b->z - a->z) + a->z;
 }
 
-void Vec3_Normalise(Vec3* v) {
+void Vec3_Normalise(vec3* v) {
 	float scale, lenSquared;
 	lenSquared = v->x * v->x + v->y * v->y + v->z * v->z;
 	/* handle zero vector */
@@ -22,7 +21,7 @@ void Vec3_Normalise(Vec3* v) {
 	v->z  = v->z * scale;
 }
 
-void Vec3_Transform(Vec3* result, const Vec3* a, const struct Matrix* mat) {
+void Vec3_Transform(vec3* result, const vec3* a, const struct Matrix* mat) {
 	/* a could be pointing to result - therefore can't directly assign X/Y/Z */
 	float x = a->x * mat->row1.x + a->y * mat->row2.x + a->z * mat->row3.x + mat->row4.x;
 	float y = a->x * mat->row1.y + a->y * mat->row2.y + a->z * mat->row3.y + mat->row4.y;
@@ -30,55 +29,55 @@ void Vec3_Transform(Vec3* result, const Vec3* a, const struct Matrix* mat) {
 	result->x = x; result->y = y; result->z = z;
 }
 
-void Vec3_TransformY(Vec3* result, float y, const struct Matrix* mat) {
+void Vec3_TransformY(vec3* result, float y, const struct Matrix* mat) {
 	result->x = y * mat->row2.x + mat->row4.x;
 	result->y = y * mat->row2.y + mat->row4.y;
 	result->z = y * mat->row2.z + mat->row4.z;
 }
 
-Vec3 Vec3_RotateX(Vec3 v, float angle) {
+vec3 Vec3_RotateX(vec3 v, float angle) {
 	float cosA = Math_CosF(angle);
 	float sinA = Math_SinF(angle);
 	return Vec3_Create3(v.x, cosA * v.y + sinA * v.z, -sinA * v.y + cosA * v.z);
 }
 
-Vec3 Vec3_RotateY(Vec3 v, float angle) {
+vec3 Vec3_RotateY(vec3 v, float angle) {
 	float cosA = Math_CosF(angle);
 	float sinA = Math_SinF(angle);
 	return Vec3_Create3(cosA * v.x - sinA * v.z, v.y, sinA * v.x + cosA * v.z);
 }
 
-Vec3 Vec3_RotateY3(float x, float y, float z, float angle) {
+vec3 Vec3_RotateY3(float x, float y, float z, float angle) {
 	float cosA = Math_CosF(angle);
 	float sinA = Math_SinF(angle);
 	return Vec3_Create3(cosA * x - sinA * z, y, sinA * x + cosA * z);
 }
 
-Vec3 Vec3_RotateZ(Vec3 v, float angle) {
+vec3 Vec3_RotateZ(vec3 v, float angle) {
 	float cosA = Math_CosF(angle);
 	float sinA = Math_SinF(angle);
 	return Vec3_Create3(cosA * v.x + sinA * v.y, -sinA * v.x + cosA * v.y, v.z);
 }
 
 
-void IVec3_Floor(IVec3* result, const Vec3* a) {
+void IVec3_Floor(vec3i* result, const vec3* a) {
 	result->x = Math_Floor(a->x); result->y = Math_Floor(a->y); result->z = Math_Floor(a->z);
 }
 
-void IVec3_ToVec3(Vec3* result, const IVec3* a) {
+void IVec3_ToVec3(vec3* result, const vec3i* a) {
 	result->x = (float)a->x; result->y = (float)a->y; result->z = (float)a->z;
 }
 
-void IVec3_Min(IVec3* result, const IVec3* a, const IVec3* b) {
+void IVec3_Min(vec3i* result, const vec3i* a, const vec3i* b) {
 	result->x = min(a->x, b->x); result->y = min(a->y, b->y); result->z = min(a->z, b->z);
 }
 
-void IVec3_Max(IVec3* result, const IVec3* a, const IVec3* b) {
+void IVec3_Max(vec3i* result, const vec3i* a, const vec3i* b) {
 	result->x = max(a->x, b->x); result->y = max(a->y, b->y); result->z = max(a->z, b->z);
 }
 
 
-Vec3 Vec3_GetDirVector(float yawRad, float pitchRad) {
+vec3 Vec3_GetDirVector(float yawRad, float pitchRad) {
 	float x = -Math_CosF(pitchRad) * -Math_SinF(yawRad);
 	float y = -Math_SinF(pitchRad);
 	float z = -Math_CosF(pitchRad) * Math_CosF(yawRad);
@@ -169,7 +168,7 @@ CC_WEAKFUNC void Matrix_Mul(struct Matrix* result, const struct Matrix* left, co
 	result->row4.w = (((lM41 * rM14) + (lM42 * rM24)) + (lM43 * rM34)) + (lM44 * rM44);
 }
 
-void Matrix_LookRot(struct Matrix* result, Vec3 pos, Vec2 rot) {
+void Matrix_LookRot(struct Matrix* result, vec3 pos, vec2 rot) {
 	struct Matrix rotX, rotY, trans;
 	Matrix_RotateX(&rotX, rot.y);
 	Matrix_RotateY(&rotY, rot.x);

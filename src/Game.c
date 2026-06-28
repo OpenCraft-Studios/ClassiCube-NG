@@ -489,7 +489,7 @@ void Game_SetMinFrameTime(float frameTimeMS) {
 
 static void Render3DFrame(float delta, float t) {
 	struct Matrix mvp;
-	Vec3 pos;
+	vec3 pos;
 
 	Camera.Active->GetView(&Gfx.View);
 	/*Gfx_LoadMatrix(MATRIX_PROJ, &Gfx.Projection);

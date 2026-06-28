@@ -20,7 +20,7 @@ struct ChunkPartInfo* MapRenderer_PartsNormal;
 struct ChunkPartInfo* MapRenderer_PartsTranslucent;
 
 static cc_bool inTranslucent;
-static IVec3 chunkPos;
+static vec3i chunkPos;
 
 /* The number of non-empty Normal/Translucent ChunkPartInfos (across entire world) for each 1D atlas batch. */
 /* 1D atlas batches that do not have any ChunkPartInfos can be entirely skipped. */
@@ -91,7 +91,7 @@ CC_NOINLINE static int MapRenderer_UsedAtlases(void) {
 *-------------------------------------------------------Map rendering-----------------------------------------------------*
 *#########################################################################################################################*/
 static void CheckWeather(float delta) {
-	IVec3 pos;
+	vec3i pos;
 	BlockID block;
 	cc_bool outside;
 	IVec3_Floor(&pos, &Camera.CurrentPos);
@@ -536,7 +536,7 @@ static void RefreshBorderChunks(int maxHeight) {
 *#########################################################################################################################*/
 #define CHUNK_TARGET_TIME ((1.0f/30) + 0.01f)
 static int chunksTarget = 12;
-static Vec3 lastCamPos;
+static vec3 lastCamPos;
 static float lastYaw, lastPitch;
 /* Max distance from camera that chunks are rendered within */
 /* This may differ from the view distance configured by the user */
@@ -676,7 +676,7 @@ static void SortMapChunks(int left, int right) {
 
 static void UpdateSortOrder(void) {
 	struct ChunkInfo* info;
-	IVec3 pos;
+	vec3i pos;
 	int i, dx, dy, dz;
 
 	/* pos is centre coordinate of chunk camera is in */

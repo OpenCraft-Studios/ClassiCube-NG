@@ -40,7 +40,7 @@ extern RNGState* Tree_Rnd;
 cc_bool TreeGen_CanGrow(int treeX, int treeY, int treeZ, int treeHeight);
 /* Generates the blocks (and their positions in the world) that actually make up a tree. */
 /* Returns the number of blocks generated, which will be <= TREE_MAX_COUNT */
-int  TreeGen_Grow(int treeX, int treeY, int treeZ, int height, IVec3* coords, BlockRaw* blocks);
+int  TreeGen_Grow(int treeX, int treeY, int treeZ, int height, vec3i* coords, BlockRaw* blocks);
 
 CC_END_HEADER
 #endif

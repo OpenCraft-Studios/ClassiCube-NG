@@ -220,7 +220,7 @@ CC_API void Env_SetLampLightCol(PackedCol color);
 float Respawn_HighestSolidY(struct AABB* bb);
 /* Finds a suitable initial spawn position for the entity. */
 /* Works by iterating downwards from top of world until solid ground is found. */
-Vec3 Respawn_FindSpawnPosition(float x, float z, Vec3 modelSize);
+vec3 Respawn_FindSpawnPosition(float x, float z, vec3 modelSize);
 
 CC_END_HEADER
 #endif

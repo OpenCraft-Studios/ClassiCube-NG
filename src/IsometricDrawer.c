@@ -69,7 +69,7 @@ static void IsometricDrawer_Flat(BlockID block, float size) {
 
 static void IsometricDrawer_Angled(BlockID block, float size) {
 	cc_bool bright;
-	Vec3 min, max;
+	vec3 min, max;
 	struct VertexTextured* beg = iso_vertices;
 	struct VertexTextured* v;
 	float x, y, scale;
@@ -107,7 +107,7 @@ static void IsometricDrawer_Angled(BlockID block, float size) {
 		/*   Matrix_RotateX(&rotX, -30.0f * MATH_DEG2RAD); */
 		/*   Matrix_Mul(&iso_transform, &rotY, &rotX); */
 		/*   ...                                       */
-		/*   Vec3 vec = { v.x, v.y, v.z }; */
+		/*   vec3 vec = { v.x, v.y, v.z }; */
 		/*   Vec3_Transform(&vec, &vec, &iso_transform); */
 		/* With all unnecessary operations either simplified or removed */
 		x = v->x * iso_cosY                              + v->z * -iso_sinY;

@@ -32,8 +32,8 @@ const char* const ShadowMode_Names[SHADOW_MODE_COUNT] = { "None", "SnapToBlock",
 *---------------------------------------------------------Entity----------------------------------------------------------*
 *#########################################################################################################################*/
 static PackedCol Entity_GetColor(struct Entity* e) {
-	Vec3 eyePos = Entity_GetEyePosition(e);
-	IVec3 pos; IVec3_Floor(&pos, &eyePos);
+	vec3 eyePos = Entity_GetEyePosition(e);
+	vec3i pos; IVec3_Floor(&pos, &eyePos);
 	return Lighting.Color(pos.x, pos.y, pos.z);
 }
 
@@ -55,15 +55,15 @@ void Entity_SetName(struct Entity* e, const cc_string* name) {
 	String_CopyToRawArray(e->NameRaw, name);
 }
 
-Vec3 Entity_GetEyePosition(struct Entity* e) {
-	Vec3 pos = e->Position; pos.y += Entity_GetEyeHeight(e); return pos;
+vec3 Entity_GetEyePosition(struct Entity* e) {
+	vec3 pos = e->Position; pos.y += Entity_GetEyeHeight(e); return pos;
 }
 
 float Entity_GetEyeHeight(struct Entity* e) {
 	return e->Model->GetEyeY(e) * e->ModelScale.y;
 }
 
-void Entity_GetTransform(struct Entity* e, Vec3 pos, Vec3 scale, struct Matrix* m) {
+void Entity_GetTransform(struct Entity* e, vec3 pos, vec3 scale, struct Matrix* m) {
 	struct Matrix tmp;
 	Matrix_Scale(m, scale.x, scale.y, scale.z);
 
@@ -152,10 +152,10 @@ void Entity_UpdateModelBounds(struct Entity* e) {
 }
 
 cc_bool Entity_TouchesAny(struct AABB* bounds, Entity_TouchesCondition condition) {
-	IVec3 bbMin, bbMax;
+	vec3i bbMin, bbMax;
 	BlockID block;
 	struct AABB blockBB;
-	Vec3 v;
+	vec3 v;
 	int x, y, z;
 
 	IVec3_Floor(&bbMin, &bounds->Min);
@@ -188,7 +188,7 @@ cc_bool Entity_TouchesAnyRope(struct Entity* e) {
 	return Entity_TouchesAny(&bounds, IsRopeCollide);
 }
 
-static const Vec3 entity_liqExpand = { 0.25f/16.0f, 0.0f/16.0f, 0.25f/16.0f };
+static const vec3 entity_liqExpand = { 0.25f/16.0f, 0.0f/16.0f, 0.25f/16.0f };
 static cc_bool IsLavaCollide(BlockID b) { return Blocks.ExtendedCollide[b] == COLLIDE_LAVA; }
 cc_bool Entity_TouchesAnyLava(struct Entity* e) {
 	struct AABB bounds; Entity_GetBounds(e, &bounds);
@@ -554,8 +554,8 @@ void Entities_Remove(int id) {
 }
 
 int Entities_GetClosest(struct Entity* src) {
-	Vec3 eyePos = Entity_GetEyePosition(src);
-	Vec3 dir    = Vec3_GetDirVector(src->Yaw * MATH_DEG2RAD, src->Pitch * MATH_DEG2RAD);
+	vec3 eyePos = Entity_GetEyePosition(src);
+	vec3 dir    = Vec3_GetDirVector(src->Yaw * MATH_DEG2RAD, src->Pitch * MATH_DEG2RAD);
 	float closestDist = -200; /* NOTE: was previously positive infinity */
 	int targetID = -1;
 
@@ -725,7 +725,7 @@ static void LocalPlayer_Tick(struct Entity* e, float delta) {
 	struct HacksComp* hacks = &p->Hacks;
 	float xMoving = 0, zMoving = 0;
 	cc_bool wasOnGround;
-	Vec3 headingVelocity;
+	vec3 headingVelocity;
 
 	if (!World.Loaded) return;
 	p->Collisions.StepSize = hacks->FullBlockStep && hacks->Enabled && hacks->CanSpeed ? 1.0f : 0.5f;
@@ -858,8 +858,8 @@ static void LocalPlayer_DoRespawn(struct LocalPlayer* p) {
 	struct EntityLocation* prev;
 	struct LocationUpdate update;
 	struct AABB bb;
-	Vec3 spawn = p->Spawn;
-	IVec3 pos;
+	vec3 spawn = p->Spawn;
+	vec3i pos;
 	BlockID block;
 	float height, spawnY;
 	int y;

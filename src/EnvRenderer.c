@@ -53,9 +53,9 @@ static CC_INLINE void UpdateFogBlend(void) {
 	fog_color   = PackedCol_Lerp(Env.FogCol, Env.SkyCol, blend);
 }
 
-static cc_bool CameraInsideBlock(BlockID block, IVec3* coords) {
+static cc_bool CameraInsideBlock(BlockID block, vec3i* coords) {
 	struct AABB blockBB;
-	Vec3 pos;
+	vec3 pos;
 	IVec3_ToVec3(&pos, coords); /* pos = coords; */
 
 	Vec3_Add(&blockBB.Min, &pos, &Blocks.MinBB[block]);
@@ -64,7 +64,7 @@ static cc_bool CameraInsideBlock(BlockID block, IVec3* coords) {
 }
 
 static PackedCol CalcFog(float* density) {
-	IVec3 coords;
+	vec3i coords;
 	BlockID block;
 
 	IVec3_Floor(&coords, &Camera.CurrentPos); /* coords = floor(camera_pos); */
@@ -339,7 +339,7 @@ static CC_NOINLINE void BuildSkybox(void) {
 void EnvRenderer_RenderSkybox(void) {
 	struct Matrix m, rotX, rotY, view;
 	float rotTime;
-	Vec3 pos;
+	vec3 pos;
 
 	if (!skybox_vb) {
 		BuildSkybox();
@@ -377,7 +377,7 @@ void EnvRenderer_RenderSkybox(void) {
 cc_int16* Weather_Heightmap;
 static GfxResourceID rain_tex, snow_tex, weather_vb;
 static float weather_accumulator;
-static IVec3 lastPos;
+static vec3i lastPos;
 
 #define WEATHER_EXTENT 4
 #define WEATHER_VERTS  8 /* 2 quads per tile */
@@ -473,7 +473,7 @@ void EnvRenderer_RenderWeather(float delta) {
 	struct VertexTextured* v;
 	cc_bool moved, particles;
 	float speed, vOffsetBase, vOffset;
-	IVec3 pos;
+	vec3i pos;
 
 	PackedCol color;
 	int dist, dx, dz, x, z;

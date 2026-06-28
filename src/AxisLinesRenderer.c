@@ -27,7 +27,7 @@ void AxisLinesRenderer_Render(void) {
 	};
 
 	struct VertexColoured* v;
-	Vec3 coords[5], pos, dirVector;
+	vec3 coords[5], pos, dirVector;
 	int i, count;
 	float axisLengthScale, axisThicknessScale;
 	struct Entity* e;

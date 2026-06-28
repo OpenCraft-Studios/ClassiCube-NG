@@ -16,7 +16,7 @@
 
 struct _CameraData Camera;
 static struct RayTracer cameraClipPos;
-static Vec2 cam_rotOffset;
+static vec2 cam_rotOffset;
 static cc_bool cam_isForwardThird;
 
 static struct CameraState {
@@ -54,8 +54,8 @@ static void PerspectiveCamera_GetProjection(struct Matrix* proj) {
 }
 
 static void PerspectiveCamera_GetView(struct Matrix* mat) {
-	Vec3 pos = Camera.CurrentPos;
-	Vec2 rot = Camera.Active->GetOrientation();
+	vec3 pos = Camera.CurrentPos;
+	vec2 rot = Camera.Active->GetOrientation();
 
 	Matrix_LookRot(mat, pos, rot);
 	if (Game_ViewBobbing) Matrix_MulBy(mat, &Camera.TiltM);
@@ -65,18 +65,18 @@ static void PerspectiveCamera_GetPickedBlock(struct RayTracer* t) {
 	struct LocalPlayer* p = Entities.CurPlayer;
 	struct Entity* e      = &p->Base;
 
-	Vec3 dir    = Vec3_GetDirVector(e->Yaw * MATH_DEG2RAD, e->Pitch * MATH_DEG2RAD + Camera.TiltPitch);
-	Vec3 eyePos = Entity_GetEyePosition(e);
+	vec3 dir    = Vec3_GetDirVector(e->Yaw * MATH_DEG2RAD, e->Pitch * MATH_DEG2RAD + Camera.TiltPitch);
+	vec3 eyePos = Entity_GetEyePosition(e);
 	Picking_CalcPickedBlock(&eyePos, &dir, p->ReachDistance, t);
 }
 
 #define CAMERA_SENSI_FACTOR (0.0002f / 3.0f * MATH_RAD2DEG)
 
-static Vec2 PerspectiveCamera_GetMouseDelta(float delta) {
+static vec2 PerspectiveCamera_GetMouseDelta(float delta) {
 	float sensitivity = CAMERA_SENSI_FACTOR * Camera.Sensitivity;
 	static float speedX, speedY, newSpeedX, newSpeedY, accelX, accelY;
 	int i = Game.CurrentState;
-	Vec2 v;
+	vec2 v;
 
 	if (Camera.Smooth) {
 		accelX = (states[i].deltaX - speedX) * 35 / Camera.Mass;
@@ -104,7 +104,7 @@ static Vec2 PerspectiveCamera_GetMouseDelta(float delta) {
 static void PerspectiveCamera_UpdateMouseRotation(struct LocalPlayer* p, float delta) {
 	struct Entity* e = &p->Base;
 	struct LocationUpdate update;
-	Vec2 rot = PerspectiveCamera_GetMouseDelta(delta);
+	vec2 rot = PerspectiveCamera_GetMouseDelta(delta);
 
 	if (Input_IsAltPressed() && Camera.Active->isThirdPerson) {
 		cam_rotOffset.x += rot.x; 
@@ -177,21 +177,21 @@ static void PerspectiveCamera_CalcViewBobbing(struct LocalPlayer* p, float t, fl
 /*########################################################################################################################*
 *---------------------------------------------------First person camera---------------------------------------------------*
 *#########################################################################################################################*/
-static Vec2 FirstPersonCamera_GetOrientation(void) {
+static vec2 FirstPersonCamera_GetOrientation(void) {
 	struct LocalPlayer* p = Entities.CurPlayer;
 	struct Entity* e = &p->Base;
 
-	Vec2 v;
+	vec2 v;
 	v.x = e->Yaw   * MATH_DEG2RAD; 
 	v.y = e->Pitch * MATH_DEG2RAD;
 	return v;
 }
 
-static Vec3 FirstPersonCamera_GetPosition(float t) {
+static vec3 FirstPersonCamera_GetPosition(float t) {
 	struct LocalPlayer* p = Entities.CurPlayer;
 	struct Entity* e = &p->Base;
 
-	Vec3 camPos   = Entity_GetEyePosition(e);
+	vec3 camPos   = Entity_GetEyePosition(e);
 	float yaw     = e->Yaw * MATH_DEG2RAD;
 	PerspectiveCamera_CalcViewBobbing(p, t, 1);
 	
@@ -218,11 +218,11 @@ static struct Camera cam_FirstPerson = {
 #define DEF_ZOOM 3.0f
 static float dist_third = DEF_ZOOM, dist_forward = DEF_ZOOM;
 
-static Vec2 ThirdPersonCamera_GetOrientation(void) {
+static vec2 ThirdPersonCamera_GetOrientation(void) {
 	struct LocalPlayer* p = Entities.CurPlayer;
 	struct Entity* e = &p->Base;
 
-	Vec2 v;	
+	vec2 v;	
 	v.x = e->Yaw   * MATH_DEG2RAD; 
 	v.y = e->Pitch * MATH_DEG2RAD;
 	if (cam_isForwardThird) { v.x += MATH_PI; v.y = -v.y; }
@@ -239,13 +239,13 @@ static float ThirdPersonCamera_GetZoom(struct LocalPlayer* p) {
 	return dist;
 }
 
-static Vec3 ThirdPersonCamera_GetPosition(float t) {
+static vec3 ThirdPersonCamera_GetPosition(float t) {
 	struct LocalPlayer* p = Entities.CurPlayer;
 	struct Entity* e = &p->Base;
 
 	float dist = ThirdPersonCamera_GetZoom(p);
-	Vec3 target, dir;
-	Vec2 rot;
+	vec3 target, dir;
+	vec2 rot;
 
 	PerspectiveCamera_CalcViewBobbing(p, t, dist);
 	target = Entity_GetEyePosition(e);

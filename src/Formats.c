@@ -1516,7 +1516,7 @@ static cc_result Cw_WriteBockDef(struct Stream* stream, int b) {
 	TextureLoc tex;
 	cc_uint8 fog;
 	PackedCol col;
-	Vec3 minBB, maxBB;	
+	vec3 minBB, maxBB;	
 
 	/* Hacky unique tag name for each by using hex of block */
 	String_InitArray_NT(name, nameBuffer);

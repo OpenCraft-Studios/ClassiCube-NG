@@ -23,7 +23,7 @@ struct AnimatedComp {
 };
 
 void AnimatedComp_Init(struct AnimatedComp* anim);
-void AnimatedComp_Update(struct Entity* entity, Vec3 oldPos, Vec3 newPos, float delta);
+void AnimatedComp_Update(struct Entity* entity, vec3 oldPos, vec3 newPos, float delta);
 void AnimatedComp_GetCurrent(struct Entity* entity, float t);
 
 /* Entity component that performs tilt animation depending on movement speed and time */
@@ -93,10 +93,10 @@ struct NetInterpAngles { float Pitch, Yaw, RotX, RotZ; };
 struct NetInterpComp {
 	InterpComp_Layout
 	/* Last known position and orientation sent by the server */
-	Vec3 CurPos; struct NetInterpAngles CurAngles;
+	vec3 CurPos; struct NetInterpAngles CurAngles;
 	/* Interpolated position and orientation state */
 	int PositionsCount, AnglesCount;
-	Vec3 Positions[10]; struct NetInterpAngles Angles[10];
+	vec3 Positions[10]; struct NetInterpAngles Angles[10];
 };
 
 void NetInterpComp_SetLocation(struct NetInterpComp* interp, struct LocationUpdate* update, struct Entity* e);
@@ -123,13 +123,13 @@ struct PhysicsComp {
 	struct CollisionsComp* Collisions;
 
 	float gravity;
-	Vec3 drag, groundFriction;
+	vec3 drag, groundFriction;
 };
 
 void PhysicsComp_Init(struct PhysicsComp* comp, struct Entity* entity);
 void PhysicsComp_UpdateVelocityState(struct PhysicsComp* comp);
 void PhysicsComp_DoNormalJump(struct PhysicsComp* comp);
-void PhysicsComp_PhysicsTick(struct PhysicsComp* comp, Vec3 vel);
+void PhysicsComp_PhysicsTick(struct PhysicsComp* comp, vec3 vel);
 float PhysicsComp_CalcJumpVelocity(float jumpHeight);
 double PhysicsComp_CalcMaxHeight(float u);
 void PhysicsComp_DoEntityPush(struct Entity* entity);

@@ -182,7 +182,7 @@ void Block_SetSide(TextureLoc texLoc, BlockID blockId) {
 /* Calculates render min/max corners of this block */
 /* Works by slightly offsetting collision min/max corners */
 static void Block_CalcRenderBounds(BlockID block) {
-	Vec3 min = Blocks.MinBB[block], max = Blocks.MaxBB[block];
+	vec3 min = Blocks.MinBB[block], max = Blocks.MaxBB[block];
 
 	if (Blocks.IsLiquid[block]) {
 		min.x += 0.1f/16.0f; max.x += 0.1f/16.0f;
@@ -200,7 +200,7 @@ static void Block_CalcRenderBounds(BlockID block) {
 /* Calculates light colour offset for each face of the given block */
 static void Block_CalcLightOffset(BlockID block) {
 	int flags = 0xFF;
-	Vec3 min = Blocks.MinBB[block], max = Blocks.MaxBB[block];
+	vec3 min = Blocks.MinBB[block], max = Blocks.MaxBB[block];
 
 	if (min.x != 0) flags &= ~FACE_BIT_XMIN;
 	if (max.x != 1) flags &= ~FACE_BIT_XMAX;
@@ -275,9 +275,9 @@ static void Block_RecalculateBB(BlockID block) {
 	TextureLoc texLoc = Block_Tex(block, FACE_XMAX);
 	int x = Atlas2D_TileX(texLoc), y = Atlas2D_TileY(texLoc);
 
-	Vec3 centre = { 0.5f, 0.0f, 0.5f };
+	vec3 centre = { 0.5f, 0.0f, 0.5f };
 	float minX = 0, minY = 0, maxX = 1, maxY = 1;
-	Vec3 minRaw, maxRaw;
+	vec3 minRaw, maxRaw;
 
 	if (y < Atlas2D.RowsCount) {
 		minX = GetSpriteBB_MinX(tileSize, x, y, bmp);
@@ -349,7 +349,7 @@ static cc_bool Block_MightCull(BlockID block, BlockID other) {
 }
 
 static void Block_CalcCulling(BlockID block, BlockID other) {
-	Vec3 bMin, bMax, oMin, oMax;
+	vec3 bMin, bMax, oMin, oMax;
 	cc_bool occludedX, occludedY, occludedZ, bothLiquid;
 	int f;
 

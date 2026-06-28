@@ -239,7 +239,7 @@ static cc_bool Physics_CheckItem(struct TickQueue* queue, int* posIndex) {
 
 
 static void Physics_HandleSapling(int index, BlockID block) {
-	IVec3 coords[TREE_MAX_COUNT];
+	vec3i coords[TREE_MAX_COUNT];
 	BlockRaw blocks[TREE_MAX_COUNT];
 	int i, count, height;
 

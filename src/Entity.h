@@ -67,13 +67,13 @@ enum EntityType { ENTITY_TYPE_NONE, ENTITY_TYPE_PLAYER };
 
 /* Represents a location update for an entity. Can be a relative position, full position, and/or an orientation update. */
 struct LocationUpdate {
-	Vec3 pos;
+	vec3 pos;
 	float pitch, yaw, rotX, rotZ;
 	cc_uint8 flags;
 };
 
 /* Represents a position and orientation state */
-struct EntityLocation { Vec3 pos; float pitch, yaw, rotX, rotY, rotZ; };
+struct EntityLocation { vec3 pos; float pitch, yaw, rotX, rotY, rotZ; };
 
 struct Entity;
 struct EntityVTABLE {
@@ -109,18 +109,18 @@ struct EntityVTABLE {
 /* Contains a model, along with position, velocity, and rotation. May also contain other fields and properties. */
 struct Entity {
 	const struct EntityVTABLE* VTABLE;
-	Vec3 Position;
+	vec3 Position;
 	/* NOTE: Do NOT change order of yaw/pitch, this will break models in plugins */
 	/* When adding a new field to structs that plugins can access, add them to the end to avoid breaking compatibility. */
 	float Pitch, Yaw, RotX, RotY, RotZ;
-	Vec3 Velocity;
+	vec3 Velocity;
 
 	struct Model* Model;
 	BlockID ModelBlock; /* BlockID, if model name was originally a valid block. */
 	cc_uint8 Flags;
 	cc_uint8 ShouldRender;
 	struct AABB ModelAABB;
-	Vec3 ModelScale, Size;
+	vec3 ModelScale, Size;
 	int _skinReqID;
 	
 	cc_uint8 SkinType;
@@ -147,12 +147,12 @@ typedef cc_bool (*Entity_TouchesCondition)(BlockID block);
 /* Initialises non-zero fields of the given entity. */
 void Entity_Init(struct Entity* e);
 /* Gets the position of the eye of the given entity's model. */
-Vec3 Entity_GetEyePosition(struct Entity* e);
+vec3 Entity_GetEyePosition(struct Entity* e);
 /* Returns the height of the eye of the given entity's model. */
 /* (i.e. distance to eye from feet/base of the model) */
 float Entity_GetEyeHeight(struct Entity* e);
 /* Calculates the transformation matrix applied when rendering the given entity. */
-CC_API void Entity_GetTransform(struct Entity* e, Vec3 pos, Vec3 scale, struct Matrix* m);
+CC_API void Entity_GetTransform(struct Entity* e, vec3 pos, vec3 scale, struct Matrix* m);
 void Entity_GetPickingBounds(struct Entity* e, struct AABB* bb);
 /* Gets the current collision bounds of the given entity. */
 void Entity_GetBounds(struct Entity* e, struct AABB* bb);
@@ -243,7 +243,7 @@ void LocalPlayerInput_Remove(struct LocalPlayerInput* source);
 /* Represents the user/player's own entity. */
 struct LocalPlayer {
 	struct Entity Base;
-	Vec3 Spawn, OldVelocity;
+	vec3 Spawn, OldVelocity;
 	float SpawnYaw, SpawnPitch, ReachDistance;
 	struct HacksComp Hacks;
 	struct TiltComp Tilt;

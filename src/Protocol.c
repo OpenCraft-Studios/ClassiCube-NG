@@ -459,7 +459,7 @@ void Classic_BuildChat(const cc_string* text, cc_bool partial, struct ChatPacket
 	WriteString(pkt->msg, text);
 }
 
-static cc_uint8* Classic_WritePosition(cc_uint8* data, Vec3 pos, float yaw, float pitch) {
+static cc_uint8* Classic_WritePosition(cc_uint8* data, vec3 pos, float yaw, float pitch) {
 	BlockID payload;
 	int x, y, z;
 
@@ -1160,7 +1160,7 @@ static void CPE_ExtRemovePlayerName(cc_uint8* data) {
 }
 
 static void CPE_MakeSelection(cc_uint8* data) {
-	IVec3 p1, p2;
+	vec3i p1, p2;
 	PackedCol c;
 	/* data[0] is id, data[1..64] is label */
 
@@ -1922,7 +1922,7 @@ static void BlockDefs_UndefineBlock(cc_uint8* data) {
 }
 
 static void BlockDefs_DefineBlockExt(cc_uint8* data) {
-	Vec3 minBB, maxBB;
+	vec3 minBB, maxBB;
 	BlockID block = BlockDefs_DefineBlockCommonStart(&data, 
 						blockDefsExt_Ext.serverVersion >= 2);
 

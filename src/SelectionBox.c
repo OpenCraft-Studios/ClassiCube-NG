@@ -9,7 +9,7 @@
 #ifdef CC_BUILD_NETWORKING
 /* Data for a selection box. */
 struct SelectionBox {
-	Vec3 p0, p1;
+	vec3 p0, p1;
 	PackedCol color;
 	float minDist, maxDist;
 };
@@ -35,7 +35,7 @@ static void BuildFaces(struct SelectionBox* box, struct VertexColoured* v) {
 	int i, flags;
 
 	float offset = box->minDist < 32.0f * 32.0f ? (1/32.0f) : (1/16.0f);
-	Vec3 coords[2];
+	vec3 coords[2];
 	Vec3_Add1(&coords[0], &box->p0, -offset);
 	Vec3_Add1(&coords[1], &box->p1,  offset);
 
@@ -59,7 +59,7 @@ static void BuildEdges(struct SelectionBox* box, struct VertexColoured* v) {
 	int i, flags;
 
 	float offset = box->minDist < 32.0f * 32.0f ? (1/32.0f) : (1/16.0f);
-	Vec3 coords[2];
+	vec3 coords[2];
 	Vec3_Add1(&coords[0], &box->p0, -offset);
 	Vec3_Add1(&coords[1], &box->p1,  offset);
 
@@ -90,7 +90,7 @@ static int CompareDists(struct SelectionBox* a, struct SelectionBox* b) {
 	return 0;
 }
 
-static void CalcDists(struct SelectionBox* box, Vec3 P) {
+static void CalcDists(struct SelectionBox* box, vec3 P) {
 	float dx0 = (P.x - box->p0.x) * (P.x - box->p0.x), dx1 = (P.x - box->p1.x) * (P.x - box->p1.x);
 	float dy0 = (P.y - box->p0.y) * (P.y - box->p0.y), dy1 = (P.y - box->p1.y) * (P.y - box->p1.y);
 	float dz0 = (P.z - box->p0.z) * (P.z - box->p0.z), dz1 = (P.z - box->p1.z) * (P.z - box->p1.z);
@@ -110,7 +110,7 @@ static struct SelectionBox selections_list[SELECTIONS_MAX];
 static cc_uint8 selections_ids[SELECTIONS_MAX];
 static GfxResourceID selections_VB, selections_LineVB;
 
-void Selections_Add(cc_uint8 id, const IVec3* p1, const IVec3* p2, PackedCol color) {
+void Selections_Add(cc_uint8 id, const vec3i* p1, const vec3i* p2, PackedCol color) {
 	struct SelectionBox sel;
 	IVec3_ToVec3(&sel.p0, p1);
 	IVec3_ToVec3(&sel.p1, p2);
@@ -168,7 +168,7 @@ static void Selections_QuickSort(int left, int right) {
 
 void Selections_Render(void) {
 	struct VertexColoured* data;
-	Vec3 cameraPos;
+	vec3 cameraPos;
 	int i, count;
 	if (!selections_count) return;
 

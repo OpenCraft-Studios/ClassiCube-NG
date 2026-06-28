@@ -129,7 +129,7 @@ static void HUDScreen_BuildPosition(struct HUDScreen* s, struct VertexTextured* 
 	struct VertexTextured* cur = data;
 	struct TextAtlas* atlas = &s->posAtlas;
 	struct Texture tex;
-	IVec3 pos;
+	vec3i pos;
 
 	/* Make "Position: " prefix */
 	tex = atlas->tex; 
@@ -336,7 +336,7 @@ static void HUDScreen_UpdateFPS(struct HUDScreen* s, float delta) {
 
 static void HUDScreen_Update(void* screen, float delta) {
 	struct HUDScreen* s = (struct HUDScreen*)screen;
-	IVec3 pos;
+	vec3i pos;
 
 	HUDScreen_UpdateFPS(s,          delta);
 	HotbarWidget_Update(&s->hotbar, delta);

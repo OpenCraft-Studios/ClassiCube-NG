@@ -660,7 +660,7 @@ static void NormalBuilder_RenderBlock(int index, int x, int y, int z) {
 	int count_ZMax, count_YMin, count_YMax;
 
 	/* block state */
-	Vec3 min, max;
+	vec3 min, max;
 	int baseOffset, lightFlags;
 	cc_bool fullBright;
 
@@ -780,7 +780,7 @@ static void NormalBuilder_SetActive(void) {
 *-------------------------------------------------Advanced mesh builder---------------------------------------------------*
 *#########################################################################################################################*/
 #ifdef CC_BUILD_ADVLIGHTING
-static Vec3 adv_minBB, adv_maxBB;
+static vec3 adv_minBB, adv_maxBB;
 static int adv_initBitFlags, adv_baseOffset;
 static int* adv_bitFlags;
 static float adv_x1, adv_y1, adv_z1, adv_x2, adv_y2, adv_z2;
@@ -1220,7 +1220,7 @@ static void Adv_DrawYMax(int count) {
 }
 
 static void Adv_RenderBlock(int index, int x, int y, int z) {
-	Vec3 min, max;
+	vec3 min, max;
 	int count_XMin, count_XMax, count_ZMin;
 	int count_ZMax, count_YMin, count_YMax;
 
@@ -1576,7 +1576,7 @@ static void Modern_DrawYMax(int count, int x, int y, int z) {
 }
 
 static void Modern_RenderBlock(int index, int x, int y, int z) {
-	Vec3 min, max;
+	vec3 min, max;
 	int count_XMin, count_XMax, count_ZMin;
 	int count_ZMax, count_YMin, count_YMax;
 

@@ -37,7 +37,7 @@ struct Event_Entry {
 	void* Objs[EVENT_MAX_CALLBACKS]; int Count;
 };
 
-typedef void (*Event_Block_Callback)(void* obj, IVec3 coords, BlockID oldBlock, BlockID block);
+typedef void (*Event_Block_Callback)(void* obj, vec3i coords, BlockID oldBlock, BlockID block);
 struct Event_Block {
 	Event_Block_Callback Handlers[EVENT_MAX_CALLBACKS];
 	void* Objs[EVENT_MAX_CALLBACKS]; int Count;
@@ -106,7 +106,7 @@ CC_API void Event_RaiseFloat(struct Event_Float* handlers, float arg);
 void Event_RaiseEntry(struct Event_Entry* handlers, struct Stream* stream, const cc_string* name);
 /* Calls all registered callbacks for an event which takes block change arguments. */
 /* These are the coordinates/location of the change, block there before, block there now. */
-void Event_RaiseBlock(struct Event_Block* handlers, IVec3 coords, BlockID oldBlock, BlockID block);
+void Event_RaiseBlock(struct Event_Block* handlers, vec3i coords, BlockID oldBlock, BlockID block);
 /* Calls all registered callbacks for an event which has chat message type and contents. */
 /* See MsgType enum in Chat.h for what types of messages there are. */
 void Event_RaiseChat(struct Event_Chat* handlers, const cc_string* msg, int msgType);
