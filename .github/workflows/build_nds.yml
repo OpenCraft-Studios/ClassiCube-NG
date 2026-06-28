@@ -32,7 +32,7 @@ jobs:
           export MAKEFLAGS="$MAKEFLAGS -j$(nproc) --no-print-directory"
           make -f misc/nds/Makefile
           export BUILD_NONET=1
-          make ds
+          make -f misc/nds/Makefile
  
          
       - uses: ./.github/actions/upload_build

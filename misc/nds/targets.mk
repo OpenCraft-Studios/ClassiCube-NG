@@ -2,11 +2,11 @@ $(ELF): $(OBJS) | $(BUILDDIR)
 	$(LD) -o $@ $^ $(LDFLAGS)
 
 $(BUILDDIR)/%.o : %.s | $(BUILDDIR)
-	@printf "Assembling %s" "$(@F)"
+	@printf "Assembling %s\n" "$(@F)"
 	@$(CC) $(ASFLAGS) -MMD -MP -c $< -o $@
 
 $(BUILDDIR)/%.o : %.c | $(BUILDDIR)
-	@printf "Compiling  %s" "$(@F)"
+	@printf "Compiling  %s\n" "$(@F)"
 	@$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
 
 $(BUILDDIR):

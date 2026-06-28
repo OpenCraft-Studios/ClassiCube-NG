@@ -72,6 +72,7 @@ export VPATH	:= $(SOURCEDIRS)
 include misc/nds/targets.mk
 
 $(BUILDDIR)/%.arm.o : %.arm.c | $(BUILDDIR)
-	$(CC) $(CFLAGS) -MMD -MP -marm -mlong-calls -c -o $@ $<
+	@printf "Compiling  %s\n" "$(@F)"
+	@$(CC) $(CFLAGS) -MMD -MP -marm -mlong-calls -c -o $@ $<
 
 -include $(DEPS)
