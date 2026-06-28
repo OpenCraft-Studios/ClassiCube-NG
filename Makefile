@@ -298,8 +298,6 @@ n64:
 	$(MAKE) -f misc/n64/Makefile
 gba:
 	$(MAKE) -f misc/gba/Makefile
-ds:
-	$(MAKE) -f misc/nds/Makefile
 3ds:
 	$(MAKE) -f misc/3ds/Makefile
 gamecube:

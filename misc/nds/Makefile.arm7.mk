@@ -1,6 +1,3 @@
-# SPDX-License-Identifier: CC0-1.0
-#
-# SPDX-FileContributor: Antonio Niño Díaz, 2023
 export BLOCKSDS			?= /opt/wonderful/thirdparty/blocksds/core
 export BLOCKSDSEXT		?= /opt/wonderful/thirdparty/blocksds/external
 export WONDERFUL_TOOLCHAIN	?= /opt/wonderful
@@ -68,27 +65,8 @@ export VPATH	:= $(SOURCEDIRS)
 
 # Targets
 # -------
-.PHONY: all clean
+OBJS += $(BLOCKSDS)/sys/crts/ds_arm7_crt0.o
 
-all: $(BUILDDIR) $(ELF)
-
-$(BUILDDIR):
-	mkdir -p $(BUILDDIR)
-
-$(ELF): $(OBJS)
-	$(LD) -o $@ $(OBJS) $(BLOCKSDS)/sys/crts/ds_arm7_crt0.o $(LDFLAGS)
-clean:
-	rm $(ELF) $(MAP) $(OBJS)
-
-# Rules
-# -----
-$(BUILDDIR)/%.o : %.s | $(BUILD_DIR)
-	$(CC) $(ASFLAGS) -MMD -MP -c -o $@ $<
-
-$(BUILDDIR)/%.o : %.c | $(BUILD_DIR)
-	$(CC) $(CFLAGS) -MMD -MP -c -o $@ $<
-
-# Include dependency files if they exist
-# --------------------------------------
+include misc/nds/targets.mk
 
 -include $(DEPS)

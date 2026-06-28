@@ -29,28 +29,18 @@ BUILDDIR	:= build/nds
 ROM			:= ClassiCube.nds
 endif
 
-# Targets
-# -------
-.PHONY: all clean arm9 arm7 dldipatch sdimage
-
-all: $(ROM)
-
-clean:
-	$(MAKE) -f misc/nds/Makefile.arm9 clean --no-print-directory
-	$(MAKE) -f misc/nds/Makefile.arm7 clean --no-print-directory
-	$(RM) $(ROM) $(BUILDDIR) $(SDIMAGE)
-
-arm9:
-	$(MAKE) -f misc/nds/Makefile.arm9 --no-print-directory
-
-arm7:
-	$(MAKE) -f misc/nds/Makefile.arm7 --no-print-directory
-
-
 $(ROM): arm9 arm7
 	$(BLOCKSDS)/tools/ndstool/ndstool -c $@ \
 		-7 $(BUILDDIR)/cc-arm7.elf -9 $(BUILDDIR)/cc-arm9.elf \
 		-b $(GAME_ICON) "$(GAME_FULL_TITLE)"
+
+arm9:
+	$(MAKE) -f misc/nds/Makefile.arm9.mk
+
+arm7:
+	$(MAKE) -f misc/nds/Makefile.arm7.mk
+
+
 
 
 sdimage:
@@ -58,3 +48,10 @@ sdimage:
 
 dldipatch: $(ROM)
 	$(BLOCKSDS)/tools/dlditool/dlditool $(BLOCKSDS)/tools/dldi/r4tfv2.dldi $(ROM)
+
+clean:
+	$(MAKE) -f misc/nds/Makefile.arm9.mk clean
+	$(MAKE) -f misc/nds/Makefile.arm7.mk clean
+	$(RM) $(ROM) $(BUILDDIR) $(SDIMAGE)
+
+.PHONY: clean arm9 arm7 dldipatch sdimage

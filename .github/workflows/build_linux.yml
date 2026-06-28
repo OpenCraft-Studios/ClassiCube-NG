@@ -50,6 +50,7 @@ jobs:
           
           export CFLAGS="-m32"
           export LDFLAGS="-m32"
+          export COLOR="off"
 
           cat >> config.mk << 'EOF'
           
@@ -59,9 +60,9 @@ jobs:
           LIBS   += $(shell pkg-config --libs x11 gl xi) -lm -ldl -lpthread
 
           EOF
-
-          make -fNewMakefile.mk target=cc-nix32-gl1 COLOR=off
-          make -fNewMakefile.mk target=cc-nix32-gl2 COLOR=off CFLAGS="-DCC_GFX_BACKEND=CC_GFX_BACKEND_GL2"
+          
+          make -fNewMakefile.mk target=cc-nix32-gl1 platform=linux-gl1
+          make -fNewMakefile.mk target=cc-nix32-gl2 platform=linux-gl2 CFLAGS="-DCC_GFX_BACKEND=CC_GFX_BACKEND_GL2"
       
       - uses: ./.github/actions/upload_build
         with:

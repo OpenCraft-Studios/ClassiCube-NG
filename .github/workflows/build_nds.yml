@@ -29,8 +29,8 @@ jobs:
 
       - name: Compile NDS build
         run: |
-          export MAKEFLAGS="$MAKEFLAGS -j$(nproc)"
-          make ds
+          export MAKEFLAGS="$MAKEFLAGS -j$(nproc) --no-print-directory"
+          make -f misc/nds/Makefile
           export BUILD_NONET=1
           make ds
  
