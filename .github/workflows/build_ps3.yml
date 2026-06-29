@@ -37,7 +37,7 @@ jobs:
 
       - name: Display compiler info
         run: |
-          make -fNewMakefile.mk platform=ps3 compiler-info
+          make -fNewMakefile.mk CC=$PS3DEV/ppu/bin/ppu-gcc platform=ps3 compiler-info
 
       - uses: ./.github/actions/upload_build
         with:

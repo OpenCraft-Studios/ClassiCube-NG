@@ -46,12 +46,10 @@ DEPFILES := $(OBJS:%.o=%.d)
 # Code generation
 #---------------------------------------------------------------------------------
 ARCH	= -march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
-CFLAGS	= -pipe -g -Wall -Os -mword-relocations $(ARCH) $(INCLUDE) -D__3DS__ -DPLAT_3DS
-LDFLAGS	= -specs=3dsx.specs -g $(ARCH)
+CFLAGS	= -pipe -g -Wall -Os -mword-relocations -ffunction-sections $(ARCH) $(INCLUDE) -D__3DS__ -DPLAT_3DS
 ASFLAGS	= -g $(ARCH)
 
-CFLAGS +=  -ffunction-sections -fdata-sections
-
+LDFLAGS	= -specs=3dsx.specs -g $(ARCH)
 LIBS	= -lctru -lm
 INCLUDES= 
 
@@ -82,6 +80,8 @@ default: $(BUILD_DIR) $(TARGET).cia
 clean:
 	rm $(TARGET).cia $(TARGET).3dsx $(TARGET).elf $(OBJS)
 
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
 
 
 #---------------------------------------------------------------------------------
@@ -90,17 +90,16 @@ clean:
 $(TARGET).elf: $(OBJS)
 	$(ARM_CC) $(LDFLAGS) $^ -o $@ $(LIBS)
 
-$(BUILD_DIR).smdh: $(APP_ICON) | $(BUILD_DIR)
+$(BUILD_DIR).smdh: $(APP_ICON)
 	$(SMDHTOOL) --create "$(APP_TITLE)" "$(APP_DESCRIPTION)" "$(APP_AUTHOR)" $(APP_ICON) $@
 
 $(TARGET).3dsx: $(TARGET).elf $(BUILD_DIR).smdh
 	$(_DSXTOOL) $< $@ --smdh=$(BUILD_DIR).smdh
 
-MAKEROM_ZIP_URL := https://github.com/3DSGuy/Project_CTR/releases/download/makerom-v0.19.0/makerom-v0.19.0-ubuntu_x86_64.zip
-$(BUILD_DIR)/makerom: | $(BUILD_DIR)
-	wget $(MAKEROM_ZIP_URL) -O $(BUILD_DIR)/makerom.zip
+$(BUILD_DIR)/makerom:
+	wget https://github.com/3DSGuy/Project_CTR/releases/download/makerom-v0.18.3/makerom-v0.18.3-ubuntu_x86_64.zip -O $(BUILD_DIR)/makerom.zip
 	unzip $(BUILD_DIR)/makerom.zip -d $(BUILD_DIR)
-	chmod +x $@
+	chmod +x $(BUILD_DIR)/makerom
 
 $(TARGET).cia : $(TARGET).3dsx $(BUILD_DIR)/makerom
 	$(BUILD_DIR)/makerom -f cia -o $(TARGET).cia -elf $(TARGET).elf -rsf $(CIA_SPEC_RSF) -icon $(CIA_ICON_BIN) -banner $(CIA_BANNER_BIN) -exefslogo -target t
@@ -109,24 +108,21 @@ $(TARGET).cia : $(TARGET).3dsx $(BUILD_DIR)/makerom
 #---------------------------------------------------------------------------------
 # Object generation
 #---------------------------------------------------------------------------------
-$(BUILD_DIR)/%.o: src/%.c | $(BUILD_DIR)
+$(BUILD_DIR)/%.o: src/%.c
 	$(ARM_CC) $(CFLAGS) $(INCLUDES) $(DEPFLAGS) -c $< -o $@
 
-$(BUILD_DIR)/%.o: src/3ds/%.c | $(BUILD_DIR)
+$(BUILD_DIR)/%.o: src/3ds/%.c
 	$(ARM_CC) $(CFLAGS) $(INCLUDES) $(DEPFLAGS) -c $< -o $@
 
-$(BUILD_DIR)/%.o: third_party/bearssl/%.c | $(BUILD_DIR)
+$(BUILD_DIR)/%.o: third_party/bearssl/%.c
 	$(ARM_CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-$(BUILD_DIR)/%.shbin: misc/3ds/%.v.pica | $(BUILD_DIR)
+$(BUILD_DIR)/%.shbin: misc/3ds/%.v.pica
 	$(PICASSO) $< -o $@
 
-$(BUILD_DIR)/%.shbin.o: $(BUILD_DIR)/%.shbin | $(BUILD_DIR)
+$(BUILD_DIR)/%.shbin.o: $(BUILD_DIR)/%.shbin
 	$(BIN2S) $< | $(ARM_CC) -x assembler-with-cpp -c - -o $@
 
-
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
 
 #---------------------------------------------------------------------------------
 # Dependency tracking
