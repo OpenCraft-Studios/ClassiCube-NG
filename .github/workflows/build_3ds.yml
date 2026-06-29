@@ -26,7 +26,7 @@ jobs:
           
       - name: Display compiler info
         run: |
-          make -fNewMakefile.mk platform=3ds compiler-info
+          make -fNewMakefile.mk CC=$DEVKITPRO/devkitARM/bin/arm-none-eabi-gcc platform=3ds compiler-info
           
       - uses: ./.github/actions/upload_build
         with:
