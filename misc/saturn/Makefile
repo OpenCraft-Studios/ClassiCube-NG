@@ -135,5 +135,6 @@ $(BUILD_DIR)/%.o : src/saturn/%.S
 # Dependency tracking
 #---------------------------------------------------------------------------------
 $(DEPFILES):
-
+CC := $(SH_CC)
+include misc/diagnostic.mk
 include $(wildcard $(DEPFILES))

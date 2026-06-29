@@ -31,7 +31,10 @@ jobs:
         run: |
           export MAKEFLAGS="$MAKEFLAGS -j$(nproc)"
           make saturn
-          
+      
+      - name: Extensive compiler diagnostic
+        run: |
+          make -f misc/saturn/Makefile compiler-info
           
       - uses: ./.github/actions/upload_build
         with:
