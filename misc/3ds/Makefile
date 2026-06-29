@@ -46,10 +46,13 @@ DEPFILES := $(OBJS:%.o=%.d)
 # Code generation
 #---------------------------------------------------------------------------------
 ARCH	= -march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
-CFLAGS	= -pipe -g -Wall -O2 -mword-relocations -ffunction-sections $(ARCH) $(INCLUDE) -D__3DS__ -DPLAT_3DS
-ASFLAGS	= -g $(ARCH)
-
+CFLAGS	= -pipe -g1 -Wall -Os -mword-relocations $(ARCH) $(INCLUDE) -D__3DS__ -DPLAT_3DS
 LDFLAGS	= -specs=3dsx.specs -g $(ARCH)
+ASFLAGS	= -g1 $(ARCH)
+
+CFLAGS +=  -ffunction-sections -fdata-sections
+LDFLAGS	+= -Wl,--gc-sections
+
 LIBS	= -lctru -lm
 INCLUDES= 
 
@@ -97,7 +100,7 @@ $(TARGET).3dsx: $(TARGET).elf $(BUILD_DIR).smdh
 	$(_DSXTOOL) $< $@ --smdh=$(BUILD_DIR).smdh
 
 $(BUILD_DIR)/makerom:
-	wget https://github.com/3DSGuy/Project_CTR/releases/download/makerom-v0.18.3/makerom-v0.18.3-ubuntu_x86_64.zip -O $(BUILD_DIR)/makerom.zip
+	wget https://github.com/3DSGuy/Project_CTR/releases/download/makerom-v0.19.0/makerom-v0.19.0-ubuntu_x86_64.zip -O $(BUILD_DIR)/makerom.zip
 	unzip $(BUILD_DIR)/makerom.zip -d $(BUILD_DIR)
 	chmod +x $(BUILD_DIR)/makerom
 

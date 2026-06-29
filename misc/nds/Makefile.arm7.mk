@@ -46,7 +46,7 @@ ASFLAGS		+= -x assembler-with-cpp $(DEFINES) $(ARCH) \
 		   -ffunction-sections -fdata-sections
 
 CFLAGS		+= -std=gnu11 $(WARNFLAGS) $(DEFINES) $(ARCH) \
-		   -mthumb -mthumb-interwork $(INCLUDEFLAGS) -O2 \
+		   -mthumb -mthumb-interwork $(INCLUDEFLAGS) -Os \
 		   -ffunction-sections -fdata-sections \
 		   -fomit-frame-pointer -pipe
 

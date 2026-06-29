@@ -16,7 +16,7 @@
   MAKE ?= make
   MAKEFLAGS += -j$(shell nproc) --no-print-directory
   
-  CFLAGS  += -fno-pie -pipe -fno-math-errno $(EXTRA_CFLAGS)
+  CFLAGS  += -O2 -fno-pie -pipe -fno-math-errno $(EXTRA_CFLAGS)
   LDFLAGS += -no-pie $(EXTRA_LDFLAGS)
 
 -include config.mk

@@ -38,8 +38,8 @@ S_FILES := $(foreach dir,$(SOURCE_DIRS),$(wildcard $(dir)/*.S))
 C_FILES := $(foreach dir,$(SOURCE_DIRS),$(wildcard $(dir)/*.c))
 OBJS 	:= $(addprefix $(BUILD_DIR)/, $(notdir $(C_FILES:%.c=%.o) $(S_FILES:%.S=%.o)))
 
-CFLAGS   := -I$(PSPSDK)/include -g -O2 -fno-math-errno -D_PSP_FW_VERSION=600 -DPLAT_PSP -pipe
-ASFLAGS  := -I$(PSPSDK)/include -g
+CFLAGS   := -I$(PSPSDK)/include -g1 -O2 -fno-math-errno -D_PSP_FW_VERSION=600 -DPLAT_PSP -pipe
+ASFLAGS  := -I$(PSPSDK)/include -g1
 
 LDFLAGS  := -L$(PSPSDK)/lib -specs=$(PSPSDK)/lib/prxspecs -Wl,-q,-T$(PSPSDK)/lib/linkfile.prx -Wl,-zmax-page-size=128
 LIBS 	 := -lm -lpspgu -lpspge -lpspdisplay -lpspctrl -lpspnet -lpspnet_apctl

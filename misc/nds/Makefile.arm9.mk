@@ -54,11 +54,12 @@ ASFLAGS		+= -x assembler-with-cpp $(DEFINES) $(INCLUDEFLAGS) \
 		   -specs=$(SPECS)
 
 CFLAGS		+= -std=gnu17 $(WARNFLAGS) $(DEFINES) $(INCLUDEFLAGS) \
-		   $(ARCH) -O2 -ffunction-sections -fdata-sections \
+		   $(ARCH) -Os -ffunction-sections -fdata-sections \
 		   -specs=$(SPECS) -Wstack-usage=10000 -pipe
 
 LDFLAGS		:= $(ARCH) $(LIBDIRSFLAGS) -Wl,-Map,$(MAP) $(DEFINES) \
-		   -Wl,--start-group $(LIBS) -Wl,--end-group -specs=$(SPECS)
+		   -Wl,--start-group $(LIBS) -Wl,--end-group -specs=$(SPECS)\
+		   -Wl,--gc-sections
 
 # Intermediate build files
 # ------------------------

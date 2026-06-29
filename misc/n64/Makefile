@@ -9,7 +9,7 @@ SRC_DIRS		=
 CFILES 	:= $(notdir $(wildcard src/*.c)) $(notdir $(wildcard src/n64/*.c))
 OFILES 	:= $(CFILES:.c=.o) rsp_gpu.o
 OBJS 	:= $(addprefix $(BUILD_DIR)/,$(OFILES))
-CFLAGS	:= -Wno-error=missing-braces -Wno-error=strict-aliasing -Wno-error=incompatible-pointer-types -DPLAT_N64
+CFLAGS	:= -O2 -Wno-error=missing-braces -Wno-error=strict-aliasing -Wno-error=incompatible-pointer-types -DPLAT_N64
 
 
 default: $(BUILD_DIR) $(TARGET).z64

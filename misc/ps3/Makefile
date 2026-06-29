@@ -53,7 +53,7 @@ OBJS 		+= $(addsuffix .o, $(FPOFILES))
 MACHDEP	= -mhard-float -fmodulo-sched -ffunction-sections -fdata-sections
 
 CFLAGS	= -pipe -O2 -DPLAT_PS3 -Wall -mcpu=cell -fno-math-errno $(MACHDEP) $(INCLUDE)
-LDFLAGS	= $(MACHDEP) -Wl,-Map,$(notdir $@).map -fno-use-linker-plugin
+LDFLAGS	= $(MACHDEP) -Wl,-Map,$(notdir $@).map -fno-use-linker-plugin --Wl,--gc-sections
 LIBS	= -lrsx -lgcm_sys -lio -lsysutil -lrt -llv2 -lm -lnet -lsysmodule 
 
 INCLUDE = -I$(PSL1GHT)/ppu/include -I$(PSL1GHT)/ppu/include/simdmath
