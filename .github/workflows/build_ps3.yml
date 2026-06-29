@@ -35,6 +35,9 @@ jobs:
           export MAKEFLAGS="$MAKEFLAGS -j$(nproc)"
           make ps3
 
+      - name: Display compiler info
+        run: |
+          make -fNewMakefile.mk platform=ps3 compiler-info
 
       - uses: ./.github/actions/upload_build
         with:

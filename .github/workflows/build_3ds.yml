@@ -24,6 +24,9 @@ jobs:
           export MAKEFLAGS="$MAKEFLAGS -j$(nproc)"
           make 3ds
           
+      - name: Display compiler info
+        run: |
+          make -fNewMakefile.mk platform=3ds compiler-info
           
       - uses: ./.github/actions/upload_build
         with:
