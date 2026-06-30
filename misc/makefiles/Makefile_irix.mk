@@ -11,8 +11,7 @@ CFLAGS	=
 # Flags passed to the linker
 LDFLAGS	= -g -rdynamic
 # Libraries to link against
-LIBS 	= -lGL -lX11 -lXi -lpthread -ldl
-
+LIBS 	= -lGL -lX11 -lXi -lpthread -ldl -lGL -lX11 -lXi -lpthread -ldl -lGLcore -Wl,--allow-shlib-undefine -DCC_BUILD_GL11
 CC      = gcc
 
 
