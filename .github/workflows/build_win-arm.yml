@@ -55,14 +55,6 @@ jobs:
       - uses: actions/checkout@v5
       - name: Compile ARM64 Windows builds
         shell: bash
-<<<<<<< HEAD
-        env: 
-          LIBS: "-lwinmm -limagehlp"
-          SRCS: "src/*.c third_party/bearssl/*.c"
-          COMMON_FLAGS: "-O1 -pipe -s -fno-stack-protector -fno-math-errno -Qn -Werror -Wno-pragma-pack"
-          WIN64_FLAGS:  "-mwindows -nostartfiles -Wl,-emain_real -DCC_NOMAIN -DCC_GFX_BACKEND=CC_GFX_BACKEND_D3D11"
-=======
->>>>>>> 60c4ea3782ddb812fd2c51326a73408d2a043ace
         run: |
           LATEST_FLAG=-DCC_COMMIT_SHA=\\\"${GITHUB_SHA::9}\\\"
 
