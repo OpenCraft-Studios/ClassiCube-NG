@@ -7,37 +7,25 @@ CXX=$(RETRO68)/bin/m68k-apple-macos-g++
 CFLAGS=-O2 -pipe -fno-math-errno
 
 REZ=$(RETRO68)/bin/Rez
-
-LDFLAGS=-lm
 RINCLUDES=$(PREFIX)/RIncludes
 REZFLAGS=-I$(RINCLUDES)
 
+SOURCE_DIRS := src src/macclassic
+LIBS		:= -lm
+OEXT    	:= .code.bin
+# performance too slow if not in release mode
+RELEASE		:= 1
+include misc/makefiles/common_config.mk
+
 ifdef ARCH_68040
-	TARGET		:=	ClassiCube-68040
-	BUILD_DIR 	:=	build/mac_68040
+	TARGET		:= $(TARGET)-68040
+	BUILD_DIR 	:= build/mac_68040
 	CFLAGS		+= -march=68040
 else
-	TARGET		:=	ClassiCube-68k
-	BUILD_DIR 	:=	build/mac_68k
+	TARGET		:= $(TARGET)-68k
+	BUILD_DIR 	:= build/mac_68k
 	CFLAGS		+= -DCC_BUILD_FPU_MODE=CC_FPU_MODE_MINIMAL -DCC_BUILD_TINYMEM -DCC_GFX_BACKEND=CC_GFX_BACKEND_SOFTMIN
 endif
-
-SOURCE_DIR	:=	src
-C_SOURCES   := $(wildcard $(SOURCE_DIR)/*.c)
-C_OBJECTS   := $(patsubst $(SOURCE_DIR)/%.c, $(BUILD_DIR)/%.o, $(C_SOURCES))
-
-# Dependency tracking
-DEPFLAGS = -MT $@ -MMD -MP -MF $(BUILD_DIR)/$*.d
-DEPFILES := $(C_OBJECTS:%.o=%.d)
-
-
-#---------------------------------------------------------------------------------
-# main targets
-#---------------------------------------------------------------------------------
-default: $(BUILD_DIR) $(TARGET).bin
-
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
 
 
 #---------------------------------------------------------------------------------
@@ -50,17 +38,4 @@ $(TARGET).bin $(TARGET).APPL $(TARGET).dsk: $(TARGET).code.bin
 		-t "APPL" -c "????" \
 		-o $(TARGET).bin --cc $(TARGET).APPL --cc $(TARGET).dsk
 
-$(TARGET).code.bin: $(C_OBJECTS)
-	$(CC) $(C_OBJECTS) -o $@ $(LDFLAGS)
-
-
-#---------------------------------------------------------------------------------
-# object generation
-#---------------------------------------------------------------------------------
-$(C_OBJECTS): $(BUILD_DIR)/%.o : $(SOURCE_DIR)/%.c | $(BUILD_DIR)
-	$(CC) $(CFLAGS) $(DEPFLAGS) -c $< -o $@
-
-# Dependency tracking
-$(DEPFILES):
-
-include $(wildcard $(DEPFILES))
+include misc/makefiles/common_build.mk

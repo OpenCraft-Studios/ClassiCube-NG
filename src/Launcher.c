@@ -457,8 +457,12 @@ static cc_result Launcher_ProcessZipEntry(const cc_string* path, struct Stream* 
 		if (dirtBmp.scan0 != NULL) goto defer;
 		res = Png_Decode(&bmp, data);
 
-		if (res) Logger_SysWarn(res, "decoding terrain.png");
-		else ExtractTerrainTiles(&bmp);
+		if (res) {
+			Logger_SysWarn(res, "decoding terrain.png"); return res;
+		} else {
+			ExtractTerrainTiles(&bmp);
+			Mem_Free(bmp.scan0);
+		}
 	}
 
 defer:

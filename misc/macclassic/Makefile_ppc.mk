@@ -9,28 +9,19 @@ CFLAGS=-O2 -pipe -fno-math-errno
 REZ=$(RETRO68)/bin/Rez
 MakePEF=$(RETRO68)/bin/MakePEF
 
-LDFLAGS=-lm
+REZ=$(RETRO68)/bin/Rez
 RINCLUDES=$(PREFIX)/RIncludes
 REZFLAGS=-I$(RINCLUDES)
 
-TARGET		:=	ClassiCube-ppc
-BUILD_DIR 	:=	build/mac_ppc
-SOURCE_DIR	:=	src
-C_SOURCES   := $(wildcard $(SOURCE_DIR)/*.c)
-C_OBJECTS   := $(patsubst $(SOURCE_DIR)/%.c, $(BUILD_DIR)/%.o, $(C_SOURCES))
+SOURCE_DIRS := src src/macclassic
+LIBS		:= -lm
+OEXT    	:= .elf
+# performance too slow if not in release mode
+RELEASE		:= 1
+include misc/makefiles/common_config.mk
 
-# Dependency tracking
-DEPFLAGS = -MT $@ -MMD -MP -MF $(BUILD_DIR)/$*.d
-DEPFILES := $(C_OBJECTS:%.o=%.d)
-
-
-#---------------------------------------------------------------------------------
-# main targets
-#---------------------------------------------------------------------------------
-default: $(BUILD_DIR) $(TARGET).bin
-
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
+TARGET		:= $(TARGET)-ppc
+BUILD_DIR 	:= build/mac_ppc
 
 
 #---------------------------------------------------------------------------------
@@ -43,20 +34,7 @@ $(TARGET).bin $(TARGET).APPL $(TARGET).dsk: $(TARGET).pef
 		--data $(TARGET).pef \
 		-o $(TARGET).bin --cc $(TARGET).APPL --cc $(TARGET).dsk
 
-$(TARGET).elf: $(C_OBJECTS)
-	$(CC) $(C_OBJECTS) -o $@ $(LDFLAGS)
-
 $(TARGET).pef: $(TARGET).elf
 	$(MakePEF) $(TARGET).elf -o $(TARGET).pef
 
-
-#---------------------------------------------------------------------------------
-# object generation
-#---------------------------------------------------------------------------------
-$(C_OBJECTS): $(BUILD_DIR)/%.o : $(SOURCE_DIR)/%.c | $(BUILD_DIR)
-	$(CC) $(CFLAGS) $(DEPFLAGS) -c $< -o $@
-
-# Dependency tracking
-$(DEPFILES):
-
-include $(wildcard $(DEPFILES))
+include misc/makefiles/common_build.mk

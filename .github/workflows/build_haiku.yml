@@ -21,17 +21,21 @@ jobs:
       - uses: actions/checkout@v5
 
       - name: Compile haiku build
-        env: 
-          LIBS: "-lm -lGL -lnetwork -lstdc++ -lbe -lgame -ltracker"
-          SRCS: "src/*.c src/Platform_BeOS.cpp src/Window_BeOS.cpp third_party/bearssl/*.c"
-          COMMON_FLAGS: "-O2 -pipe -s -fno-stack-protector -fno-math-errno -Qn -Werror"
+        shell: bash
         run: |
-          x86_64-unknown-haiku-gcc ${{ env.SRCS }} -o ClassiCube-haiku ${{ env.COMMON_FLAGS }} ${{ env.LIBS }}
+          LATEST_FLAG=-DCC_COMMIT_SHA=\\\"${GITHUB_SHA::9}\\\"
+
+          export CC=x86_64-unknown-haiku-gcc
+          export CXX=x86_64-unknown-haiku-g++
+          export EXTRA_CFLAGS="-fno-stack-protector $LATEST_FLAG"
+          export EXTRA_LDFLAGS="-s"
+
+          make haiku RELEASE=1 TARGET=cc-haiku
           
           
       - uses: ./.github/actions/upload_build
         with:
-          SOURCE_FILE: 'ClassiCube-haiku'
+          SOURCE_FILE: 'cc-haiku'
           DEST_NAME: 'ClassiCube-haiku'
           
           
