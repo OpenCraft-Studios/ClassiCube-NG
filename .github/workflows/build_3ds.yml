@@ -1,10 +1,7 @@
 name: Build latest (3DS)
-# trigger via either push to selected branches or on manual run
 on:
   push:
-    branches:
-      - main
-      - master
+  pull_request:
   workflow_dispatch:
 
 concurrency:

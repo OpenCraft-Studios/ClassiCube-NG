@@ -1,11 +1,8 @@
 name: Build latest (iOS)
-# trigger via either push to selected branches or on manual run
+
 on:
   push:
-    branches:
-      - main
-      - master
-      - ios_no_arc
+  pull_request:
   workflow_dispatch:
 
 concurrency:

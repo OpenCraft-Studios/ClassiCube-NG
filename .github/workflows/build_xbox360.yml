@@ -1,12 +1,10 @@
 name: Build latest (Xbox 360)
-# trigger via either push to selected branches or on manual run
+
 on:
   push:
-    branches:
-      - main
-      - master
+  pull_request:
   workflow_dispatch:
-
+  
 concurrency:
   group: ${{ github.ref }}-xbox360
   cancel-in-progress: true

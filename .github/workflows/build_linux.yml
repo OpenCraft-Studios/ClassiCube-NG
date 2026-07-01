@@ -1,12 +1,8 @@
 name: Build latest (Linux)
-# trigger via either push to selected branches or on manual run
+
 on:
   push:
-    branches:
-      - main
-      - master
-      - ModernLighting
-      - AngledLighting
+  pull_request:
   workflow_dispatch:
 
 concurrency:
