@@ -310,7 +310,7 @@ void _gfxTextureMatrix(const struct Matrix* matrix) {
 	if (lastMatrix != GL_TEXTURE)
 		glMatrixMode(lastMatrix = GL_TEXTURE);
 
-	GL_SET_TEXTURE(matrix);
+	GL_SET_MATRIX(matrix);
 }
 
 #undef GL_SET_MATRIX
