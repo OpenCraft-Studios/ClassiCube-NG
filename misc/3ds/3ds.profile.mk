@@ -2,7 +2,8 @@ ifeq ($(strip $(DEVKITPRO)),)
 $(error "Please set DEVKITPRO in your environment. export DEVKITPRO=path/to/devkitPro)
 endif
 
-OBJECTS += $(patsubst $(src)/3ds/%.c, $(build)/3ds/%.c.o, $(wildcard $(src)/3ds/*.c))
+PLATFORM_SPECIFIC := $(build)/3ds
+OBJECTS += $(patsubst $(src)/3ds/%.c, $(PLATFORM_SPECIFIC)/%.c.o, $(wildcard $(src)/3ds/*.c))
 OBJECTS += $(patsubst misc/3ds/%.v.pica, $(build)/%.shbin.o, $(wildcard misc/3ds/*.v.pica))
 
 TARGET_BASE = ClassiCube-3ds
@@ -25,7 +26,7 @@ include misc/3ds/build-3dsx.mk
 include misc/3ds/build-makerom.mk
 
 
-$(build)/3ds/%.c.o: src/3ds/%.c | $(build)
+$(build)/3ds/%.c.o: src/3ds/%.c | $(PLATFORM_SPECIFIC)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 
