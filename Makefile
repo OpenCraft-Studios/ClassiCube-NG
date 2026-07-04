@@ -100,8 +100,6 @@ gba:
 	$(MAKE) -f misc/gba/Makefile $(filter-out $@, $(MAKECMDGOALS))
 ds:
 	$(MAKE) -f misc/nds/Makefile $(filter-out $@, $(MAKECMDGOALS))
-3ds:
-	$(MAKE) -f misc/3ds/Makefile $(filter-out $@, $(MAKECMDGOALS))
 gamecube:
 	$(MAKE) -f misc/gc/Makefile $(filter-out $@, $(MAKECMDGOALS))
 wii:

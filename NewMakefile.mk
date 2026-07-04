@@ -10,8 +10,8 @@
   OBJECTS := $(patsubst $(src)/%.c,$(build)/%.c.o,$(C_SOURCES)) # Main.c.o,...
 
 ## —— Toolchain settings ——————————————————————————————————————————————————————
-  CC := cc
-  LD := cc
+  CC ?= cc
+  LD ?= cc
   
   MAKE ?= make
   MAKEFLAGS += -j$(shell nproc) --no-print-directory
@@ -38,7 +38,7 @@ $(build)/libbearssl.a: ## Builds BearSSL (needed for internet connection)
 $(info -- COMPILER		$(CC) $(CFLAGS) -c INPUTFILE -o OUTPUTFILE)
 $(build)/%.c.o: $(src)/%.c | $(build) ## Rule to compile C files
 	@printf "  $(GREEN)Compiling$(RESET) %s\n" "$(@F)"
-	@$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 
 $(build): ## Create the build directory in case it doesn't exist
