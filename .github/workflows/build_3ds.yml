@@ -26,10 +26,10 @@ jobs:
           export LD="$CC"
 
           # Miscellaneous tools provided by devkitpro
-          export DSXTOOL  = "$DEVKITPRO/tools/bin/3dsxtool"
-          export SMDHTOOL = "$DEVKITPRO/tools/bin/smdhtool
-          export PICASSO  = "$DEVKITPRO/tools/bin/picasso
-          export BIN2S    = "$DEVKITPRO/tools/bin/bin2s
+          export DSXTOOL="$DEVKITPRO/tools/bin/3dsxtool"
+          export SMDHTOOL="$DEVKITPRO/tools/bin/smdhtool"
+          export PICASSO="$DEVKITPRO/tools/bin/picasso"
+          export BIN2S="$DEVKITPRO/tools/bin/bin2s"
 
           echo include misc/3ds/3ds.profile.mk >> config.mk
           make -fNewMakefile.mk
