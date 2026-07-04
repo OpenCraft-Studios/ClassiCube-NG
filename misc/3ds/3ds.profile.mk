@@ -25,7 +25,6 @@ include misc/3ds/build-smdh.mk
 include misc/3ds/build-3dsx.mk
 include misc/3ds/build-makerom.mk
 
-
 $(build)/3ds/%.c.o: src/3ds/%.c | $(PLATFORM_SPECIFIC)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
@@ -36,3 +35,5 @@ $(build)/%.shbin: misc/3ds/%.v.pica | $(build)
 $(build)/%.shbin.o: $(build)/%.shbin | $(build)
 	$(BIN2S) $< | $(CC) -x assembler-with-cpp -c - -o $@
 
+$(PLATFORM_SPECIFIC):
+	@mkdir -p $(PLATFORM_SPECIFIC)

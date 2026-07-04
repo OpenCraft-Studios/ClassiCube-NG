@@ -32,7 +32,7 @@ jobs:
           export BIN2S="$DEVKITPRO/tools/bin/bin2s"
 
           echo include misc/3ds/3ds.profile.mk >> config.mk
-          make -fNewMakefile.mk
+          make -fNewMakefile.mk platform=3ds
 
       - name: Display compiler info
         run: |
