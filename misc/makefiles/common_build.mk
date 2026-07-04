@@ -28,7 +28,7 @@ endif
 #------------------------------------------------
 # Main executable compilation
 #------------------------------------------------
-$(TARGET)$(OEXT): $(OBJECTS) | $(BUILD_DIRS)
+$(TARGET)$(OEXT): $(OBJECTS)
 	$(LINK) $(LDFLAGS) $(EXTRA_LDFLAGS) -o $@ $(OBJECTS) $(LIBS) $(EXTRA_LIBS)
 	@echo "----------------------------------------------------"
 	@echo "Successfully compiled executable: $@"
@@ -56,21 +56,21 @@ DEPFLAGS = -MT $@ -MMD -MP -MF $(BUILD_DIR)/$*.d
 DEPFILES := $(patsubst %.o, %.d, $(OBJECTS))
 $(DEPFILES):
 
-$(BUILD_DIR)/%.o : %.c $(BUILD_DIR)/%.d | $(BUILD_DIR)
+$(BUILD_DIR)/%.o : %.c $(BUILD_DIR)/%.d | $(BUILD_DIRS)
 	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(DEPFLAGS) -c $< -o $@
-$(BUILD_DIR)/%.o : %.cpp $(BUILD_DIR)/%.d | $(BUILD_DIR)
+$(BUILD_DIR)/%.o : %.cpp $(BUILD_DIR)/%.d | $(BUILD_DIRS)
 	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(DEPFLAGS) -c $< -o $@
-$(BUILD_DIR)/%.o : %.m $(BUILD_DIR)/%.d | $(BUILD_DIR)
+$(BUILD_DIR)/%.o : %.m $(BUILD_DIR)/%.d | $(BUILD_DIRS)
 	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(DEPFLAGS) -c $< -o $@
 
 include $(wildcard $(DEPFILES))
 
 else
 # === Compiling without dependency tracking ===
-$(BUILD_DIR)/%.o : %.c | $(BUILD_DIR)
+$(BUILD_DIR)/%.o : %.c | $(BUILD_DIRS)
 	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) -c $< -o $@
-$(BUILD_DIR)/%.o : %.cpp | $(BUILD_DIR)
+$(BUILD_DIR)/%.o : %.cpp | $(BUILD_DIRS)
 	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) -c $< -o $@
-$(BUILD_DIR)/%.o : %.m | $(BUILD_DIR)
+$(BUILD_DIR)/%.o : %.m | $(BUILD_DIRS)
 	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) -c $< -o $@
 endif
