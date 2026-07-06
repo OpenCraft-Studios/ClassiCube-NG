@@ -24,29 +24,28 @@
 $(info -- LINKER		$(LD) $(LDFLAGS) OBJECTS -o TARGET $(LIBS))
 target := OpenCraft
 $(target): $(OBJECTS) $(build)/libbearssl.a ## Makes the final game
-	@printf "  $(BLUE)Linking the game...$(RESET)\n"
-	@$(LD) $(LDFLAGS) $^ -o $@ $(LIBS)
-	@chmod +x $@
-
+	printf "  $(BLUE)Linking the game...$(RESET)\n"
+	$(LD) $(LDFLAGS) $^ -o $@ $(LIBS)
+	chmod +x $@
 
 $(build)/libbearssl.a: ## Builds BearSSL (needed for internet connection)
     # Delegates BearSSL build to its own Makefile
     # `TARGET` represents the name of the resultant file
-	@$(MAKE) -Cthird_party/bearssl TARGET=$@
+	$(MAKE) -Cthird_party/bearssl TARGET=$@ $(MAKEOVERRIDES)
 
 
 $(info -- COMPILER		$(CC) $(CFLAGS) -c INPUTFILE -o OUTPUTFILE)
 $(build)/%.c.o: $(src)/%.c | $(build) ## Rule to compile C files
-	@printf "  $(GREEN)Compiling$(RESET) %s\n" "$(@F)"
-	@$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+	printf "  $(GREEN)Compiling$(RESET) %s\n" "$(@F)"
+	$(CC) $(CFLAGS) -c $< -o $@
 
 
 $(build): ## Create the build directory in case it doesn't exist
 	mkdir -p $(build)
 
 clean:
-	@rm -rf $(build) $(target)
-	@$(MAKE) -Cthird_party/bearssl clean
+	rm -rf $(build) $(target)
+	$(MAKE) -Cthird_party/bearssl clean
 
 include misc/diagnostic.mk
 -include misc/colors.mk
