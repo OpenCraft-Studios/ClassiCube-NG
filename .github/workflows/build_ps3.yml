@@ -2,7 +2,6 @@ name: Build latest (PS3)
 
 on:
   push:
-  pull_request:
   workflow_dispatch:
 
 concurrency:
