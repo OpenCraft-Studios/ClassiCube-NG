@@ -2,7 +2,6 @@ name: Build latest (Windows ARM32/64)
 
 on:
   push:
-  pull_request:
   workflow_dispatch:
 
 concurrency:
