@@ -51,10 +51,6 @@ struct ChunkInfo {
 	cc_uint8 drawYMin : 1;
 	cc_uint8 drawYMax : 1;
 	cc_uint8 : 0;          /* pad to next byte */
-#ifdef OCCLUSION
-	public cc_bool Visited = false, Occluded = false;
-	public byte OcclusionFlags, OccludedFlags, DistanceFlags;
-#endif
 #if CC_GFX_BACKEND != CC_GFX_BACKEND_GL11
 	GfxResourceID vb;
 #endif
