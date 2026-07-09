@@ -36,7 +36,7 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Compile 32 bit Linux builds
+      - name: Compile 32 bit Linux build (OpenGL 1)
         shell: bash
         run: |
           # Enable support for i386
