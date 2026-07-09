@@ -571,6 +571,8 @@ static int UpdateChunksAndVisibility(int* chunkUpdates) {
 			BuildChunk(chunk, chunkUpdates);
 		}
 
+		if (chunk->dirty || chunk->noData) continue;
+
 		if (distSqr > renderDistSqr) {
 			chunk->visible  = false;
 		} else {
