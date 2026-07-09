@@ -9,7 +9,7 @@
 - [x] Runs on Windows, macOS, Linux, Android, iOS, and in a web browser
 - [x] Also runs on OpenBSD, FreeBSD, NetBSD, Solaris, Haiku, IRIX, SerenityOS
 - [x] Runs on various consoles (although in various stages of early development)
-- [ ] Isometric software rendering graphics backend for weak CPUs
+- [ ] An isometric software rendering graphics backend for weak CPUs
 
 ## Security improvements
 Our developers have done very good work spotting memory leaks and improving OpenCraft's security.
