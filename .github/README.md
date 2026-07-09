@@ -12,7 +12,7 @@
 - [ ] Isometric software rendering graphics backend for weak CPUs
 
 ## Security improvements
-Our developers have done a very good work at spotting memory leaks and improving OpenCraft's security.
+Our developers have done very good work spotting memory leaks and improving OpenCraft's security.
 Here's a summary of what has been recently fixed:
 - [x] Memory leaks in SoftGPU graphics backend (12 bytes of RAM leaked)
 - [x] Memory leaks in SoftFP graphics backend (1.6 MiB of RAM leaked)
