@@ -18,7 +18,7 @@ jobs:
     container:
       image: dockcross/windows-armv7
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Compile ARM32 Windows builds
         shell: bash
         run: |
@@ -49,7 +49,7 @@ jobs:
     container:
       image: dockcross/windows-arm64
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Compile ARM64 Windows builds
         shell: bash
         run: |

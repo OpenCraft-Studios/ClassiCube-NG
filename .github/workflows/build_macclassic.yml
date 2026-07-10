@@ -15,7 +15,7 @@ jobs:
     container:
       image: ghcr.io/autc04/retro68
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Compile Mac classic build
         run: |
           export RETRO68=/Retro68-build/toolchain
