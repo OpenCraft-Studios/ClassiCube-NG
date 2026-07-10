@@ -32,11 +32,11 @@ jobs:
               x11proto-kb-dev
               
 
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
 
-      - name: Compile 32 bit Linux builds
+      - name: Compile 32 bit Linux build (OpenGL 1)
         shell: bash
         run: |
           # Enable support for i386
@@ -93,7 +93,7 @@ jobs:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           submodules: recursive
       

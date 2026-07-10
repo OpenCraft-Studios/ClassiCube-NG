@@ -15,7 +15,7 @@ jobs:
     container:
       image: trzeci/emscripten-fastcomp:1.39.0
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Compiles webclient
         env:
           SRCS: "src/*.c src/webclient/*.c"

@@ -222,9 +222,6 @@ void MapRenderer_RenderNormal(float delta) {
 
 	CheckWeather(delta);
 	Gfx_SetAlphaTest(false);
-#if DEBUG_OCCLUSION
-	DebugPickedPos();
-#endif
 }
 
 #define DrawTranslucentFaces(minFace, maxFace) \
@@ -339,11 +336,6 @@ static void DeleteChunk(struct ChunkInfo* chunk) {
 	chunk->allAir = false;
 	chunk->noData = true;
 	chunk->dirty  = true;
-
-#ifdef OCCLUSION
-	chunk.OcclusionFlags = 0;
-	chunk.OccludedFlags = 0;
-#endif
 
 	if (chunk->normalParts) {
 		ptr = chunk->normalParts;
@@ -578,6 +570,8 @@ static int UpdateChunksAndVisibility(int* chunkUpdates) {
 			DeleteChunk(chunk);
 			BuildChunk(chunk, chunkUpdates);
 		}
+
+		if (chunk->dirty || chunk->noData) continue;
 
 		if (distSqr > renderDistSqr) {
 			chunk->visible  = false;

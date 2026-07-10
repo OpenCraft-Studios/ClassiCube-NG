@@ -154,20 +154,6 @@ static void PrepareChunk(int x1, int y1, int z1) {
 	int cIndex, index, tileIdx;
 	BlockID b;
 	int x, y, z, xx, yy, zz;
-
-#ifdef OCCLUSION
-	int flags = ComputeOcclusion();
-#endif
-#ifdef DEBUG_OCCLUSION
-	FastColour col = new FastColour(60, 60, 60, 255);
-	if (flags & 1) col.R = 255; /* x */
-	if (flags & 4) col.G = 255; /* y */
-	if (flags & 2) col.B = 255; /* z */
-	map.Sunlight = map.Shadowlight = col;
-	map.SunlightXSide = map.ShadowlightXSide = col;
-	map.SunlightZSide = map.ShadowlightZSide = col;
-	map.SunlightYBottom = map.ShadowlightYBottom = col;
-#endif
 	
 	for (y = y1, yy = 0; y < yMax; y++, yy++) {
 		for (z = z1, zz = 0; z < zMax; z++, zz++) {
@@ -417,10 +403,6 @@ cc_bool Builder_MakeChunk(struct ChunkInfo* info) {
 	if (!totalVerts) return true;
 	
 	OutputChunkPartsMeta(x1, y1, z1, info);
-#ifdef OCCLUSION
-	if (info.NormalParts != null || info.TranslucentParts != null)
-		info.occlusionFlags = (cc_uint8)ComputeOcclusion();
-#endif
 
 #if CC_GFX_BACKEND != CC_GFX_BACKEND_GL11
 	/* add an extra element to fix crashing on some GPUs */

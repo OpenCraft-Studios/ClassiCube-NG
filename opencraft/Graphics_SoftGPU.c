@@ -351,7 +351,7 @@ static int TransformVertex3D(int index, Vertex* vertex) {
 		vertex->v = (v->V + texOffsetY);
 		vertex->c = v->Col;
 	}
-	return vertex->z >= 0.0f;
+	return vertex->w > 0.0f;
 }
 
 static void ViewportVertex3D(Vertex* vertex) {

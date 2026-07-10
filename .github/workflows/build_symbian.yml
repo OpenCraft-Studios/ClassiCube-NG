@@ -13,9 +13,9 @@ jobs:
     timeout-minutes: 10
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
-      - uses: actions/cache/restore@v5
+      - uses: actions/cache/restore@v6
         name: Check SDK
         id: cache_sdk
         with:
@@ -28,7 +28,7 @@ jobs:
 
       - name: Cache SDK
         if: steps.cache_sdk.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         with:
           path: symbiansdk.zip
           key: symbian-sdk
