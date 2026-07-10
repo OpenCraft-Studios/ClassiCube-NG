@@ -3,6 +3,7 @@ BUILD := /tmp/bearssl.linux
 C_SOURCES := $(wildcard $(SRC)/*.c)
 OBJECTS := $(patsubst $(SRC)/%.c,$(BUILD)/%.c.o,$(C_SOURCES))
 
+-include ../../bearssl.config.mk
 
 CC := cc
 CFLAGS += -pipe
