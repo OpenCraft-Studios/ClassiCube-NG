@@ -15,7 +15,7 @@ jobs:
     container:
       image: haiku/cross-compiler:x86_64-r1beta4
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Compile haiku build
         shell: bash

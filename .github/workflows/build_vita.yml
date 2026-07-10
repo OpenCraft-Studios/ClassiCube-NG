@@ -15,7 +15,7 @@ jobs:
     container:
       image: vitasdk/vitasdk:latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Compile Vita build
         run: |
           export MAKEFLAGS="$MAKEFLAGS -j$(nproc)"

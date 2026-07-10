@@ -15,7 +15,7 @@ jobs:
     container:
       image: ghcr.io/extremscorner/libogc2:latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Compile GameCube build
         run: |
           make gamecube
