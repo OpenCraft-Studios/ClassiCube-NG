@@ -31,7 +31,7 @@ $(target): $(OBJECTS) $(build)/libbearssl.a ## Makes the final game
 $(build)/libbearssl.a: ## Builds BearSSL (needed for internet connection)
     # Delegates BearSSL build to its own Makefile
     # `TARGET` represents the name of the resultant file
-	$(MAKE) -Cthird_party/bearssl TARGET=$@ $(MAKEOVERRIDES)
+	$(MAKE) -fthird_party/bearssl/Makefile TARGET=$@ $(MAKEOVERRIDES)
 
 
 $(info -- COMPILER		$(CC) $(CFLAGS) -c INPUTFILE -o OUTPUTFILE)

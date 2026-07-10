@@ -1,9 +1,9 @@
-SRC = .
+SRC = third_party/bearssl
 BUILD := /tmp/bearssl.linux
 C_SOURCES := $(wildcard $(SRC)/*.c)
 OBJECTS := $(patsubst $(SRC)/%.c,$(BUILD)/%.c.o,$(C_SOURCES))
 
--include ../../bearssl.config.mk
+-include bearssl.config.mk
 
 CC := cc
 CFLAGS += -pipe
@@ -25,4 +25,4 @@ clean:
 
 
 .PHONY: clean
--include ../../misc/colors.mk
+-include misc/colors.mk
