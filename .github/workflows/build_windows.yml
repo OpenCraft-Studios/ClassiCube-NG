@@ -39,7 +39,7 @@ jobs:
                 EXTRA_LDFLAGS="$COMMON_LDFLAGS"
 
           make mingw clean
-          make mingw RELEASE=1 TARGET=cc-w32-d3d11.exe CC=i686-w64-mingw32-gcc \ 
+          make mingw RELEASE=1 TARGET=cc-w32-d3d11.exe CC=i686-w64-mingw32-gcc \
                 EXTRA_CFLAGS="$COMMON_CFLAGS -DCC_GFX_BACKEND=CC_GFX_BACKEND_D3D11" \
                 EXTRA_LDFLAGS="$COMMON_LDFLAGS"
 
@@ -119,7 +119,7 @@ jobs:
                 EXTRA_LDFLAGS="$COMMON_LDFLAGS"
 
           make mingw clean
-          make mingw RELEASE=1 TARGET=cc-w64-d3d11.exe CC=x86_64-w64-mingw32-gcc \ 
+          make mingw RELEASE=1 TARGET=cc-w64-d3d11.exe CC=x86_64-w64-mingw32-gcc \
                 EXTRA_CFLAGS="$COMMON_CFLAGS -DCC_GFX_BACKEND=CC_GFX_BACKEND_D3D11" \
                 EXTRA_LDFLAGS="$COMMON_LDFLAGS"
 
