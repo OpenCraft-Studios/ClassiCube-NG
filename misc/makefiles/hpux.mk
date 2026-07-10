@@ -10,5 +10,5 @@ LIBS    := -lm -lX11 -lXi -lXext -L/opt/graphics/OpenGL/lib/hpux32 -lGL -lpthrea
 include misc/makefiles/common_config.mk
 
 
-CC := gcc
+CC := cc
 include misc/makefiles/common_build.mk

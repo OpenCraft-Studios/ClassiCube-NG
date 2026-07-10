@@ -10,5 +10,5 @@ LIBS 	:= -lGL -lX11 -lXi -lpthread -ldl
 include misc/makefiles/common_config.mk
 
 
-CC := gcc
+CC := cc
 include misc/makefiles/common_build.mk

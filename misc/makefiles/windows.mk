@@ -10,6 +10,6 @@ LIBS 	:= -lwinmm
 include misc/makefiles/common_config.mk
 
 
-CC      := gcc
+CC      := cc
 OEXT    := .exe
 include misc/makefiles/common_build.mk
