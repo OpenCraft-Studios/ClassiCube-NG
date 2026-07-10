@@ -21,8 +21,8 @@ jobs:
           export MAKEFLAGS="$MAKEFLAGS -sj$(nproc)"
 
           # DEVKITPRO Toolchain
-          sudo ln -sf $DEVKITPRO/devkitARM/bin/arm-none-eabi-gcc /usr/local/bin/cc
-          sudo ln -sf $DEVKITPRO/devkitARM/bin/arm-none-eabi-gcc /usr/local/bin/ld
+          sudo ln -sf $DEVKITARM/bin/arm-none-eabi-gcc /usr/local/bin/cc
+          sudo ln -sf $DEVKITARM/bin/arm-none-eabi-gcc /usr/local/bin/ld
 
           # Miscellaneous tools provided by devkitpro
           export DSXTOOL="$DEVKITPRO/tools/bin/3dsxtool"

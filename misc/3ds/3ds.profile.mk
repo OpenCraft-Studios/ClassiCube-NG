@@ -12,9 +12,8 @@ override target = ClassiCube-3ds.elf
 ARCH      = -march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 CTRULIB   = $(DEVKITPRO)/libctru
 INCLUDES += $(foreach dir, $(CTRULIB), -I$(dir)/include)
-LDFLAGS  += $(foreach dir, $(CTRULIB), -L$(dir)/lib)
-LIBS     += -lctru -lm
-override LDFLAGS = -specs=3dsx.specs -g $(ARCH)
+override LDFLAGS = -specs=3dsx.specs -g $(ARCH) $(foreach dir, $(CTRULIB), -L$(dir)/lib)
+LIBS += -lctru -lm
 override CFLAGS  = -pipe -g -Wall -Os -mword-relocations -ffunction-sections $(ARCH) $(INCLUDES) -D__3DS__ -DPLAT_3DS
 
 MAKEROM := $(build)/makerom
