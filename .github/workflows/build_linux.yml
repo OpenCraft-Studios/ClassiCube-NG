@@ -43,6 +43,9 @@ jobs:
           export PKG_CONFIG_PATH=/usr/lib/i386-linux-gnu/pkgconfig:/usr/share/pkgconfig:/usr/lib/pkgconfig
           unset PKG_CONFIG_LIBDIR
           
+          sudo ln -sf $(which clang) /usr/local/bin/cc
+          sudo ln -sf $(which clang) /usr/local/bin/ld
+
           export CFLAGS="-m32"
           export LDFLAGS="-m32"
           export COLOR="off"
