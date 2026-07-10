@@ -53,6 +53,7 @@ jobs:
           #!/usr/bin/env bash
           exec clang --target=i386-linux-gnu -m32 "$@"
           EOF
+          sudo chmod +x /usr/local/bin/i386-linux-gnu-clang
 
           tee config.mk << 'EOF'
           
