@@ -7,7 +7,7 @@ OBJECTS += $(patsubst $(src)/3ds/%.c, $(PLATFORM_SPECIFIC)/%.c.o, $(wildcard $(s
 OBJECTS += $(patsubst misc/3ds/%.v.pica, $(build)/%.shbin.o, $(wildcard misc/3ds/*.v.pica))
 
 TARGET_BASE = ClassiCube-3ds
-override target = ClassiCube-3ds.elf
+override target = $(TARGET_BASE).elf
 
 ARCH      = -march=armv6k -mtune=mpcore -mfloat-abi=hard -mtp=soft
 CTRULIB   = $(DEVKITPRO)/libctru
@@ -24,7 +24,7 @@ include misc/3ds/build-smdh.mk
 include misc/3ds/build-3dsx.mk
 include misc/3ds/build-makerom.mk
 
-$(build)/3ds/%.c.o: src/3ds/%.c | $(PLATFORM_SPECIFIC)
+$(PLATFORM_SPECIFIC)/%.c.o: src/3ds/%.c | $(PLATFORM_SPECIFIC)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 

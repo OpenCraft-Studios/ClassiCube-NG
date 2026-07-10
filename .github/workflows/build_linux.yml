@@ -52,10 +52,11 @@ jobs:
 
           cat >> config.mk << 'EOF'
           
-          CFLAGS += $(shell pkg-config --cflags x11 gl xi) -DCC_COMMIT_SHA="${GITHUB_SHA::9}"
-          CFLAGS += -O2 -s -fno-stack-protector -Werror -fvisibility=hidden -rdynamic -Werror
-          CFLAGS += -fcf-protection=none -Wl,--unresolved-symbols=ignore-in-shared-libs
-          LIBS   += $(shell pkg-config --libs x11 gl xi) -lm -ldl -lpthread
+          CFLAGS  += $(shell pkg-config --cflags x11 gl xi) -DCC_COMMIT_SHA="${GITHUB_SHA::9}"
+          CFLAGS  += -O2 -s -fno-stack-protector -Werror -fvisibility=hidden -rdynamic -Werror
+          CFLAGS  += -fcf-protection=none
+          LDFLAGS += -Wl,--unresolved-symbols=ignore-in-shared-libs
+          LIBS    += $(shell pkg-config --libs x11 gl xi) -lm -ldl -lpthread
 
           EOF
           
