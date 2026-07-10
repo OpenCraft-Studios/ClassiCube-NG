@@ -49,10 +49,12 @@ jobs:
           sudo ln -sf $(which clang) /usr/local/bin/cc
           sudo ln -sf $(which clang) /usr/local/bin/ld
 
-          export CFLAGS="-m32"
-          export LDFLAGS="-m32"
+          sudo tee /usr/local/bin/i386-linux-gnu-clang << 'EOF'
+          #!/usr/bin/env bash
+          exec clang --target=i386-linux-gnu -m32 "$@"
+          EOF
 
-          cat >> config.mk << 'EOF'
+          tee config.mk << 'EOF'
           
           CFLAGS  += $(shell pkg-config --cflags x11 gl xi) -DCC_COMMIT_SHA="${GITHUB_SHA::9}"
           CFLAGS  += -O2 -fno-stack-protector -Werror -fvisibility=hidden -Werror
@@ -60,6 +62,9 @@ jobs:
           LDFLAGS += -fuse-ld=/usr/bin/ld -Wl,--unresolved-symbols=ignore-in-shared-libs -s -Wl,-export_dynamic
           LIBS    += $(shell pkg-config --libs x11 gl xi) -lm -ldl -lpthread
 
+          override CC=i386-linux-gnu-clang
+          override LD=i386-linux-gnu-clang
+          export CC LD
           EOF
           
           make -fNewMakefile.mk target=cc-nix32-gl1 platform=linux-gl1
