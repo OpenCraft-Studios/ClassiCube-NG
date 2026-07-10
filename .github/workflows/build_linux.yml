@@ -39,6 +39,9 @@ jobs:
       - name: Compile 32 bit Linux build (OpenGL 1)
         shell: bash
         run: |
+          # Multicore optimization
+          export MAKEFLAGS="$MAKEFLAGS -sj$(nproc)"
+
           # Enable support for i386
           export PKG_CONFIG_PATH=/usr/lib/i386-linux-gnu/pkgconfig:/usr/share/pkgconfig:/usr/lib/pkgconfig
           unset PKG_CONFIG_LIBDIR
@@ -48,14 +51,13 @@ jobs:
 
           export CFLAGS="-m32"
           export LDFLAGS="-m32"
-          export COLOR="off"
 
           cat >> config.mk << 'EOF'
           
           CFLAGS  += $(shell pkg-config --cflags x11 gl xi) -DCC_COMMIT_SHA="${GITHUB_SHA::9}"
           CFLAGS  += -O2 -fno-stack-protector -Werror -fvisibility=hidden -Werror
           CFLAGS  += -fcf-protection=none
-          LDFLAGS += -Wl,--unresolved-symbols=ignore-in-shared-libs -s -Wl,-export_dynamic
+          LDFLAGS += -fuse-ld=/usr/bin/ld -Wl,--unresolved-symbols=ignore-in-shared-libs -s -Wl,-export_dynamic
           LIBS    += $(shell pkg-config --libs x11 gl xi) -lm -ldl -lpthread
 
           EOF
