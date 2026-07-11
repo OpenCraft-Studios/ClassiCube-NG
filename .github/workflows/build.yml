@@ -1,0 +1,9 @@
+name: Build CI
+
+on: [push, workflow_dispatch]
+
+jobs:
+  linux:
+    name: Linux
+    uses: ./.github/workflows/linux.yml
+

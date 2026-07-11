@@ -1,0 +1,73 @@
+on: [workflow_call]
+
+jobs:
+  build:
+    timeout-minutes: 7
+    name: Linux ${{ matrix.arch }}
+    runs-on: ubuntu-latest
+    environment: Build
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: i386
+            cflags: -m32 -march=i386 --target=i386-linux-gnu
+            output: OpenCraft-i386
+
+          - arch: x86_64
+            cflags: -m64 -march=x86-64 --target=x86_64-linux-gnu
+            output: OpenCraft-x86_64v1
+
+    steps:
+      - name: Install LLVM toolchain
+        run: |
+          sudo tee /etc/apt/apt.conf.d/99-no_recommends <<< 'APT::Install-Suggests "false";'
+          sudo dpkg --add-architecture i386
+
+          sudo apt-get update
+          sudo apt-get install -y \
+            gcc-multilib \
+            clang llvm mold \
+            libx11-dev   libx11-dev:i386 \
+            libgl-dev    libgl-dev:i386 \
+            libc6-dev    libc6-dev:i386 \
+            libxi-dev    libxi-dev:i386 \
+            libglvnd-dev libglvnd-dev:i386  \
+            x11proto-core-dev \
+            x11proto-input-dev \
+            x11proto-kb-dev
+
+      - name: Fetch OpenCraft source code
+        uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Setup compiler wrapper
+        run: |
+          mkdir -p "$RUNNER_TEMP/bin"
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+
+          CC="$RUNNER_TEMP/bin/${{ matrix.arch }}-linux-llvm-clang"
+
+          cat > "$CC" << EOF
+          #!/usr/bin/env bash
+          exec clang -pipe -fuse-ld=mold ${{ matrix.cflags }} "\$@"
+          EOF
+          chmod +x "$CC"
+          echo "CC=$CC" >> "$GITHUB_ENV"
+
+      - name: Compile
+        run: |
+          CFLAGS="$(pkg-config --cflags x11 xi gl)"
+          LIBS="$(pkg-config --libs x11 xi gl) -ldl -lm -lpthread"
+          "$CC" $CFLAGS -O2 opencraft/*.c bearssl/*.c -o "${{ matrix.output }}" $LIBS
+
+      - name: Strip binary
+        run: |
+          llvm-strip "${{ matrix.output }}"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.output }}
+          path: ${{ matrix.output }}
