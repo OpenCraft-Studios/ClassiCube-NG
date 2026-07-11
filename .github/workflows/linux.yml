@@ -5,7 +5,7 @@ jobs:
     timeout-minutes: 7
     name: Linux ${{ matrix.arch }}
     runs-on: ubuntu-latest
-    environment: Build
+    environment: Canary
 
     strategy:
       fail-fast: false
@@ -61,7 +61,7 @@ jobs:
         run: |
           CFLAGS="$(pkg-config --cflags x11 xi gl)"
           LIBS="$(pkg-config --libs x11 xi gl) -ldl -lm -lpthread"
-          "$CC" $CFLAGS -O2 opencraft/*.c bearssl/*.c -o "${{ matrix.output }}" $LIBS
+          "$CC" $CFLAGS -Weverything -O2 opencraft/*.c bearssl/*.c -o "${{ matrix.output }}" $LIBS
 
       - name: Strip binary
         run: |
