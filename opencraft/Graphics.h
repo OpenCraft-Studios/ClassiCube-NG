@@ -197,7 +197,9 @@ enum Screen3DS { TOP_SCREEN, BOTTOM_SCREEN };
 void Gfx_3DS_SetRenderScreen(enum Screen3DS screen);
 #else
 /* Selects which screen/display to render to */
-static CC_INLINE void Gfx_3DS_SetRenderScreen(enum Screen3DS screen) { }
+static CC_INLINE void Gfx_3DS_SetRenderScreen(enum Screen3DS screen) {
+	(void)screen;
+}
 #endif
 
 
@@ -429,7 +431,10 @@ void Gfx_LoadMVP(const struct Matrix* view, const struct Matrix* proj, struct Ma
 #ifdef CC_CLIPPING_FLAGS
 cc_bool Gfx_CanSphereSkipClipping(float x, float y, float z, float radius);
 #else
-static CC_INLINE cc_bool Gfx_CanSphereSkipClipping(float x, float y, float z, float radius) { return false; }
+static CC_INLINE cc_bool Gfx_CanSphereSkipClipping(float x, float y, float z, float radius) {
+	(void)x; (void)y; (void)z; (void)radius;
+	return false;
+}
 #endif
 
 /* Calculates an orthographic projection matrix suitable with this backend. (usually for 2D) */
