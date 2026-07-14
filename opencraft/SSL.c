@@ -4,7 +4,7 @@
 #if CC_SSL_BACKEND == CC_SSL_BACKEND_BEARSSL
 #include "String_.h"
 #include "Certs.h"
-#include "../third_party/bearssl/bearssl.h"
+#include "../bearssl/bearssl.h"
 #include "../misc/certs/certs.h"
 
 // https://github.com/unkaktus/bearssl/blob/master/samples/client_basic.c#L283
