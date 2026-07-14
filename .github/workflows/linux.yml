@@ -61,7 +61,7 @@ jobs:
         run: |
           CFLAGS="$(pkg-config --cflags x11 xi gl)"
           LIBS="$(pkg-config --libs x11 xi gl) -ldl -lm -lpthread"
-          "$CC" $CFLAGS -Weverything -O2 opencraft/*.c bearssl/*.c -o "${{ matrix.output }}" $LIBS
+          "$CC" $CFLAGS -Weverything -Wno-unsafe-buffer-usage -O2 opencraft/*.c bearssl/*.c -o "${{ matrix.output }}" $LIBS
 
       - name: Strip binary
         run: |
