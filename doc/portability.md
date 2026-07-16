@@ -80,9 +80,6 @@ Define:
 ### HTTP
 HTTP, HTTPS, and setting request/getting response headers
 
-Define:
-- ```DEFAULT_NET_BACKEND CC_NET_BACKEND_BUILTIN``` - use built in simple HTTP backend
-
 Supporting connection reuse is highly recommended. (but not required)
 
 ### SSL
