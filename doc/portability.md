@@ -84,6 +84,3 @@ Supporting connection reuse is highly recommended. (but not required)
 
 ### SSL
 SSL and TLS support, plus basic certificate validation
-
-Define:
-- ```DEFAULT_SSL_BACKEND CC_SSL_BACKEND_BEARSSL``` - use BearSSL for SSL/TLS
