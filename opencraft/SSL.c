@@ -1,7 +1,7 @@
 #include "SSL.h"
 #include "Errors.h"
 
-#if CC_SSL_BACKEND == CC_SSL_BACKEND_BEARSSL
+/*#if CC_SSL_BACKEND == CC_SSL_BACKEND_BEARSSL*/
 #include "String_.h"
 #include "Certs.h"
 #include "../bearssl/bearssl.h"
@@ -246,6 +246,7 @@ cc_result SSL_Free(void* ctx_) {
 	Mem_Free(ctx_);
 	return 0;
 }
+/* TODO: Xmacros should implement these stubs
 #else
 void SSLBackend_Init(cc_bool verifyCerts) { }
 cc_bool SSLBackend_DescribeError(cc_result res, cc_string* dst) { return false; }
@@ -264,3 +265,4 @@ cc_result SSL_WriteAll(void* ctx, const cc_uint8* data, cc_uint32 count) {
 
 cc_result SSL_Free(void* ctx) { return 0; }
 #endif
+*/

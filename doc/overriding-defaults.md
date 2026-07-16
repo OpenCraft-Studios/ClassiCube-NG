@@ -43,11 +43,6 @@ The OpenGL backend can be further customised:
 * CC_BUILD_EGL
 * CC_BUILD_WGL
 
-### SSL backends (`CC_SSL_BACKEND`)
-* CC_SSL_BACKEND_NONE
-* CC_SSL_BACKEND_BEARSSL
-* CC_SSL_BACKEND_SCHANNEL
-
 ### Window backends (`CC_WIN_BACKEND`)
 * CC_WIN_BACKEND_TERMINAL
 * CC_WIN_BACKEND_SDL2
