@@ -50,7 +50,6 @@ struct IGameComponent Http_Component = {
 #else
 #include "_HttpBase.h"
 
-#if CC_NET_BACKEND == CC_NET_BACKEND_BUILTIN
 #include "Errors.h"
 #include "PackedCol.h"
 #include "SSL.h"
@@ -715,8 +714,6 @@ static cc_result HttpBackend_Do(struct HttpRequest* req) {
 static cc_bool HttpBackend_DescribeError(cc_result res, cc_string* dst) {
 	return SSLBackend_DescribeError(res, dst);
 }
-#endif
-
 
 static void* workerWaitable;
 static void* workerThread;

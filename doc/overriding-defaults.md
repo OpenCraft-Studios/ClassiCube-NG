@@ -43,11 +43,6 @@ The OpenGL backend can be further customised:
 * CC_BUILD_EGL
 * CC_BUILD_WGL
 
-### HTTP backends (`CC_NET_BACKEND`)
-* CC_NET_BACKEND_BUILTIN - custom HTTP client
-* CC_NET_BACKEND_LIBCURL
-* CC_BUILD_CFNETWORK
-
 ### SSL backends (`CC_SSL_BACKEND`)
 * CC_SSL_BACKEND_NONE
 * CC_SSL_BACKEND_BEARSSL
