@@ -1,15 +1,17 @@
-BSL_BUILD_DIR := $(BUILD_DIR)/bearssl
-BSL_SRCS      := $(wildcard bearssl/*.c)
-BSL_OBJS      := $(patsubst bearssl/%.c,$(BSL_BUILD_DIR)/%.c.o,$(BSL_SRCS))
+bearssl.src    ?= $(CURDIR)/bearssl
+bearssl.build  ?= /tmp/$(plat.USE)/bearssl
+bearssl.SRCS   := $(wildcard $(bearssl.src)/*.c)
+bearssl.OBJS   := $(patsubst $(bearssl.src)/%.c,$(bearssl.build)/%.c.o,$(bearssl.SRCS))
 
-BSL_CFLAGS += -DCC_SSL_BACKEND=CC_SSL_BACKEND_BEARSSL
+bearssl.CFLAGS += -DCC_SSL_BACKEND=CC_SSL_BACKEND_BEARSSL
 
-$(BSL_BUILD_DIR)/%.c.o: bearssl/%.c | $(BSL_BUILD_DIR)
+$(bearssl.build)/%.c.o: bearssl/%.c | $(bearssl.build)
 	$(call log_compile,$(<F),bearssl,$(VERSION))
-	$(CC) $(CFLAGS) $(BSL_CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(bearssl.CFLAGS) -c $< -o $@
 
-$(BSL_BUILD_DIR):
+$(bearssl.build):
 	@mkdir -p $@
 
-override OBJS   += $(BSL_OBJS)
-override CFLAGS += $(BSL_CFLAGS)
+override OBJS       += $(bearssl.OBJS)
+override CFLAGS     += $(bearssl.CFLAGS)
+override BUILD_DIRS += $(bearssl.build)

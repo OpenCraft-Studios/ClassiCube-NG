@@ -1,30 +1,31 @@
-WDW_BACKENDS := x11 mac-classic os2 sdl2 sdl3 terminal windows wince
-WDW_USE       = $(filter $(WDW_BACKENDS), $(USE))
-WDW_OBJS     := $(BUILD_DIR)/Window_$(WDW_USE).c.o
-# TODO: BeOS not supported yet
+override WDW_BACKENDS := x11 mac-classic os2 sdl2 sdl3 terminal windows wince
 
-ifeq ($(WDW_USE), )
+# TODO: Add support for BeOS
+wdw.USE   = $(filter $(WDW_BACKENDS),$(USE))
+wdw.OBJS := $(oc.build)/Window_$(wdw.USE).c.o
+
+ifeq ($(wdw.USE),)
 $(error Please, select a window backend or disable it (make ... WINDOW=0))
-else ifeq ($(WDW_USE), x11)
-WDW_LDLIBS += $(shell $(PKGCONF) --libs x11 xi)
-WDW_CFLAGS += $(shell $(PKGCONF) --cflags x11 xi) 
-WDW_CFLAGS += -DCC_BUILD_XINPUT2
-WDW_CFLAGS += -DCC_WIN_BACKEND=CC_WIN_BACKEND_X11
-else ifeq ($(WDW_USE), x11)
-WDW_CFLAGS += -DCC_WIN_BACKEND=CC_WIN_BACKEND_SDL2
-else ifeq ($(WDW_USE), x11)
-WDW_CFLAGS += -DCC_WIN_BACKEND=CC_WIN_BACKEND_SDL3
-else ifeq ($(WDW_USE), x11)
-WDW_CFLAGS += -DCC_WIN_BACKEND=CC_WIN_BACKEND_TERMINAL
-else ifeq ($(WDW_USE), x11)
-WDW_CFLAGS += -DCC_WIN_BACKEND=CC_WIN_BACKEND_WIN32
-else ifeq ($(WDW_USE), x11)
-WDW_CFLAGS += -DCC_WIN_BACKEND=CC_WIN_BACKEND_WIN32CE
+else ifeq ($(wdw.USE),x11)
+wdw.LDLIBS += $(shell $(PKGCONF) --libs x11 xi)
+wdw.CFLAGS += $(shell $(PKGCONF) --cflags x11 xi) 
+wdw.CFLAGS += -DCC_BUILD_XINPUT2
+wdw.CFLAGS += -DCC_WIN_BACKEND=CC_WIN_BACKEND_X11
+else ifeq ($(wdw.USE),sdl2)
+wdw.CFLAGS += -DCC_WIN_BACKEND=CC_WIN_BACKEND_SDL2
+else ifeq ($(wdw.USE),sdl3)
+wdw.CFLAGS += -DCC_WIN_BACKEND=CC_WIN_BACKEND_SDL3
+else ifeq ($(wdw.USE),terminal)
+wdw.CFLAGS += -DCC_WIN_BACKEND=CC_WIN_BACKEND_TERMINAL
+else ifeq ($(wdw.USE),windows)
+wdw.CFLAGS += -DCC_WIN_BACKEND=CC_WIN_BACKEND_WIN32
+else ifeq ($(wdw.USE),wince)
+wdw.CFLAGS += -DCC_WIN_BACKEND=CC_WIN_BACKEND_WIN32CE
 endif
 
-$(BUILD_DIR)/Window_%.c.o: $(SRC_DIR)/Window_%.c | $(BUILD_DIR)
-	$(CC) $(CFLAGS) $(WDW_CFLAGS) -c $< -o $@
+$(oc.build)/Window_%.c.o: $(oc.src)/Window_%.c | $(oc.build)
+	$(CC) $(CFLAGS) $(wdw.CFLAGS) -c $< -o $@
 
-override OBJS   += $(WDW_OBJS)
-override LDLIBS += $(WDW_LDLIBS)
-override CFLAGS += $(WDW_CFLAGS)
+override OBJS   += $(wdw.OBJS)
+override LDLIBS += $(wdw.LDLIBS)
+override CFLAGS += $(wdw.CFLAGS)

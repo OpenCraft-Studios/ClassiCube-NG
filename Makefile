@@ -2,12 +2,14 @@ PKGCONF ?= pkg-config
 
 TARGET    := OpenCraft
 USE       := linux gl2 x11 openal openssl
-SRC_DIR   := opencraft
-BUILD_DIR := /tmp/$(PTF_USE)-opencraft
 VERSION   := $(shell git describe --always --tags --dirty="*" --abbrev=1)
 
-override SRCS := $(filter-out Graphics_% Audio% Platform_% Window_%,$(wildcard $(SRC_DIR)/*.c))
-override OBJS  = $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.c.o,$(SRCS))
+oc.build    := /tmp/opencraft
+oc.src      := $(CURDIR)/opencraft
+bearssl.src := $(CURDIR)/bearssl
+
+override SRCS := $(filter-out Graphics_% Audio% Platform_% Window_%,$(wildcard $(oc.src)/*.c))
+override OBJS  = $(patsubst $(oc.src)/%.c,$(oc.build)/%.c.o,$(SRCS))
 
 .DEFAULT_GOAL := $(TARGET)
 
@@ -21,22 +23,22 @@ include $(oc.src)/certs.mk
 
 BEARSSL  ?= 1
 ifneq ($(BEARSSL), 0)
-include bearssl/module.mk
+include $(bearssl.src)/module.mk
 endif
 
 AUDIO    ?= 1
 ifneq ($(AUDIO), 0)
-include $(SRC_DIR)/audio.mk
+include $(oc.src)/audio.mk
 endif
 
 OPENGFX  ?= 1
 ifneq ($(OPENGFX), 0)
-include $(SRC_DIR)/opengfx.mk
+include $(oc.src)/opengfx.mk
 endif
 
 WINDOW   ?= 1
 ifneq ($(WINDOW), 0)
-include $(SRC_DIR)/window.mk
+include $(oc.src)/window.mk
 endif
 
 $(TARGET): $(OBJS)
@@ -44,16 +46,16 @@ $(TARGET): $(OBJS)
 	$(call log_link,$@,$(words $(OBJS)))
 	chmod +x $@
 
-$(BUILD_DIR)/%.c.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
+$(oc.build)/%.c.o: $(oc.src)/%.c | $(oc.build)
 	$(call log_compile,$(<F),opencraft,$(VERSION))
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(BUILD_DIR):
+$(oc.build):
 	@mkdir -p $@
 
 
 clean:
-	rm -rf $(BUILD_DIR) $(TARGET)
+	rm -rf $(BUILD_DIRS) $(TARGET)
 
 env:
 	@echo export MAKEFLAGS=\"-sj$(shell nproc) --no-print-directory\"\;
@@ -67,7 +69,9 @@ env:
 .PHONY: clean env
 include misc/logging.mk
 
-override COMMON_FLAGS += $(ARCH_FLAGS) -DCC_BUILD_MANUAL
+override BUILD_DIRS   += $(oc.build)
+
+override COMMON_FLAGS += $(ARCH_FLAGS) -pipe -DCC_BUILD_MANUAL
 override CFLAGS       += $(COMMON_FLAGS)
 override CXXFLAGS     += $(COMMON_FLAGS)
 override LDFLAGS      +=
