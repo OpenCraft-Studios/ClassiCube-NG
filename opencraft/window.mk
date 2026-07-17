@@ -4,22 +4,22 @@ WDW_OBJS     := $(BUILD_DIR)/Window_$(WDW_USE).c.o
 # TODO: BeOS not supported yet
 
 ifeq ($(WDW_USE), )
-	$(error Please, select a window backend or disable it (make ... WINDOW=0))
+$(error Please, select a window backend or disable it (make ... WINDOW=0))
 else ifeq ($(WDW_USE), x11)
-	WDW_LDLIBS += $(shell $(PKGCONF) --libs x11 xi)
-	WDW_CFLAGS += $(shell $(PKGCONF) --cflags x11 xi) 
-	WDW_CFLAGS += -DCC_BUILD_XINPUT2
-	WDW_CFLAGS += -DCC_WIN_BACKEND=CC_WIN_BACKEND_X11
+WDW_LDLIBS += $(shell $(PKGCONF) --libs x11 xi)
+WDW_CFLAGS += $(shell $(PKGCONF) --cflags x11 xi) 
+WDW_CFLAGS += -DCC_BUILD_XINPUT2
+WDW_CFLAGS += -DCC_WIN_BACKEND=CC_WIN_BACKEND_X11
 else ifeq ($(WDW_USE), x11)
-	WDW_CFLAGS += -DCC_WIN_BACKEND=CC_WIN_BACKEND_SDL2
+WDW_CFLAGS += -DCC_WIN_BACKEND=CC_WIN_BACKEND_SDL2
 else ifeq ($(WDW_USE), x11)
-	WDW_CFLAGS += -DCC_WIN_BACKEND=CC_WIN_BACKEND_SDL3
+WDW_CFLAGS += -DCC_WIN_BACKEND=CC_WIN_BACKEND_SDL3
 else ifeq ($(WDW_USE), x11)
-	WDW_CFLAGS += -DCC_WIN_BACKEND=CC_WIN_BACKEND_TERMINAL
+WDW_CFLAGS += -DCC_WIN_BACKEND=CC_WIN_BACKEND_TERMINAL
 else ifeq ($(WDW_USE), x11)
-	WDW_CFLAGS += -DCC_WIN_BACKEND=CC_WIN_BACKEND_WIN32
+WDW_CFLAGS += -DCC_WIN_BACKEND=CC_WIN_BACKEND_WIN32
 else ifeq ($(WDW_USE), x11)
-	WDW_CFLAGS += -DCC_WIN_BACKEND=CC_WIN_BACKEND_WIN32CE
+WDW_CFLAGS += -DCC_WIN_BACKEND=CC_WIN_BACKEND_WIN32CE
 endif
 
 $(BUILD_DIR)/Window_%.c.o: $(SRC_DIR)/Window_%.c | $(BUILD_DIR)
