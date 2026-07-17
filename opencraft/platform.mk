@@ -1,26 +1,26 @@
 PTF_BACKENDS := linux posix mac-classic wince windows
 PTF_USE       = $(filter $(PTF_BACKENDS), $(USE))
 ifeq ($(PTF_USE), linux)
-	PTF_USE     = posix
-	PTF_CFLAGS += -DCC_BUILD_LINUX
+PTF_USE     = posix
+PTF_CFLAGS += -DCC_BUILD_LINUX
 endif
 
 # TODO: BeOS won't compile
 PTF_OBJS     := $(BUILD_DIR)/Platform_$(PTF_USE).c.o
 
 ifeq ($(PTF_USE), )
-	$(error Please, select a platform (mac-classic, posix, wince, windows))
+$(error Please, select a platform (mac-classic, posix, wince, windows))
 else ifeq ($(PTF_USE), posix)
-	PTF_LDLIBS += -lpthread
-	PTF_CFLAGS += -DCC_BUILD_POSIX
+PTF_LDLIBS += -lpthread
+PTF_CFLAGS += -DCC_BUILD_POSIX
 else ifeq ($(PTF_USE), mac-classic)
-	PTF_CFLAGS += -DCC_BUILD_MACCLASSIC
+PTF_CFLAGS += -DCC_BUILD_MACCLASSIC
 else ifeq ($(PTF_USE), wince)
-	PTF_CFLAGS += -DCC_BUILD_WINCE
+PTF_CFLAGS += -DCC_BUILD_WINCE
 else ifeq ($(PTF_USE), windows)
-	PTF_CFLAGS += -DCC_BUILD_WIN
+PTF_CFLAGS += -DCC_BUILD_WIN
 #else ifeq ($(PTF_USE), beos)
-#	PTF_CFLAGS += -DCC_BUILD_BEOS
+#PTF_CFLAGS += -DCC_BUILD_BEOS
 endif
 
 $(BUILD_DIR)/Platform_%.c.o: $(SRC_DIR)/Platform_%.c | $(BUILD_DIR)

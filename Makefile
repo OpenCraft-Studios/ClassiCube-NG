@@ -1,25 +1,23 @@
-# TODO: Logging
-# TODO: Add colors
-
 PKGCONF ?= pkg-config
-CC ?= clang
-LD ?= mold
 
 TARGET    := OpenCraft
-USE       := openal gl2 linux x11 openssl
+USE       := linux gl2 x11 openal openssl
 SRC_DIR   := opencraft
-BUILD_DIR := /tmp/opencraft
+BUILD_DIR := /tmp/$(PTF_USE)-opencraft
+VERSION   := $(shell git describe --always --tags --dirty="*" --abbrev=1)
 
-override SRCS := $(filter-out Graphics_% Audio% Platform_% Window_%, $(wildcard $(SRC_DIR)/*.c))
-override OBJS  = $(patsubst $(SRC_DIR)/%.c, $(BUILD_DIR)/%.c.o, $(SRCS))
+override SRCS := $(filter-out Graphics_% Audio% Platform_% Window_%,$(wildcard $(SRC_DIR)/*.c))
+override OBJS  = $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.c.o,$(SRCS))
 
-.DEFAULT: $(TARGET)
+.DEFAULT_GOAL := $(TARGET)
 
-native: ARCH_FLAGS += -O3 -march=native -mtune=native
-native: $(TARGET)
+oc.build    := /tmp/opencraft
+oc.src      := $(CURDIR)/opencraft
+bearssl.src := $(CURDIR)/bearssl
 
-include $(SRC_DIR)/platform.mk
-include $(SRC_DIR)/certs.mk
+include misc/logging.mk
+include $(oc.src)/platform.mk
+include $(oc.src)/certs.mk
 
 BEARSSL  ?= 1
 ifneq ($(BEARSSL), 0)
@@ -43,9 +41,11 @@ endif
 
 $(TARGET): $(OBJS)
 	$(CC) -fuse-ld=$(LD) $(LDFLAGS) $^ $(LDLIBS) -o $@
+	$(call log_link,$@,$(words $(OBJS)))
 	chmod +x $@
 
-$(BUILD_DIR)/%.c.o: $(SRC_DIR)/%.c
+$(BUILD_DIR)/%.c.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
+	$(call log_compile,$(<F),opencraft,$(VERSION))
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR):
@@ -55,7 +55,17 @@ $(BUILD_DIR):
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET)
 
-.PHONY: clean
+env:
+	@echo export MAKEFLAGS=\"-sj$(shell nproc) --no-print-directory\"\;
+	@echo export LD=\"$(shell command -v ld.mold || command -v lld || command -v ld.gold)\"\;
+	@echo export CC=\"$(shell command -v clang || command -v gcc || command -v cc)\"\;
+	@echo "# -s,--silent,--quiet:  Be silent, don't print recipes."
+	@echo "# -j,--jobs=$(shell nproc):          Harness full PC power."
+	@echo "# --no-print-directory: Don't print annoying messages if compiling recursively."
+	@echo 
+
+.PHONY: clean env
+include misc/logging.mk
 
 override COMMON_FLAGS += $(ARCH_FLAGS) -DCC_BUILD_MANUAL
 override CFLAGS       += $(COMMON_FLAGS)
