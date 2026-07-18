@@ -1,0 +1,52 @@
+name: Install LLVM toolchain
+description: Install LLVM toolchain and development dependencies
+
+inputs:
+  architecture:
+    description: Additional architecture support to install (i386 or x86_64)
+    required: false
+    default: "x86_64"
+
+runs:
+  using: composite
+  steps:
+    - name: Configure apt for 32-bit packages
+      if: inputs.architecture == 'i386'
+      shell: bash
+      run: |
+        sudo tee /etc/apt/apt.conf.d/99-no_recommends <<< 'APT::Install-Suggests "false";'
+        sudo dpkg --add-architecture i386
+
+    - name: Update apt repositories
+      shell: bash
+      run: |
+        sudo apt-get update
+
+    - name: Install LLVM toolchain
+      if: always()
+      shell: bash
+      run: |
+        sudo apt-get install -y \
+          clang \
+          llvm \
+          mold \
+          gcc-multilib \
+          libx11-dev \
+          libgl-dev \
+          libc6-dev \
+          libxi-dev \
+          libglvnd-dev \
+          x11proto-core-dev \
+          x11proto-input-dev \
+          x11proto-kb-dev
+
+    - name: Install development libraries for i386
+      if: inputs.architecture == 'i386'
+      shell: bash
+      run: |
+        sudo apt-get install -y \
+          libx11-dev:i386 \
+          libgl-dev:i386 \
+          libc6-dev:i386 \
+          libxi-dev:i386 \
+          libglvnd-dev:i386
