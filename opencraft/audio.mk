@@ -1,6 +1,6 @@
 override AUD_BACKENDS := openal os2 sles winmm
 
-aud.USE   = $(filter $(AUD_BACKENDS), $(USE))
+aud.USE   = $(lastword $(filter $(AUD_BACKENDS), $(USE)))
 aud.OBJS := $(oc.build)/Audio.c.o $(oc.build)/Audio_$(aud.USE).c.o
 
 ifeq ($(aud.USE),)

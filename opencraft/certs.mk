@@ -1,5 +1,5 @@
 CRT_BACKENDS := windows android openssl apple-sec
-CRT_USE       = $(filter $(CRT_BACKENDS), $(USE))
+CRT_USE       = $(lastword $(filter $(CRT_BACKENDS), $(USE)))
 
 ifeq ($(CRT_USE), )
 	override CRT_USE = openssl

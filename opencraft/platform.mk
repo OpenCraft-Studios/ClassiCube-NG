@@ -1,6 +1,6 @@
 override PTF_BACKENDS := linux posix mac-classic wince windows
 
-plat.USE       = $(filter $(PTF_BACKENDS),$(USE))
+plat.USE       = $(lastword $(filter $(PTF_BACKENDS),$(USE)))
 ifeq ($(plat.USE), linux)
 plat.USE     = posix
 plat.CFLAGS += -DCC_BUILD_LINUX
