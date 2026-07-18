@@ -20,28 +20,15 @@ jobs:
             output: OpenCraft-x86_64v1
 
     steps:
-      - name: Install LLVM toolchain
-        run: |
-          sudo tee /etc/apt/apt.conf.d/99-no_recommends <<< 'APT::Install-Suggests "false";'
-          sudo dpkg --add-architecture i386
-
-          sudo apt-get update
-          sudo apt-get install -y \
-            gcc-multilib \
-            clang llvm mold \
-            libx11-dev   libx11-dev:i386 \
-            libgl-dev    libgl-dev:i386 \
-            libc6-dev    libc6-dev:i386 \
-            libxi-dev    libxi-dev:i386 \
-            libglvnd-dev libglvnd-dev:i386  \
-            x11proto-core-dev \
-            x11proto-input-dev \
-            x11proto-kb-dev
-
       - name: Fetch OpenCraft source code
         uses: actions/checkout@v7
         with:
           submodules: recursive
+      
+      - name: Install LLVM toolchain
+        uses: ./.github/actions/llvm-toolchain
+        with:
+          architecture: ${{ matrix.arch }}
 
       - name: Setup compiler wrapper
         run: |
