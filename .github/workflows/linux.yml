@@ -25,24 +25,11 @@ jobs:
         with:
           submodules: recursive
       
-      - name: Install LLVM toolchain
+      - name: Setup LLVM toolchain
         uses: ./.github/actions/llvm-toolchain
         with:
           architecture: ${{ matrix.arch }}
-
-      - name: Setup compiler wrapper
-        run: |
-          mkdir -p "$RUNNER_TEMP/bin"
-          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
-
-          CC="$RUNNER_TEMP/bin/${{ matrix.arch }}-linux-llvm-clang"
-
-          cat > "$CC" << EOF
-          #!/usr/bin/env bash
-          exec clang -pipe -fuse-ld=mold ${{ matrix.cflags }} "\$@"
-          EOF
-          chmod +x "$CC"
-          echo "CC=$CC" >> "$GITHUB_ENV"
+          cflags: ${{ matrix.cflags }}
 
       - name: Compile
         run: |
