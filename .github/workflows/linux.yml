@@ -33,13 +33,8 @@ jobs:
 
       - name: Compile
         run: |
-          CFLAGS="$(pkg-config --cflags x11 xi gl)"
-          LIBS="$(pkg-config --libs x11 xi gl) -ldl -lm -lpthread"
-          "$CC" $CFLAGS -Weverything -Wno-unsafe-buffer-usage -O2 opencraft/*.c bearssl/*.c -o "${{ matrix.output }}" $LIBS
-
-      - name: Strip binary
-        run: |
-          llvm-strip "${{ matrix.output }}"
+          make TARGET="${{ matrix.output }}" \
+            COMMON_FLAGS="-Weverything -Wno-unsafe-buffer-usage -O2"
 
       - uses: actions/upload-artifact@v7
         with:
