@@ -100,5 +100,5 @@ override BUILD_DIRS   += $(oc.build)
 override COMMON_FLAGS += $(ARCH_FLAGS) -pipe -DCC_BUILD_MANUAL
 override CFLAGS       += $(COMMON_FLAGS)
 override CXXFLAGS     += $(COMMON_FLAGS)
-override LDFLAGS      +=
+override LDFLAGS      += -s
 override LDLIBS       += -lm
