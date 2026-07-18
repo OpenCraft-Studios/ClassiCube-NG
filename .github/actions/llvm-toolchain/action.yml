@@ -1,11 +1,15 @@
-name: Install LLVM toolchain
-description: Install LLVM toolchain and development dependencies
+name: Setup LLVM toolchain
+description: Setup LLVM toolchain and development dependencies
 
 inputs:
   architecture:
     description: Additional architecture support to install (i386 or x86_64)
     required: false
     default: "x86_64"
+  cflags:
+      description: Additional flags that clang should execute
+      required: true
+      default: ""
 
 runs:
   using: composite
@@ -50,3 +54,22 @@ runs:
           libc6-dev:i386 \
           libxi-dev:i386 \
           libglvnd-dev:i386
+
+    - name: Setup build environment
+      shell: bash
+      run: |
+        mkdir -p "$RUNNER_TEMP/bin"
+        echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+
+        CC="$RUNNER_TEMP/bin/${{ inputs.architecture }}-linux-llvm-clang"
+        LD=$(command -v mold || command -v ld.gold || command -v lld)
+
+        cat > "$CC" << EOF
+        #!/usr/bin/env bash
+        exec clang ${{ inputs.cflags }} "\$@"
+        EOF
+
+        chmod +x "$CC"
+        echo "CC=$CC" >> "$GITHUB_ENV"
+        echo "LD=$LD" >> "$GITHUB_ENV"
+
