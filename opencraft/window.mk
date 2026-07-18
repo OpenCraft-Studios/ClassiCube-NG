@@ -1,7 +1,7 @@
 override WDW_BACKENDS := x11 mac-classic os2 sdl2 sdl3 terminal windows wince
 
 # TODO: Add support for BeOS
-wdw.USE   = $(filter $(WDW_BACKENDS),$(USE))
+wdw.USE   = $(lastword $(filter $(WDW_BACKENDS),$(USE)))
 wdw.OBJS := $(oc.build)/Window_$(wdw.USE).c.o
 
 ifeq ($(wdw.USE),)

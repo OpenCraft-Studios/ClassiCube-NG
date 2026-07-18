@@ -1,5 +1,6 @@
 override GFX_BACKENDS := gl1 gl2 gl11 softgpu softmin softfp d3d9 d3d11
-gfx.USE   = $(filter $(GFX_BACKENDS),$(USE))
+
+gfx.USE   = $(lastword $(filter $(GFX_BACKENDS),$(USE)))
 gfx.OBJS := $(oc.build)/Graphics_$(gfx.USE).c.o
 
 ifeq ($(gfx.USE),)
