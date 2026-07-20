@@ -2220,8 +2220,8 @@ void HacksBindingsScreen_Show(void) {
 *--------------------------------------------------OtherBindingsScreen----------------------------------------------------*
 *#########################################################################################################################*/
 void OtherBindingsScreen_Show(void) {
-	static const cc_uint8 binds[]     = { BIND_EXT_INPUT, BIND_HIDE_FPS, BIND_HIDE_GUI, BIND_HOTBAR_SWITCH, BIND_DROP_BLOCK,BIND_SCREENSHOT, BIND_FULLSCREEN, BIND_AXIS_LINES, BIND_AUTOROTATE, BIND_SMOOTH_CAMERA, BIND_IDOVERLAY, BIND_BREAK_LIQUIDS };
-	static const char* const descs[]  = { "Show ext input", "Hide FPS", "Hide gui", "Hotbar switching", "Drop block", "Screenshot", "Fullscreen", "Show axis lines", "Auto-rotate", "Smooth camera", "ID overlay", "Breakable liquids" };
+	static const cc_uint8 binds[]     = { BIND_EXT_INPUT, BIND_HIDE_FPS, BIND_HIDE_GUI, BIND_DROP_BLOCK,BIND_SCREENSHOT, BIND_FULLSCREEN, BIND_AXIS_LINES, BIND_AUTOROTATE, BIND_SMOOTH_CAMERA, BIND_IDOVERLAY, BIND_BREAK_LIQUIDS };
+	static const char* const descs[]  = { "Show ext input", "Hide FPS", "Hide gui", "Drop block", "Screenshot", "Fullscreen", "Show axis lines", "Auto-rotate", "Smooth camera", "ID overlay", "Breakable liquids" };
 	
 	KeyBindsScreen_Reset(Menu_SwitchBindsHacks, Menu_SwitchBindsMouse, 260);
 	KeyBindsScreen_SetLayout(-140, 10, 6);

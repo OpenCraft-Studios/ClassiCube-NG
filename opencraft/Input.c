@@ -405,7 +405,7 @@ const BindMapping PadBind_Defaults[BIND_COUNT] = {
 	{ 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, /* BIND_SCREENSHOT, BIND_FULLSCREEN, BIND_THIRD_PERSON, BIND_HIDE_GUI */
 	{ 0, 0 }, { 0, 0 }, { 0, 0 },           /* BIND_AXIS_LINES, BIND_ZOOM_SCROLL, BIND_HALF_SPEED */
 	{ CCPAD_L, 0 }, { 0, 0 },{ CCPAD_R, 0 },/* BIND_DELETE_BLOCK, BIND_PICK_BLOCK, BIND_PLACE_BLOCK */
-	{ 0, 0 }, { 0, 0 }, { 0, 0 },           /* BIND_AUTOROTATE, BIND_HOTBAR_SWITCH, BIND_SMOOTH_CAMERA */
+	{ 0, 0 },           { 0, 0 },           /* BIND_AUTOROTATE, BIND_SMOOTH_CAMERA */
 	{ 0, 0 }, { 0, 0 }, { 0, 0 },           /* BIND_DROP_BLOCK, BIND_IDOVERLAY, BIND_BREAK_LIQUIDS */
 	{ 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, /* BIND_LOOK_UP, BIND_LOOK_DOWN, BIND_LOOK_RIGHT, BIND_LOOK_LEFT */
 	{ 0, 0 }, { 0, 0 }, { 0, 0 },           /* BIND_HOTBAR_1, BIND_HOTBAR_2, BIND_HOTBAR_3 */
@@ -427,8 +427,7 @@ const BindMapping KeyBind_Defaults[BIND_COUNT] = {
 	{ CCKEY_F5, 0 },     { CCKEY_F1, 0 },           /* BIND_THIRD_PERSON, BIND_HIDE_GUI */ 
 	{ CCKEY_F7, 0 }, { 'C', 0 }, { CCKEY_LCTRL, 0 },/* BIND_AXIS_LINES, BIND_ZOOM_SCROLL, BIND_HALF_SPEED */
 	{ CCMOUSE_L, 0},{ CCMOUSE_M, 0},{ CCMOUSE_R, 0},/* BIND_DELETE_BLOCK, BIND_PICK_BLOCK, BIND_PLACE_BLOCK */
-	{ CCKEY_F6, 0 },     { CCKEY_LALT, 0 },         /* BIND_AUTOROTATE, BIND_HOTBAR_SWITCH */
-
+	{ CCKEY_F6, 0 },                                /* BIND_AUTOROTATE */
 	{ CCKEY_F8, 0 },     { 'G', 0 },                /* BIND_SMOOTH_CAMERA, BIND_DROP_BLOCK */
 	{ CCKEY_F10, 0 },    { 0, 0 },                  /* BIND_IDOVERLAY, BIND_BREAK_LIQUIDS */
 	{ 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 },         /* BIND_LOOK_UP, BIND_LOOK_DOWN, BIND_LOOK_RIGHT, BIND_LOOK_LEFT */
@@ -446,7 +445,7 @@ static const char* const bindNames[BIND_COUNT] = {
 	"ExtInput", "HideFPS", "Screenshot", "Fullscreen", 
 	"ThirdPerson", "HideGUI", "AxisLines", "ZoomScrolling", 
 	"HalfSpeed", "DeleteBlock", "PickBlock", "PlaceBlock", 
-	"AutoRotate", "HotbarSwitching", "SmoothCamera", 
+	"AutoRotate", "SmoothCamera", 
 	"DropBlock", "IDOverlay", "BreakableLiquids",
 	"LookUp", "LookDown", "LookRight", "LookLeft",
 	"Hotbar1", "Hotbar2", "Hotbar3",

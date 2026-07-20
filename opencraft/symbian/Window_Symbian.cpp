@@ -67,7 +67,7 @@ const BindMapping symbian_binds_12[BIND_COUNT] = {
 	{ 0, 0 },            { 0, 0 },                  /* BIND_THIRD_PERSON, BIND_HIDE_GUI */ 
 	{ 0, 0 }, { 0, 0 },  { 0, 0 },                  /* BIND_AXIS_LINES, BIND_ZOOM_SCROLL, BIND_HALF_SPEED */
 	{ '5', 0 }, { 0, 0 },{ CCKEY_F1, 0},            /* BIND_DELETE_BLOCK, BIND_PICK_BLOCK, BIND_PLACE_BLOCK */
-	{ 0, 0 },            { 0, 0 },                  /* BIND_AUTOROTATE, BIND_HOTBAR_SWITCH */
+	{ 0, 0 },                                       /* BIND_AUTOROTATE */
 
 	{ 0, 0 },            { CCKEY_BACKSPACE, 0 },    /* BIND_SMOOTH_CAMERA, BIND_DROP_BLOCK */
 	{ 0, 0 },            { 0, 0 },                  /* BIND_IDOVERLAY, BIND_BREAK_LIQUIDS */
@@ -92,7 +92,7 @@ const BindMapping symbian_binds_qwerty[BIND_COUNT] = {
 	{ 0, 0 },            { 0, 0 },                  /* BIND_THIRD_PERSON, BIND_HIDE_GUI */ 
 	{ 0, 0 }, { 0, 0 },  { CCKEY_LCTRL, 0 },        /* BIND_AXIS_LINES, BIND_ZOOM_SCROLL, BIND_HALF_SPEED */
 	{ 'E', 0 }, { 0, 0 },{ 'Q', 0},                 /* BIND_DELETE_BLOCK, BIND_PICK_BLOCK, BIND_PLACE_BLOCK */
-	{ 0, 0 },            { 0, 0 },                  /* BIND_AUTOROTATE, BIND_HOTBAR_SWITCH */
+	{ 0, 0 },                                       /* BIND_AUTOROTATE */
 
 	{ 0, 0 },            { CCKEY_BACKSPACE, 0 },    /* BIND_SMOOTH_CAMERA, BIND_DROP_BLOCK */
 	{ 0, 0 },            { 0, 0 },                  /* BIND_IDOVERLAY, BIND_BREAK_LIQUIDS */

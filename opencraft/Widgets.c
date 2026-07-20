@@ -562,9 +562,7 @@ static int HotbarWidget_CycleIndex(int dir) {
 }
 
 static int HotbarWidget_KeyDown(void* widget, int key, struct InputDevice* device) {
-	struct HotbarWidget* w = (struct HotbarWidget*)widget;
-	int index = HotbarWidget_MapKey(key, device);
-
+	const int index = HotbarWidget_MapKey(key, device);
 	if (index != -1) {
 		Inventory_SetSelectedIndex(index);
 		return true;
@@ -579,12 +577,9 @@ static int HotbarWidget_KeyDown(void* widget, int key, struct InputDevice* devic
 }
 
 static void HotbarWidget_InputUp(void* widget, int key, struct InputDevice* device) {
-	struct HotbarWidget* w = (struct HotbarWidget*)widget;
-	/* Need to handle these cases:
-	     a) user presses alt then number
-	     b) user presses alt
-	   We only do case b) if case a) did not happen */
-	if (!InputBind_Claims(BIND_HOTBAR_SWITCH, key, device)) return;
+	(void)widget;
+	(void)key;
+	(void)device;
 }
 
 static int HotbarWidget_PointerDown(void* widget, int id, int x, int y) {
@@ -648,16 +643,8 @@ static int HotbarWidget_PointerMove(void* widget, int id, int x, int y) {
 }
 
 static int HotbarWidget_MouseScroll(void* widget, float delta) {
-	struct HotbarWidget* w = (struct HotbarWidget*)widget;
-	int index;
-
-	if (Bind_IsTriggered[BIND_HOTBAR_SWITCH]) {
-		index = Inventory.Offset / 9;
-		index = HotbarWidget_ScrolledIndex(w, delta, index, 1);
-	} else {
-		index = HotbarWidget_ScrolledIndex(w, delta, Inventory.SelectedIndex, -1);
-		Inventory_SetSelectedIndex(index);
-	}
+	const int index = HotbarWidget_ScrolledIndex(widget, delta, Inventory.SelectedIndex, -1);
+	Inventory_SetSelectedIndex(index);
 	return true;
 }
 

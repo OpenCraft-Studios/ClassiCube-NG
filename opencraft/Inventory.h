@@ -12,12 +12,11 @@ struct IGameComponent;
 extern struct IGameComponent Inventory_Component;
 
 /* Number of hotbars that can be selected between */
-#define INVENTORY_HOTBARS 9
 #define HOTBAR_MAX_INDEX 8
 
 CC_VAR extern struct _InventoryData {
 	/* Stores the currently bound blocks for all hotbars. */
-	BlockID Table[INVENTORY_HOTBARS * 9];
+	BlockID Table[9];
 	/* Mapping of indices in inventory menu to block IDs. */
 	BlockID Map[BLOCK_COUNT];
 	/* Currently selected index within a hotbar. */
@@ -31,9 +30,9 @@ CC_VAR extern struct _InventoryData {
 } Inventory;
 
 /* Gets the block at the nth index in the current hotbar. */
-#define Inventory_Get(idx) (Inventory.Table[Inventory.Offset + (idx)])
+#define Inventory_Get(idx) (Inventory.Table[idx])
 /* Sets the block at the nth index in the current hotbar. */
-#define Inventory_Set(idx, block) Inventory.Table[Inventory.Offset + (idx)] = block
+#define Inventory_Set(idx, block) Inventory.Table[idx] = block
 /* Gets the currently selected block. */
 #define Inventory_SelectedBlock Inventory_Get(Inventory.SelectedIndex)
 
