@@ -24,7 +24,7 @@ void Inventory_SetSelectedIndex(int index) {
 
 void Inventory_SetHotbarIndex(int index) {
 	if (!Inventory_CheckChangeSelected() || Game_ClassicMode) return;
-	Inventory.Offset = index * INVENTORY_BLOCKS_PER_HOTBAR;
+	Inventory.Offset = index * 9;
 	Event_RaiseVoid(&UserEvents.HeldBlockChanged);
 }
 
@@ -38,7 +38,7 @@ void Inventory_SetSelectedBlock(BlockID block) {
 	if (!Inventory_CheckChangeSelected()) return;
 
 	/* Swap with currently selected block if given block is already in the hotbar */
-	for (i = 0; i < INVENTORY_BLOCKS_PER_HOTBAR; i++) {
+	for (i = 0; i < 9; i++) {
 		if (Inventory_Get(i) != block) continue;
 		Inventory_Set(i, Inventory_SelectedBlock);
 		break;
@@ -60,19 +60,18 @@ void Inventory_PickBlock(BlockID block) {
 	}
 
 	/* Try to replace same block */
-	for (i = 0; i < INVENTORY_BLOCKS_PER_HOTBAR; i++) {
+	for (i = 0; i < 9; i++) {
 		if (Inventory_Get(i) != block) continue;
 		Inventory_SetSelectedIndex(i); return;
 	}
 
 	if (AutoRotate_Enabled) {
 		/* Try to replace existing autorotate variant */
-		for (i = 0; i < INVENTORY_BLOCKS_PER_HOTBAR; i++) {
-			if (AutoRotate_BlocksShareGroup(Inventory_Get(i), block)) {
-				Inventory_SetSelectedIndex(i);
-				Inventory_SetSelectedBlock(block);
-				return;
-			}
+		for (i = 0; i < 9; i++) {
+			if (!AutoRotate_BlocksShareGroup(Inventory_Get(i), block)) continue;
+			Inventory_SetSelectedIndex(i);
+			Inventory_SetSelectedBlock(block);
+			return;
 		}
 	}
 
@@ -82,7 +81,7 @@ void Inventory_PickBlock(BlockID block) {
 	}
 
 	/* Try to replace empty slots */
-	for (i = 0; i < INVENTORY_BLOCKS_PER_HOTBAR; i++) {
+	for (i = 0; i < 9; i++) {
 		if (Inventory_Get(i) != BLOCK_AIR) continue;
 		Inventory_Set(i, block);
 		Inventory_SetSelectedIndex(i); return;
@@ -144,7 +143,7 @@ static void OnInit(void) {
 	OnReset();
 	Inventory.BlocksPerRow = Game_Version.BlocksPerRow;
 	
-	for (i = 0; i < INVENTORY_BLOCKS_PER_HOTBAR; i++) {
+	for (i = 0; i < 9; i++) {
 		inv[i] = Game_Version.Hotbar[i];
 	}
 }

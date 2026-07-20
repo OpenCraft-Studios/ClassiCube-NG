@@ -1465,7 +1465,7 @@ static void CPE_SetHotbar(cc_uint8* data) {
 	ReadBlock(data, block);
 	index = *data;
 
-	if (index >= INVENTORY_BLOCKS_PER_HOTBAR) return;
+	if (index >= 9) return;
 	Inventory_Set(index, block);
 }
 
