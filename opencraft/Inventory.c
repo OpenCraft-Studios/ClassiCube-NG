@@ -22,9 +22,6 @@ void Inventory_SetSelectedIndex(int index) {
 	Event_RaiseVoid(&UserEvents.HeldBlockChanged);
 }
 
-void Inventory_SwitchHotbar(void) {
-}
-
 void Inventory_SetSelectedBlock(BlockID block) {
 	int i;
 	if (!Inventory_CheckChangeSelected()) return;

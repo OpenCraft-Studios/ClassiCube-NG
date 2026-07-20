@@ -42,7 +42,6 @@ CC_VAR extern struct _InventoryData {
 cc_bool Inventory_CheckChangeSelected(void);
 /* Attempts to set the currently selected index in a hotbar. */
 void Inventory_SetSelectedIndex(int index);
-void Inventory_SwitchHotbar(void);
 /* Attempts to set the block for the selected index in the current hotbar. */
 /* NOTE: If another slot is already this block, the selected index is instead changed. */
 void Inventory_SetSelectedBlock(BlockID block);

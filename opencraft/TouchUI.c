@@ -520,7 +520,7 @@ static struct Widget* touch_widgets[ONSCREEN_MAX_BTNS + TOUCH_EXTRA_BTNS + 2] = 
 
 static void TouchScreen_ChatClick(void* s,     void* w) { ChatScreen_OpenInput(&String_Empty); }
 static void TouchScreen_MoreClick(void* s,     void* w) { TouchMoreScreen_Show(); }
-static void TouchScreen_SwitchClick(void* s,   void* w) { Inventory_SwitchHotbar(); }
+static void TouchScreen_SwitchClick(void* s,   void* w) { }
 
 static void TouchScreen_TabClick(void* s, void* w) {
 	struct Screen* tablist = Gui_GetScreen(GUI_PRIORITY_TABLIST);

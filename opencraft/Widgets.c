@@ -590,9 +590,6 @@ static void HotbarWidget_InputUp(void* widget, int key, struct InputDevice* devi
 	   We only do case b) if case a) did not happen */
 	if (!InputBind_Claims(BIND_HOTBAR_SWITCH, key, device)) return;
 	if (w->altHandled) { w->altHandled = false; return; } /* handled already */
-
-	/* Don't switch hotbar when alt+tabbing to another window */
-	if (Window_Main.Focused) Inventory_SwitchHotbar();
 }
 
 static int HotbarWidget_PointerDown(void* widget, int id, int x, int y) {
