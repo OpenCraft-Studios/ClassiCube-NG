@@ -575,7 +575,6 @@ static int HotbarWidget_KeyDown(void* widget, int key, struct InputDevice* devic
 
 	if (Bind_IsTriggered[BIND_HOTBAR_SWITCH]) {
 		/* Pick from first to ninth row */
-		Inventory_SetHotbarIndex(index);
 		w->altHandled = true;
 	} else {
 		Inventory_SetSelectedIndex(index);
@@ -663,7 +662,6 @@ static int HotbarWidget_MouseScroll(void* widget, float delta) {
 	if (Bind_IsTriggered[BIND_HOTBAR_SWITCH]) {
 		index = Inventory.Offset / 9;
 		index = HotbarWidget_ScrolledIndex(w, delta, index, 1);
-		Inventory_SetHotbarIndex(index);
 		w->altHandled = true;
 	} else {
 		index = HotbarWidget_ScrolledIndex(w, delta, Inventory.SelectedIndex, -1);

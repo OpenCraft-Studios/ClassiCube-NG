@@ -22,15 +22,7 @@ void Inventory_SetSelectedIndex(int index) {
 	Event_RaiseVoid(&UserEvents.HeldBlockChanged);
 }
 
-void Inventory_SetHotbarIndex(int index) {
-	if (!Inventory_CheckChangeSelected() || Game_ClassicMode) return;
-	Inventory.Offset = index * 9;
-	Event_RaiseVoid(&UserEvents.HeldBlockChanged);
-}
-
 void Inventory_SwitchHotbar(void) {
-	int index = Inventory.Offset == 0 ? 1 : 0;
-	Inventory_SetHotbarIndex(index);
 }
 
 void Inventory_SetSelectedBlock(BlockID block) {
