@@ -71,7 +71,6 @@ struct HotbarWidget {
 	float slotWidth, selWidth;
 	float slotXOffset, elemSize;
 	float scrollAcc, scale;
-	cc_bool altHandled;
 	struct Texture ellipsisTex;
 	int state[HOTBAR_CORE_VERTICES / 4];
 	int verticesCount;

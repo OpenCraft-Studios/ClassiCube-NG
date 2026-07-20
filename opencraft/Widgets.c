@@ -565,21 +565,17 @@ static int HotbarWidget_KeyDown(void* widget, int key, struct InputDevice* devic
 	struct HotbarWidget* w = (struct HotbarWidget*)widget;
 	int index = HotbarWidget_MapKey(key, device);
 
-	if (index == -1) {
-		if (InputBind_Claims(BIND_HOTBAR_LEFT, key, device))
-			return HotbarWidget_CycleIndex(-1);
-		if (InputBind_Claims(BIND_HOTBAR_RIGHT, key, device))
-			return HotbarWidget_CycleIndex(+1);
-		return false;
+	if (index != -1) {
+		Inventory_SetSelectedIndex(index);
+		return true;
 	}
 
-	if (Bind_IsTriggered[BIND_HOTBAR_SWITCH]) {
-		/* Pick from first to ninth row */
-		w->altHandled = true;
-	} else {
-		Inventory_SetSelectedIndex(index);
-	}
-	return true;
+	if (InputBind_Claims(BIND_HOTBAR_LEFT, key, device))
+		return HotbarWidget_CycleIndex(-1);
+	else if (InputBind_Claims(BIND_HOTBAR_RIGHT, key, device))
+		return HotbarWidget_CycleIndex(+1);
+	
+	return false;
 }
 
 static void HotbarWidget_InputUp(void* widget, int key, struct InputDevice* device) {
@@ -589,7 +585,6 @@ static void HotbarWidget_InputUp(void* widget, int key, struct InputDevice* devi
 	     b) user presses alt
 	   We only do case b) if case a) did not happen */
 	if (!InputBind_Claims(BIND_HOTBAR_SWITCH, key, device)) return;
-	if (w->altHandled) { w->altHandled = false; return; } /* handled already */
 }
 
 static int HotbarWidget_PointerDown(void* widget, int id, int x, int y) {
@@ -659,7 +654,6 @@ static int HotbarWidget_MouseScroll(void* widget, float delta) {
 	if (Bind_IsTriggered[BIND_HOTBAR_SWITCH]) {
 		index = Inventory.Offset / 9;
 		index = HotbarWidget_ScrolledIndex(w, delta, index, 1);
-		w->altHandled = true;
 	} else {
 		index = HotbarWidget_ScrolledIndex(w, delta, Inventory.SelectedIndex, -1);
 		Inventory_SetSelectedIndex(index);
