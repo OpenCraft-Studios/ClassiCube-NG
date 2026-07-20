@@ -11,18 +11,13 @@ TARGET      := OpenCraft
 USE         := linux gl2 x11 openal openssl
 VERSION     := $(shell git describe --always --tags --dirty="*" --abbrev=1)
 
-oc.build    := /tmp/opencraft
+oc.build     = /tmp/$(plat.USE)-opencraft
 oc.src      := $(CURDIR)/opencraft
-bearssl.src := $(CURDIR)/bearssl
 
-override SRCS := $(filter-out Graphics_% Audio% Platform_% Window_%,$(wildcard $(oc.src)/*.c))
+override SRCS := $(filter-out Graphics_% Audio% Platform_% Window_% $(oc.src)/SSL.c,$(wildcard $(oc.src)/*.c))
 override OBJS  = $(patsubst $(oc.src)/%.c,$(oc.build)/%.c.o,$(SRCS))
 
 # ——— Modules —————————————————————————————————————————————————————————————————
-
-oc.build    := /tmp/opencraft
-oc.src      := $(CURDIR)/opencraft
-bearssl.src := $(CURDIR)/bearssl
 
 include misc/logging.mk
 include $(oc.src)/platform.mk
@@ -30,7 +25,7 @@ include $(oc.src)/certs.mk
 
 BEARSSL  ?= 1
 ifneq ($(BEARSSL), 0)
-include $(bearssl.src)/module.mk
+include bearssl/module.mk
 endif
 
 AUDIO    ?= 1
