@@ -5,7 +5,7 @@
 #include <Platform.h>
 #include "Inventory.h"
 #include "Drawer2D.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Funcs.h"
 #include "Model.h"
 #include "Generator.h"

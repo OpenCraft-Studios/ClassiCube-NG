@@ -6,7 +6,7 @@
 #include "ExtMath.h"
 #include "Funcs.h"
 #include "Game.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Model.h"
 #include "World.h"
 #include "Particle.h"

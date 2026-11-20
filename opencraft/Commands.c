@@ -9,7 +9,7 @@
 #include "Inventory.h"
 #include "Entity.h"
 #include <Window.h>
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Funcs.h"
 #include "Block.h"
 #include "EnvRenderer.h"

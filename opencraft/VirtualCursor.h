@@ -3,7 +3,7 @@
 #include "Drawer2D.h"
 #include "Input.h"
 #include "LBackend.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Game.h"
 
 static cc_bool vc_hooked;

@@ -5,7 +5,7 @@
 #include "Lighting.h"
 #include <Platform.h>
 #include "MapRenderer.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Drawer.h"
 #include "ExtMath.h"
 #include "Block.h"

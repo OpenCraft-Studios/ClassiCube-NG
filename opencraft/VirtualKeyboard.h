@@ -8,7 +8,7 @@
 #include "Utils.h"
 #include "LBackend.h"
 #include <Window.h>
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Game.h"
 
 static cc_bool kb_inited, kb_shift, kb_needsHook;

@@ -9,7 +9,7 @@
 #include "Http.h"
 #include "Funcs.h"
 #include "Entity.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Gui.h"
 #include "Screens.h"
 #include "Formats.h"

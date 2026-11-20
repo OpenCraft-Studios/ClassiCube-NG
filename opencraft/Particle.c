@@ -5,7 +5,7 @@
 #include "Lighting.h"
 #include "Entity.h"
 #include "TexturePack.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Funcs.h"
 #include "Game.h"
 #include "Event.h"

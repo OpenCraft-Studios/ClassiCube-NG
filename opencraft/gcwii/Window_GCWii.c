@@ -8,7 +8,7 @@
 #include "../Bitmap.h"
 #include "../Errors.h"
 #include "../ExtMath.h"
-#include "../Graphics.h"
+#include <Graphics.h>
 #include "../Options.h"
 #include "../VirtualKeyboard.h"
 #include "../VirtualDialog.h"

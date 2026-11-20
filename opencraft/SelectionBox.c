@@ -1,6 +1,6 @@
 #include "SelectionBox.h"
 #include "ExtMath.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Event.h"
 #include "Funcs.h"
 #include "Game.h"

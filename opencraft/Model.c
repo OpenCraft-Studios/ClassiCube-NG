@@ -2,7 +2,7 @@
 #include "ExtMath.h"
 #include "Funcs.h"
 #include "Game.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Entity.h"
 #include "Camera.h"
 #include "Event.h"
