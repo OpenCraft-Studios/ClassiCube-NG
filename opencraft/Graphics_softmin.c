@@ -1,4 +1,4 @@
-#include "Core.h"
+#include <Core.h>
 #if CC_GFX_BACKEND == CC_GFX_BACKEND_SOFTMIN
 #define CC_DYNAMIC_VBS_ARE_STATIC
 #define OVERRIDE_BEGEND2D_FUNCTIONS

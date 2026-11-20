@@ -1,4 +1,4 @@
-#include "Core.h"
+#include <Core.h>
 #if defined CC_BUILD_MACCLASSIC
 #define CC_NO_UPDATER
 #define CC_NO_DYNLIB

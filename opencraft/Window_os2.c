@@ -1,4 +1,4 @@
-#include "Core.h"
+#include <Core.h>
 #if defined CC_BUILD_OS2 && !defined CC_BUILD_SDL2
 #include "_WindowBase.h"
 #include "String_.h"

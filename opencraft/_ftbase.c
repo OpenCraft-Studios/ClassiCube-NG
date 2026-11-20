@@ -15,7 +15,7 @@
 /*                                                                         */
 /***************************************************************************/
 
-#include "Core.h"
+#include <Core.h>
 #ifdef CC_BUILD_FREETYPE
 #include "freetype/ft2build.h"
 #define  FT_MAKE_OPTION_SINGLE_OBJECT

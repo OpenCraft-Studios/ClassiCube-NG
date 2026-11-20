@@ -1,6 +1,6 @@
 #ifndef CC_ENVRENDERER_H
 #define CC_ENVRENDERER_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* 

@@ -2,7 +2,7 @@
 #define GL_SILENCE_DEPRECATION
 #define GLES_SILENCE_DEPRECATION
 
-#include "Core.h"
+#include <Core.h>
 #if CC_GFX_BACKEND == CC_GFX_BACKEND_GL1
 #include "_GraphicsBase.h"
 #include "Errors.h"

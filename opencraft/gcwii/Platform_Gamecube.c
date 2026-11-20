@@ -1,4 +1,4 @@
-#include "../Core.h"
+#include <Core.h>
 #if defined CC_BUILD_GAMECUBE
 
 #define CC_XTEA_ENCRYPTION

@@ -1,6 +1,6 @@
 #ifndef CC_OPTIONS_H
 #define CC_OPTIONS_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* 

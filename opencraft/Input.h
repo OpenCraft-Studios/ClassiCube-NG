@@ -1,6 +1,6 @@
 #ifndef CC_INPUT_H
 #define CC_INPUT_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* 

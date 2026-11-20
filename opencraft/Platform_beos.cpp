@@ -1,4 +1,4 @@
-#include "Core.h"
+#include <Core.h>
 #if defined CC_BUILD_BEOS || defined CC_BUILD_HAIKU
 extern "C" {
 #include "Platform.h"

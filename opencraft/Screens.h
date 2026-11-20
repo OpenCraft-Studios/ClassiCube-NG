@@ -1,6 +1,6 @@
 #ifndef CC_SCREENS_H
 #define CC_SCREENS_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* Contains all 2D non-menu screen implementations.

@@ -1,4 +1,4 @@
-#include "../Core.h"
+#include <Core.h>
 #include "../_WindowBase.h"
 #include "../Game.h"
 #include "../String_.h"

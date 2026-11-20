@@ -1,6 +1,6 @@
 #ifndef CC_GUI_H
 #define CC_GUI_H
-#include "Core.h"
+#include <Core.h>
 #include "PackedCol.h"
 
 CC_BEGIN_HEADER

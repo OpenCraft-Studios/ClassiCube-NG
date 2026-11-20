@@ -1,6 +1,6 @@
 #ifndef CC_QUEUE_H
 #define CC_QUEUE_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 struct Queue {

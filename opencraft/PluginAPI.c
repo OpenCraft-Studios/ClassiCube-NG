@@ -1,4 +1,4 @@
-#include "Core.h"
+#include <Core.h>
 
 #ifdef CC_BUILD_PLUGINS
 #include "Game.h"

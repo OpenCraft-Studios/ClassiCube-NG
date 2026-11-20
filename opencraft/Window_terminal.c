@@ -1,4 +1,4 @@
-#include "Core.h"
+#include <Core.h>
 #if CC_WIN_BACKEND == CC_WIN_BACKEND_TERMINAL
 #include "_WindowBase.h"
 #include "String_.h"

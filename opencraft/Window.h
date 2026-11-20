@@ -1,6 +1,6 @@
 #ifndef CC_WINDOW_H
 #define CC_WINDOW_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* 

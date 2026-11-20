@@ -1,6 +1,6 @@
 #ifndef CC_BLOCKID_H
 #define CC_BLOCKID_H
-#include "Core.h" /* TODO: Remove this include when we move to external defines */
+#include <Core.h> /* TODO: Remove this include when we move to external defines */
 /* List of all core/standard block IDs
    Copyright 2014-2025 ClassiCube | Licensed under BSD-3
 */

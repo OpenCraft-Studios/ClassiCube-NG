@@ -1,6 +1,6 @@
 #ifndef CC_BITMAP_H
 #define CC_BITMAP_H
-#include "Core.h"
+#include <Core.h>
 /* Represents a 2D array of pixels.
    Copyright 2014-2025 ClassiCube | Licensed under BSD-3
 */

@@ -1,6 +1,6 @@
 #ifndef CC_ENTITYRENDERERS_H
 #define CC_ENTITYRENDERERS_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* Renders supporting objects for entities (shadows and names)

@@ -1,4 +1,4 @@
-#include "Core.h"
+#include <Core.h>
 #if CC_WIN_BACKEND == CC_WIN_BACKEND_SDL2
 #undef CC_BUILD_EGL /* eglCreateWindowSurface can't use an SDL window */
 #include "_WindowBase.h"

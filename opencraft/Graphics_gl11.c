@@ -1,4 +1,4 @@
-#include "Core.h"
+#include <Core.h>
 #if CC_GFX_BACKEND == CC_GFX_BACKEND_GL11
 #include "_GraphicsBase.h"
 #include "Errors.h"

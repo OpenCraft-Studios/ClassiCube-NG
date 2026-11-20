@@ -1,7 +1,7 @@
 #ifndef CC_HTTP_H
 #define CC_HTTP_H
 #include "Constants.h"
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* 

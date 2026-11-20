@@ -1,4 +1,4 @@
-#include "Core.h"
+#include <Core.h>
 
 #if CC_AUD_BACKEND == CC_AUD_BACKEND_OPENAL
 /* Simpler to just include subset of OpenAL actually use here instead of including */
