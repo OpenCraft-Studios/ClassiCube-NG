@@ -1,5 +1,5 @@
-#include "../Window.h"
-#include "../Platform.h"
+#include <Window.h>
+#include <Platform.h>
 #include "../Input.h"
 #include "../Event.h"
 #include "../String_.h"
@@ -7,7 +7,7 @@
 #include "../Bitmap.h"
 #include "../Errors.h"
 #include "../ExtMath.h"
-#include "../Graphics.h"
+#include <Graphics.h>
 #include "../Launcher.h"
 #include "../LBackend.h"
 #include "../Options.h"

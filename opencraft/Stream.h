@@ -1,7 +1,7 @@
 #ifndef CC_STREAM_H
 #define CC_STREAM_H
 #include "Constants.h"
-#include "Platform.h"
+#include <Platform.h>
 CC_BEGIN_HEADER
 
 /* Defines an abstract way of reading and writing data in a streaming manner.

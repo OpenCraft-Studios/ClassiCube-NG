@@ -3,13 +3,13 @@
 #include "World.h"
 #include "Lighting.h"
 #include "MapRenderer.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Camera.h"
 #include "Options.h"
 #include "Funcs.h"
 #include "ExtMath.h"
 #include "Gui.h"
-#include "Window.h"
+#include <Window.h>
 #include "Event.h"
 #include "Utils.h"
 #include "Logger.h"
@@ -32,7 +32,7 @@
 #include "HeldBlockRenderer.h"
 #include "SelOutlineRenderer.h"
 #include "Menus.h"
-#include "Audio.h"
+#include <Audio.h>
 #include "Stream.h"
 #include "Builder.h"
 #include "Protocol.h"

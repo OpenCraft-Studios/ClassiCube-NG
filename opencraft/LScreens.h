@@ -1,6 +1,6 @@
 #ifndef CC_LSCREENS_H
 #define CC_LSCREENS_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* 

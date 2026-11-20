@@ -1,4 +1,4 @@
-#include "Core.h"
+#include <Core.h>
 #if defined CC_BUILD_POSIX
 
 #define CC_XTEA_ENCRYPTION
@@ -6,7 +6,7 @@
 #include "ExtMath.h"
 #include "SystemFonts.h"
 #include "Funcs.h"
-#include "Window.h"
+#include <Window.h>
 #include "Utils.h"
 #include "Errors.h"
 #include "PackedCol.h"

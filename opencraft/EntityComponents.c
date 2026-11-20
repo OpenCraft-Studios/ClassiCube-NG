@@ -6,13 +6,13 @@
 #include "Event.h"
 #include "Game.h"
 #include "Entity.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Camera.h"
 #include "Funcs.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Physics.h"
 #include "Model.h"
-#include "Audio.h"
+#include <Audio.h>
 
 /*########################################################################################################################*
 *----------------------------------------------------AnimatedComponent----------------------------------------------------*

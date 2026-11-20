@@ -1,6 +1,6 @@
 #ifndef CC_INVENTORY_H
 #define CC_INVENTORY_H
-#include "Core.h"
+#include <Core.h>
 #include "BlockID.h"
 CC_BEGIN_HEADER
 

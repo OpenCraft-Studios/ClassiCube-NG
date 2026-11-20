@@ -4,7 +4,7 @@
 #include "../Bitmap.h"
 #include "../Options.h"
 #include "../Errors.h"
-#include "../Graphics.h"
+#include <Graphics.h>
 #include "../Game.h"
 
 #include <winrt/Windows.ApplicationModel.DataTransfer.h>

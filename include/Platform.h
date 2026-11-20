@@ -1,6 +1,6 @@
 #ifndef CC_PLATFORM_H
 #define CC_PLATFORM_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* 

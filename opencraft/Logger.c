@@ -1,7 +1,7 @@
 #include "Logger.h"
 #include "String_.h"
-#include "Platform.h"
-#include "Window.h"
+#include <Platform.h>
+#include <Window.h>
 #include "Funcs.h"
 #include "Stream.h"
 #include "Errors.h"

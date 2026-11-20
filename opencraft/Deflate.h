@@ -1,6 +1,6 @@
 #ifndef CC_DEFLATE_H
 #define CC_DEFLATE_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* Decodes data compressed using DEFLATE in a streaming manner.

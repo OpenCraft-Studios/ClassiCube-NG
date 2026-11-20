@@ -2,7 +2,7 @@
 #include "ExtMath.h"
 #include "Funcs.h"
 #include "Constants.h"
-#include "Core.h"
+#include <Core.h>
 
 void Vec3_Lerp(Vec3* result, const Vec3* a, const Vec3* b, float blend) {
 	result->x = blend * (b->x - a->x) + a->x;

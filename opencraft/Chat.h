@@ -1,6 +1,6 @@
 #ifndef CC_CHAT_H
 #define CC_CHAT_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* Manages sending, adding, logging and handling chat.

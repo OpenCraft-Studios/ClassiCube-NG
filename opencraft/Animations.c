@@ -2,7 +2,7 @@
 #include "String_.h"
 #include "Constants.h"
 #include "Stream.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Event.h"
 #include "Game.h"
 #include "Funcs.h"

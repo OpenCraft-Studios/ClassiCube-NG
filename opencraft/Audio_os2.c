@@ -1,4 +1,4 @@
-#include "Core.h"
+#include <Core.h>
 
 #if CC_AUD_BACKEND == CC_AUD_BACKEND_OS2
 #include <stdio.h>

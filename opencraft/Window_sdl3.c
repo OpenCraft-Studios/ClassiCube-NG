@@ -1,8 +1,8 @@
-#include "Core.h"
+#include <Core.h>
 #if CC_WIN_BACKEND == CC_WIN_BACKEND_SDL3
 #undef CC_BUILD_EGL /* eglCreateWindowSurface can't use an SDL window */
 #include "_WindowBase.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "String_.h"
 #include "Funcs.h"
 #include "Bitmap.h"

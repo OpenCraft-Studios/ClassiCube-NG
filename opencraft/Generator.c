@@ -2,12 +2,12 @@
 #include "BlockID.h"
 #include "ExtMath.h"
 #include "Funcs.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "World.h"
 #include "Utils.h"
 #include "Game.h"
 #include "Screens.h"
-#include "Window.h"
+#include <Window.h>
 
 static const struct MapGenerator* gen_active;
 BlockRaw* Gen_Blocks;

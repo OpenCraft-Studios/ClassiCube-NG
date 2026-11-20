@@ -36,7 +36,7 @@
   /*                                                                       */
   /*************************************************************************/
 
-#include "Core.h"
+#include <Core.h>
 #ifdef CC_BUILD_FREETYPE
 #include "freetype/ft2build.h"
 #include "freetype/ftconfig.h"

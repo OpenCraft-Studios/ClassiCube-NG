@@ -1,7 +1,7 @@
 #include "World.h"
 #include "Logger.h"
 #include "String_.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Event.h"
 #include "Block.h"
 #include "Entity.h"
@@ -9,7 +9,7 @@
 #include "Physics.h"
 #include "Game.h"
 #include "TexturePack.h"
-#include "Window.h"
+#include <Window.h>
 
 struct _WorldData World;
 static char nameBuffer[STRING_SIZE];

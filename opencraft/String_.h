@@ -1,6 +1,6 @@
 #ifndef CC_STRING_H
 #define CC_STRING_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* 

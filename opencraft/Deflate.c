@@ -2,7 +2,7 @@
 #include "String_.h"
 #include "Logger.h"
 #include "Funcs.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Stream.h"
 #include "Errors.h"
 #include "Utils.h"

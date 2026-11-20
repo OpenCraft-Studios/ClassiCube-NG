@@ -1,4 +1,4 @@
-#include "Certs.h"
+#include <Certs.h>
 #include "Errors.h"
 
 #ifndef CC_CRT_BACKEND
@@ -12,7 +12,7 @@ void Certs_BeginCert( struct X509CertContext* ctx, int size) { }
 void Certs_AppendCert(struct X509CertContext* ctx, const void* data, int len) { }
 void Certs_FinishCert(struct X509CertContext* ctx) { }
 #else
-#include "Platform.h"
+#include <Platform.h>
 #include "String_.h"
 #include "Stream.h"
 

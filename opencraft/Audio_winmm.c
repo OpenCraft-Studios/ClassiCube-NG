@@ -1,4 +1,4 @@
-#include "Core.h"
+#include <Core.h>
 
 #if CC_AUD_BACKEND == CC_AUD_BACKEND_WINMM
 #define WIN32_LEAN_AND_MEAN
@@ -16,7 +16,7 @@
 /* Compatibility versions so compiling works on older Windows SDKs */
 #include "../misc/windows/min-winmm.h"
 
-#include "Audio.h"
+#include <Audio.h>
 struct AudioContext {
 	HWAVEOUT handle;
 	WAVEHDR headers[AUDIO_MAX_BUFFERS];

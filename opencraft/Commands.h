@@ -1,6 +1,6 @@
 #ifndef CC_COMMANDS_H
 #define CC_COMMANDS_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* Executes actions in response to certain chat input

@@ -1,6 +1,6 @@
 #ifndef CC_ANIMATIONS_H
 #define CC_ANIMATIONS_H
-#include "Core.h"
+#include <Core.h>
 /* 
 Contains everything relating to texture animations (including default water/lava ones)
 Copyright 2014-2025 ClassiCube | Licensed under BSD-3

@@ -2,7 +2,7 @@
 #include "Block.h"
 #include "Game.h"
 #include "Inventory.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Camera.h"
 #include "ExtMath.h"
 #include "Event.h"

@@ -1,6 +1,6 @@
-#include "Graphics.h"
+#include <Graphics.h>
 #include "String_.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Funcs.h"
 #include "Game.h"
 #include "ExtMath.h"

@@ -1,4 +1,4 @@
-#include "Core.h"
+#include <Core.h>
 #if CC_WIN_BACKEND == CC_WIN_BACKEND_X11
 /*
    The Open Toolkit Library License

@@ -1,5 +1,5 @@
 #include "Event.h"
-#include "Platform.h"
+#include <Platform.h>
 
 int EventAPIVersion = 4;
 struct _EntityEventsList        EntityEvents;

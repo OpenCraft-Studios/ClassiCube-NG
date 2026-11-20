@@ -6,13 +6,13 @@
 #include "ExtMath.h"
 #include "Funcs.h"
 #include "Game.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Model.h"
 #include "World.h"
 #include "Particle.h"
 #include "Drawer2D.h"
 #include "Server.h"
-#include "Platform.h"
+#include <Platform.h>
 
 /*########################################################################################################################*
 *------------------------------------------------------Entity Shadow------------------------------------------------------*

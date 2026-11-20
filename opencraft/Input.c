@@ -4,7 +4,7 @@
 #include "Funcs.h"
 #include "Options.h"
 #include "Logger.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Utils.h"
 #include "Game.h"
 #include "ExtMath.h"
@@ -12,7 +12,7 @@
 #include "Inventory.h"
 #include "World.h"
 #include "Event.h"
-#include "Window.h"
+#include <Window.h>
 #include "Screens.h"
 #include "Block.h"
 

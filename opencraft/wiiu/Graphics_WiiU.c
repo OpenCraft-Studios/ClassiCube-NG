@@ -1,7 +1,7 @@
 #define CC_DYNAMIC_VBS_ARE_STATIC
 #include "../_GraphicsBase.h"
 #include "../Errors.h"
-#include "../Window.h"
+#include <Window.h>
 
 #include <gx2/clear.h>
 #include <gx2/context.h>

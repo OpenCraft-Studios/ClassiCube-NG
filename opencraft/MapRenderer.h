@@ -1,6 +1,6 @@
 #ifndef CC_MAPRENDERER_H
 #define CC_MAPRENDERER_H
-#include "Core.h"
+#include <Core.h>
 #include "Constants.h"
 CC_BEGIN_HEADER
 

@@ -1,4 +1,4 @@
-#include "Core.h"
+#include <Core.h>
 #if defined CC_BUILD_WINCE
 
 #include "Stream.h"

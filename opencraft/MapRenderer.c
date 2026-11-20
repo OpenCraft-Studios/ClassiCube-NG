@@ -8,8 +8,8 @@
 #include "ExtMath.h"
 #include "Funcs.h"
 #include "Game.h"
-#include "Graphics.h"
-#include "Platform.h"
+#include <Graphics.h>
+#include <Platform.h>
 #include "TexturePack.h"
 #include "Utils.h"
 #include "World.h"

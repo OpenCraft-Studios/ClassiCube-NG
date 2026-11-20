@@ -1,6 +1,6 @@
 #ifndef CC_VECTORS_H
 #define CC_VECTORS_H
-#include "Core.h"
+#include <Core.h>
 #include "Constants.h"
 CC_BEGIN_HEADER
 

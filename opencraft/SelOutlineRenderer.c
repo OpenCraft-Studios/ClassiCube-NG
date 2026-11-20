@@ -1,6 +1,6 @@
 #include "SelOutlineRenderer.h"
 #include "PackedCol.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Game.h"
 #include "Event.h"
 #include "Picking.h"

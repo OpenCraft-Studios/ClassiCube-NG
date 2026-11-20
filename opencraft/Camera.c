@@ -1,8 +1,8 @@
 #include "Camera.h"
 #include "ExtMath.h"
 #include "Game.h"
-#include "Window.h"
-#include "Graphics.h"
+#include <Window.h>
+#include <Graphics.h>
 #include "Funcs.h"
 #include "Gui.h"
 #include "Entity.h"
@@ -11,7 +11,7 @@
 #include "Event.h"
 #include "Options.h"
 #include "Picking.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Protocol.h"
 
 struct _CameraData Camera;

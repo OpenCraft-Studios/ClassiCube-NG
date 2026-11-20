@@ -1,12 +1,12 @@
-#include "Core.h"
+#include <Core.h>
 #if defined CC_BUILD_SYMBIAN && CC_AUD_BACKEND != CC_AUD_BACKEND_NULL
 
 #include <e32base.h>
 #include <MdaAudioOutputStream.h>
 #include <mda/common/audio.h>
 extern "C" {
-#include "Audio.h"
-#include "Platform.h"
+#include <Audio.h>
+#include <Platform.h>
 #include "Errors.h"
 #include "Funcs.h"
 }

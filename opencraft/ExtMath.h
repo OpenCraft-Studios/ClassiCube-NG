@@ -1,6 +1,6 @@
 #ifndef CC_MATH_H
 #define CC_MATH_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* Simple math functions and constants. Also implements a RNG algorithm, based on 

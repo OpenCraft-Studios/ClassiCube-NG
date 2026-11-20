@@ -3,7 +3,7 @@
 #include "../Funcs.h"
 #include "../Bitmap.h"
 #include "../Errors.h"
-#include "../Graphics.h"
+#include <Graphics.h>
 #include "../Gui.h"
 #include "interop_android.h"
 

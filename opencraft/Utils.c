@@ -1,7 +1,7 @@
 #include "Utils.h"
 #include "String_.h"
 #include "Bitmap.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Stream.h"
 #include "Errors.h"
 #include "Logger.h"

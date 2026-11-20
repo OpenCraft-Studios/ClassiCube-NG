@@ -1,6 +1,6 @@
 #ifndef CC_GAME_H
 #define CC_GAME_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* Represents the game and related structures.

@@ -2,7 +2,7 @@
 #define CC_DYNAMIC_VBS_ARE_STATIC
 #include "../_GraphicsBase.h"
 #include "../Errors.h"
-#include "../Window.h"
+#include <Window.h>
 
 #include <assert.h>
 #include <stddef.h>

@@ -2,14 +2,14 @@
 #define GLES_SILENCE_DEPRECATION
 #include "../Bitmap.h"
 #include "../Input.h"
-#include "../Platform.h"
+#include <Platform.h>
 #include "../String_.h"
 #include "../Errors.h"
 #include "../Drawer2D.h"
 #include "../Launcher.h"
 #include "../Funcs.h"
 #include "../Gui.h"
-#include "../Window.h"
+#include <Window.h>
 #include "../Event.h"
 #include "../Logger.h"
 #include <mach-o/dyld.h>

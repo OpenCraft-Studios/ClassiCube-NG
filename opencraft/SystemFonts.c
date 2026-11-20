@@ -2,7 +2,7 @@
 #include "Drawer2D.h"
 #include "String_.h"
 #include "Funcs.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "ExtMath.h"
 #include "Logger.h"
 #include "Game.h"
@@ -10,7 +10,7 @@
 #include "Stream.h"
 #include "Utils.h"
 #include "Errors.h"
-#include "Window.h"
+#include <Window.h>
 #include "Options.h"
 
 static char defaultBuffer[STRING_SIZE];

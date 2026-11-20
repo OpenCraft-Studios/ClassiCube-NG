@@ -8,8 +8,8 @@
 #include "World.h"
 #include "Inventory.h"
 #include "Entity.h"
-#include "Window.h"
-#include "Graphics.h"
+#include <Window.h>
+#include <Graphics.h>
 #include "Funcs.h"
 #include "Block.h"
 #include "EnvRenderer.h"
@@ -17,7 +17,7 @@
 #include "TexturePack.h"
 #include "Options.h"
 #include "Drawer2D.h"
-#include "Audio.h"
+#include <Audio.h>
 
 #define COMMANDS_PREFIX "/client"
 #define COMMANDS_PREFIX_SPACE "/client "

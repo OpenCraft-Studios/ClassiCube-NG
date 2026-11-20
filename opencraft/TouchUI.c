@@ -3,10 +3,10 @@
 #include "Widgets.h"
 #include "Game.h"
 #include "Event.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Inventory.h"
 #include "Drawer2D.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Funcs.h"
 #include "TexturePack.h"
 #include "Model.h"
@@ -14,7 +14,7 @@
 #include "Server.h"
 #include "Chat.h"
 #include "ExtMath.h"
-#include "Window.h"
+#include <Window.h>
 #include "Camera.h"
 #include "Http.h"
 #include "Block.h"

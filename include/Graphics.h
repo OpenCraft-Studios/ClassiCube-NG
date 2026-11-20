@@ -1,7 +1,7 @@
 #ifndef CC_GFXAPI_H
 #define CC_GFXAPI_H
-#include "Vectors.h"
-#include "PackedCol.h"
+#include "../opencraft/Vectors.h"
+#include "../opencraft/PackedCol.h"
 CC_BEGIN_HEADER
 
 /* 

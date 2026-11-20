@@ -2,7 +2,7 @@
 #include "../_GraphicsBase.h"
 #include "../Errors.h"
 #include "../Logger.h"
-#include "../Window.h"
+#include <Window.h>
 
 #include <3ds.h>
 #define BUFFER_BASE_PADDR OS_VRAM_PADDR // VRAM physical address

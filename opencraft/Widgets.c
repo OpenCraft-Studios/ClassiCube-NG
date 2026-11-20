@@ -1,13 +1,13 @@
 #include "Widgets.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Drawer2D.h"
 #include "ExtMath.h"
 #include "Funcs.h"
-#include "Window.h"
+#include <Window.h>
 #include "Utils.h"
 #include "Model.h"
 #include "Screens.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Server.h"
 #include "Event.h"
 #include "Chat.h"

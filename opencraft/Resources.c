@@ -5,7 +5,7 @@
 #include "Constants.h"
 #include "Deflate.h"
 #include "Stream.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Launcher.h"
 #include "Utils.h"
 #include "Vorbis.h"
@@ -14,7 +14,7 @@
 #include "LWeb.h"
 #include "Http.h"
 #include "Game.h"
-#include "Audio.h"
+#include <Audio.h>
 
 /* Represents a set of assets/resources */
 /* E.g. music set, sounds set, textures set */

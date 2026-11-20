@@ -8,12 +8,12 @@
 #include "Lighting.h"
 #include "Options.h"
 #include "Generator.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Game.h"
 #include "Logger.h"
 #include "Vectors.h"
 #include "Chat.h"
-#include "Audio.h"
+#include <Audio.h>
 
 /* Data for a resizable queue, used for liquid physic tick entries. */
 struct TickQueue {

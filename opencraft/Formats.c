@@ -4,7 +4,7 @@
 #include "Deflate.h"
 #include "Block.h"
 #include "Entity.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "ExtMath.h"
 #include "Logger.h"
 #include "Game.h"
@@ -16,7 +16,7 @@
 #include "Chat.h"
 #include "TexturePack.h"
 #include "Utils.h"
-#include "Audio.h"
+#include <Audio.h>
 
 #ifdef CC_BUILD_FILESYSTEM
 static struct LocationUpdate* spawn_point;

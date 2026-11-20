@@ -11,7 +11,7 @@
 #include "Stream.h"
 #include "Utils.h"
 #include "Input.h"
-#include "Window.h"
+#include <Window.h>
 #include "Event.h"
 #include "Http.h"
 #include "ExtMath.h"

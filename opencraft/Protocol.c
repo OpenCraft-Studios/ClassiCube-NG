@@ -6,7 +6,7 @@
 #include "Server.h"
 #include "Stream.h"
 #include "Entity.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Screens.h"
 #include "World.h"
 #include "Event.h"
@@ -25,7 +25,7 @@
 #include "Gui.h"
 #include "Errors.h"
 #include "Camera.h"
-#include "Window.h"
+#include <Window.h>
 #include "Particle.h"
 #include "Picking.h"
 #include "Input.h"
@@ -34,7 +34,7 @@
 #include "HeldBlockRenderer.h"
 #include "Options.h"
 #include "Screens.h"
-#include "Audio.h"
+#include <Audio.h>
 
 struct _ProtocolData Protocol;
 

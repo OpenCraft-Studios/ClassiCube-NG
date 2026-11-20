@@ -2,17 +2,17 @@
 #if defined CC_BUILD_ANDROID11111111111
 #include "Launcher.h"
 #include "Drawer2D.h"
-#include "Window.h"
+#include <Window.h>
 #include "LWidgets.h"
 #include "String_.h"
 #include "Gui.h"
 #include "Drawer2D.h"
 #include "Launcher.h"
 #include "ExtMath.h"
-#include "Window.h"
+#include <Window.h>
 #include "Funcs.h"
 #include "LWeb.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "LScreens.h"
 #include "Input.h"
 #include "Utils.h"
