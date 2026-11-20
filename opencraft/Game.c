@@ -9,7 +9,7 @@
 #include "Funcs.h"
 #include "ExtMath.h"
 #include "Gui.h"
-#include "Window.h"
+#include <Window.h>
 #include "Event.h"
 #include "Utils.h"
 #include "Logger.h"

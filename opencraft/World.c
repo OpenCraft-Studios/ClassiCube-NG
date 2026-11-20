@@ -9,7 +9,7 @@
 #include "Physics.h"
 #include "Game.h"
 #include "TexturePack.h"
-#include "Window.h"
+#include <Window.h>
 
 struct _WorldData World;
 static char nameBuffer[STRING_SIZE];

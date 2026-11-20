@@ -25,7 +25,7 @@
 #include "Gui.h"
 #include "Errors.h"
 #include "Camera.h"
-#include "Window.h"
+#include <Window.h>
 #include "Particle.h"
 #include "Picking.h"
 #include "Input.h"

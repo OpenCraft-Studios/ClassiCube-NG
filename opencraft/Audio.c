@@ -15,7 +15,7 @@
 #include "Deflate.h"
 #ifdef CC_BUILD_MOBILE
 /* TODO: Refactor maybe to not rely on checking WinInfo.Handle != NULL */
-#include "Window.h"
+#include <Window.h>
 #endif
 
 int Audio_SoundsVolume, Audio_MusicVolume;

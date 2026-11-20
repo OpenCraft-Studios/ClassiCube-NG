@@ -9,7 +9,7 @@
 #include "../Launcher.h"
 #include "../Funcs.h"
 #include "../Gui.h"
-#include "../Window.h"
+#include <Window.h>
 #include "../Event.h"
 #include "../Logger.h"
 #include <mach-o/dyld.h>

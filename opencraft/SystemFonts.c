@@ -10,7 +10,7 @@
 #include "Stream.h"
 #include "Utils.h"
 #include "Errors.h"
-#include "Window.h"
+#include <Window.h>
 #include "Options.h"
 
 static char defaultBuffer[STRING_SIZE];

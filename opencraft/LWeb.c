@@ -5,7 +5,7 @@
 #include "Platform.h"
 #include "Stream.h"
 #include "Logger.h"
-#include "Window.h"
+#include <Window.h>
 #include "Options.h"
 #include "PackedCol.h"
 #include "Errors.h"

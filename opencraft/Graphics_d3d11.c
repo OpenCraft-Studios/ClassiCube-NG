@@ -2,7 +2,7 @@
 #if CC_GFX_BACKEND == CC_GFX_BACKEND_D3D11
 #include "_GraphicsBase.h"
 #include "Errors.h"
-#include "Window.h"
+#include <Window.h>
 #include "../misc/windows/D3D11Shaders.h"
 
 /* Avoid pointless includes */

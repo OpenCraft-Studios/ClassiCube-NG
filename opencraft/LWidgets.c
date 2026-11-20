@@ -5,7 +5,7 @@
 #include "Drawer2D.h"
 #include "Launcher.h"
 #include "ExtMath.h"
-#include "Window.h"
+#include <Window.h>
 #include "Funcs.h"
 #include "LWeb.h"
 #include "Platform.h"

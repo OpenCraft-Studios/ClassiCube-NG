@@ -2,7 +2,7 @@
 #if CC_GFX_BACKEND == CC_GFX_BACKEND_D3D9
 #include "_GraphicsBase.h"
 #include "Errors.h"
-#include "Window.h"
+#include <Window.h>
 
 /* Avoid pointless includes */
 #define WIN32_LEAN_AND_MEAN

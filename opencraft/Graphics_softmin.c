@@ -4,7 +4,7 @@
 #define OVERRIDE_BEGEND2D_FUNCTIONS
 #include "_GraphicsBase.h"
 #include "Errors.h"
-#include "Window.h"
+#include <Window.h>
 
 static cc_bool faceCulling;
 static int fb_width, fb_height; 

@@ -8,7 +8,7 @@
 #include "../ExtMath.h"
 #include "../SystemFonts.h"
 #include "../Funcs.h"
-#include "../Window.h"
+#include <Window.h>
 #include "../Utils.h"
 #include "../Errors.h"
 #include "../PackedCol.h"

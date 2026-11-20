@@ -7,7 +7,7 @@
 #include "Input.h"
 #include "Utils.h"
 #include "LBackend.h"
-#include "Window.h"
+#include <Window.h>
 #include "Graphics.h"
 #include "Game.h"
 

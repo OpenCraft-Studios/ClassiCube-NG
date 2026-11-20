@@ -7,7 +7,7 @@
 #include "Utils.h"
 #include "Game.h"
 #include "Screens.h"
-#include "Window.h"
+#include <Window.h>
 
 static const struct MapGenerator* gen_active;
 BlockRaw* Gen_Blocks;

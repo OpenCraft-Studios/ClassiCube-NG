@@ -3,7 +3,7 @@
 #include "Drawer2D.h"
 #include "Utils.h"
 #include "LBackend.h"
-#include "Window.h"
+#include <Window.h>
 #include "SystemFonts.h"
 
 static cc_bool vd_close;

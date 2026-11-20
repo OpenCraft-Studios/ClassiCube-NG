@@ -11,7 +11,7 @@
 #include "Stream.h"
 #include "Utils.h"
 #include "Errors.h"
-#include "Window.h"
+#include <Window.h>
 #include "Options.h"
 #include "TexturePack.h"
 #include "SystemFonts.h"

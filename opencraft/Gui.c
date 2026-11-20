@@ -1,6 +1,6 @@
 #include "Gui.h"
 #include "String_.h"
-#include "Window.h"
+#include <Window.h>
 #include "Game.h"
 #include "Graphics.h"
 #include "Event.h"

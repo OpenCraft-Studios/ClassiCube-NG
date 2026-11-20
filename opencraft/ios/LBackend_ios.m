@@ -11,7 +11,7 @@
 #include "../Gui.h"
 #include "../LWeb.h"
 #include "../Funcs.h"
-#include "../Window.h"
+#include <Window.h>
 #include <UIKit/UIKit.h>
 #include <CoreText/CoreText.h>
 

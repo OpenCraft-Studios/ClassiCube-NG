@@ -6,7 +6,7 @@
 #if CC_GFX_BACKEND == CC_GFX_BACKEND_GL1
 #include "_GraphicsBase.h"
 #include "Errors.h"
-#include "Window.h"
+#include <Window.h>
 
 #if defined CC_BUILD_WIN
 	#define CC_BUILD_GL11_FALLBACK

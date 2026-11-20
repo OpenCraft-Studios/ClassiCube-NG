@@ -11,7 +11,7 @@
 #include "Funcs.h"
 #include "Resources.h"
 #include "Logger.h"
-#include "Window.h"
+#include <Window.h>
 #include "Input.h"
 #include "Options.h"
 #include "Utils.h"
