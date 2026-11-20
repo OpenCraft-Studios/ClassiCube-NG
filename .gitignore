@@ -69,17 +69,6 @@ build/
 src/.vs/
 
 # ClassiCube game files
-src/audio
-src/texpacks
-src/maps
-src/texturecache
-src/logs
-src/options.txt
-src/ClassiCube*
-src/screenshots
-src/fontscache.txt
-
-# ClassiCube game files
 audio
 texpacks
 maps
@@ -87,6 +76,7 @@ texturecache
 logs
 options.txt
 ClassiCube*
+OpenCraft*
 screenshots
 fontscache.txt
 
