@@ -16,7 +16,7 @@
 #include "Chat.h"
 #include "TexturePack.h"
 #include "Utils.h"
-#include "Audio.h"
+#include <Audio.h>
 
 #ifdef CC_BUILD_FILESYSTEM
 static struct LocationUpdate* spawn_point;

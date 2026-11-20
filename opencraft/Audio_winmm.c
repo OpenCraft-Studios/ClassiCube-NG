@@ -16,7 +16,7 @@
 /* Compatibility versions so compiling works on older Windows SDKs */
 #include "../misc/windows/min-winmm.h"
 
-#include "Audio.h"
+#include <Audio.h>
 struct AudioContext {
 	HWAVEOUT handle;
 	WAVEHDR headers[AUDIO_MAX_BUFFERS];

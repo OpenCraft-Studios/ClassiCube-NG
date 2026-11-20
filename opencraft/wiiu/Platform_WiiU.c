@@ -11,7 +11,7 @@
 #include "../Utils.h"
 #include "../Errors.h"
 #include "../PackedCol.h"
-#include "../Audio.h"
+#include <Audio.h>
 
 #include <errno.h>
 #include <time.h>

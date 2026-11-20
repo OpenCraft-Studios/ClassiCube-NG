@@ -81,7 +81,7 @@ bisect: $(TARGET) .WAIT full-clean
 ## * Execute [`eval "$(make env)"`] to setup your environment
 env:
 	@echo export MAKEFLAGS=\"-sj$(shell nproc) --no-print-directory\"\;
-	@echo export LD=\"$(shell command -v ld.mold || command -v lld || command -v ld.gold)\"\;
+	@echo export LD=\"$(shell command -v ld.mold || command -v ld.lld || command -v ld.gold)\"\;
 	@echo export CC=\"$(shell command -v clang || command -v gcc || command -v cc)\"\;
 	@echo "# -s,--silent,--quiet:  Be silent, don't print recipes."
 	@echo "# -j,--jobs=$(shell nproc):          Harness full PC power."
@@ -92,7 +92,8 @@ env:
 
 override BUILD_DIRS   += $(oc.build)
 
-override COMMON_FLAGS += $(ARCH_FLAGS) -pipe -DCC_BUILD_MANUAL
+override INCLUDES     += -I"$(CURDIR)/include"
+override COMMON_FLAGS += $(ARCH_FLAGS) $(INCLUDES) -pipe -DCC_BUILD_MANUAL
 override CFLAGS       += $(COMMON_FLAGS)
 override CXXFLAGS     += $(COMMON_FLAGS)
 override LDFLAGS      += -s

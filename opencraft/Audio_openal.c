@@ -55,7 +55,7 @@ static ALboolean (APIENTRY *_alcCloseDevice)(void* device);
 static ALenum    (APIENTRY *_alcGetError)(void* device);
 /* === END OPENAL HEADERS === */
 
-#include "Audio.h"
+#include <Audio.h>
 struct AudioContext {
 	ALuint source;
 	ALuint buffers[AUDIO_MAX_BUFFERS];

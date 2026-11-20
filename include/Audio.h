@@ -1,6 +1,6 @@
 #ifndef CC_AUDIO_H
 #define CC_AUDIO_H
-#include "Core.h"
+#include "../opencraft/Core.h"
 /* Manages playing sound and music.
    Copyright 2014-2025 ClassiCube | Licensed under BSD-3
 */

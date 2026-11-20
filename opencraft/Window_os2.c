@@ -6,7 +6,7 @@
 #include "Bitmap.h"
 #include "Options.h"
 #include "Errors.h"
-#include "Audio.h"
+#include <Audio.h>
 
 #define INCL_DOSPROCESS
 #define INCL_DOSMEMMGR

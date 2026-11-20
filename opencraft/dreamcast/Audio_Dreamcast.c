@@ -1,5 +1,5 @@
 #include <kos.h>
-#include "../Audio.h"
+#include <Audio.h>
 
 /* TODO needs way more testing, especially with sounds */
 #define HANDLE_STATE_UNUSED    0
