@@ -1,5 +1,5 @@
 #include "Bitmap.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "ExtMath.h"
 #include "Deflate.h"
 #include "Logger.h"

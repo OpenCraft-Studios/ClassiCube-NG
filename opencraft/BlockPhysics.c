@@ -8,7 +8,7 @@
 #include "Lighting.h"
 #include "Options.h"
 #include "Generator.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Game.h"
 #include "Logger.h"
 #include "Vectors.h"

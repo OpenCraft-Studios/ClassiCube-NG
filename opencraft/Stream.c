@@ -1,6 +1,6 @@
 #include "Stream.h"
 #include "String_.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Funcs.h"
 #include "Errors.h"
 #include "Utils.h"

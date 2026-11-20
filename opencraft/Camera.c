@@ -11,7 +11,7 @@
 #include "Event.h"
 #include "Options.h"
 #include "Picking.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Protocol.h"
 
 struct _CameraData Camera;

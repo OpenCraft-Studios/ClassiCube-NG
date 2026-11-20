@@ -7,7 +7,7 @@
 #include "Event.h"
 #include "Game.h"
 #include "Http.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Deflate.h"
 #include "Funcs.h"
 #include "ExtMath.h"

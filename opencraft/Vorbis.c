@@ -1,6 +1,6 @@
 #include "Vorbis.h"
 #include "Logger.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Event.h"
 #include "ExtMath.h"
 #include "Funcs.h"

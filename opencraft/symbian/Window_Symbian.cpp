@@ -37,7 +37,7 @@ extern "C" {
 #include "Gui.h"
 #include "Graphics.h"
 #include "Game.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Options.h"
 #include "Server.h"
 #include "LScreens.h"

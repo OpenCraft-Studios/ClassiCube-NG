@@ -12,7 +12,7 @@
 #include <Window.h>
 #include "Funcs.h"
 #include "LWeb.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "LScreens.h"
 #include "Input.h"
 #include "Utils.h"

@@ -3,7 +3,7 @@
 
 extern "C" {
 #include "Errors.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Logger.h"
 #include "String_.h"
 #include "Stream.h"

@@ -6,7 +6,7 @@
 #include "Event.h"
 #include "Game.h"
 #include "Entity.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Camera.h"
 #include "Funcs.h"
 #include "Graphics.h"

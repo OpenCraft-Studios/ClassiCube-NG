@@ -4,7 +4,7 @@
 #include "Deflate.h"
 #include "Block.h"
 #include "Entity.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "ExtMath.h"
 #include "Logger.h"
 #include "Game.h"

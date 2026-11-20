@@ -9,7 +9,7 @@ Eg. the webclient 'main' function loads IndexedDB, and when that has asynchronou
 */
 #include "Logger.h"
 #include "String_.h"
-#include "Platform.h"
+#include <Platform.h>
 #include <Window.h>
 #include "Constants.h"
 #include "Game.h"

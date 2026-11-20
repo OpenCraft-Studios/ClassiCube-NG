@@ -21,7 +21,7 @@
 #include "Logger.h"
 #include "Protocol.h"
 #include "Inventory.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Input.h"
 #include "Errors.h"
 #include "Options.h"

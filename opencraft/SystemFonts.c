@@ -2,7 +2,7 @@
 #include "Drawer2D.h"
 #include "String_.h"
 #include "Funcs.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "ExtMath.h"
 #include "Logger.h"
 #include "Game.h"

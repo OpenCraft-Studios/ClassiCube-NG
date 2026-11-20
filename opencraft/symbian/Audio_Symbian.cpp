@@ -6,7 +6,7 @@
 #include <mda/common/audio.h>
 extern "C" {
 #include <Audio.h>
-#include "Platform.h"
+#include <Platform.h>
 #include "Errors.h"
 #include "Funcs.h"
 }

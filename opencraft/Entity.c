@@ -5,7 +5,7 @@
 #include "Event.h"
 #include "Game.h"
 #include "Camera.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Funcs.h"
 #include "Graphics.h"
 #include "Lighting.h"

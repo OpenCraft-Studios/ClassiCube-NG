@@ -5,7 +5,7 @@
 #include "Constants.h"
 #include "Deflate.h"
 #include "Stream.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Launcher.h"
 #include "Utils.h"
 #include "Vorbis.h"

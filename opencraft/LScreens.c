@@ -7,7 +7,7 @@
 #include "Gui.h"
 #include "Drawer2D.h"
 #include "ExtMath.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Funcs.h"
 #include "Resources.h"
 #include "Logger.h"

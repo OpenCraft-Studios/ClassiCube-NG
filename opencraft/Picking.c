@@ -8,7 +8,7 @@
 #include "Block.h"
 #include "Logger.h"
 #include "Camera.h"
-#include "Platform.h"
+#include <Platform.h>
 
 static float pickedPos_dist;
 static void TestAxis(struct RayTracer* t, float dAxis, Face fAxis) {

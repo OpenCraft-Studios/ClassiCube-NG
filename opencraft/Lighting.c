@@ -2,7 +2,7 @@
 #include "Block.h"
 #include "Funcs.h"
 #include "MapRenderer.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "World.h"
 #include "Logger.h"
 #include "Event.h"

@@ -6,7 +6,7 @@
 #include "Graphics.h"
 #include "Physics.h"
 #include "Block.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Event.h"
 #include "Utils.h"
 #include "Game.h"
@@ -14,7 +14,7 @@
 #include "Block.h"
 #include "Event.h"
 #include "TexturePack.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Camera.h"
 #include "Particle.h"
 #include "Options.h"

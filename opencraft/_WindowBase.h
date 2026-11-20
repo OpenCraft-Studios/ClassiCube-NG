@@ -2,7 +2,7 @@
 #include "Input.h"
 #include "Event.h"
 #include "Logger.h"
-#include "Platform.h"
+#include <Platform.h>
 
 struct _DisplayData DisplayInfo;
 struct cc_window WindowInfo;

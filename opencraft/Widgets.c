@@ -7,7 +7,7 @@
 #include "Utils.h"
 #include "Model.h"
 #include "Screens.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Server.h"
 #include "Event.h"
 #include "Chat.h"

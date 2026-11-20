@@ -1,6 +1,6 @@
 #include "../Bitmap.h"
 #include "../Input.h"
-#include "../Platform.h"
+#include <Platform.h>
 #include "../String_.h"
 #include "../Errors.h"
 #include "../Drawer2D.h"

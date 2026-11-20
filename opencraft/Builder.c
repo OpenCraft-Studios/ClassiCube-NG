@@ -3,7 +3,7 @@
 #include "World.h"
 #include "Funcs.h"
 #include "Lighting.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "MapRenderer.h"
 #include "Graphics.h"
 #include "Drawer.h"

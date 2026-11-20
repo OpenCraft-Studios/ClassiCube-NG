@@ -1,5 +1,5 @@
 #include <Window.h>
-#include "../Platform.h"
+#include <Platform.h>
 #include "../Input.h"
 #include "../InputHandler.h"
 #include "../Event.h"

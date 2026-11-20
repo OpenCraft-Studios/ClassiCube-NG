@@ -10,7 +10,7 @@
 #include "Camera.h"
 #include "Input.h"
 #include "Logger.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Bitmap.h"
 #include "Options.h"
 #include "Menus.h"

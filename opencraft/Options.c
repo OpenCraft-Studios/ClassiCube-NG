@@ -1,7 +1,7 @@
 #include "Options.h"
 #include "String_.h"
 #include "ExtMath.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Stream.h"
 #include "Errors.h"
 #include "Utils.h"

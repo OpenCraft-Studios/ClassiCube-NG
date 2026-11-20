@@ -2,7 +2,7 @@
 #include "String_.h"
 #include "Graphics.h"
 #include "Funcs.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "ExtMath.h"
 #include "Logger.h"
 #include "Game.h"

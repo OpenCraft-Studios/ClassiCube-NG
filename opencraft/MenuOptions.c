@@ -2,7 +2,7 @@
 #include "Widgets.h"
 #include "Game.h"
 #include "Event.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Inventory.h"
 #include "Drawer2D.h"
 #include "Graphics.h"

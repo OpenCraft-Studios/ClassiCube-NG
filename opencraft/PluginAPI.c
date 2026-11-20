@@ -6,7 +6,7 @@
 #include "Logger.h"
 #include "String_.h"
 #include "Chat.h"
-#include "Platform.h"
+#include <Platform.h>
 #define INTERNAL_PLUGIN_HDR
 #include "PluginAPI.h"
 
