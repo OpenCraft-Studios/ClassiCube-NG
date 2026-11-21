@@ -3,7 +3,7 @@ on: [workflow_call]
 jobs:
   build:
     timeout-minutes: 7
-    name: 🐧 Linux ${{ matrix.arch }}
+    name: ${{ matrix.arch }}
     runs-on: ubuntu-latest
     environment: Canary
 
