@@ -3,7 +3,7 @@
 #include "Input.h"
 CC_BEGIN_HEADER
 
-/* 
+/*
 Manages base game input handling
 Copyright 2014-2025 ClassiCube | Licensed under BSD-3
 */

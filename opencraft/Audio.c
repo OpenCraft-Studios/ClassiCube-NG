@@ -27,7 +27,7 @@ const char* const Sound_Names[SOUND_COUNT] = {
 
 #ifdef CC_BIG_ENDIAN
 /* Hacky workaround to ensure that sounds are re-fetched on big endian systems, */
-/*  as the .wav writing code at one point accidentally wrote big endian instead */ 
+/*  as the .wav writing code at one point accidentally wrote big endian instead */
 /*  of little endian samples to the .wav file */
 const cc_string Sounds_ZipPathMC = String_FromConst("audio/default2.zip");
 #else
@@ -112,7 +112,7 @@ static struct SoundGroup* Soundboard_FindGroup(struct Soundboard* board, const c
 	struct SoundGroup* groups = board->groups;
 	int i;
 
-	for (i = 0; i < SOUND_COUNT; i++) 
+	for (i = 0; i < SOUND_COUNT; i++)
 	{
 		if (String_CaselessEqualsConst(name, Sound_Names[i])) return &groups[i];
 	}
@@ -200,7 +200,7 @@ static void Sounds_Play(cc_uint8 type, struct Soundboard* board) {
 		data.volume /= 2;
 		if (type == SOUND_METAL) data.rate = 140;
 	}
-	
+
 	res = AudioPool_Play(&data);
 	if (res) Sounds_Fail(res);
 }
@@ -219,7 +219,7 @@ static cc_bool SelectZipEntry(const cc_string* path) { return true; }
 static cc_result ProcessZipEntry(const cc_string* path, struct Stream* stream, struct ZipEntry* source) {
 	static const cc_string dig  = String_FromConst("dig_");
 	static const cc_string step = String_FromConst("step_");
-	
+
 	Soundboard_Load(&digBoard,  &dig,  path, stream);
 	Soundboard_Load(&stepBoard, &step, path, stream);
 	return 0;
@@ -252,10 +252,10 @@ void Sounds_LoadDefault(void) {
 
 static cc_bool sounds_loaded;
 static void Sounds_Start(void) {
-	if (!AudioBackend_Init()) { 
-		AudioBackend_Free(); 
-		Audio_SoundsVolume = 0; 
-		return; 
+	if (!AudioBackend_Init()) {
+		AudioBackend_Free();
+		Audio_SoundsVolume = 0;
+		return;
 	}
 
 	if (sounds_loaded) return;
@@ -336,7 +336,7 @@ static cc_result Music_PlayOgg(struct Stream* source) {
 	Vorbis_Init(vorbis);
 	vorbis->source = ogg;
 	if ((res = Vorbis_DecodeHeaders(vorbis))) goto cleanup;
-	
+
 	channels   = vorbis->channels;
 	sampleRate = vorbis->sampleRate;
 	if ((res = StreamContext_SetFormat(&music_ctx, channels, sampleRate, 100))) goto cleanup;
@@ -347,11 +347,11 @@ static cc_result Music_PlayOgg(struct Stream* source) {
 	samplesPerSecond = channels * sampleRate;
 
 	if ((res = Audio_AllocChunks(chunkSize * 2, chunks, AUDIO_MAX_BUFFERS))) goto cleanup;
-    volume = Audio_MusicVolume;
-    Audio_SetVolume(&music_ctx, volume);	
+	volume = Audio_MusicVolume;
+	Audio_SetVolume(&music_ctx, volume);
 
 	/* fill up with some samples before playing */
-	for (i = 0; i < AUDIO_MAX_BUFFERS && !res; i++) 
+	for (i = 0; i < AUDIO_MAX_BUFFERS && !res; i++)
 	{
 		res = Music_Buffer(&chunks[i], samplesPerSecond, vorbis);
 	}
@@ -364,19 +364,19 @@ static cc_result Music_PlayOgg(struct Stream* source) {
 	while (!music_stopping) {
 #ifdef CC_BUILD_MOBILE
 		/* Don't play music while in the background on Android */
-    	/* TODO: Not use such a terrible approach */
-    	if (!Window_Main.Handle.ptr || Window_Main.Inactive) {
-    		StreamContext_Pause(&music_ctx);
-    		while ((!Window_Main.Handle.ptr || Window_Main.Inactive) && !music_stopping) {
-    			Thread_Sleep(10); continue;
-    		}
-    		StreamContext_Play(&music_ctx);
-    	}
+		/* TODO: Not use such a terrible approach */
+		if (!Window_Main.Handle.ptr || Window_Main.Inactive) {
+			StreamContext_Pause(&music_ctx);
+			while ((!Window_Main.Handle.ptr || Window_Main.Inactive) && !music_stopping) {
+				Thread_Sleep(10); continue;
+			}
+			StreamContext_Play(&music_ctx);
+		}
 #endif
-        if (volume != Audio_MusicVolume) {
-            volume = Audio_MusicVolume;
-            Audio_SetVolume(&music_ctx, volume);
-        }
+		if (volume != Audio_MusicVolume) {
+			volume = Audio_MusicVolume;
+			Audio_SetVolume(&music_ctx, volume);
+		}
 
 		res = StreamContext_Update(&music_ctx, &inUse);
 		if (res) { music_stopping = true; break; }
@@ -478,9 +478,9 @@ static void Music_RunLoop(void) {
 static void Music_Start(void) {
 	if (music_thread) return;
 	if (!AudioBackend_Init()) {
-		AudioBackend_Free(); 
+		AudioBackend_Free();
 		Audio_MusicVolume = 0;
-		return; 
+		return;
 	}
 
 	music_joining  = false;
@@ -493,7 +493,7 @@ static void Music_Stop(void) {
 	music_joining  = true;
 	music_stopping = true;
 	Waitable_Signal(music_waitable);
-	
+
 	if (music_thread) Thread_Join(music_thread);
 	music_thread = NULL;
 }

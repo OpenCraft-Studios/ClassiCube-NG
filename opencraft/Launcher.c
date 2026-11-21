@@ -38,7 +38,7 @@ static struct Bitmap dirtBmp, stoneBmp;
 static void CloseActiveScreen(void) {
 	OnscreenKeyboard_Close();
 	if (!Launcher_Active) return;
-	
+
 	Launcher_Active->Deactivated(Launcher_Active);
 	LBackend_CloseScreen(Launcher_Active);
 	Launcher_Active = NULL;
@@ -82,7 +82,7 @@ cc_bool Launcher_StartGame(const cc_string* user, const cc_string* mppass, const
 	cc_string args[4]; int numArgs;
 	cc_uint64 now;
 	cc_result res;
-	
+
 	now = Stopwatch_Measure();
 	if (Stopwatch_ElapsedMS(lastJoin, now) < 1000) return false;
 	lastJoin = now;
@@ -161,9 +161,9 @@ cc_bool Launcher_ConnectToServer(const cc_string* hash, Launcher_WebErrorCallbac
 	/* TODO: Rewrite to be async */
 	FetchServerTask_Run(hash);
 
-	while (!FetchServerTask.Base.completed) { 
+	while (!FetchServerTask.Base.completed) {
 		LWebTask_Tick(&FetchServerTask.Base, errorCallback);
-		Thread_Sleep(10); 
+		Thread_Sleep(10);
 	}
 
 	if (FetchServerTask.server.hash.length) {
@@ -293,7 +293,7 @@ cc_bool Launcher_Tick(void) {
 
 void Launcher_Finish(void) {
 	Options_SaveIfChanged();
-	
+
 	Event_UnregisterAll();
 	LBackend_Free();
 	Flags_Free();
@@ -372,7 +372,7 @@ void LauncherTheme_Load(struct LauncherTheme* theme) {
 
 CC_NOINLINE static void SaveColor(const char* key, BitmapCol color) {
 	cc_string value; char valueBuffer[6];
-	
+
 	String_InitArray(value, valueBuffer);
 	String_AppendHex(&value, BitmapCol_R(color));
 	String_AppendHex(&value, BitmapCol_G(color));
@@ -478,7 +478,7 @@ static cc_result ExtractTexturePack(const cc_string* path) {
 	if (ReturnCode_IsNotFound(res)) return res;
 	if (res) { Logger_SysWarn(res, "opening texture pack"); return res; }
 
-	res = Zip_Extract(&stream, 
+	res = Zip_Extract(&stream,
 			Launcher_SelectZipEntry, Launcher_ProcessZipEntry,
 			entries, Array_Elems(entries));
 	if (res) { Logger_SysWarn(res, "extracting texture pack"); }
@@ -512,7 +512,7 @@ void Launcher_TryLoadTexturePack(void) {
 *----------------------------------------------------------Background-----------------------------------------------------*
 *#########################################################################################################################*/
 /* Fills the given area using pixels from the source bitmap, by repeatedly tiling the bitmap */
-CC_NOINLINE static void ClearTile(int x, int y, int width, int height, 
+CC_NOINLINE static void ClearTile(int x, int y, int width, int height,
 								struct Context2D* ctx, struct Bitmap* src) {
 	struct Bitmap* dst = (struct Bitmap*)ctx;
 	BitmapCol* dstRow;
@@ -551,16 +551,16 @@ cc_bool Launcher_BitmappedText(void) {
 	return (useBitmappedFont || Launcher_Theme.ClassicBackground) && hasBitmappedFont;
 }
 
-static void DrawTitleText(struct FontDesc* font, const char* text, struct Context2D* ctx, 
+static void DrawTitleText(struct FontDesc* font, const char* text, struct Context2D* ctx,
 				cc_uint8 horAnchor, cc_uint8 verAnchor) {
 	cc_string title = String_FromReadonly(text);
 	struct DrawTextArgs args;
 	int x, y;
-	
+
 	DrawTextArgs_Make(&args, &title, font, false);
 	x = Gui_CalcPos(horAnchor, 0, Drawer2D_TextWidth(&args),  ctx->width);
 	y = Gui_CalcPos(verAnchor, 0, Drawer2D_TextHeight(&args), ctx->height);
-	
+
 	Drawer2D.Colors['f'] = BITMAPCOLOR_BLACK;
 	Context2D_DrawText(ctx, &args, x + Display_ScaleX(4), y + Display_ScaleY(4));
 	Drawer2D.Colors['f'] = BITMAPCOLOR_WHITE;
@@ -583,12 +583,12 @@ void Launcher_DrawTitle(struct FontDesc* font, const char* text, struct Context2
 	Context2D_Wrap(ctx, &bmp);
 	topCtx.width  = width;
 	topCtx.height = height;
-	
+
 	Launcher_DrawBackgroundAll(ctx);
 	DrawTitleText(font, text, ctx, ANCHOR_CENTRE, ANCHOR_CENTRE);
 	Rect2D rect = { 0, 0, bmp.width, bmp.height };
 	Window_DrawFramebuffer(rect, &bmp);
-	
+
 	Window_FreeFramebuffer(&bmp);
 	launcherTop = false;
 }
@@ -596,7 +596,7 @@ void Launcher_DrawTitle(struct FontDesc* font, const char* text, struct Context2
 void Launcher_DrawTitle(struct FontDesc* font, const char* text, struct Context2D* ctx) {
 	/* Skip dragging logo when very small window to save space */
 	if (Window_Main.Height < 240) return;
-	
+
 	DrawTitleText(font, text, ctx, ANCHOR_CENTRE, ANCHOR_MIN);
 }
 #endif

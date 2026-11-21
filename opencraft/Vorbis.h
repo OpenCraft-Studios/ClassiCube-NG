@@ -3,7 +3,7 @@
 #include <Core.h>
 CC_BEGIN_HEADER
 
-/* 
+/*
 Decodes ogg vorbis audio into 16 bit PCM samples
 Copyright 2014-2025 ClassiCube | Licensed under BSD-3
 */
@@ -13,7 +13,7 @@ struct Stream;
 #define OGG_BUFFER_SIZE (255 * 256)
 
 struct OggState {
-	cc_uint8* cur; 
+	cc_uint8* cur;
 	cc_uint32 left, last;
 	struct Stream* source;
 	int segmentsRead, numSegments;

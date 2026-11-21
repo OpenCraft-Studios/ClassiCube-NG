@@ -4,7 +4,7 @@
 #include "Vectors.h"
 CC_BEGIN_HEADER
 
-/* 
+/*
 Draws the vertices for a cuboid region
 Copyright 2014-2025 ClassiCube | Licensed under BSD-3
 */

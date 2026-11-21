@@ -20,7 +20,7 @@ struct JsonContext {
 	cc_bool failed;   /* Whether there was an error parsing the JSON. */
 	cc_string curKey; /* Key/Name of current member */
 	int depth;        /* Object/Array depth (e.g. { { { is depth 3 */
-	
+
 	JsonOnNew OnNewArray;  /* Invoked when start of an array is read. */
 	JsonOnNew OnNewObject; /* Invoked when start of an object is read. */
 	JsonOnValue OnValue;   /* Invoked on each member value in an object/array. */
@@ -56,7 +56,7 @@ struct LWebTask {
 	cc_bool completed; /* Whether the task has finished executing. */
 	cc_bool working;   /* Whether the task is currently in progress, or is scheduled to be. */
 	cc_bool success;   /* Whether the task completed successfully. */
-	
+
 	int reqID; /* Unique request identifier for this web task. */
 	/* Called when task successfully downloaded/uploaded data. */
 	void (*Handle)(cc_uint8* data, cc_uint32 len);
@@ -120,7 +120,7 @@ extern struct FetchUpdateData {
 void FetchUpdateTask_Run(cc_bool release, int buildIndex);
 
 
-extern struct FetchFlagsData { 
+extern struct FetchFlagsData {
 	struct LWebTask Base;
 	/* Number of flags downloaded. */
 	int count;

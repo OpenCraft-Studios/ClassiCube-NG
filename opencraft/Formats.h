@@ -7,7 +7,7 @@ CC_BEGIN_HEADER
    Copyright 2014-2025 ClassiCube | Licensed under BSD-3
 */
 
-struct Stream; 
+struct Stream;
 struct IGameComponent;
 extern struct IGameComponent Formats_Component;
 

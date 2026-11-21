@@ -45,7 +45,7 @@
 static int GetOnscreenButtons(void) {
 	#define DEFAULT_SP_ONSCREEN (ONSCREEN_BTN_FLY | ONSCREEN_BTN_SPEED)
 	#define DEFAULT_MP_ONSCREEN (ONSCREEN_BTN_FLY | ONSCREEN_BTN_SPEED | ONSCREEN_BTN_CHAT)
-	
+
 	return Options_GetInt(OPT_TOUCH_BUTTONS, 0, Int32_MaxValue,
 							Server.IsSinglePlayer ? DEFAULT_SP_ONSCREEN : DEFAULT_MP_ONSCREEN);
 }
@@ -87,10 +87,10 @@ static void TouchOnscreen_UpdateButton(struct TouchOnscreenScreen* s, struct But
 
 	bit        = 1 << btn->meta.val;
 	btn->color = (buttons & bit) ? PACKEDCOL_WHITE : grey;
-	
+
 	String_InitArray(str, buffer);
 	label = touchOnscreen[btn->meta.val];
-	
+
 	if ((buttons & bit) && (haligns & bit)) {
 		String_Format1(&str, "%c: Left aligned",  label);
 	} else if (buttons & bit) {
@@ -103,7 +103,7 @@ static void TouchOnscreen_UpdateButton(struct TouchOnscreenScreen* s, struct But
 
 static void TouchOnscreen_UpdateAll(struct TouchOnscreenScreen* s) {
 	int i;
-	for (i = 0; i < ONSCREEN_PAGE_BTNS; i++) 
+	for (i = 0; i < ONSCREEN_PAGE_BTNS; i++)
 	{
 		TouchOnscreen_UpdateButton(s, &s->btns[i]);
 	}
@@ -115,7 +115,7 @@ static void TouchOnscreen_Any(void* screen, void* w) {
 	int buttons = GetOnscreenButtons();
 	int haligns = GetOnscreenHAligns();
 	int bit = 1 << btn->meta.val;
-	
+
 	if ((buttons & bit) & (haligns & bit)) {
 		buttons &= ~bit;
 		haligns &= ~bit;
@@ -142,7 +142,7 @@ static void TouchOnscreen_RemakeWidgets(struct TouchOnscreenScreen* s) {
 	s->numWidgets = 0;
 	s->maxWidgets = Array_Elems(touchOnscreen_widgets);
 
-	for (i = 0; i < ONSCREEN_PAGE_BTNS; i++) 
+	for (i = 0; i < ONSCREEN_PAGE_BTNS; i++)
 	{
 		ButtonWidget_Add(s, &s->btns[i], 300, TouchOnscreen_Any);
 		s->btns[i].meta.val = i + offset;
@@ -183,11 +183,11 @@ static void TouchOnscreenScreen_ContextRecreated(void* screen) {
 static void TouchOnscreenScreen_Layout(void* screen) {
 	struct TouchOnscreenScreen* s = (struct TouchOnscreenScreen*)screen;
 	int i;
-	for (i = 0; i < ONSCREEN_PAGE_BTNS; i++) 
+	for (i = 0; i < ONSCREEN_PAGE_BTNS; i++)
 	{
 		Widget_SetLocation(&s->btns[i], ANCHOR_CENTRE, ANCHOR_CENTRE, 0, -75 + i * 50);
 	}
-	
+
 	Menu_LayoutBack(&s->back);
 	Widget_SetLocation(&s->left,  ANCHOR_CENTRE, ANCHOR_CENTRE, -220, 0);
 	Widget_SetLocation(&s->right, ANCHOR_CENTRE, ANCHOR_CENTRE,  220, 0);
@@ -296,7 +296,7 @@ static void TouchCtrls_Hold(void* s, void* w) {
 static void TouchCtrls_SensitivityDone(const cc_string* value, cc_bool valid) {
 	int sensitivity;
 	if (!valid) return;
-	
+
 	Convert_ParseInt(value, &sensitivity);
 	Camera.Sensitivity = sensitivity;
 	Options_Set(OPT_SENSITIVITY, value);
@@ -321,7 +321,7 @@ static void TouchCtrls_ScaleDone(const cc_string* value, cc_bool valid) {
 	if (!valid) return;
 	Convert_ParseFloat(value, &Gui.RawTouchScale);
 	Options_Set(OPT_TOUCH_SCALE, value);
-	
+
 	TouchCtrls_UpdateScale(&TouchCtrlsScreen);
 	Gui_LayoutAll();
 }
@@ -426,7 +426,7 @@ static void TouchMore_Menu(void* s, void* w) {
 	Gui_Remove((struct Screen*)&TouchMoreScreen);
 	Gui_ShowPauseMenu();
 }
-static void TouchMore_Game(void* s, void* w) { 
+static void TouchMore_Game(void* s, void* w) {
 	Gui_Remove((struct Screen*)&TouchMoreScreen);
 }
 static void TouchMore_Chat(void* s, void* w) {
@@ -572,7 +572,7 @@ static void TouchScreen_InitButtons(struct TouchScreen* s) {
 	int i, j;
 	for (i = 0; i < ONSCREEN_MAX_BTNS + TOUCH_EXTRA_BTNS; i++) s->widgets[i] = NULL;
 
-	for (i = 0, j = 0; i < ONSCREEN_MAX_BTNS; i++) 
+	for (i = 0, j = 0; i < ONSCREEN_MAX_BTNS; i++)
 	{
 		if (!(buttons & (1 << i))) continue;
 		desc    = &onscreenDescs[i];
@@ -596,7 +596,7 @@ static void TouchScreen_InitButtons(struct TouchScreen* s) {
 		s->numBtns = Array_Elems(normDescs);
 	}
 
-	for (i = 0; i < s->numBtns; i++) 
+	for (i = 0; i < s->numBtns; i++)
 	{
 		s->widgets[i + ONSCREEN_MAX_BTNS] = (struct Widget*)&s->btns[i];
 		ButtonWidget_Init(&s->btns[i], 60, descs[i].OnClick);
@@ -628,12 +628,12 @@ static void TouchScreen_ContextRecreated(void* screen) {
 	Screen_UpdateVb(screen);
 	Gui_MakeTitleFont(&s->font);
 
-	for (i = 0; i < s->numOnscreen; i++) 
+	for (i = 0; i < s->numOnscreen; i++)
 	{
 		desc = (struct TouchButtonDesc*)s->onscreen[i].meta.ptr;
 		ButtonWidget_SetConst(&s->onscreen[i], desc->text, &s->font);
 	}
-	for (i = 0; i < s->numBtns; i++) 
+	for (i = 0; i < s->numBtns; i++)
 	{
 		desc = (struct TouchButtonDesc*)s->btns[i].meta.ptr;
 		ButtonWidget_SetConst(&s->btns[i], desc->text, &s->font);
@@ -661,7 +661,7 @@ static int TouchScreen_PointerDown(void* screen, int id, int x, int y) {
 	w->active |= id;
 
 	/* Clicking on jump or fly buttons should still move camera */
-	for (i = 0; i < s->numBtns; i++) 
+	for (i = 0; i < s->numBtns; i++)
 	{
 		if (w == (struct Widget*)&s->btns[i]) return TOUCH_TYPE_GUI | TOUCH_TYPE_CAMERA;
 	}
@@ -676,10 +676,10 @@ static void TouchScreen_PointerUp(void* screen, int id, int x, int y) {
 	s->thumbstick.active &= ~id;
 	s->more.active       &= ~id;
 
-	for (i = 0; i < s->numBtns; i++) 
+	for (i = 0; i < s->numBtns; i++)
 	{
 		if (!(s->btns[i].active & id)) continue;
-	 	desc = (struct TouchButtonDesc*)s->btns[i].meta.ptr;
+		desc = (struct TouchButtonDesc*)s->btns[i].meta.ptr;
 
 		if (desc->bind) {
 			Bind_OnReleased[desc->bind](0, &TouchDevice);
@@ -694,12 +694,12 @@ static void TouchScreen_LayoutOnscreen(struct TouchScreen* s, cc_uint8 alignment
 	int i, x, y;
 	cc_uint8 halign;
 
-	for (i = 0, x = 10, y = 10; i < s->numOnscreen; i++) 
+	for (i = 0, x = 10, y = 10; i < s->numOnscreen; i++)
 	{
 		desc   = (struct TouchButtonDesc*)s->onscreen[i].meta.ptr;
 		halign = desc->x;
 		if (halign != alignment) continue;
-		
+
 		Widget_SetLocation(&s->onscreen[i], halign, ANCHOR_MIN, x, y);
 		if (s->onscreen[i].y + s->onscreen[i].height <= s->btns[0].y){ y += 40; continue; }
 
@@ -719,7 +719,7 @@ static void TouchScreen_Layout(void* screen) {
 	/* Need to align these relative to the hotbar */
 	height = HUDScreen_LayoutHotbar();
 
-	for (i = 0; i < s->numBtns; i++) 
+	for (i = 0; i < s->numBtns; i++)
 	{
 		desc = (struct TouchButtonDesc*)s->btns[i].meta.ptr;
 		Widget_SetLocation(&s->btns[i], ANCHOR_MAX, ANCHOR_MAX, desc->x, desc->y);

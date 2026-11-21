@@ -15,7 +15,7 @@ struct PadAxisUpdate;
 
 typedef void (*Event_Void_Callback)(void* obj);
 struct Event_Void {
-	Event_Void_Callback Handlers[EVENT_MAX_CALLBACKS]; 
+	Event_Void_Callback Handlers[EVENT_MAX_CALLBACKS];
 	void* Objs[EVENT_MAX_CALLBACKS]; int Count;
 };
 
@@ -76,7 +76,7 @@ struct Event_PadAxis {
 /* "data" will be 64 bytes in length. */
 typedef void (*Event_PluginMessage_Callback)(void* obj, cc_uint8 channel, cc_uint8* data);
 struct Event_PluginMessage {
-	Event_PluginMessage_Callback Handlers[EVENT_MAX_CALLBACKS]; 
+	Event_PluginMessage_Callback Handlers[EVENT_MAX_CALLBACKS];
 	void* Objs[EVENT_MAX_CALLBACKS]; int Count;
 };
 

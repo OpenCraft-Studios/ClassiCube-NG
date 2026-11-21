@@ -126,9 +126,9 @@ void Platform_Log(const char* msg, int len) {
 #define FileTime_UnixTime(time)  ((time / 10000000) - FILETIME_UNIX_EPOCH)
 
 TimeMS DateTime_CurrentUTC(void) {
-	FILETIME ft; 
+	FILETIME ft;
 	cc_uint64 raw;
-	
+
 	_GetSystemTimeAsFileTime(&ft);
 	/* in 100 nanosecond units, since Jan 1 1601 */
 	raw = ft.dwLowDateTime | ((cc_uint64)ft.dwHighDateTime << 32);
@@ -155,7 +155,7 @@ cc_uint64 Stopwatch_Measure(void) {
 	if (sw_highRes) {
 		QueryPerformanceCounter(&t);
 		return (cc_uint64)t.QuadPart;
-	} else {		
+	} else {
 		_GetSystemTimeAsFileTime(&ft);
 		return (cc_uint64)ft.dwLowDateTime | ((cc_uint64)ft.dwHighDateTime << 32);
 	}
@@ -167,7 +167,7 @@ cc_uint64 Stopwatch_Measure(void) {
 *#########################################################################################################################*/
 /* In EXCEPTION_ACCESS_VIOLATION case, arg 1 is access type and arg 2 is virtual address */
 /* https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-exception_record */
-#define IsNullReadException(r)  (r->ExceptionCode == EXCEPTION_ACCESS_VIOLATION && r->ExceptionInformation[1] == 0 && r->ExceptionInformation[0] == 0) 
+#define IsNullReadException(r)  (r->ExceptionCode == EXCEPTION_ACCESS_VIOLATION && r->ExceptionInformation[1] == 0 && r->ExceptionInformation[0] == 0)
 #define IsNullWriteException(r) (r->ExceptionCode == EXCEPTION_ACCESS_VIOLATION && r->ExceptionInformation[1] == 0 && r->ExceptionInformation[0] == 1)
 
 static const char* ExceptionDescribe(struct _EXCEPTION_RECORD* rec) {
@@ -275,7 +275,7 @@ void Platform_EncodePath(cc_filepath* dst, const cc_string* src) {
 
 void Platform_DecodePath(cc_string* dst, const cc_filepath* path) {
 	int i;
-	for (i = 0; i < FILENAME_SIZE && path->uni[i]; i++) 
+	for (i = 0; i < FILENAME_SIZE && path->uni[i]; i++)
 	{
 		String_Append(dst, Convert_CodepointToCP437(path->uni[i]));
 	}
@@ -292,7 +292,7 @@ cc_result Directory_Create2(const cc_filepath* path) {
 
 int File_Exists(const cc_filepath* path) {
 	DWORD attribs = GetFileAttributesW(path->uni);
-	
+
 	if (attribs == INVALID_FILE_ATTRIBUTES)
 		attribs = GetFileAttributesA(path->ansi);
 
@@ -303,7 +303,7 @@ static cc_result Directory_EnumCore(const cc_string* dirPath, const cc_string* f
 									void* obj, Directory_EnumCallback callback) {
 	cc_string path; char pathBuffer[MAX_PATH + 10];
 	int is_dir;
-	
+
 	/* ignore . and .. entry */
 	if (file->length == 1 && file->buffer[0] == '.') return 0;
 	if (file->length == 2 && file->buffer[0] == '.' && file->buffer[1] == '.') return 0;
@@ -323,13 +323,13 @@ cc_result Directory_Enum(const cc_string* dirPath, void* obj, Directory_EnumCall
 	int i, ansi = false;
 	cc_filepath str;
 	HANDLE find;
-	cc_result res;	
+	cc_result res;
 
 	/* Need to append \* to search for files in directory */
 	String_InitArray(path, pathBuffer);
 	String_Format1(&path, "%s\\*", dirPath);
 	Platform_EncodePath(&str, &path);
-	
+
 	find = FindFirstFileW(str.uni, &eW);
 	if (!find || find == INVALID_HANDLE_VALUE) {
 		if ((res = GetLastError()) != ERROR_CALL_NOT_IMPLEMENTED) return res;
@@ -434,7 +434,7 @@ void Thread_Run(void** handle, Thread_StartFunc func, int stackSize, const char*
 	DWORD threadID;
 	HANDLE thread = CreateThread(NULL, 0, ExecThread, (void*)func, CREATE_SUSPENDED, &threadID);
 	if (!thread) Process_Abort2(GetLastError(), "Creating thread");
-	
+
 	*handle = thread;
 	ResumeThread(thread);
 #endif
@@ -465,8 +465,8 @@ void* Mutex_Create(const char* name) {
 	return ptr;
 }
 
-void Mutex_Free(void* handle)   { 
-	DeleteCriticalSection((CRITICAL_SECTION*)handle); 
+void Mutex_Free(void* handle)   {
+	DeleteCriticalSection((CRITICAL_SECTION*)handle);
 	Mem_Free(handle);
 }
 void Mutex_Lock(void* handle)   { EnterCriticalSection((CRITICAL_SECTION*)handle); }
@@ -518,7 +518,7 @@ static void FontDirCallback(const cc_string* path, void* obj, int isDirectory) {
 	static const cc_string fonExt = String_FromConst(".fon");
 	/* Completely skip windows .FON files */
 	if (String_CaselessEnds(path, &fonExt)) return;
-	
+
 	if (isDirectory) {
 		Directory_Enum(path, NULL, FontDirCallback);
 	} else {
@@ -526,12 +526,12 @@ static void FontDirCallback(const cc_string* path, void* obj, int isDirectory) {
 	}
 }
 
-void Platform_LoadSysFonts(void) { 
+void Platform_LoadSysFonts(void) {
 	int i;
 	char winFolder[FILENAME_SIZE];
 	WCHAR winTmp[FILENAME_SIZE];
 	UINT winLen;
-	
+
 	cc_string dirs[2];
 	String_InitArray(dirs[0], winFolder);
 	dirs[1] = String_FromReadonly("C:/WINNT35/system");
@@ -545,7 +545,7 @@ void Platform_LoadSysFonts(void) {
 	}
 	String_AppendConst(&dirs[0], "/fonts");
 
-	for (i = 0; i < Array_Elems(dirs); i++) 
+	for (i = 0; i < Array_Elems(dirs); i++)
 	{
 		Platform_Log1("Searching for fonts in %s", &dirs[i]);
 		Directory_Enum(&dirs[i], NULL, FontDirCallback);
@@ -562,7 +562,7 @@ static char sockaddr_size_check[sizeof(SOCKADDR_STORAGE) < CC_SOCKETADDR_MAXSIZE
 cc_bool SockAddr_ToString(const cc_sockaddr* addr, cc_string* dst) {
 	struct sockaddr_in* addr4 = (struct sockaddr_in*)addr->data;
 
-	if (addr4->sin_family == AF_INET) 
+	if (addr4->sin_family == AF_INET)
 		return IPv4_ToString(&addr4->sin_addr, &addr4->sin_port, dst);
 	return false;
 }
@@ -575,7 +575,7 @@ static cc_bool ParseIPv4(const cc_string* ip, int port, cc_sockaddr* dst) {
 	addr4->sin_addr.S_un.S_addr = ip_addr;
 	addr4->sin_family      = AF_INET;
 	addr4->sin_port        = SockAddr_EncodePort(port);
-		
+
 	dst->size = sizeof(*addr4);
 	return true;
 }
@@ -611,12 +611,12 @@ static cc_result ParseHostOld(const char* host, int port, cc_sockaddr* addrs, in
 		if (wsa_res == WSAHOST_NOT_FOUND) return SOCK_ERR_UNKNOWN_HOST;
 		return ERR_INVALID_ARGUMENT;
 	}
-		
+
 	/* per MSDN, should only be getting AF_INET returned from this */
 	if (res->h_addrtype != AF_INET) return ERR_INVALID_ARGUMENT;
 	if (!res->h_addr_list)          return ERR_INVALID_ARGUMENT;
 
-	for (i = 0; i < SOCKET_MAX_ADDRS; i++) 
+	for (i = 0; i < SOCKET_MAX_ADDRS; i++)
 	{
 		src_addr = res->h_addr_list[i];
 		if (!src_addr) break;
@@ -642,7 +642,7 @@ static cc_result ParseHostNew(const char* host, int port, cc_sockaddr* addrs, in
 
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol = IPPROTO_TCP;
-	
+
 	String_InitArray(portStr,  portRaw);
 	String_AppendInt(&portStr, port);
 	portRaw[portStr.length] = '\0';
@@ -652,13 +652,13 @@ static cc_result ParseHostNew(const char* host, int port, cc_sockaddr* addrs, in
 	if (res) return res;
 
 	/* Prefer IPv4 addresses first */
-	for (cur = result; cur && i < SOCKET_MAX_ADDRS; cur = cur->ai_next) 
+	for (cur = result; cur && i < SOCKET_MAX_ADDRS; cur = cur->ai_next)
 	{
 		if (cur->ai_family != AF_INET) continue;
 		SocketAddr_Set(&addrs[i], cur->ai_addr, cur->ai_addrlen); i++;
 	}
-	
-	for (cur = result; cur && i < SOCKET_MAX_ADDRS; cur = cur->ai_next) 
+
+	for (cur = result; cur && i < SOCKET_MAX_ADDRS; cur = cur->ai_next)
 	{
 		if (cur->ai_family == AF_INET) continue;
 		SocketAddr_Set(&addrs[i], cur->ai_addr, cur->ai_addrlen); i++;
@@ -736,7 +736,7 @@ cc_result Socket_Poll(cc_socket s, int timeoutMS, int mode, cc_bool* success) {
 	if (mode == SOCKET_POLL_READ) {
 		selectCount = _select(1, &set1, NULL, NULL, &time);
 
-		*success = set1.fd_count != 0; 
+		*success = set1.fd_count != 0;
 	} else {
 		selectCount = _select(1, NULL, &set1, &set2, &time);
 
@@ -744,7 +744,7 @@ cc_result Socket_Poll(cc_socket s, int timeoutMS, int mode, cc_bool* success) {
 	}
 
 	if (selectCount >= 0) return 0;
-	*success = false; 
+	*success = false;
 	return _WSAGetLastError();
 }
 
@@ -761,7 +761,7 @@ static cc_result Process_RawGetExePath(cc_winstring* path, int* len) {
 	*len = GetModuleFileNameA(NULL, path->ansi, NATIVE_STR_LEN);
 	path->ansi[*len] = '\0';
 	if (!(*len)) return GetLastError();
-	
+
 	*len = GetModuleFileNameW(NULL, path->uni, NATIVE_STR_LEN);
 	path->uni[*len]  = '\0';
 	if (*len) return 0;
@@ -777,7 +777,7 @@ cc_result Process_StartGame2(const cc_string* args, int numArgs) {
 		STARTUPINFOW wide;
 		STARTUPINFOA ansi;
 	} si = { 0 }; // less compiler warnings this way
-	
+
 	cc_winstring path;
 	cc_string argv; char argvBuffer[NATIVE_STR_LEN];
 	PROCESS_INFORMATION pi = { 0 };
@@ -789,7 +789,7 @@ cc_result Process_StartGame2(const cc_string* args, int numArgs) {
 
 	if ((res = Process_RawGetExePath(&path, &len))) return res;
 	si.wide.cb = sizeof(STARTUPINFOW);
-	
+
 	String_InitArray(argv, argvBuffer);
 	/* Game doesn't actually care about argv[0] */
 	String_AppendConst(&argv, "cc");
@@ -877,7 +877,7 @@ cc_result Updater_Start(const char** action) {
 	*action = "Getting executable path";
 	if ((res = Process_RawGetExePath(&path, &len))) return res;
 
-	*action = "Moving executable to CC_prev.exe"; 
+	*action = "Moving executable to CC_prev.exe";
 	if (!path.uni[0]) return ERR_NOT_SUPPORTED; /* MoveFileA returns ERROR_ACCESS_DENIED on Win 9x anyways */
 	if (!MoveFileExW(path.uni, UPDATE_TMP, MOVEFILE_REPLACE_EXISTING)) return GetLastError();
 
@@ -919,7 +919,7 @@ cc_result Updater_SetNewBuildTime(cc_uint64 timestamp) {
 	FILETIME ft;
 	cc_uint64 raw;
 	cc_result res;
-	
+
 	Platform_EncodePath(&str, &path);
 	res = File_OpenOrCreate(&file, &str);
 	if (res) return res;
@@ -1003,14 +1003,14 @@ void Platform_EncodeString(cc_winstring* dst, const cc_string* src) {
 	if (src->length > FILENAME_SIZE) Process_Abort("String too long to expand");
 
 	uni = dst->uni;
-	for (i = 0; i < src->length; i++) 
+	for (i = 0; i < src->length; i++)
 	{
 		*uni++ = Convert_CP437ToUnicode(src->buffer[i]);
 	}
 	*uni = '\0';
 
 	ansi = dst->ansi;
-	for (i = 0; i < src->length; i++) 
+	for (i = 0; i < src->length; i++)
 	{
 		*ansi++ = (char)dst->uni[i];
 	}
@@ -1059,7 +1059,7 @@ cc_bool Platform_DescribeError(cc_result res, cc_string* dst) {
 	WCHAR chars[NATIVE_STR_LEN];
 	DWORD flags = FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS;
 
-	res = FormatMessageW(flags, NULL, res, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), 
+	res = FormatMessageW(flags, NULL, res, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
 						 chars, NATIVE_STR_LEN, NULL);
 	if (!res) return false;
 
@@ -1080,7 +1080,7 @@ cc_result Platform_Encrypt(const void* data, int len, cc_string* dst) {
 	if (!_CryptProtectData) return ERR_NOT_SUPPORTED;
 	if (!_CryptProtectData(&input, NULL, NULL, NULL, NULL, 0, &output)) return GetLastError();
 
-	for (i = 0; i < output.cbData; i++) 
+	for (i = 0; i < output.cbData; i++)
 	{
 		String_Append(dst, output.pbData[i]);
 	}
@@ -1097,7 +1097,7 @@ cc_result Platform_Decrypt(const void* data, int len, cc_string* dst) {
 	if (!_CryptUnprotectData) return ERR_NOT_SUPPORTED;
 	if (!_CryptUnprotectData(&input, NULL, NULL, NULL, NULL, 0, &output)) return GetLastError();
 
-	for (i = 0; i < output.cbData; i++) 
+	for (i = 0; i < output.cbData; i++)
 	{
 		String_Append(dst, output.pbData[i]);
 	}
@@ -1115,11 +1115,11 @@ cc_result Platform_GetEntropy(void* data, int len) {
 	if (!_RtlGenRandom) {
 		static const cc_string kernel32 = String_FromConst("ADVAPI32.DLL");
 		void* lib;
-		
+
 		DynamicLib_LoadAll(&kernel32, funcs, Array_Elems(funcs), &lib);
 		if (!_RtlGenRandom) return ERR_NOT_SUPPORTED;
 	}
-	
+
 	if (!_RtlGenRandom(data, len)) return GetLastError();
 	return 0;
 }
@@ -1161,7 +1161,7 @@ int Platform_GetCommandLineArgs(int argc, STRING_REF char** argv, cc_string* arg
 	Platform_NextArg(&cmdArgs); /* skip exe path */
 	if (gameHasArgs) return GetGameArgs(args);
 
-	for (i = 0; i < GAME_MAX_CMDARGS; i++) 
+	for (i = 0; i < GAME_MAX_CMDARGS; i++)
 	{
 		args[i] = Platform_NextArg(&cmdArgs);
 
@@ -1183,7 +1183,7 @@ static cc_bool IsProblematicWorkingDirectory(void) {
 
 	curDir = String_FromReadonly(curPath);
 	winDir = String_FromReadonly(winPath);
-	
+
 	if (String_Equals(&curDir, &winDir)) {
 		Platform_LogConst("Working directory is System32! Changing to executable directory..");
 		return true;
@@ -1199,11 +1199,11 @@ cc_result Platform_SetDefaultCurrentDirectory(int argc, char** argv) {
 
 	res = Process_RawGetExePath(&path, &len);
 	if (res) return res;
-	if (!path.uni[0]) return ERR_NOT_SUPPORTED; 
+	if (!path.uni[0]) return ERR_NOT_SUPPORTED;
 	/* Not implemented on ANSI only systems due to laziness */
 
 	/* Get rid of filename at end of directory */
-	for (i = len - 1; i >= 0; i--, len--) 
+	for (i = len - 1; i >= 0; i--, len--)
 	{
 		if (path.uni[i] == '/' || path.uni[i] == '\\') break;
 	}

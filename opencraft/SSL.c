@@ -67,7 +67,7 @@ static unsigned x509_maybe_system_verify(struct SSLContext* ssl, unsigned r) {
 
 static unsigned x509_end_chain(const br_x509_class** ctx) {
 	struct SSLContext* ssl = (struct SSLContext*)ctx;
-	
+
 	unsigned r = br_x509_minimal_vtable.end_chain(ctx);
 	r = x509_maybe_skip_verify(r);
 	r = x509_maybe_system_verify(ssl, r);
@@ -104,7 +104,7 @@ cc_bool SSLBackend_DescribeError(cc_result res, cc_string* dst) {
 		String_AppendConst(dst, "The website's SSL certificate was issued by an authority that is not trusted");
 		return true;
 	}
-	return false; // TODO: error codes 
+	return false; // TODO: error codes
 }
 
 static void InjectEntropy(SSLContext* ctx) {
@@ -117,7 +117,7 @@ static void InjectEntropy(SSLContext* ctx) {
 
 static int ssl_time_check_callback(void* ctx,
 	uint32_t not_before_days, uint32_t not_before_secs,
-	uint32_t not_after_days,  uint32_t not_after_secs) 
+	uint32_t not_after_days,  uint32_t not_after_secs)
 {
 #ifdef CC_BUILD_CONSOLE
 	/* It's fairly common for RTC on older console systems to not be set correctly */
@@ -144,7 +144,7 @@ static int sock_read(void* ctx_, unsigned char* buf, size_t len) {
 	SSLContext* ctx = (SSLContext*)ctx_;
 	cc_uint32 read;
 	cc_result res = Socket_Read(ctx->socket, buf, len, &read);
-	
+
 	if (res) { ctx->readError = res; return -1; }
 	/* In case socket has been partially closed (i.e. can't be read from anymore) */
 	if (read == 0) { ctx->readError = ERR_END_OF_STREAM; return -1; }
@@ -156,7 +156,7 @@ static int sock_write(void* ctx_, const unsigned char* buf, size_t len) {
 	SSLContext* ctx = (SSLContext*)ctx_;
 	cc_uint32 wrote;
 	cc_result res = Socket_Write(ctx->socket, buf, len, &wrote);
-	
+
 	if (res) { ctx->writeError = res; return -1; }
 	return wrote;
 }
@@ -165,23 +165,23 @@ cc_result SSL_Init(cc_socket socket, const cc_string* host_, void** out_ctx) {
 	SSLContext* ctx;
 	char host[NATIVE_STR_LEN];
 	String_EncodeUtf8(host, host_);
-	
+
 	ctx = (SSLContext*)Mem_TryAlloc(1, sizeof(SSLContext));
 	if (!ctx) return ERR_OUT_OF_MEMORY;
 	*out_ctx = (void*)ctx;
-	
+
 #if defined CC_BUILD_SYMBIAN
 	{
 		TAs[3].pkey.key.ec.curve = BR_EC_secp384r1;
 		TAs[3].pkey.key.ec.q = (unsigned char *)TA3_EC_Q;
 		TAs[3].pkey.key.ec.qlen = sizeof TA3_EC_Q;
-		
+
 		TAs[6].pkey.key.ec.curve = BR_EC_secp384r1;
 		TAs[6].pkey.key.ec.q = (unsigned char *)TA6_EC_Q;
 		TAs[6].pkey.key.ec.qlen = sizeof TA6_EC_Q;
 	}
 #endif
-	
+
 	br_ssl_client_init_full(&ctx->sc, &ctx->xc, TAs, TAs_NUM);
 	InjectEntropy(ctx);
 	br_x509_minimal_set_time_callback(&ctx->xc, NULL, ssl_time_check_callback);
@@ -190,19 +190,19 @@ cc_result SSL_Init(cc_socket socket, const cc_string* host_, void** out_ctx) {
 	br_ssl_engine_set_buffer(&ctx->sc.eng, ctx->iobuf, sizeof(ctx->iobuf), 1);
 	br_ssl_client_reset(&ctx->sc, host, 0);
 	ctx->xc.vtable = &cert_verifier_vtable;
-	
+
 	/* Account login must be done over TLS 1.2 */
 	if (String_CaselessEqualsConst(host_, "www.classicube.net")) {
 		br_ssl_engine_set_versions(&ctx->sc.eng, BR_TLS12, BR_TLS12);
 	}
-	
-	br_sslio_init(&ctx->ioc, &ctx->sc.eng, 
-			sock_read,  ctx, 
+
+	br_sslio_init(&ctx->ioc, &ctx->sc.eng,
+			sock_read,  ctx,
 			sock_write, ctx);
-			
+
 	ctx->readError  = 0;
 	ctx->writeError = 0;
-	
+
 	return 0;
 }
 
@@ -210,20 +210,20 @@ static CC_NOINLINE cc_result SSL_GetError(SSLContext* ctx) {
 	int err;
 	if (ctx->writeError) return ctx->writeError;
 	if (ctx->readError)  return ctx->readError;
-		
+
 	// TODO session resumption, proper connection closing ??
 	err = br_ssl_engine_last_error(&ctx->sc.eng);
 	if (err == 0 && br_ssl_engine_current_state(&ctx->sc.eng) == BR_SSL_CLOSED)
 		return SSL_ERR_CONTEXT_DEAD;
-		
+
 	return SSL_ERROR_SHIFT | (err & 0xFFFF);
 }
 
-cc_result SSL_Read(void* ctx_, cc_uint8* data, cc_uint32 count, cc_uint32* read) { 
+cc_result SSL_Read(void* ctx_, cc_uint8* data, cc_uint32 count, cc_uint32* read) {
 	SSLContext* ctx = (SSLContext*)ctx_;
 	int res = br_sslio_read(&ctx->ioc, data, count);
-	if (res < 0) return SSL_GetError(ctx);	
-	
+	if (res < 0) return SSL_GetError(ctx);
+
 	*read = res;
 	return 0;
 }
@@ -232,7 +232,7 @@ cc_result SSL_Write(void* ctx_, const cc_uint8* data, cc_uint32 count, cc_uint32
 	SSLContext* ctx = (SSLContext*)ctx_;
 	int res = br_sslio_write(&ctx->ioc, data, count);
 	if (res < 0) return SSL_GetError(ctx);
-	
+
 	br_sslio_flush(&ctx->ioc);
 	*sent = res;
 	return 0;
@@ -241,7 +241,7 @@ cc_result SSL_Write(void* ctx_, const cc_uint8* data, cc_uint32 count, cc_uint32
 cc_result SSL_Free(void* ctx_) {
 	SSLContext* ctx = (SSLContext*)ctx_;
 	if (ctx) br_sslio_close(&ctx->ioc);
-	
+
 	Mem_Free(ctx_);
 	return 0;
 }

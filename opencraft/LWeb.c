@@ -193,12 +193,12 @@ cc_bool Json_Parse(struct JsonContext* ctx) {
 	return !ctx->failed;
 }
 
-static cc_bool Json_Handle(cc_uint8* data, cc_uint32 len, 
+static cc_bool Json_Handle(cc_uint8* data, cc_uint32 len,
 						JsonOnValue onVal, JsonOnNew newArr, JsonOnNew newObj) {
 	struct JsonContext ctx;
 	/* NOTE: classicube.net uses \u JSON for non ASCII, no need to UTF8 convert characters here */
 	Json_Init(&ctx, (char*)data, len);
-	
+
 	if (onVal)  ctx.OnValue     = onVal;
 	if (newArr) ctx.OnNewArray  = newArr;
 	if (newObj) ctx.OnNewObject = newObj;
@@ -342,7 +342,7 @@ static void SignInTask_Handle(cc_uint8* data, cc_uint32 len) {
 
 	cc_bool success = Json_Handle(data, len, SignInTask_OnValue, NULL, NULL);
 	if (success) return;
-	
+
 	SignInTask.error = "&cError parsing response";
 	Logger_WarnFunc(&err_msg);
 }
@@ -631,7 +631,7 @@ static void FetchFlagsTask_DownloadNext(void);
 static void FetchFlagsTask_Handle(cc_uint8* data, cc_uint32 len) {
 	struct Flag* flag = &flags[FetchFlagsTask.count];
 	LBackend_DecodeFlag(flag, data, len);
-	
+
 	FetchFlagsTask.count++;
 	FetchFlagsTask_DownloadNext();
 }
@@ -664,7 +664,7 @@ static void FetchFlagsTask_Ensure(void) {
 
 void FetchFlagsTask_Add(const struct ServerInfo* server) {
 	int i;
-	for (i = 0; i < flagsCount; i++) 
+	for (i = 0; i < flagsCount; i++)
 	{
 		if (flags[i].country[0] != server->country[0]) continue;
 		if (flags[i].country[1] != server->country[1]) continue;
@@ -684,7 +684,7 @@ void FetchFlagsTask_Add(const struct ServerInfo* server) {
 
 struct Flag* Flags_Get(const struct ServerInfo* server) {
 	int i;
-	for (i = 0; i < FetchFlagsTask.count; i++) 
+	for (i = 0; i < FetchFlagsTask.count; i++)
 	{
 		if (flags[i].country[0] != server->country[0]) continue;
 		if (flags[i].country[1] != server->country[1]) continue;

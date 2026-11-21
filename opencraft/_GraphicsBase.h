@@ -42,7 +42,7 @@ static cc_bool gfx_alphaTest, gfx_alphaBlend;
 static void SetAlphaTest(cc_bool enabled);
 void Gfx_SetAlphaTest(cc_bool enabled) {
 	if (gfx_alphaTest == enabled) return;
-	
+
 	gfx_alphaTest = enabled;
 	SetAlphaTest(enabled);
 }
@@ -50,7 +50,7 @@ void Gfx_SetAlphaTest(cc_bool enabled) {
 static void SetAlphaBlend(cc_bool enabled);
 void Gfx_SetAlphaBlending(cc_bool enabled) {
 	if (gfx_alphaBlend == enabled) return;
-	
+
 	gfx_alphaBlend = enabled;
 	SetAlphaBlend(enabled);
 }
@@ -217,7 +217,7 @@ void Gfx_Draw2DTexture(const struct Texture* tex, PackedCol color) {
 }
 #endif
 
-struct VertexColoured* Gfx_Build2DFlat(int x, int y, int width, int height, 
+struct VertexColoured* Gfx_Build2DFlat(int x, int y, int width, int height,
 										PackedCol color, struct VertexColoured* v) {
 	v->x = (float)x;           v->y = (float)y;            v->z = 0; v->Col = color; v++;
 	v->x = (float)(x + width); v->y = (float)y;            v->z = 0; v->Col = color; v++;
@@ -226,7 +226,7 @@ struct VertexColoured* Gfx_Build2DFlat(int x, int y, int width, int height,
 	return v;
 }
 
-struct VertexColoured* Gfx_Build2DGradient(int x, int y, int width, int height, 
+struct VertexColoured* Gfx_Build2DGradient(int x, int y, int width, int height,
 											PackedCol top, PackedCol bottom, struct VertexColoured* v) {
 	v->x = (float)x;           v->y = (float)y;            v->z = 0; v->Col = top;    v++;
 	v->x = (float)(x + width); v->y = (float)y;            v->z = 0; v->Col = top;    v++;
@@ -274,7 +274,7 @@ void Gfx_End2D(void) {
 	Gfx_SetDepthTest(true);
 	Gfx_SetDepthWrite(true);
 	Gfx_SetAlphaBlending(false);
-	
+
 	if (gfx_hadFog) Gfx_SetFog(true);
 }
 #endif
@@ -310,7 +310,7 @@ static CC_INLINE float Reversed_CalcZNear(float fov, int depthbufferBits) {
 static void PrintMaxTextureInfo(cc_string* info) {
 	if (Gfx.MaxTexSize) {
 		float maxSize = Gfx.MaxTexSize / (1024.0f * 1024.0f);
-		String_Format3(info, "Max texture size: (%i, %i), up to %f3 MB\n", 
+		String_Format3(info, "Max texture size: (%i, %i), up to %f3 MB\n",
 						&Gfx.MaxTexWidth, &Gfx.MaxTexHeight, &maxSize);
 	} else {
 		String_Format2(info, "Max texture size: (%i, %i)\n",
@@ -331,7 +331,7 @@ void Gfx_UpdateTexturePart(GfxResourceID texId, int x, int y, struct Bitmap* par
 	Gfx_UpdateTexture(texId, x, y, part, part->width, mipmaps);
 }
 
-static CC_INLINE void CopyPixels(void* dst,       int dstStride, 
+static CC_INLINE void CopyPixels(void* dst,       int dstStride,
 								const void* src,  int srcStride,
 								int pixelsPerRow, int rows) {
 	cc_uint8* src_ = (cc_uint8*)src;
@@ -342,7 +342,7 @@ static CC_INLINE void CopyPixels(void* dst,       int dstStride,
 		Mem_Copy(dst_, src_, Bitmap_DataSize(pixelsPerRow, rows));
 	} else {
 		/* Have to copy scanline by scanline */
-		for (y = 0; y < rows; y++) 
+		for (y = 0; y < rows; y++)
 		{
 			Mem_Copy(dst_, src_, pixelsPerRow * BITMAPCOLOR_SIZE);
 			src_ += srcStride;
@@ -373,9 +373,9 @@ static BitmapCol AverageColor(BitmapCol p1, BitmapCol p2) {
 	/* ((r1 + r2) / 2) / ((a1 + a2) / 2) */
 	/* but we just cancel out the / 2 */
 	return BitmapCol_Make(
-		(r1 + r2) / aSum, 
+		(r1 + r2) / aSum,
 		(g1 + g2) / aSum,
-		(b1 + b2) / aSum, 
+		(b1 + b2) / aSum,
 		aSum >> 1);
 }
 
@@ -425,10 +425,10 @@ cc_bool Gfx_CheckTextureSize(int width, int height, cc_uint8 flags) {
 	int maxSize;
 	if (width  > Gfx.MaxTexWidth)  return false;
 	if (height > Gfx.MaxTexHeight) return false;
-	
+
 	if (Gfx.MinTexWidth  && width  < Gfx.MinTexWidth)  return false;
 	if (Gfx.MinTexHeight && height < Gfx.MinTexHeight) return false;
-	
+
 	maxSize = Gfx.MaxTexSize;
 	// low resolution textures may support higher sizes (e.g. Nintendo 64)
 	if ((flags & TEXTURE_FLAG_LOWRES) && Gfx.MaxLowResTexSize)
@@ -498,7 +498,7 @@ GfxResourceID Gfx_TryCreateStaticVb(VertexFormat fmt, int count) {
 
 GfxResourceID Gfx_CreateDynamicVb(VertexFormat fmt, int maxVertices) {
 	GfxResourceID vb;
-	if (Gfx.LostContext) return 0; 
+	if (Gfx.LostContext) return 0;
 
 	for (;;)
 	{

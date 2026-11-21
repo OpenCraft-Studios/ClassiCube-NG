@@ -4,7 +4,7 @@
 #include "PackedCol.h"
 CC_BEGIN_HEADER
 
-/* 
+/*
 Represents a fixed size 3D array of blocks and associated metadata
 Copyright 2014-2025 ClassiCube | Licensed under BSD-3
 */
@@ -111,7 +111,7 @@ static CC_INLINE cc_bool World_Contains(int x, int y, int z) {
 }
 /* Whether the given coordinates lie horizontally inside the map. */
 static CC_INLINE cc_bool World_ContainsXZ(int x, int z) {
-	return (unsigned)x < (unsigned)World.Width 
+	return (unsigned)x < (unsigned)World.Width
 		&& (unsigned)z < (unsigned)World.Length;
 }
 
@@ -124,7 +124,7 @@ enum EnvVar {
 	ENV_VAR_EDGE_BLOCK, ENV_VAR_SIDES_BLOCK, ENV_VAR_EDGE_HEIGHT, ENV_VAR_SIDES_OFFSET,
 	ENV_VAR_CLOUDS_HEIGHT, ENV_VAR_CLOUDS_SPEED, ENV_VAR_WEATHER_SPEED, ENV_VAR_WEATHER_FADE,
 	ENV_VAR_WEATHER, ENV_VAR_EXP_FOG, ENV_VAR_SKYBOX_HOR_SPEED, ENV_VAR_SKYBOX_VER_SPEED,
-	ENV_VAR_SKY_COLOR, ENV_VAR_CLOUDS_COLOR, ENV_VAR_FOG_COLOR, 
+	ENV_VAR_SKY_COLOR, ENV_VAR_CLOUDS_COLOR, ENV_VAR_FOG_COLOR,
 	ENV_VAR_SUN_COLOR, ENV_VAR_SHADOW_COLOR, ENV_VAR_SKYBOX_COLOR,
 	ENV_VAR_LAVALIGHT_COLOR, ENV_VAR_LAMPLIGHT_COLOR
 };

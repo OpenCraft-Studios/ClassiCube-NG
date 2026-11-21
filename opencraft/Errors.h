@@ -15,7 +15,7 @@ enum CC_ERRORS {
 
 	OGG_ERR_INVALID_SIG  = 0xCCDED005UL, /* Bytes #1-#4 aren't "OggS" */
 	OGG_ERR_VERSION      = 0xCCDED006UL, /* Byte #5 isn't 0 */
-						 
+
 	WAV_ERR_STREAM_HDR   = 0xCCDED007UL, /* Bytes #1-#4  aren't "RIFF" */
 	WAV_ERR_STREAM_TYPE  = 0xCCDED008UL, /* Bytes #9-#12 aren't "WAV " */
 	WAV_ERR_DATA_TYPE    = 0xCCDED009UL, /* Audio data type isn't 1 (PCM) */

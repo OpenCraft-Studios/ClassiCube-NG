@@ -123,7 +123,7 @@ static void UpdateFogNormal(float fogDensity, PackedCol fogColor) {
 }
 
 void EnvRenderer_UpdateFog(void) {
-	float fogDensity; 
+	float fogDensity;
 	PackedCol fogColor;
 	if (!World.Loaded) return;
 
@@ -147,7 +147,7 @@ static int clouds_vertices;
 static void DrawCloudsY(int x1, int z1, int x2, int z2, int y, struct VertexTextured* v) {
 	int endX = x2, endZ = z2, startZ = z1, axisSize = EnvRenderer_AxisSize();
 	float u1, u2, v1, v2;
-	float yy = (float)y + 0.1f; 
+	float yy = (float)y + 0.1f;
 	PackedCol col = Env.CloudsCol;
 	/* adjust range so that largest negative uv coordinate is shifted to 0 or above. */
 	float offset = (float)Math_CeilDiv(-x1, 2048);
@@ -201,7 +201,7 @@ void EnvRenderer_RenderClouds(void) {
 		BuildClouds();
 		if (!clouds_vb) return;
 	}
-	
+
 	offset = (float)(Game.Time / 2048.0f * 0.6f * Env.CloudsSpeed);
 
 	Gfx_EnableTextureOffset(offset, 0);
@@ -283,7 +283,7 @@ void EnvRenderer_RenderSky(void) {
 		Gfx_DrawVb_IndexedTris(sky_vertices);
 	} else {
 		m  = Gfx.View;
-		dy = skyY - normY; 
+		dy = skyY - normY;
 		/* inlined Y translation matrix multiply */
 		m.row4.x += dy * m.row2.x; m.row4.y += dy * m.row2.y;
 		m.row4.z += dy * m.row2.z; m.row4.w += dy * m.row2.w;
@@ -359,7 +359,7 @@ void EnvRenderer_RenderSkybox(void) {
 	/* Rotate around camera */
 	pos = Camera.CurrentPos;
 	Vec3_Set(Camera.CurrentPos, 0,0,0);
-	Camera.Active->GetView(&view); 
+	Camera.Active->GetView(&view);
 	Matrix_MulBy(&m, &view);
 	Camera.CurrentPos = pos;
 
@@ -389,7 +389,7 @@ static IVec3 lastPos;
 static void InitWeatherHeightmap(void) {
 	int i;
 	Weather_Heightmap = (cc_int16*)Mem_Alloc(World.Width * World.Length, 2, "weather heightmap");
-	
+
 	for (i = 0; i < World.Width * World.Length; i++) {
 		Weather_Heightmap[i] = Int16_MaxValue;
 	}
@@ -485,7 +485,7 @@ void EnvRenderer_RenderWeather(float delta) {
 	weather = Env.Weather;
 	if (weather == WEATHER_SUNNY) return;
 
-	if (!Weather_Heightmap) 
+	if (!Weather_Heightmap)
 		InitWeatherHeightmap();
 	if (!weather_vb)
 		weather_vb = Gfx_CreateDynamicVb(VERTEX_FORMAT_TEXTURED, WEATHER_VERTS_COUNT);
@@ -525,7 +525,7 @@ void EnvRenderer_RenderWeather(float delta) {
 	Gfx_SetAlphaArgBlend(true);
 
 	Gfx_SetVertexFormat(VERTEX_FORMAT_TEXTURED);
-	v = (struct VertexTextured*)Gfx_LockDynamicVb(weather_vb, 
+	v = (struct VertexTextured*)Gfx_LockDynamicVb(weather_vb,
 										VERTEX_FORMAT_TEXTURED, numCoords * WEATHER_VERTS);
 
 	color = Env.SunCol;
@@ -565,9 +565,9 @@ void EnvRenderer_RenderWeather(float delta) {
 		} else {
 			vOffset = vOffsetBase;
 		}
-		
+
 		worldV = vOffset + (z & 1) / 2.0f - (x & 0x0F) / 16.0f;
-		v1 = y            / 6.0f + worldV; 
+		v1 = y            / 6.0f + worldV;
 		v2 = (y + height) / 6.0f + worldV;
 		x1 = (float)x;       y1 = (float)y;            z1 = (float)z;
 		x2 = (float)(x + 1); y2 = (float)(y + height); z2 = (float)(z + 1);
@@ -610,7 +610,7 @@ static void MakeBorderTex(GfxResourceID* texId, BlockID block) {
 
 static Rect2D EnvRenderer_Rect(int x, int y, int width, int height) {
 	Rect2D r;
-	r.x = x; r.y = y; r.width = width; r.height = height; 
+	r.x = x; r.y = y; r.width = width; r.height = height;
 	return r;
 }
 
@@ -686,7 +686,7 @@ static void DrawBorderY(int x1, int z1, int x2, int z2, float y, PackedCol color
 	for (; x1 < endX; x1 += axisSize) {
 		x2 = x1 + axisSize;
 		if (x2 > endX) x2 = endX;
-		
+
 		for (z1 = startZ; z1 < endZ; z1 += axisSize) {
 			z2 = z1 + axisSize;
 			if (z2 > endZ) z2 = endZ;

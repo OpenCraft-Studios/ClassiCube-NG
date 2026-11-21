@@ -27,7 +27,7 @@ cc_bool Utils_EnsureDirectory(const char* dirName) {
 	cc_filepath raw_dir;
 	cc_string dir;
 	cc_result res;
-	
+
 	dir = String_FromReadonly(dirName);
 	Platform_EncodePath(&raw_dir, &dir);
 	res = Directory_Create2(&raw_dir);
@@ -43,8 +43,8 @@ void Utils_UNSAFE_GetFilename(STRING_REF cc_string* path) {
 
 	for (i = path->length - 1; i >= 0; i--) {
 		c = path->buffer[i];
-		if (c == '/' || c == '\\') { 
-			*path = String_UNSAFE_SubstringAt(path, i + 1); return; 
+		if (c == '/' || c == '\\') {
+			*path = String_UNSAFE_SubstringAt(path, i + 1); return;
 		}
 	}
 }
@@ -77,7 +77,7 @@ int Utils_AccumulateWheelDelta(float* accumulator, float delta) {
 /* If color param is not null, it checks if the area is all the specified color. */
 static cc_bool IsAllSameColor(const struct Bitmap* bmp, int x1, int y1, int width, int height, BitmapCol* color) {
 	int x, y;
-	
+
 	for (y = y1; y < y1 + height; y++) {
 		BitmapCol* row = Bitmap_GetRow(bmp, y);
 
@@ -110,7 +110,7 @@ cc_uint8 Utils_CalcSkinType(const struct Bitmap* bmp) {
 	if (bmp->width != bmp->height)     return SKIN_INVALID;
 
 	scale = bmp->width / 64;
-	/* Minecraft alex skins have this particular pixel with alpha of 0 */	
+	/* Minecraft alex skins have this particular pixel with alpha of 0 */
 	col = Bitmap_GetPixel(bmp, 54 * scale, 20 * scale);
 	if (BitmapCol_A(col) < 128) return SKIN_64x64_SLIM;
 
@@ -222,7 +222,7 @@ CC_NOINLINE static int DecodeBase64(char c) {
 	if (c >= 'A' && c <= 'Z') return (c - 'A');
 	if (c >= 'a' && c <= 'z') return (c - 'a') + 26;
 	if (c >= '0' && c <= '9') return (c - '0') + 52;
-	
+
 	if (c == '+') return 62;
 	if (c == '/') return 63;
 	return -1;
@@ -270,7 +270,7 @@ cc_result EntryList_Load(struct StringsBuffer* list, const char* file, char sepa
 
 	path   = String_FromReadonly(file);
 	maxLen = list->_lenMask ? list->_lenMask : STRINGSBUFFER_DEF_LEN_MASK;
-	
+
 	Platform_EncodePath(&raw_path, &path);
 	res = Stream_OpenPath(&stream, &raw_path);
 	if (res == ReturnCode_FileNotFound) return res;
@@ -285,7 +285,7 @@ cc_result EntryList_Load(struct StringsBuffer* list, const char* file, char sepa
 		res = Stream_ReadLine(&buffered, &entry);
 		if (res == ERR_END_OF_STREAM) break;
 		if (res) { Logger_IOWarn2(res, "reading from", &raw_path); break; }
-		
+
 		/* whitespace lines are ignored (e.g. if user manually edits file) */
 		String_UNSAFE_TrimStart(&entry);
 		String_UNSAFE_TrimEnd(&entry);
@@ -315,8 +315,8 @@ cc_result EntryList_Load(struct StringsBuffer* list, const char* file, char sepa
 	return res;
 }
 
-cc_result EntryList_UNSAFE_Load(struct StringsBuffer* list, const char* file) { 
-	return EntryList_Load(list, file, '\0', NULL); 
+cc_result EntryList_UNSAFE_Load(struct StringsBuffer* list, const char* file) {
+	return EntryList_Load(list, file, '\0', NULL);
 }
 
 void EntryList_Save(struct StringsBuffer* list, const char* file) {
@@ -328,7 +328,7 @@ void EntryList_Save(struct StringsBuffer* list, const char* file) {
 
 	String_InitArray(path, pathBuffer);
 	String_AppendConst(&path, file);
-	
+
 	Platform_EncodePath(&raw_path, &path);
 	res = Stream_CreatePath(&stream, &raw_path);
 	if (res) { Logger_IOWarn2(res, "creating", &raw_path); return; }
@@ -349,7 +349,7 @@ cc_bool EntryList_Remove(struct StringsBuffer* list, const cc_string* key, char 
 	for (;;) {
 		int i = EntryList_Find(list, key, separator);
 		if (i == -1) break;
-		
+
 		StringsBuffer_Remove(list, i);
 		found = true;
 	}

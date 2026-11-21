@@ -136,7 +136,7 @@ void World_SetBlock(int x, int y, int z, BlockID block) {
 }
 #else
 void World_SetBlock(int x, int y, int z, BlockID block) {
-	World.Blocks[World_Pack(x, y, z)] = block; 
+	World.Blocks[World_Pack(x, y, z)] = block;
 }
 #endif
 
@@ -196,7 +196,7 @@ void Env_Reset(void) {
 
 void Env_SetEdgeBlock(BlockID block) {
 	/* some server software wrongly uses this value */
-	if (block == 255 && !Block_IsCustomDefined(255)) block = BLOCK_STILL_WATER; 
+	if (block == 255 && !Block_IsCustomDefined(255)) block = BLOCK_STILL_WATER;
 	Env_Set(block, Env.EdgeBlock, ENV_VAR_EDGE_BLOCK);
 }
 void Env_SetSidesBlock(BlockID block) {
@@ -277,7 +277,7 @@ float Respawn_HighestSolidY(struct AABB* bb) {
 	BlockID block;
 	struct AABB blockBB;
 	Vec3 v;
-	int x, y, z;	
+	int x, y, z;
 
 	for (y = minY; y <= maxY; y++) { v.y = (float)y;
 		for (z = minZ; z <= maxZ; z++) { v.z = (float)z;
@@ -309,7 +309,7 @@ Vec3 Respawn_FindSpawnPosition(float x, float z, Vec3 modelSize) {
 	Vec3_Set(spawn, x, World.Height + ENTITY_ADJUSTMENT, z);
 	AABB_Make(&bb, &spawn, &modelSize);
 	spawn.y = 0.0f;
-	
+
 	for (y = World.Height; y >= 0; y--) {
 		highestY = Respawn_HighestSolidY(&bb);
 		if (highestY != RESPAWN_NOT_FOUND) {

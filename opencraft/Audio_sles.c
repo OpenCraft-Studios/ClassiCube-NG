@@ -41,7 +41,7 @@ static cc_bool LoadSLFuncs(void) {
 		DynamicLib_ReqSym(SL_IID_VOLUME)
 	};
 	void* lib;
-	
+
 	return DynamicLib_LoadAll(&slLib, funcs, Array_Elems(funcs), &lib);
 }
 
@@ -53,10 +53,10 @@ cc_bool AudioBackend_Init(void) {
 
 	if (slEngineObject) return true;
 	if (!LoadSLFuncs()) { Logger_WarnFunc(&msg); return false; }
-	
+
 	/* mixer doesn't use any effects */
 	ids[0] = *_SL_IID_NULL; req[0] = SL_BOOLEAN_FALSE;
-	
+
 	res = _slCreateEngine(&slEngineObject, 0, NULL, 0, NULL, NULL);
 	if (res) { Audio_Warn(res, "creating OpenSL ES engine"); return false; }
 
@@ -128,7 +128,7 @@ static float Log10(float volume) { return Math_Log2(volume) / Math_Log2(10); }
 static void UpdateVolume(struct AudioContext* ctx) {
 	/* Object doesn't exist until Audio_SetFormat is called */
 	if (!ctx->playerVolume) return;
-	
+
 	/* log of 0 is undefined */
 	SLmillibel attenuation = ctx->volume == 0 ? SL_MILLIBEL_MIN : (2000 * Log10(ctx->volume / 100.0f));
 	(*ctx->playerVolume)->SetVolumeLevel(ctx->playerVolume, attenuation);
@@ -211,7 +211,7 @@ cc_result Audio_Poll(struct AudioContext* ctx, int* inUse) {
 	cc_result res = 0;
 
 	if (ctx->playerQueue) {
-		res = (*ctx->playerQueue)->GetState(ctx->playerQueue, &state);	
+		res = (*ctx->playerQueue)->GetState(ctx->playerQueue, &state);
 	}
 	*inUse  = state.count;
 	return res;
@@ -226,7 +226,7 @@ cc_result StreamContext_SetFormat(struct AudioContext* ctx, int channels, int sa
 }
 
 cc_result StreamContext_Enqueue(struct AudioContext* ctx, struct AudioChunk* chunk) {
-	return Audio_QueueChunk(ctx, chunk); 
+	return Audio_QueueChunk(ctx, chunk);
 }
 
 cc_result StreamContext_Play(struct AudioContext* ctx) {

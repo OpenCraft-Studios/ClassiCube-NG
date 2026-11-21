@@ -47,7 +47,7 @@ static void RequestList_Append(struct RequestList* list, struct HttpRequest* ite
 
 	if (flags & HTTP_FLAG_PRIORITY) {
 		/* Shift all requests right one place */
-		for (i = list->count; i > 0; i--) 
+		for (i = list->count; i > 0; i--)
 		{
 			HttpRequest_Copy(&list->entries[i], &list->entries[i - 1]);
 		}
@@ -66,7 +66,7 @@ static void RequestList_Append(struct RequestList* list, struct HttpRequest* ite
 static void RequestList_RemoveAt(struct RequestList* list, int i) {
 	if (i < 0 || i >= list->count) Process_Abort("Tried to remove element at list end");
 
-	for (; i < list->count - 1; i++) 
+	for (; i < list->count - 1; i++)
 	{
 		HttpRequest_Copy(&list->entries[i], &list->entries[i + 1]);
 	}
@@ -157,7 +157,7 @@ static void Http_ParseCookie(struct HttpRequest* req, const cc_string* value) {
 static void Http_ParseContentLength(struct HttpRequest* req, const cc_string* value) {
 	int contentLen = 0;
 	Convert_ParseInt(value, &contentLen);
-	
+
 	if (contentLen <= 0) return;
 	req->contentLength = contentLen;
 }
@@ -266,11 +266,11 @@ static int Http_Add(const cc_string* url, cc_uint8 flags, cc_uint8 type, const c
 		cc_string url_ = String_FromRawArray(req.url);
 		if (String_CaselessStarts(&url_, &https)) String_DeleteAt(&url_, 4);
 	}
-	
+
 	if (lastModified) {
 		String_CopyToRawArray(req.lastModified, lastModified);
 	}
-	if (etag) { 
+	if (etag) {
 		String_CopyToRawArray(req.etag, etag);
 	}
 
@@ -312,7 +312,7 @@ static cc_bool Http_CleanCacheTask(struct ScheduledTask2* task) {
 	Mutex_Lock(processedMutex);
 	{
 		cc_uint64 now = Stopwatch_Measure();
-		for (i = processedReqs.count - 1; i >= 0; i--) 
+		for (i = processedReqs.count - 1; i >= 0; i--)
 		{
 			item = &processedReqs.entries[i];
 			if (Stopwatch_ElapsedMS(item->timeDownloaded, now) < 10 * 1000) continue;
@@ -390,7 +390,7 @@ static cc_bool HttpBackend_DescribeError(cc_result res, cc_string* dst);
 void Http_LogError(const char* action, const struct HttpRequest* item) {
 	cc_string msg; char msgBuffer[512];
 	String_InitArray(msg, msgBuffer);
-	
+
 	Logger_FormatWarn(&msg, item->result, action, HttpBackend_DescribeError);
 	Logger_WarnFunc(&msg);
 }

@@ -179,7 +179,7 @@ static void Physics_TickRandomBlocks(void) {
 				/* Inlined 3 random ticks for this chunk */
 				lo = World_Pack( x,  y,  z);
 				hi = World_Pack(x2, y2, z2);
-				
+
 				index = Random_Range(&physics_rnd, lo, hi);
 				block = World.Blocks[index];
 				tick = Physics.OnRandomTick[block];
@@ -261,7 +261,7 @@ static void Physics_HandleSapling(int index, BlockID block) {
 	if (TreeGen_CanGrow(x, y, z, height)) {
 		count = TreeGen_Grow(x, y, z, height, coords, blocks);
 
-		for (i = 0; i < count; i++) 
+		for (i = 0; i < count; i++)
 		{
 			Game_UpdateBlock(coords[i].x, coords[i].y, coords[i].z, blocks[i]);
 		}
@@ -381,7 +381,7 @@ static void Physics_PropagateWater(int posIndex, int x, int y, int z) {
 			Game_UpdateBlock(x, y, z, BLOCK_STONE);
 		}
 	} else if (Blocks.Draw[block] == DRAW_GAS) {
-		/* Sponge check */		
+		/* Sponge check */
 		for (yy = (y < 2 ? 0 : y - 2); yy <= (y > physics_maxWaterY ? World.MaxY : y + 2); yy++) {
 			for (zz = (z < 2 ? 0 : z - 2); zz <= (z > physics_maxWaterZ ? World.MaxZ : z + 2); zz++) {
 				for (xx = (x < 2 ? 0 : x - 2); xx <= (x > physics_maxWaterX ? World.MaxX : x + 2); xx++) {
@@ -485,7 +485,7 @@ static void Physics_HandleCobblestoneSlab(int index, BlockID block) {
 /*  performance difference probably isn't enough to really matter */
 static cc_bool BlocksTNT(BlockID b) {
 	/* NOTE: A bit hacky, but works well enough */
-	return (b >= BLOCK_WATER && b <= BLOCK_STILL_LAVA) || 
+	return (b >= BLOCK_WATER && b <= BLOCK_STILL_LAVA) ||
 		(Blocks.ExtendedCollide[b] == COLLIDE_SOLID && (Blocks.DigSounds[b] == SOUND_METAL || Blocks.DigSounds[b] == SOUND_STONE));
 }
 
@@ -498,7 +498,7 @@ static void Physics_HandleTnt(int index, BlockID block) {
 	World_Unpack(index, x, y, z);
 	Game_UpdateBlock(x, y, z, BLOCK_AIR);
 	Physics_ActivateNeighbours(x, y, z, index);
-	
+
 	for (dy = -TNT_POWER; dy <= TNT_POWER; dy++) {
 		for (dz = -TNT_POWER; dz <= TNT_POWER; dz++) {
 			for (dx = -TNT_POWER; dx <= TNT_POWER; dx++) {

@@ -38,7 +38,7 @@ static void BuildMesh(struct RayTracer* selected) {
 		SelOutline_X(0) SelOutline_X(3) /* XMin, XMax */
 		SelOutline_Z(0) SelOutline_Z(3) /* ZMin, ZMax */
 	};
-	
+
 	struct VertexColoured* ptr;
 	int i;
 	Vec3 delta;
@@ -60,8 +60,8 @@ static void BuildMesh(struct RayTracer* selected) {
 	if (dist <  4.0f *  4.0f) scale = 1.0f / 128.0f;
 	if (dist <  2.0f *  2.0f) scale = 1.0f / 192.0f;
 	size = base_size * scale;
-	
-	/*  How a face is laid out: 
+
+	/*  How a face is laid out:
 	                 #--#-------#--#<== OUTER_MAX (3)
 	                 |  |       |  |
 	                 |  #-------#<===== INNER_MAX (2)
@@ -79,10 +79,10 @@ static void BuildMesh(struct RayTracer* selected) {
 	Vec3_Add1(&coords[1], &coords[0],      size);
 	Vec3_Add1(&coords[3], &selected->Max,  offset);
 	Vec3_Add1(&coords[2], &coords[3],     -size);
-	
-	ptr = (struct VertexColoured*)Gfx_LockDynamicVb(selOutline_vb, 
+
+	ptr = (struct VertexColoured*)Gfx_LockDynamicVb(selOutline_vb,
 									VERTEX_FORMAT_COLOURED, SELOUTLINE_NUM_VERTICES);
-	for (i = 0; i < Array_Elems(indices); i += 3, ptr++) 
+	for (i = 0; i < Array_Elems(indices); i += 3, ptr++)
 	{
 		ptr->x   = coords[indices[i + 0]].x;
 		ptr->y   = coords[indices[i + 1]].y;
@@ -97,7 +97,7 @@ void SelOutlineRenderer_Render(struct RayTracer* selected, cc_bool dirty) {
 
 	if (!selOutline_vb)
 		selOutline_vb = Gfx_CreateDynamicVb(VERTEX_FORMAT_COLOURED, SELOUTLINE_NUM_VERTICES);
-	
+
 	Gfx_SetAlphaBlending(true);
 	Gfx_SetDepthWrite(false);
 	Gfx_SetVertexFormat(VERTEX_FORMAT_COLOURED);

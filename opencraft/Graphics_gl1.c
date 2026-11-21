@@ -156,8 +156,8 @@ static GfxResourceID Gfx_AllocStaticVb(VertexFormat fmt, int count) {
 	return id;
 }
 
-void Gfx_BindVb(GfxResourceID vb) { 
-	_glBindBuffer(GL_ARRAY_BUFFER, vb); 
+void Gfx_BindVb(GfxResourceID vb) {
+	_glBindBuffer(GL_ARRAY_BUFFER, vb);
 }
 
 void Gfx_DeleteVb(GfxResourceID* vb) {
@@ -193,7 +193,7 @@ static GfxResourceID Gfx_AllocDynamicVb(VertexFormat fmt, int maxVertices) {
 }
 
 void Gfx_BindDynamicVb(GfxResourceID vb) {
-	_glBindBuffer(GL_ARRAY_BUFFER, vb); 
+	_glBindBuffer(GL_ARRAY_BUFFER, vb);
 }
 
 void Gfx_DeleteDynamicVb(GfxResourceID* vb) {
@@ -315,9 +315,9 @@ void Gfx_SetFogCol(PackedCol color) {
 	float rgba[4];
 	if (color == gfx_fogColor) return;
 
-	rgba[0] = PackedCol_R(color) / 255.0f; 
+	rgba[0] = PackedCol_R(color) / 255.0f;
 	rgba[1] = PackedCol_G(color) / 255.0f;
-	rgba[2] = PackedCol_B(color) / 255.0f; 
+	rgba[2] = PackedCol_B(color) / 255.0f;
 	rgba[3] = PackedCol_A(color) / 255.0f;
 
 	_glFogfv(GL_FOG_COLOR, rgba);
@@ -371,9 +371,9 @@ void Gfx_DepthOnlyRendering(cc_bool depthOnly) {
 		return;
 	}
 #endif
-	SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1], 
+	SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1],
 				  enabled & gfx_colorMask[2], enabled & gfx_colorMask[3]);
-	
+
 	if (enabled) { _glEnable(GL_TEXTURE_2D); } else { _glDisable(GL_TEXTURE_2D); }
 }
 
@@ -578,7 +578,7 @@ static void APIENTRY gl10_drawElements(GLenum mode, GLsizei count, GLenum type, 
 
 	if (gfx_format == VERTEX_FORMAT_TEXTURED) {
 		struct VertexTextured* src = (struct VertexTextured*)gl10_vb;
-		for (i = 0; i < count; i++, src++) 
+		for (i = 0; i < count; i++, src++)
 		{
 			_glColor4ub(PackedCol_R(src->Col), PackedCol_G(src->Col), PackedCol_B(src->Col), PackedCol_A(src->Col));
 			_glTexCoord2f(src->U, src->V);
@@ -586,7 +586,7 @@ static void APIENTRY gl10_drawElements(GLenum mode, GLsizei count, GLenum type, 
 		}
 	} else {
 		struct VertexColoured* src = (struct VertexColoured*)gl10_vb;
-		for (i = 0; i < count; i++, src++) 
+		for (i = 0; i < count; i++, src++)
 		{
 			_glColor4ub(PackedCol_R(src->Col), PackedCol_G(src->Col), PackedCol_B(src->Col), PackedCol_A(src->Col));
 			_glVertex3f(src->x, src->y, src->z);
@@ -624,7 +624,7 @@ static void FallbackOpenGL(void) {
 		"This is usually caused by graphics drivers not being installed\n\n" \
 		"As such you will likely experience very poor performance");
 	customMipmapsLevels = false;
-		
+
 	genBuffer        = legacy_genBuffer;
 	delBuffer        = legacy_deleteBuffer;
 	_glBindBuffer    = legacy_bindBuffer;
@@ -666,16 +666,16 @@ static void GLBackend_Init(void) {
 	static const cc_string bgra_ext = String_FromConst("EXT_texture_format_BGRA8888");
 	static const cc_string bgra_sym = String_FromConst("GL_IMG_texture_format_BGRA8888");
 	cc_string extensions = String_FromReadonly((const char*)_glGetString(GL_EXTENSIONS));
-	
+
 	cc_bool has_ext_bgra = String_CaselessContains(&extensions, &bgra_ext);
 	cc_bool has_sym_bgra = String_CaselessContains(&extensions, &bgra_sym);
-	
+
 	_glGenBuffers    = glGenBuffers;
 	_glDeleteBuffers = glDeleteBuffers;
 	_glBindBuffer    = glBindBuffer;
 	_glBufferData    = glBufferData;
 	_glBufferSubData = glBufferSubData;
-	
+
 	convert_rgba = PIXEL_FORMAT != GL_RGBA && !has_ext_bgra && !has_sym_bgra;
 #else
 	static const struct DynamicLibSym coreVboFuncs[] = {

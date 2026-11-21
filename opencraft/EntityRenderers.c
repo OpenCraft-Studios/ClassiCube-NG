@@ -24,9 +24,9 @@ static float shadow_radius, shadow_uvScale;
 struct ShadowData { float y; BlockID block; cc_uint8 alpha; };
 
 /* Circle shadows extend at most 4 blocks vertically */
-#define SHADOW_MAX_RANGE 4 
+#define SHADOW_MAX_RANGE 4
 /* Circle shadows on blocks underneath the top block can be chopped up into at most 4 pieces */
-#define SHADOW_MAX_PER_SUB_BLOCK (4 * 4) 
+#define SHADOW_MAX_PER_SUB_BLOCK (4 * 4)
 /* Circle shadows use at most:
    - 4 vertices for top most block
    - MAX_PER_SUB_BLOCK for everyblock underneath the top block */
@@ -88,7 +88,7 @@ static void EntityShadow_DrawCircle(struct VertexTextured** vertices, struct Ent
 	min = Blocks.MinBB[data[0].block]; max = Blocks.MaxBB[data[0].block];
 
 	EntityShadow_DrawCoords(vertices, e, &data[0], x + min.x, z + min.z, x + max.x, z + max.z);
-	for (i = 1; i < 4; i++) 
+	for (i = 1; i < 4; i++)
 	{
 		if (data[i].block == BLOCK_AIR) return;
 		nMin = Blocks.MinBB[data[i].block]; nMax = Blocks.MaxBB[data[i].block];
@@ -106,7 +106,7 @@ static void EntityShadow_CalcAlpha(float playerY, struct ShadowData* data) {
 	float height = playerY - data->y;
 	if (height <= 6.0f) {
 		data->alpha = (cc_uint8)(160 - 160 * height / 6.0f);
-		data->y     += 1.0f / 64.0f; 
+		data->y     += 1.0f / 64.0f;
 		return;
 	}
 
@@ -130,7 +130,7 @@ static cc_bool EntityShadow_GetBlocks(struct Entity* e, int x, int y, int z, str
 	posY    = e->Position.y;
 	outside = !World_ContainsXZ(x, z);
 
-	for (i = 0; y >= 0 && i < 4; y--) 
+	for (i = 0; y >= 0 && i < 4; y--)
 	{
 		if (!outside) {
 			block = World_GetBlock(x, y, z);
@@ -257,7 +257,7 @@ void EntityShadows_Render(void) {
 	if (Entities.ShadowsMode == SHADOW_MODE_NONE) return;
 
 	shadows_boundTex = false;
-	if (!shadows_tex) 
+	if (!shadows_tex)
 		EntityShadows_MakeTexture();
 	if (!shadows_VB)
 		shadows_VB = Gfx_CreateDynamicVb(VERTEX_FORMAT_TEXTURED, SHADOW_MAX_VERTS);
@@ -269,8 +269,8 @@ void EntityShadows_Render(void) {
 	Gfx_SetVertexFormat(VERTEX_FORMAT_TEXTURED);
 	EntityShadow_Draw(&Entities.CurPlayer->Base);
 
-	if (Entities.ShadowsMode == SHADOW_MODE_CIRCLE_ALL) {	
-		for (i = 0; i < ENTITIES_MAX_COUNT; i++) 
+	if (Entities.ShadowsMode == SHADOW_MODE_CIRCLE_ALL) {
+		for (i = 0; i < ENTITIES_MAX_COUNT; i++)
 		{
 			e = Entities.List[i];
 			if (!e || !e->ShouldRender || e == &Entities.CurPlayer->Base) continue;
@@ -316,7 +316,7 @@ static void MakeNameTexture(struct Entity* e) {
 		e->NameTex.x  = NAME_IS_EMPTY;
 	} else {
 		String_InitArray(colorlessName, colorlessBuffer);
-		width  += NAME_OFFSET; 
+		width  += NAME_OFFSET;
 		height = Drawer2D_TextHeight(&args) + NAME_OFFSET;
 
 		Context2D_Alloc(&ctx, width, height);
@@ -403,7 +403,7 @@ void EntityNames_Render(void) {
 	hadFog = Gfx_GetFog();
 	if (hadFog) Gfx_SetFog(false);
 
-	for (i = 0; i < ENTITIES_MAX_COUNT; i++) 
+	for (i = 0; i < ENTITIES_MAX_COUNT; i++)
 	{
 		if (!Entities.List[i]) continue;
 		if (i != closestEntityId) DrawName(Entities.List[i]);
@@ -423,10 +423,10 @@ void EntityNames_RenderHovered(void) {
 	if (Entities.NamesMode == NAME_MODE_NONE) return;
 	if (Server.IsSinglePlayer && Game_NumStates == 1) return;
 
-	allNames = !(Entities.NamesMode == NAME_MODE_HOVERED || Entities.NamesMode == NAME_MODE_ALL) 
+	allNames = !(Entities.NamesMode == NAME_MODE_HOVERED || Entities.NamesMode == NAME_MODE_ALL)
 		&& p->Hacks.CanSeeAllNames;
 
-	for (i = 0; i < ENTITIES_MAX_COUNT; i++) 
+	for (i = 0; i < ENTITIES_MAX_COUNT; i++)
 	{
 		e = Entities.List[i];
 		if (!e || e == &p->Base) continue;
@@ -454,7 +454,7 @@ void EntityNames_RenderHovered(void) {
 
 static void DeleteAllNameTextures(void) {
 	int i;
-	for (i = 0; i < ENTITIES_MAX_COUNT; i++) 
+	for (i = 0; i < ENTITIES_MAX_COUNT; i++)
 	{
 		if (!Entities.List[i]) continue;
 		EntityNames_Delete(Entities.List[i]);
@@ -472,7 +472,7 @@ static void EntityNames_ChatFontChanged(void* obj) {
 static void EntityRenderers_ContextLost(void* obj) {
 	Gfx_DeleteTexture(&shadows_tex);
 	Gfx_DeleteDynamicVb(&shadows_VB);
-	
+
 	Gfx_DeleteDynamicVb(&names_VB);
 	DeleteAllNameTextures();
 }

@@ -4,7 +4,7 @@
 #include "Constants.h"
 CC_BEGIN_HEADER
 
-/* 
+/*
 Represents 2 and 3 component vectors, and 4 x 4 matrix
   Frustum culling sourced from http://www.crownandcutlass.com/features/technicaldetails/frustum.html
 Copyright 2014-2025 ClassiCube | Licensed under BSD-3

@@ -246,10 +246,10 @@ cc_bool Game_UpdateTexture(GfxResourceID* texId, struct Stream* src, const cc_st
 	struct Bitmap bmp;
 	cc_bool success;
 	cc_result res;
-	
+
 	res = Png_Decode(&bmp, src);
 	if (res) { Logger_SysWarn2(res, "decoding", file); }
-	
+
 	/* E.g. gui.png only need top half of the texture loaded */
 	if (heightDivisor && bmp.height >= *heightDivisor)
 		bmp.height /= *heightDivisor;
@@ -272,7 +272,7 @@ cc_bool Game_ValidateBitmap(const cc_string* file, struct Bitmap* bmp) {
 		Chat_Add1("&cError loading %s from the texture pack.", file);
 		return false;
 	}
-	
+
 	if (bmp->width > maxWidth || bmp->height > maxHeight) {
 		Chat_Add1("&cUnable to use %s from the texture pack.", file);
 
@@ -368,7 +368,7 @@ static void LoadOptions(void) {
 #else
 	Game_ViewBobbing  = Options_GetBool(OPT_VIEW_BOBBING,  true);
 #endif
-	
+
 	Game_AllowCustomBlocks   = !Game_ClassicMode && Options_GetBool(OPT_CUSTOM_BLOCKS,      true);
 	Game_SimpleArmsAnim      = !Game_ClassicMode && Options_GetBool(OPT_SIMPLE_ARMS_ANIM,   false);
 	Game_BreakableLiquids    = !Game_ClassicMode && Options_GetBool(OPT_MODIFIABLE_LIQUIDS, false);
@@ -391,7 +391,7 @@ static void Game_Load(void) {
 	Game_UpdateDimensions();
 	Game_SetFpsLimit(Options_GetEnum(OPT_FPS_LIMIT, 0, FpsLimit_Names, FPS_LIMIT_COUNT));
 	Gfx_Create();
-	
+
 	tasks_head = NULL;
 	Logger_WarnFunc = Game_WarnFunc;
 	LoadOptions();
@@ -623,7 +623,7 @@ static float gfx_targetTime, gfx_actualTime;
 static CC_INLINE float ElapsedMilliseconds(cc_uint64 beg, cc_uint64 end) {
 	cc_uint64 elapsed = Stopwatch_ElapsedMicroseconds(beg, end);
 	if (elapsed > 5000000) elapsed = 5000000;
-	
+
 	/* Avoid uint64 / float division, as that typically gets implemented */
 	/* using a library function rather than a direct CPU instruction */
 	return (int)elapsed / 1000.0f;
@@ -633,7 +633,7 @@ static CC_INLINE float ElapsedMilliseconds(cc_uint64 beg, cc_uint64 end) {
 /*  then sleeps if actual frame time is too fast */
 static void LimitFPS(void) {
 	cc_uint64 frameEnd, sleepEnd;
-	
+
 	frameEnd = Stopwatch_Measure();
 	gfx_actualTime += ElapsedMilliseconds(frameStart, frameEnd);
 	gfx_targetTime += gfx_minFrameMs;
@@ -699,11 +699,11 @@ static void DrawSplitscreen(float delta, float t, int i, int x, int y, int w, in
 	Gfx_SetViewport(x, y, w, h);
 	Gfx_SetScissor( x, y, w, h);
 	Game.CurrentState = i;
-	
+
 	Entities.CurPlayer = &LocalPlayer_Instances[i];
 	LocalPlayer_SetInterpPosition(Entities.CurPlayer, t);
 	Camera.CurrentPos = Camera.Active->GetPosition(t);
-	
+
 	Game_DrawFrame(delta, t);
 }
 
@@ -724,7 +724,7 @@ void Game_RenderFrame(void) {
 	cc_uint64 elapsed = Stopwatch_ElapsedMicroseconds(frameStart, render);
 	/* avoid large delta with suspended process */
 	if (elapsed > 5000000) elapsed = 5000000;
-	
+
 	deltaD = (int)elapsed / (1000.0 * 1000.0);
 	delta  = (float)deltaD;
 	Window_ProcessEvents(delta);
@@ -767,7 +767,7 @@ void Game_RenderFrame(void) {
 	Camera.Active->UpdateMouse(Entities.CurPlayer, delta);
 #endif
 
-	if (!Window_Main.Focused && !Gui.InputGrab && autoPause) 
+	if (!Window_Main.Focused && !Gui.InputGrab && autoPause)
 		Gui_ShowPauseMenu();
 
 	if (Bind_IsTriggered[BIND_ZOOM_SCROLL] && !Gui.InputGrab) {
@@ -788,7 +788,7 @@ void Game_RenderFrame(void) {
 	if (Window_Main.Inactive) return;
 #endif
 	Gfx_ClearBuffers(GFX_BUFFER_COLOR | GFX_BUFFER_DEPTH);
-	
+
 #ifdef CC_BUILD_SPLITSCREEN
 	switch (Game_NumStates) {
 		case 1:
@@ -863,10 +863,10 @@ void Game_Setup(void) {
 		width = 854; height = 480;
 		if (DisplayInfo.Width < 854) width = 640;
 	}
-	
+
 	String_InitArray(title, titleBuffer);
 	String_Format2(&title, "%c (%s)", GAME_APP_TITLE, &Game_Username);
-	
+
 	Window_Create3D(width, height);
 	Window_SetTitle(&title);
 	Window_Show();

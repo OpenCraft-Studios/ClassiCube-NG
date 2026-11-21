@@ -10,7 +10,7 @@
 #include "Utils.h"
 #include "Options.h"
 #include "Drawer2D.h"
- 
+
 static char status[5][STRING_SIZE];
 static char bottom[3][STRING_SIZE];
 static char client[2][STRING_SIZE];
@@ -117,7 +117,7 @@ static cc_bool CreateLogsDirectory(void) {
 	if (!res || res == ReturnCode_DirectoryExists) return true;
 
 	Chat_DisableLogging();
-	Logger_IOWarn2(res, "creating directory", &raw_dir); 
+	Logger_IOWarn2(res, "creating directory", &raw_dir);
 	return false;
 }
 
@@ -152,13 +152,13 @@ static void OpenChatLog(struct cc_datetime* now) {
 	}
 
 	Chat_DisableLogging();
-	Chat_Add1("&cFailed to open a chat log file after %i tries, giving up", &i);	
+	Chat_Add1("&cFailed to open a chat log file after %i tries, giving up", &i);
 }
 
 static void AppendChatLog(const cc_string* text) {
 	cc_string str; char strBuffer[DRAWER2D_MAX_TEXT_LENGTH];
 	struct cc_datetime now;
-	cc_result res;	
+	cc_result res;
 
 	if (!logName.length || !Chat_Logging) return;
 	DateTime_CurrentLocal(&now);
@@ -218,7 +218,7 @@ void Chat_AddOf(const cc_string* text, int msgType) {
 		}
 
 		/* StringsBuffer_Add will abort game if try to add string > 511 characters */
-		str        = *text; 
+		str        = *text;
 		str.length = min(str.length, DRAWER2D_MAX_TEXT_LENGTH);
 
 		Chat_GetLogTime(Chat_Log.count) = Game.Time;
@@ -228,7 +228,7 @@ void Chat_AddOf(const cc_string* text, int msgType) {
 		/* Status[0] is for texture pack downloading message */
 		/* Status[1] is for reduced performance mode message */
 		String_Copy(&Chat_Status[2 + (msgType - MSG_TYPE_STATUS_1)], text);
-	} else if (msgType >= MSG_TYPE_BOTTOMRIGHT_1 && msgType <= MSG_TYPE_BOTTOMRIGHT_3) {	
+	} else if (msgType >= MSG_TYPE_BOTTOMRIGHT_1 && msgType <= MSG_TYPE_BOTTOMRIGHT_3) {
 		String_Copy(&Chat_BottomRight[msgType - MSG_TYPE_BOTTOMRIGHT_1], text);
 	} else if (msgType == MSG_TYPE_ANNOUNCEMENT) {
 		String_Copy(&Chat_Announcement, text);
@@ -243,7 +243,7 @@ void Chat_AddOf(const cc_string* text, int msgType) {
 		String_Copy(&Chat_ClientStatus[msgType - MSG_TYPE_CLIENTSTATUS_1], text);
 	} else if (msgType >= MSG_TYPE_EXTRASTATUS_1 && msgType <= MSG_TYPE_EXTRASTATUS_2) {
 		String_Copy(&Chat_Status[msgType - MSG_TYPE_EXTRASTATUS_1], text);
-	} 
+	}
 
 	Event_RaiseChat(&ChatEvents.ChatReceived, text, msgType);
 }

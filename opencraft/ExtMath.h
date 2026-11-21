@@ -3,7 +3,7 @@
 #include <Core.h>
 CC_BEGIN_HEADER
 
-/* Simple math functions and constants. Also implements a RNG algorithm, based on 
+/* Simple math functions and constants. Also implements a RNG algorithm, based on
       Java's implementation from https://docs.oracle.com/javase/7/docs/api/java/util/Random.html
    Copyright 2014-2025 ClassiCube | Licensed under BSD-3
 */

@@ -13,7 +13,7 @@
 *#########################################################################################################################*/
 enum GzipState {
 	GZIP_STATE_HEADER1, GZIP_STATE_HEADER2, GZIP_STATE_COMPRESSIONMETHOD, GZIP_STATE_FLAGS,
-	GZIP_STATE_LASTMODIFIED, GZIP_STATE_COMPRESSIONFLAGS, GZIP_STATE_OPERATINGSYSTEM, 
+	GZIP_STATE_LASTMODIFIED, GZIP_STATE_COMPRESSIONFLAGS, GZIP_STATE_OPERATINGSYSTEM,
 	GZIP_STATE_HEADERCHECKSUM, GZIP_STATE_FILENAME, GZIP_STATE_COMMENT, GZIP_STATE_DONE
 };
 
@@ -33,26 +33,26 @@ cc_result GZipHeader_Read(struct Stream* s, struct GZipHeader* header) {
 		Header_ReadU8(tmp);
 		if (tmp != 0x1F) return GZIP_ERR_HEADER1;
 		header->state++;
-		
+
 	/* FALLTHRU */
 	case GZIP_STATE_HEADER2:
 		Header_ReadU8(tmp);
 		if (tmp != 0x8B) return GZIP_ERR_HEADER2;
 		header->state++;
-		
+
 	/* FALLTHRU */
 	case GZIP_STATE_COMPRESSIONMETHOD:
 		Header_ReadU8(tmp);
 		if (tmp != 0x08) return GZIP_ERR_METHOD;
 		header->state++;
-		
+
 	/* FALLTHRU */
 	case GZIP_STATE_FLAGS:
 		Header_ReadU8(tmp);
 		header->flags = tmp;
 		if (header->flags & 0x04) return GZIP_ERR_FLAGS;
 		header->state++;
-		
+
 	/* FALLTHRU */
 	case GZIP_STATE_LASTMODIFIED:
 		for (; header->partsRead < 4; header->partsRead++) {
@@ -60,17 +60,17 @@ cc_result GZipHeader_Read(struct Stream* s, struct GZipHeader* header) {
 		}
 		header->state++;
 		header->partsRead = 0;
-		
+
 	/* FALLTHRU */
 	case GZIP_STATE_COMPRESSIONFLAGS:
 		Header_ReadU8(tmp);
 		header->state++;
-		
-	/* FALLTHRU */	
+
+	/* FALLTHRU */
 	case GZIP_STATE_OPERATINGSYSTEM:
 		Header_ReadU8(tmp);
 		header->state++;
-		
+
 	/* FALLTHRU */
 	case GZIP_STATE_FILENAME:
 		if (header->flags & 0x08) {
@@ -80,7 +80,7 @@ cc_result GZipHeader_Read(struct Stream* s, struct GZipHeader* header) {
 			}
 		}
 		header->state++;
-		
+
 	/* FALLTHRU */
 	case GZIP_STATE_COMMENT:
 		if (header->flags & 0x10) {
@@ -90,7 +90,7 @@ cc_result GZipHeader_Read(struct Stream* s, struct GZipHeader* header) {
 			}
 		}
 		header->state++;
-		
+
 	/* FALLTHRU */
 	case GZIP_STATE_HEADERCHECKSUM:
 		if (header->flags & 0x02) {
@@ -193,7 +193,7 @@ static cc_result Huffman_Build(struct HuffmanTable* table, const cc_uint8* bitLe
 	/* Compute the codewords for the huffman tree.
 	*  Codewords are ordered, so consider this example tree:
 	*     2 of length 2, 3 of length 3, 1 of length 4
-	*  Codewords produced would be: 00,01 100,101,110, 1110 
+	*  Codewords produced would be: 00,01 100,101,110, 1110
 	*/
 	code = 0; offset = 0;
 	for (i = 1; i < INFLATE_MAX_BITS; i++) {
@@ -356,28 +356,28 @@ static const cc_uint8 fixed_dists[INFLATE_MAX_DISTS] = {
 	5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5, 5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5
 };
 
-static const cc_uint16 len_base[31] = { 
+static const cc_uint16 len_base[31] = {
 	3,4,5,6,7,8,9,10,11,13,
 	15,17,19,23,27,31,35,43,51,59,
-	67,83,99,115,131,163,195,227,258,0,0 
+	67,83,99,115,131,163,195,227,258,0,0
 };
-static const cc_uint8 len_bits[31] = { 
+static const cc_uint8 len_bits[31] = {
 	0,0,0,0,0,0,0,0,1,1,
 	1,1,2,2,2,2,3,3,3,3,
-	4,4,4,4,5,5,5,5,0,0,0 
+	4,4,4,4,5,5,5,5,0,0,0
 };
 static const cc_uint16 dist_base[32] = {
 	1,2,3,4,5,7,9,13,17,25,
 	33,49,65,97,129,193,257,385,513,769,
-	1025,1537,2049,3073,4097,6145,8193,12289,16385,24577,0,0 
+	1025,1537,2049,3073,4097,6145,8193,12289,16385,24577,0,0
 };
 static const cc_uint8 dist_bits[32] = {
 	0,0,0,0,1,1,2,2,3,3,
 	4,4,5,5,6,6,7,7,8,8,
-	9,9,10,10,11,11,12,12,13,13,0,0 
+	9,9,10,10,11,11,12,12,13,13,0,0
 };
 static const cc_uint8 codelens_order[INFLATE_MAX_CODELENS] = {
-	16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15 
+	16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15
 };
 
 static void Inflate_InflateFast(struct InflateState* s) {
@@ -419,12 +419,12 @@ static void Inflate_InflateFast(struct InflateState* s) {
 			bits = dist_bits[distIdx];
 			Inflate_UNSAFE_EnsureBits(s, bits);
 			dist = dist_base[distIdx] + Inflate_ReadBits(s, bits);
-	
+
 			/* Window infinitely repeats like ...xyz|uvwxyz|uvwxyz|uvw... */
 			/* If start and end don't cross a boundary, can avoid masking index */
 			startIdx = (curIdx - dist) & INFLATE_WINDOW_MASK;
 			if (curIdx >= startIdx && (curIdx + len) < INFLATE_WINDOW_SIZE) {
-				cc_uint8* src = &window[startIdx]; 
+				cc_uint8* src = &window[startIdx];
 				cc_uint8* dst = &window[curIdx];
 
 				for (i = 0; i < (len & ~0x3); i += 4) {
@@ -514,7 +514,7 @@ void Inflate_Process(struct InflateState* s) {
 			s->Index = len; /* Reuse for 'uncompressed length' */
 			s->State = INFLATE_STATE_UNCOMPRESSED_DATA;
 		}
-		
+
 		/* FALLTHRU */
 		case INFLATE_STATE_UNCOMPRESSED_DATA: {
 			/* read bits left in bit buffer (slow way) */
@@ -542,7 +542,7 @@ void Inflate_Process(struct InflateState* s) {
 
 				s->WindowIndex = (s->WindowIndex + copyLen) & INFLATE_WINDOW_MASK;
 				s->Output += copyLen; s->AvailOut -= copyLen; s->Index -= copyLen;
-				s->NextIn += copyLen; s->AvailIn  -= copyLen;		
+				s->NextIn += copyLen; s->AvailIn  -= copyLen;
 			}
 
 			if (!s->Index) { s->State = Inflate_NextBlockState(s); }
@@ -558,7 +558,7 @@ void Inflate_Process(struct InflateState* s) {
 			s->State = INFLATE_STATE_DYNAMIC_CODELENS;
 		}
 		/* FALLTHRU */
-		
+
 		case INFLATE_STATE_DYNAMIC_CODELENS: {
 			while (s->Index < s->NumCodeLens) {
 				Inflate_EnsureBits(s, 3);
@@ -575,7 +575,7 @@ void Inflate_Process(struct InflateState* s) {
 			res = Huffman_Build(&s->Table.CodeLens, s->Buffer, INFLATE_MAX_CODELENS);
 			if (res) { Inflate_Fail(s, res); return; }
 		}
-		
+
 		/* FALLTHRU */
 		case INFLATE_STATE_DYNAMIC_LITSDISTS: {
 			count = s->NumLits + s->NumDists;
@@ -626,7 +626,7 @@ void Inflate_Process(struct InflateState* s) {
 				break;
 
 			default:
-				Inflate_Fail(s, INF_ERR_REPEAT_END); 
+				Inflate_Fail(s, INF_ERR_REPEAT_END);
 				return;
 			}
 
@@ -668,15 +668,15 @@ void Inflate_Process(struct InflateState* s) {
 			s->TmpLit = len_base[lenIdx] + Inflate_ReadBits(s, bits);
 			s->State  = INFLATE_STATE_COMPRESSED_DIST;
 		}
-		
-		/* FALLTHRU */		
+
+		/* FALLTHRU */
 		case INFLATE_STATE_COMPRESSED_DIST: {
 			s->TmpDist = Huffman_Decode(s, &s->TableDists);
 			if (s->TmpDist == -1) return;
 			s->State = INFLATE_STATE_COMPRESSED_DISTEXTRA;
 		}
-		
-		/* FALLTHRU */		
+
+		/* FALLTHRU */
 		case INFLATE_STATE_COMPRESSED_DISTEXTRA: {
 			distIdx = s->TmpDist;
 			bits    = dist_bits[distIdx];
@@ -684,14 +684,14 @@ void Inflate_Process(struct InflateState* s) {
 			s->TmpDist = dist_base[distIdx] + Inflate_ReadBits(s, bits);
 			s->State   = INFLATE_STATE_COMPRESSED_DATA;
 		}
-		
-		/* FALLTHRU */	
+
+		/* FALLTHRU */
 		case INFLATE_STATE_COMPRESSED_DATA: {
 			if (!s->AvailOut) return;
 			len = s->TmpLit; dist = s->TmpDist;
 			len = min(len, s->AvailOut);
 
-			/* TODO: Should we test outside of the loop, whether a masking will be required or not? */		
+			/* TODO: Should we test outside of the loop, whether a masking will be required or not? */
 			startIdx = (s->WindowIndex - dist) & INFLATE_WINDOW_MASK;
 			curIdx   = s->WindowIndex;
 			for (i = 0; i < len; i++) {
@@ -753,7 +753,7 @@ static cc_result Inflate_StreamRead(struct Stream* stream, cc_uint8* data, cc_ui
 			hasInput = read > 0;
 			state->AvailIn += read;
 		}
-		
+
 		/* Reading data reduces available out */
 		startAvailOut = state->AvailOut;
 		Inflate_Process(state);
@@ -775,7 +775,7 @@ void Inflate_MakeStream2(struct Stream* stream, struct InflateState* state, stru
 *---------------------------------------------------Deflate (compress)----------------------------------------------------*
 *#########################################################################################################################*/
 #if !defined CC_BUILD_COMPRESSION
-void GZip_MakeStream(struct Stream* stream, struct GZipState* state, struct Stream* underlying) { 
+void GZip_MakeStream(struct Stream* stream, struct GZipState* state, struct Stream* underlying) {
 	Process_Abort("Should never be called");
 }
 #else
@@ -1092,7 +1092,7 @@ static cc_result ZLib_StreamClose(struct Stream* stream) {
 	cc_uint8 data[4];
 	cc_result res;
 
-	if ((res = Deflate_StreamClose(stream))) return res;	
+	if ((res = Deflate_StreamClose(stream))) return res;
 	Mem_WriteU32_BE(&data[0], state->Adler32);
 	return Stream_Write(state->Base.Dest, data, sizeof(data));
 }
@@ -1136,7 +1136,7 @@ void ZLib_MakeStream(struct Stream* stream, struct ZLibState* state, struct Stre
 *--------------------------------------------------------ZipReader--------------------------------------------------------*
 *#########################################################################################################################*/
 #if !defined CC_BUILD_COMPRESSION
-cc_result Zip_Extract(struct Stream* source, Zip_SelectEntry selector, Zip_ProcessEntry processor, 
+cc_result Zip_Extract(struct Stream* source, Zip_SelectEntry selector, Zip_ProcessEntry processor,
 						struct ZipEntry* entries, int maxEntries) {
 	return ERR_NOT_SUPPORTED;
 }
@@ -1220,7 +1220,7 @@ static cc_result Zip_ReadLocalFileHeader(struct ZipState* state, struct ZipEntry
 	if (pathLen > ZIP_MAXNAMELEN) return ZIP_ERR_FILENAME_LEN;
 
 	/* NOTE: ZIP spec says path uses code page 437 for encoding */
-	path = String_Init(pathBuffer, pathLen, pathLen);	
+	path = String_Init(pathBuffer, pathLen, pathLen);
 	if ((res = Stream_Read(stream, (cc_uint8*)pathBuffer, pathLen))) return res;
 	if (!state->SelectEntry(&path)) return 0;
 
@@ -1251,7 +1251,7 @@ static cc_result Zip_ReadLocalFileHeader(struct ZipState* state, struct ZipEntry
 		Mem_Free(inflate);
 #else
 		Inflate_MakeStream2(&compStream, &inflate, &portion);
-		res = state->ProcessEntry(&path, &compStream, entry);	
+		res = state->ProcessEntry(&path, &compStream, entry);
 #endif
 	} else {
 		Platform_Log1("Unsupported.zip entry compression method: %i", &method);
@@ -1311,7 +1311,7 @@ enum ZipSig {
 	ZIP_SIG_LOCALFILEHEADER = 0x04034b50
 };
 
-cc_result Zip_Extract(struct Stream* source, Zip_SelectEntry selector, Zip_ProcessEntry processor, 
+cc_result Zip_Extract(struct Stream* source, Zip_SelectEntry selector, Zip_ProcessEntry processor,
 						struct ZipEntry* entries, int maxEntries) {
 	struct ZipState state;
 	cc_uint32 stream_len;

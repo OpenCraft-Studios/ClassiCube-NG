@@ -74,7 +74,7 @@ cc_result Audio_SetFormat(struct AudioContext* ctx, int channels, int sampleRate
 	if (ctx->channels == channels && ctx->sampleRate == sampleRate) return 0;
 	ctx->channels   = channels;
 	ctx->sampleRate = sampleRate;
-	
+
 	sampleSize = channels * 2; /* 16 bits per sample / 8 */
 	if ((res = Audio_Reset(ctx))) return res;
 
@@ -85,7 +85,7 @@ cc_result Audio_SetFormat(struct AudioContext* ctx, int channels, int sampleRate
 	fmt.nBlockAlign     = sampleSize;
 	fmt.wBitsPerSample  = 16;
 	fmt.cbSize          = 0;
-	
+
 	res = waveOutOpen(&ctx->handle, WAVE_MAPPER, &fmt, 0, 0, CALLBACK_NULL);
 	/* Show a better error message when no audio output devices connected than */
 	/*  "A device ID has been used that is out of range for your system" */
@@ -106,7 +106,7 @@ cc_result Audio_QueueChunk(struct AudioContext* ctx, struct AudioChunk* chunk) {
 	for (i = 0; i < ctx->count; i++) {
 		hdr = &ctx->headers[i];
 		if (!(hdr->dwFlags & WHDR_DONE)) continue;
-		
+
 		ok = AudioBase_AdjustSound(ctx, i, &tmp);
 		if (!ok) return ERR_OUT_OF_MEMORY;
 
@@ -114,7 +114,7 @@ cc_result Audio_QueueChunk(struct AudioContext* ctx, struct AudioChunk* chunk) {
 		hdr->lpData         = (LPSTR)tmp.data;
 		hdr->dwBufferLength = tmp.size;
 		hdr->dwLoops        = 1;
-		
+
 		if ((res = waveOutPrepareHeader(ctx->handle, hdr, sizeof(WAVEHDR)))) return res;
 		if ((res = waveOutWrite(ctx->handle, hdr, sizeof(WAVEHDR))))         return res;
 		return 0;
@@ -131,7 +131,7 @@ cc_result Audio_Poll(struct AudioContext* ctx, int* inUse) {
 	for (i = 0; i < ctx->count; i++) {
 		hdr = &ctx->headers[i];
 		if (!(hdr->dwFlags & WHDR_DONE)) { count++; continue; }
-	
+
 		if (!(hdr->dwFlags & WHDR_PREPARED)) continue;
 		/* unprepare this WAVEHDR so it can be reused */
 		res = waveOutUnprepareHeader(ctx->handle, hdr, sizeof(WAVEHDR));
@@ -150,7 +150,7 @@ cc_result StreamContext_SetFormat(struct AudioContext* ctx, int channels, int sa
 }
 
 cc_result StreamContext_Enqueue(struct AudioContext* ctx, struct AudioChunk* chunk) {
-	return Audio_QueueChunk(ctx, chunk); 
+	return Audio_QueueChunk(ctx, chunk);
 }
 
 cc_result StreamContext_Play(struct AudioContext* ctx) {

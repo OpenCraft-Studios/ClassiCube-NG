@@ -38,7 +38,7 @@ void AxisLinesRenderer_Render(void) {
 		axisLines_vb = Gfx_CreateDynamicVb(VERTEX_FORMAT_COLOURED, AXISLINES_NUM_VERTICES);
 	}
 	e = &Entities.CurPlayer->Base;
-	
+
 	if (Camera.Active->isThirdPerson) {
 		pos = e->Position;
 		axisLengthScale = 1;
@@ -53,16 +53,16 @@ void AxisLinesRenderer_Render(void) {
 		axisThicknessScale = 1.0f / 8.0f;
 	}
 	count =  12;
-	 
+
 	Vec3_Add1(&coords[0], &pos, -AXISLINES_LENGTH    * axisLengthScale);
 	Vec3_Add1(&coords[1], &pos, -AXISLINES_THICKNESS * axisThicknessScale);
 	coords[2] = pos;
 	Vec3_Add1(&coords[3], &pos,  AXISLINES_THICKNESS * axisThicknessScale);
 	Vec3_Add1(&coords[4], &pos,  AXISLINES_LENGTH  	 * axisLengthScale);
 
-	v = (struct VertexColoured*)Gfx_LockDynamicVb(axisLines_vb, 
+	v = (struct VertexColoured*)Gfx_LockDynamicVb(axisLines_vb,
 									VERTEX_FORMAT_COLOURED, AXISLINES_NUM_VERTICES);
-	for (i = 0; i < count; i++, v++) 
+	for (i = 0; i < count; i++, v++)
 	{
 		v->x   = coords[indices[i*3 + 0]].x;
 		v->y   = coords[indices[i*3 + 1]].y;

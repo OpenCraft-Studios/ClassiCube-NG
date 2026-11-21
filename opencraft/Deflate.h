@@ -96,7 +96,7 @@ struct DeflateState {
 
 	cc_uint16 LitsCodewords[INFLATE_MAX_LITS]; /* Codewords for each value */
 	cc_uint8 LitsLens[INFLATE_MAX_LITS];       /* Bit lengths of each codeword */
-	
+
 	cc_uint8 Input[DEFLATE_BUFFER_SIZE];
 	cc_uint8 Output[DEFLATE_OUT_SIZE];
 	cc_uint16 Head[DEFLATE_HASH_SIZE];

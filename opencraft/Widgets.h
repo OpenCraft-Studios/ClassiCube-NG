@@ -234,7 +234,7 @@ struct ChatInputWidget {
 	int typingLogPos;
 	cc_string origStr;
 	char _textBuffer[INPUTWIDGET_MAX_LINES * INPUTWIDGET_LEN];
-	char _origBuffer[INPUTWIDGET_MAX_LINES * INPUTWIDGET_LEN];	
+	char _origBuffer[INPUTWIDGET_MAX_LINES * INPUTWIDGET_LEN];
 };
 
 CC_NOINLINE void ChatInputWidget_Create(struct ChatInputWidget* w);
@@ -309,8 +309,8 @@ CC_NOINLINE void SpecialInputWidget_SetActive(struct SpecialInputWidget* w, cc_b
 
 #ifdef CC_BUILD_TOUCH
 struct ThumbstickWidget {
-	Widget_Body 
-	float scale; 
+	Widget_Body
+	float scale;
 };
 #define THUMBSTICKWIDGET_PER (4 * 4)
 #define THUMBSTICKWIDGET_MAX (THUMBSTICKWIDGET_PER * 2)

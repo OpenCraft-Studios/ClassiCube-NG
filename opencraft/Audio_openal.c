@@ -102,7 +102,7 @@ static cc_bool LoadALFuncs(void) {
 		DynamicLib_OptSym(alSourcePlay)
 	};
 	void* lib;
-	
+
 	return DynamicLib_LoadAll(&alLib, funcs, Array_Elems(funcs), &lib);
 }
 
@@ -149,7 +149,7 @@ cc_result Audio_Init(struct AudioContext* ctx, int buffers) {
 	_alDistanceModel(AL_NONE);
 	ctx->source = 0;
 	ctx->count  = buffers;
-	
+
 	_alGetError(); /* Reset error state */
 	_alGenSources(1, &ctx->source);
 	if ((err = _alGetError())) return err;
@@ -213,7 +213,7 @@ void Audio_SetVolume(struct AudioContext* ctx, int volume) {
 cc_result Audio_QueueChunk(struct AudioContext* ctx, struct AudioChunk* chunk) {
 	ALuint buffer;
 	ALenum err;
-	
+
 	if (!ctx->free) return ERR_INVALID_ARGUMENT;
 	buffer = ctx->freeIDs[--ctx->free];
 	_alGetError(); /* Reset error state */
@@ -255,7 +255,7 @@ cc_result StreamContext_SetFormat(struct AudioContext* ctx, int channels, int sa
 }
 
 cc_result StreamContext_Enqueue(struct AudioContext* ctx, struct AudioChunk* chunk) {
-	return Audio_QueueChunk(ctx, chunk); 
+	return Audio_QueueChunk(ctx, chunk);
 }
 
 cc_result StreamContext_Play(struct AudioContext* ctx) {
@@ -284,7 +284,7 @@ cc_bool SoundContext_FastPlay(struct AudioContext* ctx, struct AudioData* data) 
 }
 
 cc_result SoundContext_PlayData(struct AudioContext* ctx, struct AudioData* data) {
-    cc_result res;
+	cc_result res;
 
 	if ((res = Audio_SetFormat(ctx,  data->channels, data->sampleRate, data->rate))) return res;
 	if ((res = Audio_QueueChunk(ctx, &data->chunk))) return res;

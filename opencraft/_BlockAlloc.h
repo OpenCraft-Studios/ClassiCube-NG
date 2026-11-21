@@ -22,31 +22,30 @@ static int blockalloc_alloc(cc_uint8* table, int maxBlocks, int blocks) {
 	int i, j;
 	if (blocks > maxBlocks) return -1;
 
-	for (i = 0; i <= maxBlocks - blocks;) 
-	{
+	for (i = 0; i <= maxBlocks - blocks;) {
 		cc_uint8 page = table[BA_PAGE(i)];
 
 		// If entire page is used, skip entirely over it
 		if ((i & 0x07) == 0 && page == 0xFF) { i += 8; continue; }
 
 		// If block is used, move onto trying next block
- 		if (page & BA_BIT(i)) { i++; continue; }
-		
+		if (page & BA_BIT(i)) { i++; continue; }
+
 		// If can't be allocated starting at block, try next
 		if (!blockalloc_can_alloc(table, i, blocks)) { i++; continue; }
 
-		for (j = i; j < i + blocks; j++) 
-		{
+		for (j = i; j < i + blocks; j++) {
 			BA_BLOCK_MARK_USED(table, j);
-        }
-        return i;
-    }
+		}
+		return i;
+	}
+
 	return -1;
 }
 
 static void blockalloc_dealloc(cc_uint8* table, int base, int blocks) {
 	int i;
-	for (i = base; i < base + blocks; i++) 
+	for (i = base; i < base + blocks; i++)
 	{
 		BA_BLOCK_MARK_FREE(table, i);
     }
@@ -58,11 +57,10 @@ static CC_INLINE void blockalloc_calc_usage(cc_uint8* table, int maxBlocks, int 
 	// Could be optimised to look at entire page in 0x00 and 0xFF case
 	// But this method is called so infrequently, so not really worth it
 
-	for (i = 0; i < maxBlocks; i++) 
-	{
- 		if (!BA_BLOCK_USED(table, i)) total_free++;
-    }
-	
+	for (i = 0; i < maxBlocks; i++) {
+		if (!BA_BLOCK_USED(table, i)) total_free++;
+	}
+
 	*freeSize = blockSize * total_free;
 	*usedSize = blockSize * (maxBlocks - total_free);
 }

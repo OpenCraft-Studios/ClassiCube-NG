@@ -115,7 +115,7 @@ static void AllocState(void) {
 static void FreeState(void) {
 	int i;
 	ClassicLighting_FreeState();
-	
+
 	/* This function can be called multiple times without calling AllocState, so... */
 	if (!chunkLightingDataFlags) return;
 
@@ -293,7 +293,7 @@ static void CalculateChunkLightingSelf(int chunkIndex, int cx, int cy, int cz) {
 			for (x = chunkStartX; x < chunkEndX; x++) {
 
 				curBlock = World_GetBlock(x, y, z);
-				
+
 				if (Blocks.Brightness[curBlock] > 0) {
 
 					brightness = GetBlockBrightness(curBlock, false);

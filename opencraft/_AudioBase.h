@@ -48,7 +48,7 @@ static void AudioBase_Clear(struct AudioContext* ctx) {
 	ctx->count      = 0;
 	ctx->channels   = 0;
 	ctx->sampleRate = 0;
-	
+
 	for (i = 0; i < AUDIO_MAX_BUFFERS; i++)
 	{
 		Mem_Free(ctx->_tmpData[i]);
@@ -90,7 +90,7 @@ cc_result Audio_AllocChunks(cc_uint32 size, struct AudioChunk* chunks, int numCh
 	cc_uint8* dst = (cc_uint8*)Mem_TryAlloc(numChunks, size);
 	int i;
 	if (!dst) return ERR_OUT_OF_MEMORY;
-	
+
 	for (i = 0; i < numChunks; i++)
 	{
 		chunks[i].data = dst + size * i;
@@ -127,7 +127,7 @@ cc_result AudioPool_Play(struct AudioData* data) {
 	int i;
 
 	/* Try to play on a context that doesn't need to be recreated */
-	for (i = 0; i < POOL_MAX_CONTEXTS; i++) 
+	for (i = 0; i < POOL_MAX_CONTEXTS; i++)
 	{
 		ctx = &context_pool[i];
 		if (!ctx->count && (res = Audio_Init(ctx, 1))) return res;
@@ -141,7 +141,7 @@ cc_result AudioPool_Play(struct AudioData* data) {
 	}
 
 	/* Try again with all contexts, even if need to recreate one (expensive) */
-	for (i = 0; i < POOL_MAX_CONTEXTS; i++) 
+	for (i = 0; i < POOL_MAX_CONTEXTS; i++)
 	{
 		ctx = &context_pool[i];
 		res = SoundContext_PollBusy(ctx, &isBusy);

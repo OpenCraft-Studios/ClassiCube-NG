@@ -57,7 +57,7 @@ static void HeldBlockRenderer_RenderModel(void) {
 		Model_Render(model, &held_entity);
 		Gfx_RestoreAlphaState(Blocks.Draw[held_block]);
 	}
-	
+
 	Gfx_SetDepthTest(true);
 	/* Gfx_SetDepthWrite(true); */
 	Gfx_SetFaceCulling(false);
@@ -203,7 +203,7 @@ static void DoAnimation(float delta, float lastSwingY) {
 		held_entity.Position.y += held_swingY;
 
 		if (held_swinging) {
-			/* i.e. the block has gone to bottom of screen and is now returning back up. 
+			/* i.e. the block has gone to bottom of screen and is now returning back up.
 			   At this point we switch over to the new held block. */
 			if (held_swingY > lastSwingY) held_lastBlock = held_block;
 			held_block = held_lastBlock;
@@ -212,7 +212,7 @@ static void DoAnimation(float delta, float lastSwingY) {
 	} else {
 		HeldBlockRenderer_DigAnimation();
 	}
-	
+
 	held_time += delta;
 	if (held_time > held_period) {
 		HeldBlockRenderer_ResetAnim(true, 0.25f);

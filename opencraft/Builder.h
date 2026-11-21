@@ -3,7 +3,7 @@
 #include <Core.h>
 CC_BEGIN_HEADER
 
-/* 
+/*
 Converts a 16x16x16 chunk into a mesh of vertices
   NormalMeshBuilder:
     Implements a simple chunk mesh builder, where each block face is a single colour

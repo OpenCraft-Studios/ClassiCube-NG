@@ -3,7 +3,7 @@
 #include <Core.h>
 CC_BEGIN_HEADER
 
-/* 
+/*
 Provides various string related operations
    Also provides conversions betweens strings and numbers
    Also provides converting code page 437 indices to/from unicode
@@ -159,7 +159,7 @@ CC_API int String_Compare(const cc_string* a, const cc_string* b);
 
 /* String_Format is provided for formatting strings (similiar to printf)
 Supported specifiers for string formatting:
-  TYPE  |  ARGUMENT |        EXAMPLE 
+  TYPE  |  ARGUMENT |        EXAMPLE
 %b      | cc_uint8  | format(%b, 46) = "46"
 %i      | int       | format(%i, -5) = "-5"
 %f[0-9] | float     | format(%f2, 321.3519) = "321.35"
@@ -169,7 +169,7 @@ Supported specifiers for string formatting:
 %s      | cc_string | format(%s, {"ABCD", 2, 4}) = "AB"
 %r      | char      | format(%r, 47) = "\"
 %x      | cc_uintptr| format(%x, 31) = "000000000000002F"
-%h      | cc_uint32 | format(%h, 11) = "0000000B" 
+%h      | cc_uint32 | format(%h, 11) = "0000000B"
 */
 
 /* See String_Format4 */

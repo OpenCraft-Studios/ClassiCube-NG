@@ -19,13 +19,13 @@
 
 /* Simple fallback terrain for when no texture packs are available at all */
 static BitmapCol fallback_terrain[16 * 8] = {
-	BitmapColor_RGB( 96, 144,  85), BitmapColor_RGB(129, 128, 127), BitmapColor_RGB(123,  87,  66), BitmapColor_RGB(174, 124,  74), BitmapColor_RGB(184, 151, 105), BitmapColor_RGB(200, 200, 197), BitmapColor_RGB(175, 173, 173), BitmapColor_RGB(153, 101,  75), 
+	BitmapColor_RGB( 96, 144,  85), BitmapColor_RGB(129, 128, 127), BitmapColor_RGB(123,  87,  66), BitmapColor_RGB(174, 124,  74), BitmapColor_RGB(184, 151, 105), BitmapColor_RGB(200, 200, 197), BitmapColor_RGB(175, 173, 173), BitmapColor_RGB(153, 101,  75),
 	BitmapColor_RGB(118, 111, 101), BitmapColor_RGB( 61,  20,  11), BitmapColor_RGB(179,  67,  23), BitmapColor_RGB(154, 128,  89), BitmapColor_RGB(163,   2,  29), BitmapColor_RGB(203, 206,   2), BitmapCol_Make(86,144,216,128), BitmapColor_RGB( 38,  88,  41),
 	/* 16*/
-	BitmapColor_RGB(165, 163, 159), BitmapColor_RGB( 37,  48,  61), BitmapColor_RGB(227, 223, 151), BitmapColor_RGB(160, 152, 147), BitmapColor_RGB( 90,  71,  58), BitmapColor_RGB(173, 135,  87), BitmapColor_RGB( 38,  98,  37), BitmapColor_RGB(225, 229, 235), 
+	BitmapColor_RGB(165, 163, 159), BitmapColor_RGB( 37,  48,  61), BitmapColor_RGB(227, 223, 151), BitmapColor_RGB(160, 152, 147), BitmapColor_RGB( 90,  71,  58), BitmapColor_RGB(173, 135,  87), BitmapColor_RGB( 38,  98,  37), BitmapColor_RGB(225, 229, 235),
 	BitmapColor_RGB(246, 231,  23), BitmapColor_RGB(225, 218, 157), BitmapColor_RGB(247, 243, 234), BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB(226,  18,  18), BitmapColor_RGB(172, 131, 101), BitmapColor_RGB(255, 122,  31), BitmapColor_RGB( 79, 120,  79),
 	/* 32 */
-	BitmapColor_RGB(129, 128, 127), BitmapColor_RGB(189, 151, 134), BitmapColor_RGB( 53,  44,  61), BitmapColor_RGB(180, 151, 102), BitmapColor_RGB(165, 163, 159), BitmapColor_RGB( 20,  20,  33), BitmapColor_RGB(243, 139,  28), BitmapColor_RGB(193, 197, 202), 
+	BitmapColor_RGB(129, 128, 127), BitmapColor_RGB(189, 151, 134), BitmapColor_RGB( 53,  44,  61), BitmapColor_RGB(180, 151, 102), BitmapColor_RGB(165, 163, 159), BitmapColor_RGB( 20,  20,  33), BitmapColor_RGB(243, 139,  28), BitmapColor_RGB(193, 197, 202),
 	BitmapColor_RGB(235, 188,  32), BitmapColor_RGB(203, 193, 135), BitmapColor_RGB(224, 220, 212), BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB(174, 124,  74),
 	/* 48 */
 	BitmapColor_RGB(175, 148,  43), BitmapColor_RGB(188, 225, 231), BitmapColor_RGB(238, 245, 245), BitmapCol_Make(205,232,252,128),BitmapColor_RGB(153, 150, 149), BitmapColor_RGB(105,  80,  54), BitmapColor_RGB(236, 236, 240), BitmapColor_RGB(161, 165, 170),
@@ -34,13 +34,13 @@ static BitmapCol fallback_terrain[16 * 8] = {
 	BitmapColor_RGB(217,  35,  35), BitmapColor_RGB(219, 137,  13), BitmapColor_RGB(224, 224,   0), BitmapColor_RGB(128, 221,   2), BitmapColor_RGB( 13, 217,  13), BitmapColor_RGB(  8, 218, 133), BitmapColor_RGB(  4, 219, 219), BitmapColor_RGB( 89, 175, 219),
 	BitmapColor_RGB(122, 122, 217), BitmapColor_RGB(131,  39, 225), BitmapColor_RGB(178,  69, 230), BitmapColor_RGB(227,  52, 227), BitmapColor_RGB(227,  41, 133), BitmapColor_RGB( 73,  73,  73), BitmapColor_RGB(151, 151, 151), BitmapColor_RGB(227, 227, 227),
 	/* 80 */
-	BitmapColor_RGB(220, 127, 162), BitmapColor_RGB( 42,  66,   8), BitmapColor_RGB( 75,  37,  11), BitmapColor_RGB( 24,  37, 149), BitmapColor_RGB( 29, 113, 149), BitmapColor_RGB(155, 161, 174), BitmapColor_RGB(167,  41,  13), BitmapColor_RGB( 57, 115, 158), 
+	BitmapColor_RGB(220, 127, 162), BitmapColor_RGB( 42,  66,   8), BitmapColor_RGB( 75,  37,  11), BitmapColor_RGB( 24,  37, 149), BitmapColor_RGB( 29, 113, 149), BitmapColor_RGB(155, 161, 174), BitmapColor_RGB(167,  41,  13), BitmapColor_RGB( 57, 115, 158),
 	BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158),
 	/* 96 */
-	BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB( 52,  90, 134), 
+	BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB( 52,  90, 134),
 	BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB( 52,  90, 134),
 	/* 112 */
-	BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158), 
+	BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158),
 	BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158), BitmapColor_RGB( 52,  90, 134), BitmapColor_RGB( 57, 115, 158),
 };
 
@@ -49,7 +49,7 @@ static void LoadFallbackAtlas(void) {
 	src.width  = 16;
 	src.height = 8;
 	src.scan0  = fallback_terrain;
-	
+
 	if (Gfx.MinTexWidth || Gfx.MinTexHeight) {
 		Bitmap_Allocate(&bmp, 16 * Gfx.MinTexWidth, 8 * Gfx.MinTexHeight);
 		Bitmap_Scale(&bmp, &src, 0, 0, 16, 8);
@@ -71,8 +71,8 @@ TextureRec Atlas1D_TexRec(TextureLoc texLoc, int uCount, int* index) {
 	int y  = Atlas1D_RowId(texLoc);
 	*index = Atlas1D_Index(texLoc);
 
-	/* Adjust coords to be slightly inside - fixes issues with AMD/ATI cards */	
-	rec.u1 = 0.0f; 
+	/* Adjust coords to be slightly inside - fixes issues with AMD/ATI cards */
+	rec.u1 = 0.0f;
 	rec.v1 = y * Atlas1D.InvTileSize;
 	rec.u2 = (uCount - 1) + UV2_Scale;
 	rec.v2 = rec.v1       + UV2_Scale * Atlas1D.InvTileSize;
@@ -85,8 +85,8 @@ static void Atlas1D_Load(int index, struct Bitmap* atlas1D) {
 	int tilesPerAtlas = Atlas1D.TilesPerAtlas;
 	int y, tile = index * tilesPerAtlas;
 	int atlasX, atlasY;
-	
-	for (y = 0; y < tilesPerAtlas; y++, tile++) 
+
+	for (y = 0; y < tilesPerAtlas; y++, tile++)
 	{
 		atlasX = Atlas2D_TileX(tile) * tileSize;
 		atlasY = Atlas2D_TileY(tile) * tileSize;
@@ -106,7 +106,7 @@ static void Atlas1D_LoadBlock(int index) {
 
 	Platform_Log2("Lazy load atlas #%i (%i per bmp)", &index, &tilesPerAtlas);
 	Bitmap_Allocate(&atlas1D, tileSize, tilesPerAtlas * tileSize);
-	
+
 	Atlas1D_Load(index, &atlas1D);
 	Mem_Free(atlas1D.scan0);
 }
@@ -136,8 +136,8 @@ static void Atlas_Convert2DTo1D(void) {
 
 	Platform_Log2("Loaded terrain atlas: %i bmps, %i per bmp", &atlasesCount, &tilesPerAtlas);
 	Bitmap_Allocate(&atlas1D, tileSize, tilesPerAtlas * tileSize);
-	
-	for (i = 0; i < atlasesCount; i++) 
+
+	for (i = 0; i < atlasesCount; i++)
 	{
 		Atlas1D_Load(i, &atlas1D);
 	}
@@ -227,7 +227,7 @@ cc_bool Atlas_TryChange(struct Bitmap* atlas) {
 
 	if (!Gfx_CheckTextureSize(tileSize, tileSize, 0)) {
 		Chat_AddRaw("&cUnable to use terrain.png from the texture pack.");
-		Chat_Add4("&c Tile size is (%i,%i), your GPU supports (%i,%i) at most.", 
+		Chat_Add4("&c Tile size is (%i,%i), your GPU supports (%i,%i) at most.",
 			&tileSize, &tileSize, &Gfx.MaxTexWidth, &Gfx.MaxTexHeight);
 		return false;
 	}
@@ -242,7 +242,7 @@ cc_bool Atlas_TryChange(struct Bitmap* atlas) {
 	if (atlas->width > Gfx.MaxTexWidth) {
 		/* Super HD textures probably won't work great on this GPU */
 		Chat_AddRaw("&cYou may experience significantly reduced performance.");
-		Chat_Add4("&c terrain.png size is (%i,%i), your GPU supports (%i,%i) at most.", 
+		Chat_Add4("&c terrain.png size is (%i,%i), your GPU supports (%i,%i) at most.",
 			&atlas->width, &atlas->height, &Gfx.MaxTexWidth, &Gfx.MaxTexHeight);
 	}
 
@@ -273,12 +273,12 @@ cc_bool TextureUrls_HasAccepted(const cc_string* url) { return EntryList_Find(&a
 cc_bool TextureUrls_HasDenied(const cc_string* url)   { return EntryList_Find(&deniedList,   url, ' ') >= 0; }
 
 void TextureUrls_Accept(const cc_string* url) {
-	EntryList_Set(&acceptedList, url, &String_Empty, ' '); 
+	EntryList_Set(&acceptedList, url, &String_Empty, ' ');
 	EntryList_Save(&acceptedList, ACCEPTED_TXT);
 }
 
 void TextureUrls_Deny(const cc_string* url) {
-	EntryList_Set(&deniedList,  url, &String_Empty, ' '); 
+	EntryList_Set(&deniedList,  url, &String_Empty, ' ');
 	EntryList_Save(&deniedList, DENIED_TXT);
 }
 
@@ -347,7 +347,7 @@ CC_NOINLINE static void MakeCachePath(cc_string* mainPath, cc_string* altPath, c
 	cc_string key; char keyBuffer[STRING_INT_CHARS];
 	String_InitArray(key, keyBuffer);
 	HashUrl(&key, url);
-	
+
 	if (UseDedicatedCache(mainPath, &key)) {
 		/* If using dedicated cache directory, also fallback to default cache directory */
 		String_Format1(altPath,  "texturecache/%s",  &key);
@@ -362,7 +362,7 @@ static int IsCached(const cc_string* url) {
 	cc_string mainPath; char mainBuffer[FILENAME_SIZE];
 	cc_string altPath;  char  altBuffer[FILENAME_SIZE];
 	cc_filepath mainStr, altStr;
-	
+
 	String_InitArray(mainPath, mainBuffer);
 	String_InitArray(altPath,   altBuffer);
 
@@ -382,7 +382,7 @@ static cc_bool OpenCachedData(const cc_string* url, struct Stream* stream) {
 
 	String_InitArray(mainPath, mainBuffer);
 	String_InitArray(altPath,   altBuffer);
-	
+
 
 	MakeCachePath(&mainPath, &altPath, url);
 	Platform_EncodePath(&raw_path, &mainPath);
@@ -507,7 +507,7 @@ cc_result TexturePack_ExtractDefault(DefaultZipCallback callback, const char** d
 	defaults[1] = "texpacks/default.zip";
 	defaults[2] = "texpacks/classicube.zip";
 
-	for (i = 0; i < Array_Elems(defaults); i++) 
+	for (i = 0; i < Array_Elems(defaults); i++)
 	{
 		path = String_FromReadonly(defaults[i]);
 		res  = callback(&path);
@@ -776,7 +776,7 @@ static void OnInit(void) {
 	if (Options_UNSAFE_Get(OPT_DEFAULT_TEX_PACK, &file)) {
 		String_Format1(&TexturePack_Path, "texpacks/%s", &file);
 	}
-	
+
 	/* TODO temp hack to fix mobile, need to properly fix */
 	/*  issue is that Drawer2D_Component.Init is called from Launcher,*/
 	/*  which called TextureEntry_Register, whoops*/

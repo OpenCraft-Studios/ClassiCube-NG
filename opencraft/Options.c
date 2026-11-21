@@ -69,14 +69,14 @@ static void SaveOptions(void) {
 
 void Options_SaveIfChanged(void) {
 	if (!changedOpts.count) return;
-	
+
 	Options_Reload();
 	SaveOptions();
 }
 
 void Options_PauseSaving(void) { savingPaused = true; }
 
-void Options_ResumeSaving(void) { 
+void Options_ResumeSaving(void) {
 	savingPaused = false;
 #if defined OPTIONS_SAVE_IMMEDIATELY
 	SaveOptions();
@@ -89,7 +89,7 @@ cc_bool Options_UNSAFE_Get(const char* keyRaw, cc_string* value) {
 	cc_string key = String_FromReadonly(keyRaw);
 
 	*value = EntryList_UNSAFE_Get(&Options, &key, '=');
-	if (value->length) return true; 
+	if (value->length) return true;
 
 	/* Fallback to without '-' (e.g. "hacks-fly" to "fly") */
 	/* Needed for some very old options.txt files */

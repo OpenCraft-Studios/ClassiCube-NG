@@ -55,7 +55,7 @@ static void LavaAnimation_Tick(void) {
 		Random_SeedFromCurrentTime(&L_rnd);
 		L_rndInited = true;
 	}
-	
+
 	for (y = 0; y < size; y++) {
 		for (x = 0; x < size; x++) {
 			/* Calculate the color at this coordinate in the heatmap */
@@ -136,7 +136,7 @@ static void WaterAnimation_Tick(void) {
 		Random_SeedFromCurrentTime(&W_rnd);
 		W_rndInited = true;
 	}
-	
+
 	for (y = 0; y < size; y++) {
 		for (x = 0; x < size; x++) {
 			/* Calculate the color at this coordinate in the heatmap */
@@ -200,7 +200,7 @@ static void Animations_ReadDescription(struct Stream* stream, const cc_string* p
 	struct AnimationData data = { 0 };
 	cc_uint8 tileX, tileY;
 
-	cc_uint8 buffer[2048]; 
+	cc_uint8 buffer[2048];
 	struct Stream buffered;
 	cc_result res;
 
@@ -277,7 +277,7 @@ static void Animations_Apply(struct AnimationData* data) {
 	size = data->frameSize;
 	Bitmap_Init(frame, size, size, NULL);
 
-	frame.scan0 = anims_bmp.scan0 
+	frame.scan0 = anims_bmp.scan0
 				+ data->frameY * anims_bmp.width
 				+ (data->frameX + data->state * size);
 	Animations_Update(loc, &frame, anims_bmp.width);
@@ -310,7 +310,7 @@ static void Animations_Validate(void) {
 
 		maxX  = data->frameX + data->frameSize * data->statesCount;
 		maxY  = data->frameY + data->frameSize;
-		tileX = Atlas2D_TileX(data->texLoc); 
+		tileX = Atlas2D_TileX(data->texLoc);
 		tileY = Atlas2D_TileY(data->texLoc);
 
 		if (data->frameSize > Atlas2D.TileSize || tileY >= Atlas2D.RowsCount) {

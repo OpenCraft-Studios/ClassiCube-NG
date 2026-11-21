@@ -112,7 +112,7 @@ static void JNICALL java_drawBackground(JNIEnv* env, jobject o, jobject bmp) {
 void LBackend_Redraw(void) {
     JNIEnv* env;
     Java_GetCurrentEnv(env);
-	
+
     jmethodID method = Java_GetIMethod(env, "redrawBackground", "()V");
     Java_ICall_Void(env, method, NULL);
 }
@@ -230,7 +230,7 @@ void LBackend_ButtonUpdate(struct LButton* w) {
     // TODO share logic with LabelUpdate/ButtonUpdate
     jmethodID method = Java_GetIMethod(env, "buttonUpdate", "(ILjava/lang/String;)V");
     Java_ICall_Void(env, method, args);
-	
+
     Java_DeleteLocalRef(env, args[1].l);
 }
 void LBackend_ButtonDraw(struct LButton* w) { }

@@ -78,7 +78,7 @@ struct GameVersion {
 	cc_bool HasCPE;
 	cc_uint8 Version, Protocol, MaxCoreBlock;
 	cc_uint8 BlocksPerRow, InventorySize;
-	const cc_uint8* Inventory; 
+	const cc_uint8* Inventory;
 	const cc_uint8* Hotbar;
 	const char* DefaultTexpack;
 };
@@ -118,7 +118,7 @@ void Game_UpdateDimensions(void);
 void Game_SetFpsLimit(int method);
 void Game_SetMinFrameTime(float frameTimeMS);
 
-cc_bool Game_UpdateTexture(GfxResourceID* texId, struct Stream* src, const cc_string* file, 
+cc_bool Game_UpdateTexture(GfxResourceID* texId, struct Stream* src, const cc_string* file,
 							cc_uint8* skinType, int* heightDivisor);
 /* Checks that the given bitmap can be loaded into a native gfx texture. */
 /* (must be power of two size and be <= Gfx_MaxTexWidth/Gfx_MaxHeight) */

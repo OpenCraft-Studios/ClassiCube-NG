@@ -73,7 +73,7 @@ cc_string String_UNSAFE_SubstringAt(STRING_REF const cc_string* str, int offset)
 int String_UNSAFE_Split(STRING_REF const cc_string* str, char c, cc_string* subs, int maxSubs) {
 	int beg = 0, end, count, i;
 
-	for (i = 0; i < maxSubs && beg <= str->length; i++) 
+	for (i = 0; i < maxSubs && beg <= str->length; i++)
 	{
 		end = String_IndexOfAt(str, beg, c);
 		if (end == -1 || i == (maxSubs - 1)) end = str->length;
@@ -119,7 +119,7 @@ int String_UNSAFE_Separate(STRING_REF const cc_string* str, char c, cc_string* k
 
 int String_Equals(const cc_string* a, const cc_string* b) {
 	return a->length == b->length && Mem_Equal(a->buffer, b->buffer, a->length);
-} 
+}
 
 int String_CaselessEquals(const cc_string* a, const cc_string* b) {
 	int i;
@@ -152,7 +152,7 @@ void String_Append(cc_string* str, char c) {
 	/* MSVC in debug mode will initialise all variables on the stack with 0xCC by default */
 	/* So if a string is being passed with CC in all its fields, then it's probably invalid */
 #if _MSC_VER && _DEBUG
-	if (str->length == 0xCCCC && str->capacity == 0xCCCC) 
+	if (str->length == 0xCCCC && str->capacity == 0xCCCC)
 		Process_Abort("String must be initialised before calling String_Append");
 #endif
 
@@ -310,7 +310,7 @@ void String_InsertAt(cc_string* str, int offset, char c) {
 	if (str->length == str->capacity) {
 		Process_Abort("Cannot insert character into full string");
 	}
-	
+
 	for (i = str->length; i > offset; i--) {
 		str->buffer[i] = str->buffer[i - 1];
 	}
@@ -324,7 +324,7 @@ void String_DeleteAt(cc_string* str, int offset) {
 	if (offset < 0 || offset >= str->length) {
 		Process_Abort("Offset for DeleteAt out of range");
 	}
-	
+
 	for (i = offset; i < str->length - 1; i++) {
 		str->buffer[i] = str->buffer[i + 1];
 	}
@@ -336,7 +336,7 @@ void String_UNSAFE_TrimStart(cc_string* str) {
 	int i;
 	for (i = 0; i < str->length; i++) {
 		if (str->buffer[i] != ' ') break;
-			
+
 		str->buffer++;
 		str->length--; i--;
 	}
@@ -394,7 +394,7 @@ int String_CaselessStarts(const cc_string* str, const cc_string* sub) {
 
 int String_CaselessEnds(const cc_string* str, const cc_string* sub) {
 	char strCur, subCur;
-	int i, j = str->length - sub->length;	
+	int i, j = str->length - sub->length;
 	if (j < 0) return false; /* sub longer than str */
 
 	for (i = 0; i < sub->length; i++) {
@@ -442,31 +442,31 @@ void String_Format4(cc_string* str, const char* format, const void* a1, const vo
 		arg = args[j++];
 
 		switch (format[++i]) {
-		case 'b': 
-			String_AppendInt(str, *((cc_uint8*)arg)); 
+		case 'b':
+			String_AppendInt(str, *((cc_uint8*)arg));
 			break;
-		case 'i': 
-			String_AppendInt(str, *((int*)arg)); 
+		case 'i':
+			String_AppendInt(str, *((int*)arg));
 			break;
-		case 'f': 
+		case 'f':
 			digits = format[++i] - '0';
-			String_AppendFloat(str, *((float*)arg), digits); 
+			String_AppendFloat(str, *((float*)arg), digits);
 			break;
 		case 'p':
 			digits = format[++i] - '0';
-			String_AppendPaddedInt(str, *((int*)arg), digits); 
+			String_AppendPaddedInt(str, *((int*)arg), digits);
 			break;
-		case 't': 
-			String_AppendBool(str, *((cc_bool*)arg)); 
+		case 't':
+			String_AppendBool(str, *((cc_bool*)arg));
 			break;
-		case 'c': 
-			String_AppendConst(str, (char*)arg);  
+		case 'c':
+			String_AppendConst(str, (char*)arg);
 			break;
-		case 's': 
-			String_AppendString(str, (cc_string*)arg);  
+		case 's':
+			String_AppendString(str, (cc_string*)arg);
 			break;
 		case 'r':
-			String_Append(str, *((char*)arg)); 
+			String_Append(str, *((char*)arg));
 			break;
 		case 'x':
 			if (sizeof(cc_uintptr) == 4) {
@@ -476,23 +476,23 @@ void String_Format4(cc_string* str, const char* format, const void* a1, const vo
 			}
 			break;
 		case 'h':
-			String_Hex32(str, *((cc_uint32*)arg)); 
+			String_Hex32(str, *((cc_uint32*)arg));
 			break;
 		case 'e':
 			digits = *((int*)arg);
 			if (digits >= -0xFFFF && digits <= 0xFFFF) {
 				String_AppendInt(str, digits);
 			} else {
-				String_Hex32(str, (cc_uint32)digits); 
+				String_Hex32(str, (cc_uint32)digits);
 			}
 			break;
 		case '%':
-			String_Append(str, '%'); 
+			String_Append(str, '%');
 			break;
 		case 'N':
 			str->buffer[str->length++] = '\0'; /* Assumes using String_InitArray_NT */
 			break;
-		default: 
+		default:
 			Process_Abort("Invalid type for string format");
 		}
 	}
@@ -579,13 +579,13 @@ int Convert_Utf8ToCodepoint(cc_codepoint* cp, const cc_uint8* data, cc_uint32 le
 	} else if ((data[0] & 0xF0) == 0xE0) {
 		if (len < 3) return 0;
 
-		*cp = ((data[0] & 0x0F) << 12) | ((data[1] & 0x3F) << 6) 
+		*cp = ((data[0] & 0x0F) << 12) | ((data[1] & 0x3F) << 6)
 			| ((data[2] & 0x3F));
 		return 3;
 	} else {
 		if (len < 4) return 0;
 
-		*cp = ((data[0] & 0x07) << 18) | ((data[1] & 0x3F) << 12) 
+		*cp = ((data[0] & 0x07) << 18) | ((data[1] & 0x3F) << 12)
 			| ((data[2] & 0x3F) << 6)  |  (data[3] & 0x3F);
 		return 4;
 	}
@@ -620,7 +620,7 @@ int Convert_CP437ToUtf8(char c, cc_uint8* data) {
 void String_AppendUtf16(cc_string* value, const void* data, int numBytes) {
 	const cc_unichar* chars = (const cc_unichar*)data;
 	int i; char c;
-	
+
 	for (i = 0; i < (numBytes >> 1); i++) {
 		/* TODO: UTF16 to codepoint conversion */
 		if (Convert_TryCodepointToCP437(chars[i], &c)) String_Append(value, c);
@@ -631,7 +631,7 @@ void String_AppendUtf8(cc_string* value, const void* data, int numBytes) {
 	const cc_uint8* chars = (const cc_uint8*)data;
 	int len; cc_codepoint cp; char c;
 
-	for (; numBytes > 0; numBytes -= len) 
+	for (; numBytes > 0; numBytes -= len)
 	{
 		len = Convert_Utf8ToCodepoint(&cp, chars, numBytes);
 		if (!len) return;
@@ -669,14 +669,14 @@ int String_EncodeUtf8(void* data, const cc_string* src) {
 *--------------------------------------------------Numerical conversions--------------------------------------------------*
 *#########################################################################################################################*/
 cc_bool Convert_ParseUInt8(const cc_string* str, cc_uint8* value) {
-	int tmp; 
+	int tmp;
 	*value = 0;
 	if (!Convert_ParseInt(str, &tmp) || tmp < 0 || tmp > UInt8_MaxValue) return false;
 	*value = (cc_uint8)tmp; return true;
 }
 
 cc_bool Convert_ParseUInt16(const cc_string* str, cc_uint16* value) {
-	int tmp; 
+	int tmp;
 	*value = 0;
 	if (!Convert_ParseInt(str, &tmp) || tmp < 0 || tmp > UInt16_MaxValue) return false;
 	*value = (cc_uint16)tmp; return true;
@@ -705,7 +705,7 @@ static cc_bool Convert_TryParseDigits(const cc_string* str, cc_bool* negative, c
 	if (str->buffer[0] == '+') { offset = 1; }
 
 	/* add digits, starting at last digit */
-	for (i = str->length - 1; i >= offset; i--) 
+	for (i = str->length - 1; i >= offset; i--)
 	{
 		char c = str->buffer[i];
 		if (c < '0' || c > '9' || digits < start) return false;
@@ -722,9 +722,9 @@ cc_bool Convert_ParseInt(const cc_string* str, int* value) {
 	char digits[INT32_DIGITS];
 	int i, compare, sum = 0;
 
-	*value = 0;	
+	*value = 0;
 	if (!Convert_TryParseDigits(str, &negative, digits, INT32_DIGITS)) return false;
-	
+
 	if (negative) {
 		compare = Convert_CompareDigits(digits, "2147483648");
 		/* Special case, since |largest min value| is > |largest max value| */
@@ -903,7 +903,7 @@ void StringsBuffer_Remove(struct StringsBuffer* buffer, int index) {
 	/* We iterate from first char of Y to last char of Z, */
 	/* shifting each character two to the left. */
 	for (i = offset + len; i < buffer->totalLength; i++) {
-		buffer->textBuffer[i - len] = buffer->textBuffer[i]; 
+		buffer->textBuffer[i - len] = buffer->textBuffer[i];
 	}
 
 	/* Adjust text offset of elements after this element */
@@ -915,7 +915,7 @@ void StringsBuffer_Remove(struct StringsBuffer* buffer, int index) {
 			buffer->flagsBuffer[i] -= offsetAdj;
 		}
 	}
-	
+
 	buffer->count--;
 	buffer->totalLength -= len;
 }
@@ -1010,7 +1010,7 @@ int WordWrap_GetBackLength(const cc_string* text, int index) {
 	int start = index;
 	if (index <= 0) return 0;
 	if (index >= text->length) Process_Abort("WordWrap_GetBackLength - index past end of string");
-	
+
 	/* Go backward to the end of the previous word */
 	while (index > 0 && text->buffer[index] == ' ') index--;
 	/* Go backward to the start of the current word */

@@ -59,12 +59,12 @@ struct HacksComp {
 	/* Whether the player should slide after letting go of movement buttons in noclip */
 	cc_bool NoclipSlide;
 	/* Whether the player has allowed the usage of fast double jumping abilities */
-	cc_bool WOMStyleHacks; 
+	cc_bool WOMStyleHacks;
 
 	cc_bool Noclip, Flying, FlyingUp, FlyingDown, Speeding, HalfSpeeding;
 	float MaxHorSpeed;
 	cc_string HacksFlags;
-	char __HacksFlagsBuffer[STRING_SIZE * 2];	
+	char __HacksFlagsBuffer[STRING_SIZE * 2];
 };
 
 void HacksComp_Init(struct HacksComp* hacks);

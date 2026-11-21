@@ -42,10 +42,10 @@ enum MouseButton_ { MOUSE_LEFT, MOUSE_RIGHT, MOUSE_MIDDLE };
 static void PlayerInputPad(int port, int axis, struct LocalPlayer* p, float* xMoving, float* zMoving) {
 	float x, y, angle;
 	if (Gamepad_AxisBehaviour[axis] != AXIS_BEHAVIOUR_MOVEMENT) return;
-	
+
 	x = Gamepad_Devices[port].axisX[axis];
 	y = Gamepad_Devices[port].axisY[axis];
-	
+
 	if (x != 0 || y != 0) {
 		angle    = Math_Atan2f(x, y);
 		*xMoving = Math_CosF(angle);
@@ -59,7 +59,7 @@ static void PlayerInputGamepad(struct LocalPlayer* p, float* xMoving, float* zMo
 	{
 		/* In splitscreen mode, tie a controller to a specific player*/
 		if (Game_NumStates > 1 && p->index != port) continue;
-		
+
 		PlayerInputPad(port, PAD_AXIS_LEFT,  p, xMoving, zMoving);
 		PlayerInputPad(port, PAD_AXIS_RIGHT, p, xMoving, zMoving);
 	}
@@ -142,7 +142,7 @@ void Hotkeys_Add(int trigger, cc_uint8 modifiers, const cc_string* text, cc_uint
 	struct HotkeyData* hk = HotkeysList;
 	int i;
 
-	for (i = 0; i < HotkeysText.count; i++, hk++) {		
+	for (i = 0; i < HotkeysText.count; i++, hk++) {
 		if (hk->trigger != trigger || hk->mods != modifiers) continue;
 		Hotkeys_RemoveText(hk->textIndex);
 
@@ -195,15 +195,15 @@ static void StoredHotkey_Parse(cc_string* key, cc_string* value) {
 
 	/* Format is: key&modifiers = more-input&text */
 	key->length -= prefix.length; key->buffer += prefix.length;
-	
+
 	if (!String_UNSAFE_Separate(key,   '&', &strKey,  &strMods)) return;
 	if (!String_UNSAFE_Separate(value, '&', &strMore, &strText)) return;
-	
+
 	trigger = Utils_ParseEnum(&strKey, INPUT_NONE, Input_StorageNames, INPUT_COUNT);
-	if (trigger == INPUT_NONE) return; 
+	if (trigger == INPUT_NONE) return;
 	if (!Convert_ParseUInt8(&strMods, &modifiers)) return;
 	if (!Convert_ParseBool(&strMore,  &more))      return;
-	
+
 	Hotkeys_Add(trigger, modifiers, &strText, more);
 }
 
@@ -263,13 +263,13 @@ static void MouseStateUpdate(int button, cc_bool pressed) {
 	if (input_pickingId == -1) {
 		p = &Entities.CurPlayer->Base;
 		input_pickingId = Entities_GetClosest(p);
-		
-		if (input_pickingId == -1) 
+
+		if (input_pickingId == -1)
 			input_pickingId = ENTITIES_SELF_ID;
 	}
 
-	
-	CPE_SendPlayerClick(button, pressed, (EntityID)input_pickingId, &Game_SelectedPos);	
+
+	CPE_SendPlayerClick(button, pressed, (EntityID)input_pickingId, &Game_SelectedPos);
 }
 
 static void MouseStatePress(int button) {
@@ -349,8 +349,8 @@ static cc_bool IntersectsOthers(Vec3 pos, BlockID block) {
 
 	Vec3_Add(&blockBB.Min, &pos, &Blocks.MinBB[block]);
 	Vec3_Add(&blockBB.Max, &pos, &Blocks.MaxBB[block]);
-	
-	for (id = 0; id < ENTITIES_MAX_COUNT; id++)	
+
+	for (id = 0; id < ENTITIES_MAX_COUNT; id++)
 	{
 		e = Entities.List[id];
 		if (!e || e == &Entities.CurPlayer->Base) continue;
@@ -375,7 +375,7 @@ static cc_bool CheckIsFree(BlockID block) {
 
 	IVec3_ToVec3(&pos, &Game_SelectedPos.translatedPos);
 	if (IntersectsOthers(pos, block)) return false;
-	
+
 	nextPos = p->next.pos;
 	Vec3_Add(&blockBB.Min, &pos, &Blocks.MinBB[block]);
 	Vec3_Add(&blockBB.Max, &pos, &Blocks.MaxBB[block]);
@@ -458,7 +458,7 @@ static cc_bool AnyBlockTouches(void);
 #endif
 void InputHandler_Tick(float delta) {
 	cc_bool left, middle, right;
-	
+
 	input_deltaAcc += delta;
 	if (Gui.InputGrab) return;
 
@@ -472,7 +472,7 @@ void InputHandler_Tick(float delta) {
 	left   = input_buttonsDown[MOUSE_LEFT];
 	middle = input_buttonsDown[MOUSE_MIDDLE];
 	right  = input_buttonsDown[MOUSE_RIGHT];
-	
+
 #ifdef CC_BUILD_TOUCH
 	if (Input_TouchMode) {
 		left   = (Input_HoldMode == INPUT_MODE_DELETE) && AnyBlockTouches();
@@ -529,9 +529,9 @@ static void CheckBlockTap(int i) {
 	pressed = input_buttonsDown[btn];
 	MouseStatePress(btn);
 
-	if (btn == MOUSE_LEFT) { 
+	if (btn == MOUSE_LEFT) {
 		InputHandler_DeleteBlock();
-	} else { 
+	} else {
 		InputHandler_PlaceBlock();
 	}
 	if (!pressed) MouseStateRelease(btn);
@@ -597,7 +597,7 @@ static void InputHandler_CheckZoomFov(void* obj) {
 
 static cc_bool BindTriggered_DeleteBlock(int key, struct InputDevice* device) {
 	if (Gui.InputGrab) return false;
-	
+
 	MouseStatePress(MOUSE_LEFT);
 	InputHandler_DeleteBlock();
 	return true;
@@ -605,7 +605,7 @@ static cc_bool BindTriggered_DeleteBlock(int key, struct InputDevice* device) {
 
 static cc_bool BindTriggered_PlaceBlock(int key, struct InputDevice* device) {
 	if (Gui.InputGrab) return false;
-	
+
 	MouseStatePress(MOUSE_RIGHT);
 	InputHandler_PlaceBlock();
 	return true;
@@ -613,7 +613,7 @@ static cc_bool BindTriggered_PlaceBlock(int key, struct InputDevice* device) {
 
 static cc_bool BindTriggered_PickBlock(int key, struct InputDevice* device) {
 	if (Gui.InputGrab) return false;
-	
+
 	MouseStatePress(MOUSE_MIDDLE);
 	InputHandler_PickBlock();
 	return true;
@@ -634,21 +634,21 @@ static void BindReleased_PickBlock(int key, struct InputDevice* device) {
 
 static cc_bool BindTriggered_HideFPS(int key, struct InputDevice* device) {
 	if (Gui.InputGrab) return false;
-	
+
 	Gui.ShowFPS = !Gui.ShowFPS;
 	return true;
 }
 
 static cc_bool BindTriggered_Fullscreen(int key, struct InputDevice* device) {
 	if (Gui.InputGrab) return false;
-	
+
 	Game_ToggleFullscreen();
 	return true;
 }
 
 static cc_bool BindTriggered_Fog(int key, struct InputDevice* device) {
 	if (Gui.InputGrab) return false;
-	
+
 	Game_CycleViewDistance();
 	return true;
 }
@@ -656,14 +656,14 @@ static cc_bool BindTriggered_Fog(int key, struct InputDevice* device) {
 
 static cc_bool BindTriggered_HideGUI(int key, struct InputDevice* device) {
 	if (Gui.InputGrab) return false;
-	
+
 	Game_HideGui = !Game_HideGui;
 	return true;
 }
 
 static cc_bool BindTriggered_SmoothCamera(int key, struct InputDevice* device) {
 	if (Gui.InputGrab) return false;
-	
+
 	InputHandler_Toggle(key, &Camera.Smooth,
 		"  &eSmooth camera is &aenabled",
 		"  &eSmooth camera is &cdisabled");
@@ -672,16 +672,16 @@ static cc_bool BindTriggered_SmoothCamera(int key, struct InputDevice* device) {
 
 static cc_bool BindTriggered_AxisLines(int key, struct InputDevice* device) {
 	if (Gui.InputGrab) return false;
-	
+
 	InputHandler_Toggle(key, &AxisLinesRenderer_Enabled,
 		"  &eAxis lines (&4X&e, &2Y&e, &1Z&e) now show",
 		"  &eAxis lines no longer show");
 	return true;
-} 
+}
 
 static cc_bool BindTriggered_AutoRotate(int key, struct InputDevice* device) {
 	if (Gui.InputGrab) return false;
-	
+
 	InputHandler_Toggle(key, &AutoRotate_Enabled,
 		"  &eAuto rotate is &aenabled",
 		"  &eAuto rotate is &cdisabled");
@@ -690,14 +690,14 @@ static cc_bool BindTriggered_AutoRotate(int key, struct InputDevice* device) {
 
 static cc_bool BindTriggered_ThirdPerson(int key, struct InputDevice* device) {
 	if (Gui.InputGrab) return false;
-	
+
 	Camera_CycleActive();
 	return true;
 }
 
 static cc_bool BindTriggered_DropBlock(int key, struct InputDevice* device) {
 	if (Gui.InputGrab) return false;
-	
+
 	if (Inventory_CheckChangeSelected() && Inventory_SelectedBlock != BLOCK_AIR) {
 		/* Don't assign SelectedIndex directly, because we don't want held block
 		switching positions if they already have air in their inventory hotbar. */
@@ -719,7 +719,7 @@ static cc_bool BindTriggered_IDOverlay(int key, struct InputDevice* device) {
 
 static cc_bool BindTriggered_BreakLiquids(int key, struct InputDevice* device) {
 	if (Gui.InputGrab) return false;
-	
+
 	InputHandler_Toggle(key, &Game_BreakableLiquids,
 		"  &eBreakable liquids is &aenabled",
 		"  &eBreakable liquids is &cdisabled");
@@ -853,7 +853,7 @@ static void OnInputDown(void* obj, int key, cc_bool was, struct InputDevice* dev
 	} else if (InputBind_Claims(BIND_SCREENSHOT, key, device) && !was) {
 		Game_ScreenshotRequested = true; return;
 	}
-	
+
 	triggered = false;
 	for (i = 0; !was && i < BIND_COUNT; i++)
 	{
@@ -863,8 +863,8 @@ static void OnInputDown(void* obj, int key, cc_bool was, struct InputDevice* dev
 		if (!Bind_OnTriggered[i])              continue;
 		triggered |= Bind_OnTriggered[i](key, device);
 	}
-	
-	for (i = 0; i < Gui.ScreensCount; i++) 
+
+	for (i = 0; i < Gui.ScreensCount; i++)
 	{
 		s = Gui_Screens[i];
 		s->dirty = true;
@@ -916,7 +916,7 @@ static void OnInputUp(void* obj, int key, cc_bool was, struct InputDevice* devic
 	}
 #endif
 
-	for (i = 0; i < Gui.ScreensCount; i++) 
+	for (i = 0; i < Gui.ScreensCount; i++)
 	{
 		s = Gui_Screens[i];
 		s->dirty = true;
@@ -979,7 +979,7 @@ static void OnInit(void) {
 	LocalPlayerInput_Add(&normalInput);
 	LocalPlayerInput_Add(&gamepadInput);
 	HookInputBinds();
-	
+
 	Event_Register_(&PointerEvents.Down,  NULL, OnPointerDown);
 	Event_Register_(&PointerEvents.Up,    NULL, OnPointerUp);
 	Event_Register_(&InputEvents._down,   NULL, OnInputDownLegacy);

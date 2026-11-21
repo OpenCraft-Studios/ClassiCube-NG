@@ -3,7 +3,7 @@
 #include "Vectors.h"
 CC_BEGIN_HEADER
 
-/* 
+/*
 Provides various physics related structs and methods such as:
    - An axis aligned bounding box, and various methods related to them.
    - Various methods for intersecting geometry.

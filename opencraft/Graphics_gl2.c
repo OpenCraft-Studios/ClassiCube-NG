@@ -54,7 +54,7 @@ void Gfx_Create(void) {
 	GLContext_GetAll(core_funcs, Array_Elems(core_funcs));
 #endif
 	Gfx.BackendType = CC_GFX_BACKEND_GL2;
-	
+
 	GL_InitCommon();
 	GLBackend_Init();
 	Gfx_RestoreState();
@@ -84,8 +84,8 @@ GfxResourceID Gfx_CreateIb2(int count, Gfx_FillIBFunc fillFunc, void* obj) {
 	return uint_to_ptr(id);
 }
 
-void Gfx_BindIb(GfxResourceID ib) { 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ptr_to_uint(ib)); 
+void Gfx_BindIb(GfxResourceID ib) {
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ptr_to_uint(ib));
 }
 
 void Gfx_DeleteIb(GfxResourceID* ib) {
@@ -104,8 +104,8 @@ static GfxResourceID Gfx_AllocStaticVb(VertexFormat fmt, int count) {
 	return uint_to_ptr(id);
 }
 
-void Gfx_BindVb(GfxResourceID vb) { 
-	glBindBuffer(GL_ARRAY_BUFFER, ptr_to_uint(vb)); 
+void Gfx_BindVb(GfxResourceID vb) {
+	glBindBuffer(GL_ARRAY_BUFFER, ptr_to_uint(vb));
 }
 
 void Gfx_DeleteVb(GfxResourceID* vb) {
@@ -140,7 +140,7 @@ static GfxResourceID Gfx_AllocDynamicVb(VertexFormat fmt, int maxVertices) {
 }
 
 void Gfx_BindDynamicVb(GfxResourceID vb) {
-	glBindBuffer(GL_ARRAY_BUFFER, ptr_to_uint(vb)); 
+	glBindBuffer(GL_ARRAY_BUFFER, ptr_to_uint(vb));
 }
 
 void Gfx_DeleteDynamicVb(GfxResourceID* vb) {
@@ -281,7 +281,7 @@ static void GenFragmentShader(const struct GLShader* shader, cc_string* dst) {
 	if (fl) String_AppendConst(dst, "  float f = clamp(1.0 - depth * fogEnd, 0.0, 1.0);\n");
 	if (fd) String_AppendConst(dst, "  float f = clamp(exp(fogDensity * depth), 0.0, 1.0);\n");
 	if (fm) String_AppendConst(dst, "  col.rgb = mix(fogCol, col.rgb, f);\n");
-	
+
 	if (fl || fd || fm) AddPostProcessing(dst);
 	String_AppendConst(dst,         "  gl_FragColor = col;\n");
 	String_AppendConst(dst,         "}");
@@ -324,7 +324,7 @@ static void CompileProgram(struct GLShader* shader) {
 
 	vs = glCreateShader(GL_VERTEX_SHADER);
 	if (!vs) { Platform_LogConst("Failed to create vertex shader"); return; }
-	
+
 	String_InitArray(tmp, tmpBuffer);
 	GenVertexShader(shader, &tmp);
 	if (!CompileShader(vs, &tmp)) ShaderFailed(vs);
@@ -498,7 +498,7 @@ static void SetAlphaTest(cc_bool enabled) { SwitchProgram(); }
 
 void Gfx_DepthOnlyRendering(cc_bool depthOnly) {
 	cc_bool enabled = !depthOnly;
-	SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1], 
+	SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1],
 				  enabled & gfx_colorMask[2], enabled & gfx_colorMask[3]);
 }
 
@@ -552,11 +552,11 @@ static void GLBackend_Init(void) {
 	static const cc_string bgra_apl = String_FromConst("APPLE_texture_format_BGRA8888");
 	static const cc_string bgra_sym = String_FromConst("GL_IMG_texture_format_BGRA8888");
 	cc_string extensions = String_FromReadonly((const char*)_glGetString(GL_EXTENSIONS));
-	
+
 	cc_bool has_ext_bgra = String_CaselessContains(&extensions, &bgra_ext);
 	cc_bool has_apl_bgra = String_CaselessContains(&extensions, &bgra_apl);
 	cc_bool has_sym_bgra = String_CaselessContains(&extensions, &bgra_sym);
-	
+
 	glGetIntegerv(_GL_MAJOR_VERSION, &major);
 	glGetIntegerv(_GL_MINOR_VERSION, &minor);
 	customMipmapsLevels = major >= 3 && minor >= 2;
@@ -601,7 +601,7 @@ static void Gfx_FreeState(void) {
 static void Gfx_RestoreState(void) {
 	struct Bitmap bmp;
 	BitmapCol pixels[1] = { BITMAPCOLOR_WHITE };
-	
+
 	InitDefaultResources();
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
@@ -624,7 +624,7 @@ static void Gfx_RestoreState(void) {
 	Gfx_RecreateTexture(&white_square, &bmp, 0, false);
 }
 
-cc_bool Gfx_WarnIfNecessary(void) { 
+cc_bool Gfx_WarnIfNecessary(void) {
 	cc_string renderer = String_FromReadonly((const char*)glGetString(GL_RENDERER));
 
 	if (String_ContainsConst(&renderer, "llvmpipe")) {
@@ -645,7 +645,7 @@ static void SetPostProcess(int v) {
 }
 
 cc_bool Gfx_GetUIOptions(struct MenuOptionsScreen* s) {
-	MenuOptionsScreen_AddEnum(s, "Post process", 
+	MenuOptionsScreen_AddEnum(s, "Post process",
 		postProcess_Names, Array_Elems(postProcess_Names),
 		GetPostProcess, SetPostProcess, NULL);
 	return false;

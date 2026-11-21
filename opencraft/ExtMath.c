@@ -91,7 +91,7 @@ float sqrtf(float x) {
 	#include <psxgte.h>
 	float Math_AbsF(float x)  { return __builtin_fabsf(x); }
 
-	float Math_SqrtF(float x) { 
+	float Math_SqrtF(float x) {
 		int fp_x = (int)(x * (1 << 12));
 		fp_x = SquareRoot12(fp_x);
 		return (float)fp_x / (1 << 12);
@@ -514,7 +514,7 @@ float Math_Atan2f(float x, float y) {
 		if (y < 0) return -PI / 2.0f;
 		return 0; /* Should probably be NaN */
 	}
-	
+
 	ax = Math_AbsF(x);
 	ay = Math_AbsF(y);
 

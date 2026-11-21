@@ -31,7 +31,7 @@ struct SimpleBlockDef {
 	cc_uint8 brightness, blocksLight; cc_uint8 gravity;
 	cc_uint8 draw, collide, digSound, stepSound;
 };
-static const struct SimpleBlockDef invalid_blockDef = { 
+static const struct SimpleBlockDef invalid_blockDef = {
 	"Invalid", 0,0,0,16, FOG_NONE,0, false,true, 100, DRAW_OPAQUE,COLLIDE_SOLID,0
 };
 
@@ -65,7 +65,7 @@ static const struct SimpleBlockDef core_blockDefs[] = {
 { "Red",              64, 64, 64, 16, FOG_NONE ,   0, BRIT_NONE,  true, 100, DRAW_OPAQUE, COLLIDE_SOLID, SOUND_CLOTH,  SOUND_CLOTH  },
 { "Orange",           65, 65, 65, 16, FOG_NONE ,   0, BRIT_NONE,  true, 100, DRAW_OPAQUE, COLLIDE_SOLID, SOUND_CLOTH,  SOUND_CLOTH  },
 { "Yellow",           66, 66, 66, 16, FOG_NONE ,   0, BRIT_NONE,  true, 100, DRAW_OPAQUE, COLLIDE_SOLID, SOUND_CLOTH,  SOUND_CLOTH  },
-	
+
 { "Lime",             67, 67, 67, 16, FOG_NONE ,   0, BRIT_NONE,  true, 100, DRAW_OPAQUE, COLLIDE_SOLID, SOUND_CLOTH,  SOUND_CLOTH  },
 { "Green",            68, 68, 68, 16, FOG_NONE ,   0, BRIT_NONE,  true, 100, DRAW_OPAQUE, COLLIDE_SOLID, SOUND_CLOTH,  SOUND_CLOTH  },
 { "Teal",             69, 69, 69, 16, FOG_NONE ,   0, BRIT_NONE,  true, 100, DRAW_OPAQUE, COLLIDE_SOLID, SOUND_CLOTH,  SOUND_CLOTH  },
@@ -344,7 +344,7 @@ static cc_bool Block_MightCull(BlockID block, BlockID other) {
 
 	/* Some translucent blocks may still cull other translucent blocks */
 	/* e.g. for water/ice, don't need to draw faces of water */
-	bType = Blocks.Collide[block]; oType = Blocks.Collide[other]; 
+	bType = Blocks.Collide[block]; oType = Blocks.Collide[other];
 	return (bType == COLLIDE_SOLID && oType == COLLIDE_SOLID) || bType != COLLIDE_SOLID;
 }
 
@@ -361,7 +361,7 @@ static void Block_CalcCulling(BlockID block, BlockID other) {
 
 	/* Some blocks may not cull 'other' block, in which case just skip detailed check */
 	/* e.g. sprite blocks, default leaves, will not cull any other blocks */
-	if (!Block_MightCull(block, other)) {	
+	if (!Block_MightCull(block, other)) {
 		Blocks.Hidden[(block * BLOCK_COUNT) + other] = 0;
 		return;
 	}
@@ -408,7 +408,7 @@ static void Block_UpdateAllCulling(void) {
 static void Block_UpdateCulling(BlockID block) {
 	int neighbour;
 	Block_CalcStretch(block);
-	
+
 	for (neighbour = BLOCK_AIR; neighbour < BLOCK_COUNT; neighbour++) {
 		Block_CalcCulling(block, (BlockID)neighbour);
 		Block_CalcCulling((BlockID)neighbour, block);
@@ -492,7 +492,7 @@ void Block_ResetProps(BlockID block) {
 	if (def->draw == DRAW_SPRITE) {
 		Vec3_Set(Blocks.MinBB[block], 2.50f/16.0f, 0, 2.50f/16.0f);
 		Vec3_Set(Blocks.MaxBB[block], 13.5f/16.0f, 1, 13.5f/16.0f);
-	} else {		
+	} else {
 		Vec3_Set(Blocks.MinBB[block], 0, 0,                   0);
 		Vec3_Set(Blocks.MaxBB[block], 1, def->height / 16.0f, 1);
 	}
@@ -520,7 +520,7 @@ int Block_FindID(const cc_string* name) {
 	cc_string blockName;
 	int block;
 
-	for (block = BLOCK_AIR; block < BLOCK_COUNT; block++) 
+	for (block = BLOCK_AIR; block < BLOCK_COUNT; block++)
 	{
 		blockName = Block_UNSAFE_GetName(block);
 		if (String_CaselessEquals(&blockName, name)) return block;
@@ -727,7 +727,7 @@ BlockID AutoRotate_RotateBlock(BlockID block) {
 	cc_string str; char strBuffer[STRING_SIZE * 2];
 	cc_string name;
 	int rotated;
-	
+
 	name = Block_UNSAFE_GetName(block);
 	String_InitArray(str, strBuffer);
 	String_AppendString(&str, &name);
@@ -766,7 +766,7 @@ cc_bool AutoRotate_BlocksShareGroup(BlockID block, BlockID other) {
 	GetAutoRotateTypes(&oName, oDirTypes);
 	if (oDirTypes[0] == -1) return false;
 
-	return bDirTypes[0] == oDirTypes[0] && bDirTypes[1] == oDirTypes[1] 
+	return bDirTypes[0] == oDirTypes[0] && bDirTypes[1] == oDirTypes[1]
 		&& String_CaselessEquals(&bName, &oName);
 }
 

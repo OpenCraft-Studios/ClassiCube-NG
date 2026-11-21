@@ -44,7 +44,7 @@ void Event_Unregister(struct Event_Void* handlers, void* obj, Event_Void_Callbac
 			handlers->Handlers[j] = handlers->Handlers[j + 1];
 			handlers->Objs[j]     = handlers->Objs[j + 1];
 		}
-		
+
 		handlers->Count--;
 		handlers->Handlers[handlers->Count] = NULL;
 		handlers->Objs[handlers->Count]     = NULL;
@@ -110,7 +110,7 @@ void Event_UnregisterAll(void) {
 	PointerEvents.Down.Count  = 0;
 	PointerEvents.Up.Count    = 0;
 	PointerEvents.RawMoved.Count = 0;
-	
+
 	ControllerEvents.AxisUpdate.Count = 0;
 
 	NetEvents.Connected.Count    = 0;

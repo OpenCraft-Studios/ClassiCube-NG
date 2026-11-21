@@ -84,7 +84,7 @@ static void Gen_Reset(void) {
 }
 
 void Gen_Start(const struct MapGenerator* gen, int seed,
-				int width, int height, int length) {	
+				int width, int height, int length) {
 	World_NewMap();
 	World_SetDimensions(width, height, length);
 	World.Seed = seed;
@@ -208,7 +208,7 @@ struct OctaveNoise { cc_uint8 p[8][NOISE_TABLE_SIZE]; int octaves; };
 static void OctaveNoise_Init(struct OctaveNoise* n, RNGState* rnd, int octaves) {
 	int i;
 	n->octaves = octaves;
-	
+
 	for (i = 0; i < octaves; i++) {
 		ImprovedNoise_Init(n->p[i], rnd);
 	}
@@ -320,7 +320,7 @@ static void NotchyGen_CreateHeightmap(void) {
 	int x, z;
 
 #if CC_BUILD_MAXSTACK <= (16 * 1024)
-	struct NoiseBuffer { 
+	struct NoiseBuffer {
 		struct CombinedNoise n1, n2;
 		struct OctaveNoise n3;
 	};
@@ -337,7 +337,7 @@ static void NotchyGen_CreateHeightmap(void) {
 #endif
 
 	CombinedNoise_Init(n1, &rnd, 8, 8);
-	CombinedNoise_Init(n2, &rnd, 8, 8);	
+	CombinedNoise_Init(n2, &rnd, 8, 8);
 	OctaveNoise_Init(n3,   &rnd, 6);
 
 	Gen_CurrentState = "Building heightmap";
@@ -569,12 +569,12 @@ static void NotchyGen_FloodFillLava(void) {
 	}
 }
 
-static void NotchyGen_CreateSurfaceLayer(void) {	
+static void NotchyGen_CreateSurfaceLayer(void) {
 	int hIndex = 0, index;
 	BlockRaw above;
 	int x, y, z;
 #if CC_BUILD_MAXSTACK <= (16 * 1024)
-	struct NoiseBuffer { 
+	struct NoiseBuffer {
 		struct OctaveNoise n1, n2;
 	};
 	struct NoiseBuffer* buf = TempMem_Alloc(sizeof(struct NoiseBuffer));
@@ -735,7 +735,7 @@ static void NotchyGen_PlantTrees(void) {
 
 static cc_bool NotchyGen_Prepare(int seed) {
 	Random_Seed(&rnd, seed);
-	waterLevel = World.Height / 2;	
+	waterLevel = World.Height / 2;
 	minHeight  = World.Height;
 
 	heightmap  = (cc_int16*)Mem_TryAlloc(World.Width * World.Length, 2);

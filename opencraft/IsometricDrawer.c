@@ -157,7 +157,7 @@ void IsometricDrawer_Render(int count, int offset, int* state) {
 	batchLen = 0;
 	batchBeg = offset;
 
-	for (i = 0; i < count / 4; i++, batchLen += 4) 
+	for (i = 0; i < count / 4; i++, batchLen += 4)
 	{
 		if (state[i] == curIdx) continue;
 

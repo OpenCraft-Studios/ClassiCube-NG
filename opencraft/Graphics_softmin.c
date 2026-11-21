@@ -7,7 +7,7 @@
 #include <Window.h>
 
 static cc_bool faceCulling;
-static int fb_width, fb_height; 
+static int fb_width, fb_height;
 static struct Bitmap fb_bmp;
 static float vp_hwidth, vp_hheight;
 static int fb_maxX, fb_maxY;
@@ -41,11 +41,11 @@ void Gfx_Create(void) {
 	Gfx.Created      = true;
 	Gfx.BackendType  = CC_GFX_BACKEND_SOFTGPU;
 	Gfx.Limitations  = GFX_LIMIT_MINIMAL | GFX_LIMIT_WORLD_ONLY;
-	
+
 	Gfx_RestoreState();
 }
 
-void Gfx_Free(void) { 
+void Gfx_Free(void) {
 	Gfx_FreeState();
 	Window_FreeFramebuffer(&fb_bmp);
 }
@@ -60,7 +60,7 @@ static CCTexture* curTexture;
 static BitmapCol* curTexPixels;
 static int curTexWidth, curTexHeight;
 static int texWidthMask, texHeightMask;
-		
+
 void Gfx_BindTexture(GfxResourceID texId) {
 	if (!texId) texId = white_square;
 	CCTexture* tex = texId;
@@ -73,13 +73,13 @@ void Gfx_BindTexture(GfxResourceID texId) {
 	texWidthMask   = (1 << Math_ilog2(tex->width))  - 1;
 	texHeightMask  = (1 << Math_ilog2(tex->height)) - 1;
 }
-		
+
 void Gfx_DeleteTexture(GfxResourceID* texId) {
 	GfxResourceID data = *texId;
 	if (data) Mem_Free(data);
 	*texId = NULL;
 }
-		
+
 GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags, cc_bool mipmaps) {
 	CCTexture* tex = (CCTexture*)Mem_TryAlloc(2 + bmp->width * bmp->height, BITMAPCOLOR_SIZE);
 	if (!tex) return NULL;
@@ -372,8 +372,8 @@ static void DrawSprite2D(Vertex* V0, Vertex* V1, Vertex* V2) {
 	if (width == 0) width = 1;
 	if (height == 0) height = 1;
 
-	int fast =  delTX == width && delTY == height && 
-				(begTX + delTX < curTexWidth ) && 
+	int fast =  delTX == width && delTY == height &&
+				(begTX + delTX < curTexWidth ) &&
 				(begTY + delTY < curTexHeight);
 
 	// Perform scissoring
@@ -381,10 +381,10 @@ static void DrawSprite2D(Vertex* V0, Vertex* V1, Vertex* V2) {
 	minY = max(minY, 0); maxY = min(maxY, fb_maxY);
 
 	int x, y;
-	for (y = minY; y <= maxY; y++) 
+	for (y = minY; y <= maxY; y++)
 	{
 		int texY = fast ? (begTY + (y - minY)) : (((begTY + delTY * (y - minY) / height)) & texHeightMask);
-		for (x = minX; x <= maxX; x++) 
+		for (x = minX; x <= maxX; x++)
 		{
 			int texX = fast ? (begTX + (x - minX)) : (((begTX + delTX * (x - minX) / width)) & texWidthMask);
 			int texIndex = texY * curTexWidth + texX;
@@ -452,7 +452,7 @@ static void DrawTriangle3D(Vertex* V0, Vertex* V1, Vertex* V2) {
 	// Perform scissoring
 	minX = max(minX, 0); maxX = min(maxX, fb_maxX);
 	minY = max(minY, 0); maxY = min(maxY, fb_maxY);
-	
+
 	// https://fgiesen.wordpress.com/2013/02/10/optimizing-the-basic-rasterizer/
 	// Essentially these are the deltas of edge functions between X/Y and X/Y + 1 (i.e. one X/Y step)
 	int dx01 = y0 - y1, dy01 = x1 - x0;
@@ -484,7 +484,7 @@ static void DrawTriangle3D(Vertex* V0, Vertex* V1, Vertex* V2) {
 	}
 
 	if (gfx_alphaTest && A == 0) return;
-	
+
 
 	if (!gfx_alphaBlend) {
 		#define PIXEL_PLOT_FUNC(index, x, y) \
@@ -516,13 +516,13 @@ static void DrawTriangle3D(Vertex* V0, Vertex* V1, Vertex* V2) {
 static void ClipLine(Vertex* v1, Vertex* v2, Vertex* V) {
 	float t  = Math_AbsF(v1->z / (v2->z - v1->z));
 	float invt = 1.0f - t;
-	
+
 	V->x = invt * v1->x + t * v2->x;
 	V->y = invt * v1->y + t * v2->y;
 	//V->z = invt * v1->z + t * v2->z;
 	V->z = 0.0f; // clipped against near plane anyways (I.e Z/W = 0 --> Z = 0)
 	V->w = invt * v1->w + t * v2->w;
-	
+
 	V->u = invt * v1->u + t * v2->u;
 	V->v = invt * v1->v + t * v2->v;
 	V->c = v1->c;
@@ -601,7 +601,7 @@ static void DrawClipped(int mask, Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3
 		ViewportVertex3D(v3);
 		ViewportVertex3D(a);
 		ViewportVertex3D(b);
-		
+
 		DrawTriangle3D(b, v3, a);
 	}
 	break;

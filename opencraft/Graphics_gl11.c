@@ -4,7 +4,7 @@
 #include "Errors.h"
 #include <Window.h>
 
-/* 
+/*
   This is the OpenGL 1.1 specific backend, that uses display lists for static geometry.
   Although the normal OpenGL can fallback to a 1.1 mode, it uses client side vertex arrays.
   So this backend may potentially be faster on a small number of old GPUs.
@@ -63,12 +63,12 @@ void Gfx_DeleteIb(GfxResourceID* ib) { }
 /*########################################################################################################################*
 *------------------------------------------------------Vertex buffers-----------------------------------------------------*
 *#########################################################################################################################*/
-static GfxResourceID Gfx_AllocStaticVb(VertexFormat fmt, int count) { 
-	return uint_to_ptr(glGenLists(1)); 
+static GfxResourceID Gfx_AllocStaticVb(VertexFormat fmt, int count) {
+	return uint_to_ptr(glGenLists(1));
 }
 
-void Gfx_BindVb(GfxResourceID vb) { 
-	activeList = ptr_to_uint(vb); 
+void Gfx_BindVb(GfxResourceID vb) {
+	activeList = ptr_to_uint(vb);
 }
 
 void Gfx_DeleteVb(GfxResourceID* vb) {
@@ -212,8 +212,8 @@ void Gfx_DrawVb_IndexedTris(int verticesCount) {
 	glDrawElements(GL_TRIANGLES, ICOUNT(verticesCount), GL_UNSIGNED_SHORT, gl_indices);
 }
 
-void Gfx_DrawIndexedTris_T2fC4b(int verticesCount, int startVertex, DrawHints hints) { 
-	glCallList(activeList); 
+void Gfx_DrawIndexedTris_T2fC4b(int verticesCount, int startVertex, DrawHints hints) {
+	glCallList(activeList);
 }
 
 
@@ -239,9 +239,9 @@ void Gfx_SetFogCol(PackedCol color) {
 	float rgba[4];
 	if (color == gfx_fogColor) return;
 
-	rgba[0] = PackedCol_R(color) / 255.0f; 
+	rgba[0] = PackedCol_R(color) / 255.0f;
 	rgba[1] = PackedCol_G(color) / 255.0f;
-	rgba[2] = PackedCol_B(color) / 255.0f; 
+	rgba[2] = PackedCol_B(color) / 255.0f;
 	rgba[3] = PackedCol_A(color) / 255.0f;
 
 	glFogfv(GL_FOG_COLOR, rgba);
@@ -274,9 +274,9 @@ static void SetAlphaTest(cc_bool enabled) {
 
 void Gfx_DepthOnlyRendering(cc_bool depthOnly) {
 	cc_bool enabled = !depthOnly;
-	SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1], 
+	SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1],
 				  enabled & gfx_colorMask[2], enabled & gfx_colorMask[3]);
-	
+
 	if (enabled) { glEnable(GL_TEXTURE_2D); } else { glDisable(GL_TEXTURE_2D); }
 }
 

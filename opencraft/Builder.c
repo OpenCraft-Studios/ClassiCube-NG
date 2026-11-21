@@ -69,7 +69,7 @@ static int Builder1DPart_CalcOffsets(struct Builder1DPart* part, int offset) {
 	}
 
 	offset += part->sCount;
-	for (i = 0; i < FACE_COUNT; i++) 
+	for (i = 0; i < FACE_COUNT; i++)
 	{
 		part->faces.vertices[i] = &Builder_Vertices[offset];
 		offset += counts[i];
@@ -168,7 +168,7 @@ static void PrepareChunk(int x1, int y1, int z1) {
 	map.SunlightZSide = map.ShadowlightZSide = col;
 	map.SunlightYBottom = map.ShadowlightYBottom = col;
 #endif
-	
+
 	for (y = y1, yy = 0; y < yMax; y++, yy++) {
 		for (z = z1, zz = 0; z < zMax; z++, zz++) {
 			cIndex = Builder_PackChunk(0, yy, zz);
@@ -338,7 +338,7 @@ static void OutputChunkPartsMeta(int x, int y, int z, struct ChunkInfo* info) {
 	cc_bool hasNorm, hasTran;
 	int partsIndex;
 	int i, j, curIdx, offset;
-	
+
 	partsIndex = World_ChunkPack(x >> CHUNK_SHIFT, y >> CHUNK_SHIFT, z >> CHUNK_SHIFT);
 	offset  = 0;
 	hasNorm = false;
@@ -366,8 +366,8 @@ cc_bool Builder_MakeChunk(struct ChunkInfo* info) {
 	BlockID* chunk   = (BlockID*)mem;
 	cc_uint8* counts = (cc_uint8*)(chunk + EXTCHUNK_SIZE_3);
 #else
-	BlockID chunk[EXTCHUNK_SIZE_3]; 
-	cc_uint8 counts[CHUNK_SIZE_3 * FACE_COUNT]; 
+	BlockID chunk[EXTCHUNK_SIZE_3];
+	cc_uint8 counts[CHUNK_SIZE_3 * FACE_COUNT];
 #endif
 
 #ifdef CC_BUILD_ADVLIGHTING
@@ -388,8 +388,8 @@ cc_bool Builder_MakeChunk(struct ChunkInfo* info) {
 	Builder_Counts = counts;
 	Builder_BitFlags = bitFlags;
 	Builder_PrePrepareChunk();
-	
-	onBorder = 
+
+	onBorder =
 		x1 == 0 || y1 == 0 || z1 == 0   || x1 + CHUNK_SIZE >= World.Width ||
 		y1 + CHUNK_SIZE >= World.Height || z1 + CHUNK_SIZE >= World.Length;
 
@@ -415,7 +415,7 @@ cc_bool Builder_MakeChunk(struct ChunkInfo* info) {
 
 	totalVerts = Builder_TotalVerticesCount();
 	if (!totalVerts) return true;
-	
+
 	OutputChunkPartsMeta(x1, y1, z1, info);
 #ifdef OCCLUSION
 	if (info.NormalParts != null || info.TranslucentParts != null)
@@ -431,7 +431,7 @@ cc_bool Builder_MakeChunk(struct ChunkInfo* info) {
 													VERTEX_FORMAT_TEXTURED, totalVerts + 1);
 #else
 	/* NOTE: Relies on assumption vb is ignored by GL11 Gfx_LockVb implementation */
-	Builder_Vertices = (struct VertexTextured*)Gfx_LockVb(0, 
+	Builder_Vertices = (struct VertexTextured*)Gfx_LockVb(0,
 													VERTEX_FORMAT_TEXTURED, totalVerts + 1);
 #endif
 	Builder_PostPrepareChunk();
@@ -505,7 +505,7 @@ static void Builder_DrawSprite(int x, int y, int z) {
 	float X, Y, Z;
 	float valX, valY, valZ;
 	float x1,y1,z1, x2,y2,z2;
-	
+
 	X  = (float)x; Y = (float)y; Z = (float)z;
 	x1 = X + 2.50f/16.0f; y1 = Y;        z1 = Z + 2.50f/16.0f;
 	x2 = X + 13.5f/16.0f; y2 = Y + 1.0f; z2 = Z + 13.5f/16.0f;
@@ -527,7 +527,7 @@ static void Builder_DrawSprite(int x, int y, int z) {
 		z1 += valZ - 1.7f/16.0f; z2 += valZ + 1.7f/16.0f;
 		if (offsetType == 7) { y1 -= valY; y2 -= valY; }
 	}
-	
+
 	bright = Blocks.Brightness[Builder_Block];
 	part   = &Builder_Parts[Atlas1D_Index(loc)];
 	color  = bright ? PACKEDCOL_WHITE : Lighting.Color_Sprite_Fast(x, y, z);
@@ -582,7 +582,7 @@ static PackedCol Normal_LightColor(int x, int y, int z, Face face, BlockID block
 		return z > (World.MaxZ - offset) ? Env.SunZSide : Lighting.Color_ZSide_Fast(x, y, z + offset);
 
 	case FACE_YMIN:
-		return Lighting.Color_YMin_Fast(x, y - offset, z);		
+		return Lighting.Color_YMin_Fast(x, y - offset, z);
 	case FACE_YMAX:
 		return Lighting.Color_YMax_Fast(x, y + offset, z);
 	}
@@ -601,7 +601,7 @@ static cc_bool Normal_CanStretch(BlockID initial, int chunkIndex, int x, int y, 
 static int NormalBuilder_StretchXLiquid(int countIndex, int x, int y, int z, int chunkIndex, BlockID block) {
 	int count = 1; cc_bool stretchTile;
 	if (Builder_OccludedLiquid(chunkIndex)) return 0;
-	
+
 	x++;
 	chunkIndex++;
 	countIndex += FACE_COUNT;
@@ -654,7 +654,7 @@ static int NormalBuilder_StretchZ(int countIndex, int x, int y, int z, int chunk
 	return count;
 }
 
-static void NormalBuilder_RenderBlock(int index, int x, int y, int z) {	
+static void NormalBuilder_RenderBlock(int index, int x, int y, int z) {
 	/* counters */
 	int count_XMin, count_XMax, count_ZMin;
 	int count_ZMax, count_YMin, count_YMax;
@@ -842,7 +842,7 @@ static int Adv_Lit(int x, int y, int z, int cIndex) {
 	if (Blocks.Brightness[Builder_Chunk[cIndex - 324]]) flags |= LIT_M1;
 	if (Blocks.Brightness[block])                       flags |= LIT_CC;
 	if (Blocks.Brightness[Builder_Chunk[cIndex + 324]]) flags |= LIT_P1;
-	
+
 	return flags;
 }
 
@@ -926,7 +926,7 @@ static int Adv_StretchX(int countIndex, int x, int y, int z, int chunkIndex, Blo
 	int count = 1; cc_bool stretchTile;
 	adv_initBitFlags = Adv_ComputeLightFlags(x, y, z, chunkIndex);
 	adv_bitFlags[chunkIndex] = adv_initBitFlags;
-	
+
 	x++;
 	chunkIndex++;
 	countIndex += FACE_COUNT;

@@ -47,13 +47,13 @@ struct Stream;
 	#define BITMAPCOLOR_G_MASK (0xFFU << BITMAPCOLOR_G_SHIFT)
 	#define BITMAPCOLOR_B_MASK (0xFFU << BITMAPCOLOR_B_SHIFT)
 	#define BITMAPCOLOR_A_MASK (0xFFU << BITMAPCOLOR_A_SHIFT)
-	
+
 	/* Extracts just the R/G/B/A component from a bitmap color */
 	#define BitmapCol_R(color) ((cc_uint8)((color) >> BITMAPCOLOR_R_SHIFT))
 	#define BitmapCol_G(color) ((cc_uint8)((color) >> BITMAPCOLOR_G_SHIFT))
 	#define BitmapCol_B(color) ((cc_uint8)((color) >> BITMAPCOLOR_B_SHIFT))
 	#define BitmapCol_A(color) ((cc_uint8)((color) >> BITMAPCOLOR_A_SHIFT))
-	
+
 	/* Converts input value into a packed color component */
 	#define BitmapColor_R_Bits(value) ((cc_uint8)(value) << BITMAPCOLOR_R_SHIFT)
 	#define BitmapColor_G_Bits(value) ((cc_uint8)(value) << BITMAPCOLOR_G_SHIFT)
@@ -70,13 +70,13 @@ struct Stream;
 	#define BITMAPCOLOR_G_MASK (0x1FU << BITMAPCOLOR_G_SHIFT)
 	#define BITMAPCOLOR_B_MASK (0x1FU << BITMAPCOLOR_B_SHIFT)
 	#define BITMAPCOLOR_A_MASK (0x01U << BITMAPCOLOR_A_SHIFT)
-	
+
 	/* Extracts just the R/G/B/A component from a bitmap color */
 	#define BitmapCol_R(color) (((cc_uint8)(color >> BITMAPCOLOR_R_SHIFT) & 0x1F) << 3)
 	#define BitmapCol_G(color) (((cc_uint8)(color >> BITMAPCOLOR_G_SHIFT) & 0x1F) << 3)
 	#define BitmapCol_B(color) (((cc_uint8)(color >> BITMAPCOLOR_B_SHIFT) & 0x1F) << 3)
 	#define BitmapCol_A(color) (((cc_uint8)(color >> BITMAPCOLOR_A_SHIFT) & 0x01) << 7)
-	
+
 	/* Converts input value into a packed color component */
 	#define BitmapColor_R_Bits(value) (((cc_uint8)(value) >> 3) << BITMAPCOLOR_R_SHIFT)
 	#define BitmapColor_G_Bits(value) (((cc_uint8)(value) >> 3) << BITMAPCOLOR_G_SHIFT)
@@ -109,7 +109,7 @@ struct Bitmap { BitmapCol* scan0; int width, height; };
 /* Copies a rectangle of pixels from one bitmap to another. */
 /* NOTE: If src and dst are the same, src and dst rectangles MUST NOT overlap. */
 /* NOTE: Rectangles are NOT checked for whether they lie inside the bitmaps. */
-void Bitmap_UNSAFE_CopyBlock(int srcX, int srcY, int dstX, int dstY, 
+void Bitmap_UNSAFE_CopyBlock(int srcX, int srcY, int dstX, int dstY,
 							struct Bitmap* src, struct Bitmap* dst, int size);
 /* Allocates a new bitmap of the given dimensions. */
 /* NOTE: You are responsible for freeing its memory! */
@@ -119,7 +119,7 @@ void Bitmap_Allocate(struct Bitmap* bmp, int width, int height);
 void Bitmap_TryAllocate(struct Bitmap* bmp, int width, int height);
 /* Scales a region of the source bitmap to occupy the entirety of the destination bitmap. */
 /* The pixels from the region are scaled upwards or downwards depending on destination width and height. */
-CC_API void Bitmap_Scale(struct Bitmap* dst, struct Bitmap* src, 
+CC_API void Bitmap_Scale(struct Bitmap* dst, struct Bitmap* src,
 						int srcX, int srcY, int srcWidth, int srcHeight);
 
 #define PNG_SIG_SIZE 8
@@ -142,7 +142,7 @@ CC_API cc_result Png_Decode(struct Bitmap* bmp, struct Stream* stream);
 /* Encodes a bitmap in PNG format. */
 /* getRow is optional. Can be used to modify how rows are encoded. (e.g. flip image) */
 /* if alpha is non-zero, RGBA channels are saved, otherwise only RGB channels are. */
-cc_result Png_Encode(struct Bitmap* bmp, struct Stream* stream, 
+cc_result Png_Encode(struct Bitmap* bmp, struct Stream* stream,
 						Png_RowGetter getRow, cc_bool alpha, void* ctx);
 
 CC_END_HEADER

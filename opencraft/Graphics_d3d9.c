@@ -34,7 +34,7 @@ static void D3D9_FreeResource(GfxResourceID resource) {
 	cc_uintptr addr;
 	ULONG refCount;
 	IUnknown* unk;
-	
+
 	unk = (IUnknown*)resource;
 	if (!unk) return;
 
@@ -68,7 +68,7 @@ static void CreateD3D9Instance(void) {
 	while (ver > 0) {
 		d3d = _Direct3DCreate9(ver);
 		if (d3d) return;
-		
+
 		/* Try an earlier d3d9 version instance if creating a 9.0c instance fails */
 		/* (e.g. if system only has 9.0b) */
 		ver--;
@@ -225,7 +225,7 @@ void Gfx_Free(void) {
 	D3D9_FreeResource(d3d);    d3d    = NULL;
 }
 
-static void Gfx_FreeState(void) { 
+static void Gfx_FreeState(void) {
 	FreeDefaultResources();
 	cachedWidth  = 0;
 	cachedHeight = 0;
@@ -260,7 +260,7 @@ static void D3D9_SetTextureData(IDirect3DTexture9* texture, struct Bitmap* bmp, 
 	cc_result res = IDirect3DTexture9_LockRect(texture, lvl, &rect, NULL, 0);
 	if (res) Process_Abort2(res, "D3D9_LockTextureData");
 
-	CopyPixels(rect.pBits, rect.Pitch, 
+	CopyPixels(rect.pBits, rect.Pitch,
 			   bmp->scan0, rowWidth * BITMAPCOLOR_SIZE,
 			   bmp->width, bmp->height);
 
@@ -278,7 +278,7 @@ static void D3D9_SetTexturePartData(IDirect3DTexture9* texture, int x, int y, co
 	res = IDirect3DTexture9_LockRect(texture, lvl, &rect, &part, 0);
 	if (res) Process_Abort2(res, "D3D9_LockTexturePartData");
 
-	CopyPixels(rect.pBits, rect.Pitch, 
+	CopyPixels(rect.pBits, rect.Pitch,
 			   bmp->scan0, rowWidth * BITMAPCOLOR_SIZE,
 			   bmp->width, bmp->height);
 
@@ -330,7 +330,7 @@ static cc_bool D3D9_CheckResult(cc_result res, const char* func) {
 static IDirect3DTexture9* DoCreateTexture(struct Bitmap* bmp, int levels, int pool) {
 	IDirect3DTexture9* tex;
 	cc_result res;
-	
+
 	for (;;) {
 		res = IDirect3DDevice9_CreateTexture(device, bmp->width, bmp->height, levels,
 			0, D3DFMT_A8R8G8B8, pool, &tex, NULL);
@@ -349,7 +349,7 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 
 	if (flags & TEXTURE_FLAG_MANAGED) {
 		while ((res = IDirect3DDevice9_CreateTexture(device, bmp->width, bmp->height, levels,
-				0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &tex, NULL))) 
+				0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &tex, NULL)))
 		{
 			if (res == D3DERR_OUTOFVIDEOMEMORY || res == E_OUTOFMEMORY) {
 				/* insufficient VRAM or RAM left to allocate texture, try to reduce the memory in use first */
@@ -369,7 +369,7 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 	sys = DoCreateTexture(bmp, levels, D3DPOOL_SYSTEMMEM);
 	D3D9_SetTextureData(sys, bmp, rowWidth, 0);
 	if (mipmaps) D3D9_DoMipmaps(sys, 0, 0, bmp, rowWidth, false);
-		
+
 	tex = DoCreateTexture(bmp, levels, D3DPOOL_DEFAULT);
 	res = IDirect3DDevice9_UpdateTexture(device, (IDirect3DBaseTexture9*)sys, (IDirect3DBaseTexture9*)tex);
 	if (res) Process_Abort2(res, "D3D9_CreateTexture - Update");
@@ -505,7 +505,7 @@ void Gfx_SetDepthWrite(cc_bool enabled) {
 
 void Gfx_DepthOnlyRendering(cc_bool depthOnly) {
 	cc_bool enabled = !depthOnly;
-	SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1], 
+	SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1],
 				  enabled & gfx_colorMask[2], enabled & gfx_colorMask[3]);
 	if (depthOnly) IDirect3DDevice9_SetTexture(device, 0, NULL);
 
@@ -672,7 +672,7 @@ void Gfx_SetDynamicVbData(GfxResourceID vb, void* vertices, int vCount) {
 	int size = vCount * gfx_stride;
 	IDirect3DVertexBuffer9* buffer = (IDirect3DVertexBuffer9*)vb;
 	cc_result res;
-	
+
 	D3D9_SetVbData(buffer, vertices, size, D3DLOCK_DISCARD);
 	res = IDirect3DDevice9_SetStreamSource(device, 0, buffer, 0, gfx_stride);
 	if (res) Process_Abort2(res, "D3D9_SetDynamicVbData - Bind");
@@ -771,7 +771,7 @@ void Gfx_CalcOrthoMatrix(struct Matrix* matrix, float width, float height, float
 	/*   final_x = (pos->x - 0.5) * mvp.row1.x + ... + _mvp.row4.x; */
 	/*   final_x = (pos->x - 0.5) * SCALEX + ... + OFFSET_X; */
 	/*   final_x = pos->x * SCALEX + ... + (OFFSET_X - 0.5 * SCALEX); */
-	/* TODO this assumes that the modelview matrix is identity */	
+	/* TODO this assumes that the modelview matrix is identity */
 	adjustX = 0.5 * ( 2.0f / width);
 	adjustY = 0.5 * (-2.0f / height);
 
@@ -826,7 +826,7 @@ cc_result Gfx_TakeScreenshot(struct Stream* output) {
 	if (res) goto finished; /* TODO: For DX 8 use IDirect3DDevice8::CreateImageSurface */
 	res = IDirect3DDevice9_GetRenderTargetData(device, backbuffer, temp);
 	if (res) goto finished;
-	
+
 	res = IDirect3DSurface9_LockRect(temp, &rect, NULL, D3DLOCK_READONLY | D3DLOCK_NO_DIRTY_UPDATE);
 	if (res) goto finished;
 	{
@@ -855,17 +855,17 @@ void Gfx_SetVSync(cc_bool vsync) {
 	if (device) UpdateSwapchain(" (toggling VSync)");
 }
 
-void Gfx_BeginFrame(void) { 
+void Gfx_BeginFrame(void) {
 	IDirect3DDevice9_BeginScene(device);
 }
 
 void Gfx_ClearBuffers(GfxBuffers buffers) {
 	DWORD targets = 0;
 	cc_result res;
-	
+
 	if (buffers & GFX_BUFFER_COLOR) targets |= D3DCLEAR_TARGET;
 	if (buffers & GFX_BUFFER_DEPTH) targets |= D3DCLEAR_ZBUFFER;
-	
+
 	res = IDirect3DDevice9_Clear(device, 0, NULL, targets, gfx_clearColor, 0.0f, 0);
 	if (res) Process_Abort2(res, "D3D9_Clear");
 }

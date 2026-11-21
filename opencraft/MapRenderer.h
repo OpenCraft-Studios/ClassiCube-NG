@@ -33,7 +33,7 @@ struct ChunkPartInfo {
 };
 
 /* Describes data necessary for rendering a chunk. */
-struct ChunkInfo {	
+struct ChunkInfo {
 	cc_uint16 centreX, centreY, centreZ; /* Centre coordinates of the chunk */
 
 	cc_uint8 visible : 1; /* Whether chunk is visible to the player */

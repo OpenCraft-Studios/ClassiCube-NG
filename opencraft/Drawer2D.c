@@ -159,11 +159,11 @@ void Context2D_Alloc(struct Context2D* ctx, int width, int height) {
 	} else if (Gfx.NonPowTwoTexturesSupport == GFX_NONPOW2_UPLOAD) {
 		/* Can upload texture without needing to pad up to power of two */
 	}
-	
+
 	if (Gfx.MinTexWidth)  { width  = max(width,  Gfx.MinTexWidth);  }
 	if (Gfx.MinTexHeight) { height = max(height, Gfx.MinTexHeight); }
 
-	ctx->bmp.width  = width; 
+	ctx->bmp.width  = width;
 	ctx->bmp.height = height;
 	ctx->bmp.scan0  = (BitmapCol*)Mem_AllocCleared(width * height, BITMAPCOLOR_SIZE, "bitmap data");
 }
@@ -320,12 +320,12 @@ void Context2D_MakeTexture(struct Texture* tex, struct Context2D* ctx) {
 	int flags = TEXTURE_FLAG_NONPOW2 | TEXTURE_FLAG_LOWRES;
 	int nouv  = Gfx.Limitations & GFX_LIMIT_NO_UV_SUPPORT;
 	Gfx_RecreateTexture(&tex->ID, &ctx->bmp, flags, false);
-	
+
 	/* TODO need to find a better solution in NoUVSupport case */
 	tex->width  = nouv ? ctx->bmp.width  : ctx->width;
 	tex->height = nouv ? ctx->bmp.height : ctx->height;
-	
-	tex->uv.u1  = 0.0f; 
+
+	tex->uv.u1  = 0.0f;
 	tex->uv.v1  = 0.0f;
 	tex->uv.u2  = Context2D_CalcUV(ctx->width,  ctx->bmp.width);
 	tex->uv.v2  = Context2D_CalcUV(ctx->height, ctx->bmp.height);
@@ -353,7 +353,7 @@ cc_bool Drawer2D_UNSAFE_NextPart(cc_string* left, cc_string* part, char* colorCo
 	if (left->length >= 2 && left->buffer[0] == '&') {
 		cur   = left->buffer[1];
 		color = Drawer2D_GetColor(cur);
-		
+
 		if (BitmapCol_A(color)) {
 			*colorCode = cur;
 			left->buffer += 2;
@@ -361,7 +361,7 @@ cc_bool Drawer2D_UNSAFE_NextPart(cc_string* left, cc_string* part, char* colorCo
 		}
 	}
 
-	for (i = 0; i < left->length; i++) 
+	for (i = 0; i < left->length; i++)
 	{
 		if (left->buffer[i] == '&' && Drawer2D_ValidColorCodeAt(left, i + 1)) break;
 	}
@@ -399,7 +399,7 @@ void Drawer2D_WithoutColors(cc_string* str, const cc_string* src) {
 char Drawer2D_LastColor(const cc_string* text, int start) {
 	int i;
 	if (start >= text->length) start = text->length - 1;
-	
+
 	for (i = start; i >= 0; i--) {
 		if (text->buffer[i] != '&') continue;
 		if (Drawer2D_ValidColorCodeAt(text, i + 1)) {
@@ -634,7 +634,7 @@ void Drawer2D_DrawClippedText(struct Context2D* ctx, struct DrawTextArgs* args,
 	String_InitArray(part.text, strBuffer);
 	String_Copy(&part.text, &args->text);
 	String_Append(&part.text, '.');
-	
+
 	for (i = part.text.length - 2; i > 0; i--) {
 		part.text.buffer[i] = '.';
 		/* skip over trailing spaces */
@@ -715,7 +715,7 @@ static void OnInit(void) {
 	Drawer2D.BlackTextShadows = Options_GetBool(OPT_BLACK_TEXT, false);
 }
 
-static void OnFree(void) { 
+static void OnFree(void) {
 	FreeFontBitmap();
 	fontBitmap.scan0 = NULL;
 }

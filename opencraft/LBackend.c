@@ -238,16 +238,16 @@ void LBackend_FreeFramebuffer(void) {
 *#########################################################################################################################*/
 static void DrawBoxBounds(BitmapCol color, int x, int y, int width, int height) {
 	Context2D_Clear(&LBackend_FB, color,
-		x,                   y, 
+		x,                   y,
 		width,               yBorder);
 	Context2D_Clear(&LBackend_FB, color,
 		x,                   y + height - yBorder,
 		width,               yBorder);
 	Context2D_Clear(&LBackend_FB, color,
-		x,                   y, 
+		x,                   y,
 		xBorder,             height);
 	Context2D_Clear(&LBackend_FB, color,
-		x + width - xBorder, y, 
+		x + width - xBorder, y,
 		xBorder,             height);
 }
 
@@ -264,7 +264,7 @@ static CC_NOINLINE void RedrawAll(void) {
 	struct LScreen* s = Launcher_Active;
 	int i;
 	s->DrawBackground(s, &LBackend_FB);
-	
+
 	for (i = 0; i < s->numWidgets; i++) {
 		DrawWidget(s->widgets[i]);
 	}
@@ -275,7 +275,7 @@ static CC_NOINLINE void RedrawDirty(void) {
 	struct LScreen* s = Launcher_Active;
 	struct LWidget* w;
 	int i;
-	
+
 	for (i = 0; i < s->numWidgets; i++) {
 		w = s->widgets[i];
 		if (!w->dirty) continue;
@@ -439,7 +439,7 @@ static void HookEvents(void) {
 	Event_Register_(&PointerEvents.Down,  NULL, OnPointerDown);
 	Event_Register_(&PointerEvents.Up,    NULL, OnPointerUp);
 	Event_Register_(&PointerEvents.Moved, NULL, OnPointerMove);
-	
+
 	Event_Register_(&InputEvents.Press,         NULL, OnKeyPress);
 	Event_Register_(&InputEvents.TextChanged,   NULL, OnTextChanged);
 
@@ -451,7 +451,7 @@ static void HookEvents(void) {
 /*########################################################################################################################*
 *------------------------------------------------------ButtonWidget-------------------------------------------------------*
 *#########################################################################################################################*/
-void LBackend_ButtonInit(struct LButton* w, int width, int height) {	
+void LBackend_ButtonInit(struct LButton* w, int width, int height) {
 	w->width  = Display_ScaleX(width);
 	w->height = Display_ScaleY(height);
 }
@@ -476,7 +476,7 @@ void LBackend_ButtonDraw(struct LButton* w) {
 	DrawTextArgs_Make(&args, &w->text, &titleFont, true);
 
 	if (!active) Drawer2D.Colors['f'] = Drawer2D.Colors['7'];
-	Context2D_DrawText(&LBackend_FB, &args, 
+	Context2D_DrawText(&LBackend_FB, &args,
 					  w->x + xOffset / 2, w->y + yOffset / 2);
 
 	if (!active) Drawer2D.Colors['f'] = Drawer2D.Colors['F'];
@@ -616,7 +616,7 @@ void LBackend_InputInit(struct LInput* w, int width) {
 	w->width    = Display_ScaleX(width);
 	w->height   = Display_ScaleY(LINPUT_HEIGHT);
 	w->minWidth = w->width;
-	
+
 	if (Window_Main.SoftKeyboard)
 		w->OnClick  = LInput_OnClick;
 
@@ -676,7 +676,7 @@ static void LInput_MoveCaretToCursor(struct LInput* w, int idx) {
 
 	DrawTextArgs_Make(&args, &text, &textFont, true);
 	if (x >= Drawer2D_TextWidth(&args)) {
-		w->caretPos = -1; return; 
+		w->caretPos = -1; return;
 	}
 
 	for (i = 0; i < text.length; i++) {
@@ -705,7 +705,7 @@ void LBackend_InputTick(struct LInput* w) {
 
 	LBackend_InputDraw(w);
 	r = caretRect;
-	
+
 	if (Rect2D_Equals(r, lastCaretRect)) {
 		/* Fast path, caret is blinking in same spot */
 		LBackend_MarkAreaDirty(r.x, r.y, r.width, r.height);
@@ -721,7 +721,7 @@ void LBackend_InputSelect(struct LInput* w, int idx, cc_bool wasSelected) {
 	w->caretShow = true;
 	LInput_MoveCaretToCursor(w, idx);
 	LBackend_NeedsRedraw(w);
-	
+
 	if (Window_Main.SoftKeyboardInstant)
 		LInput_OpenKeyboard(w);
 }
@@ -742,7 +742,7 @@ static void LInput_DrawOuterBorder(struct LInput* w) {
 	if (w->selected) {
 		DrawBoxBounds(color, w->x, w->y, w->width, w->height);
 	} else {
-		s->ResetArea(ctx, w->x,                      w->y, 
+		s->ResetArea(ctx, w->x,                      w->y,
 						  w->width,                  yBorder);
 		s->ResetArea(ctx, w->x,                      w->y + w->height - yBorder,
 						  w->width,                  yBorder);
@@ -775,13 +775,13 @@ static void LInput_BlendBoxTop(struct LInput* w) {
 	BitmapCol color = BitmapColor_RGB(0, 0, 0);
 
 	Gradient_Blend(&LBackend_FB, color, 75,
-		w->x + xBorder,      w->y + yBorder, 
+		w->x + xBorder,      w->y + yBorder,
 		w->width - xBorder2, yBorder);
 	Gradient_Blend(&LBackend_FB, color, 50,
 		w->x + xBorder,      w->y + yBorder2,
 		w->width - xBorder2, yBorder);
 	Gradient_Blend(&LBackend_FB, color, 25,
-		w->x + xBorder,      w->y + yBorder3, 
+		w->x + xBorder,      w->y + yBorder3,
 		w->width - xBorder2, yBorder);
 }
 
@@ -790,7 +790,7 @@ static void LInput_DrawText(struct LInput* w, struct DrawTextArgs* args) {
 
 	if (w->text.length || !w->hintText) {
 		y = w->y + (w->height - w->_textHeight) / 2;
-		Context2D_DrawText(&LBackend_FB, args, 
+		Context2D_DrawText(&LBackend_FB, args,
 							w->x + xInputOffset, y + yInputOffset);
 	} else {
 		args->text = String_FromReadonly(w->hintText);
@@ -800,7 +800,7 @@ static void LInput_DrawText(struct LInput* w, struct DrawTextArgs* args) {
 		y = w->y + (w->height - hintHeight) / 2;
 
 		Drawer2D.Colors['f'] = BitmapColor_RGB(125, 125, 125);
-		Context2D_DrawText(&LBackend_FB, args, 
+		Context2D_DrawText(&LBackend_FB, args,
 							w->x + xInputOffset, y);
 		Drawer2D.Colors['f'] = BITMAPCOLOR_WHITE;
 	}
@@ -872,7 +872,7 @@ void LBackend_LineDraw(struct LLine* w) {
 *------------------------------------------------------SliderWidget-------------------------------------------------------*
 *#########################################################################################################################*/
 void LBackend_SliderInit(struct LSlider* w, int width, int height) {
-	w->width  = Display_ScaleX(width); 
+	w->width  = Display_ScaleX(width);
 	w->height = Display_ScaleY(height);
 }
 
@@ -906,10 +906,10 @@ static void LSlider_DrawBox(struct LSlider* w) {
 	int halfHeight = (w->height - yBorder2) / 2;
 
 	Gradient_Vertical(&LBackend_FB, progTop, progBottom,
-					  w->x + xBorder,	   w->y + yBorder, 
+					  w->x + xBorder,	   w->y + yBorder,
 					  w->width - xBorder2, halfHeight);
 	Gradient_Vertical(&LBackend_FB, progBottom, progTop,
-					  w->x + xBorder,	   w->y + yBorder + halfHeight, 
+					  w->x + xBorder,	   w->y + yBorder + halfHeight,
 		              w->width - xBorder2, halfHeight);
 }
 
@@ -921,7 +921,7 @@ void LBackend_SliderDraw(struct LSlider* w) {
 
 	curWidth = (int)((w->width - xBorder2) * w->value / LSLIDER_MAXVALUE);
 	Context2D_Clear(&LBackend_FB, w->color,
-				   w->x + xBorder, w->y + yBorder, 
+				   w->x + xBorder, w->y + yBorder,
 				   curWidth,       w->height - yBorder2);
 }
 
@@ -1006,7 +1006,7 @@ static void LTable_DrawRowsBackground(struct LTable* w) {
 			Context2D_Clear(&LBackend_FB, color,
 							w->x, y, w->width, height);
 		} else {
-			Launcher_DrawBackground(&LBackend_FB, 
+			Launcher_DrawBackground(&LBackend_FB,
 							w->x, y, w->width, height);
 		}
 	}
@@ -1024,7 +1024,7 @@ static void LTable_DrawGridlines(struct LTable* w) {
 	for (i = 0; i < w->numColumns; i++) {
 		x += w->columns[i].width;
 		if (!w->columns[i].hasGridline) continue;
-			
+
 		Context2D_Clear(&LBackend_FB, Launcher_Theme.BackgroundColor,
 					   x, w->y, gridlineWidth, w->height);
 		x += gridlineWidth;
@@ -1048,8 +1048,8 @@ static void LTable_DrawHeaders(struct LTable* w) {
 
 	for (i = 0; i < w->numColumns; i++) {
 		args.text = String_FromReadonly(w->columns[i].name);
-		Drawer2D_DrawClippedText(&LBackend_FB, &args, 
-								x + cellXOffset, y + hdrYOffset, 
+		Drawer2D_DrawClippedText(&LBackend_FB, &args,
+								x + cellXOffset, y + hdrYOffset,
 								w->columns[i].width - cellXPadding);
 
 		x += w->columns[i].width;
@@ -1085,8 +1085,8 @@ static void LTable_DrawRows(struct LTable* w) {
 			w->columns[i].DrawRow(entry, &args, &cell, &LBackend_FB);
 
 			if (args.text.length) {
-				Drawer2D_DrawClippedText(&LBackend_FB, &args, 
-										x + cellXOffset, y + rowYOffset, 
+				Drawer2D_DrawClippedText(&LBackend_FB, &args,
+										x + cellXOffset, y + rowYOffset,
 										cell.width - cellXPadding);
 			}
 
@@ -1108,8 +1108,8 @@ static void LTable_DrawScrollbar(struct LTable* w) {
 	LTable_GetScrollbarCoords(w, &y, &height);
 
 	Context2D_Clear(&LBackend_FB, backCol,
-					x, w->y,     scrollbarWidth, w->height);		
-	Context2D_Clear(&LBackend_FB, scrollCol, 
+					x, w->y,     scrollbarWidth, w->height);
+	Context2D_Clear(&LBackend_FB, scrollCol,
 					x, w->y + y, scrollbarWidth, height);
 }
 

@@ -29,7 +29,7 @@ struct Stream {
 	cc_result (*Length)(struct Stream* s, cc_uint32* length);
 	/* Attempts to close this stream, freeing associated resources. */
 	cc_result (*Close)(struct Stream* s);
-	
+
 	union {
 		cc_file file;
 		void* inflate;

@@ -42,13 +42,13 @@ static struct ChatCommand* Commands_FindMatch(const cc_string* cmdName) {
 	struct ChatCommand* cmd;
 	cc_string name;
 
-	for (cmd = cmds_head; cmd; cmd = cmd->next) 
+	for (cmd = cmds_head; cmd; cmd = cmd->next)
 	{
 		name = String_FromReadonly(cmd->name);
 		if (String_CaselessEquals(&name, cmdName)) return cmd;
 	}
 
-	for (cmd = cmds_head; cmd; cmd = cmd->next) 
+	for (cmd = cmds_head; cmd; cmd = cmd->next)
 	{
 		name = String_FromReadonly(cmd->name);
 		if (!String_CaselessStarts(&name, cmdName)) continue;
@@ -100,10 +100,10 @@ cc_bool Commands_Execute(const cc_string* input) {
 	cc_string name, value;
 	cc_string args[50];
 
-	if (String_CaselessStarts(input, &prefixSpace)) { 
+	if (String_CaselessStarts(input, &prefixSpace)) {
 		/* /client [command] [args] */
 		offset = prefixSpace.length;
-	} else if (String_CaselessEquals(input, &prefix)) { 
+	} else if (String_CaselessEquals(input, &prefix)) {
 		/* /client */
 		offset = prefix.length;
 	} else if (Server.IsSinglePlayer && String_CaselessStarts(input, &prefix)) {
@@ -171,7 +171,7 @@ static void GpuInfoCommand_Execute(const cc_string* args, int argsCount) {
 	cc_string str, line;
 	String_InitArray(str, buffer);
 	Gfx_GetApiInfo(&str);
-	
+
 	while (str.length) {
 		String_UNSAFE_SplitBy(&str, '\n', &line);
 		if (line.length) Chat_Add1("&a%s", &line);
@@ -218,7 +218,7 @@ static struct ChatCommand RenderTypeCommand = {
 static void ResolutionCommand_Execute(const cc_string* args, int argsCount) {
 	int width, height;
 	if (argsCount < 2) {
-		Chat_Add4("&e/client: &fCurrent resolution is %i@%f2 x %i@%f2", 
+		Chat_Add4("&e/client: &fCurrent resolution is %i@%f2 x %i@%f2",
 				&Window_Main.Width, &DisplayInfo.ScaleX, &Window_Main.Height, &DisplayInfo.ScaleY);
 	} else if (!Convert_ParseInt(&args[0], &width) || !Convert_ParseInt(&args[1], &height)) {
 		Chat_AddRaw("&e/client: &cWidth and height must be integers.");
@@ -319,23 +319,23 @@ static void PlaceCommand_Execute(const cc_string* args, int argsCount) {
 	cc_uint8 off;
 	int block;
 	IVec3 pos;
-	
+
 	if (argsCount == 2) {
 		Chat_AddRaw("&eToo few arguments.");
 		return;
 	}
-	
+
 	block = !argsCount || argsCount == 3 ? Inventory_SelectedBlock : Block_Parse(&args[0]);
-	
+
 	if (block == -1) {
 		Chat_AddRaw("&eCould not parse block.");
 		return;
 	}
 	if (block > Game_Version.MaxCoreBlock && !Block_IsCustomDefined(block)) {
-		Chat_Add1("&eThere is no block with id \"%i\".", &block); 
+		Chat_Add1("&eThere is no block with id \"%i\".", &block);
 		return;
 	}
-	
+
 	if (argsCount > 2) {
 		off = argsCount == 4;
 		if (!Convert_ParseInt(&args[0 + off], &pos.x) || !Convert_ParseInt(&args[1 + off], &pos.y) || !Convert_ParseInt(&args[2 + off], &pos.z)) {
@@ -345,12 +345,12 @@ static void PlaceCommand_Execute(const cc_string* args, int argsCount) {
 	} else {
 		IVec3_Floor(&pos, &Entities.CurPlayer->Base.Position);
 	}
-	
+
 	if (!World_Contains(pos.x, pos.y, pos.z)) {
 		Chat_AddRaw("&eCoordinates are outside the world boundaries.");
 		return;
 	}
-	
+
 	Game_ChangeBlock(pos.x, pos.y, pos.z, block);
 	name = Block_UNSAFE_GetName(block);
 	Chat_Add4("&eSuccessfully placed %s block at (%i, %i, %i).", &name, &pos.x, &pos.y, &pos.z);
@@ -418,7 +418,7 @@ static void DrawOpCommand_BlockChanged(void* obj, IVec3 coords, BlockID old, Blo
 		drawOp_mark1    = coords;
 		drawOp_hasMark1 = true;
 
-		String_Format4(&msg, "&e%c: &fMark 1 placed at (%i, %i, %i), place mark 2.", 
+		String_Format4(&msg, "&e%c: &fMark 1 placed at (%i, %i, %i), place mark 2.",
 						drawOp_name, &coords.x, &coords.y, &coords.z);
 		Chat_AddOf(&msg, MSG_TYPE_CLIENTSTATUS_1);
 	} else {
@@ -427,7 +427,7 @@ static void DrawOpCommand_BlockChanged(void* obj, IVec3 coords, BlockID old, Blo
 		DrawOpCommand_Execute();
 		DrawOpCommand_ResetState();
 
-		if (!drawOp_persist) {			
+		if (!drawOp_persist) {
 			Chat_AddOf(&String_Empty, MSG_TYPE_CLIENTSTATUS_1);
 		} else {
 			DrawOpCommand_Begin();
@@ -440,7 +440,7 @@ static void DrawOpCommand_ExtractPersistArg(cc_string* value) {
 	drawOp_persist = false;
 	if (!String_CaselessEnds(value, &yes_string)) return;
 
-	drawOp_persist = true; 
+	drawOp_persist = true;
 	value->length  -= 3;
 	String_UNSAFE_TrimEnd(value);
 }
@@ -449,12 +449,12 @@ static int DrawOpCommand_ParseBlock(const cc_string* arg) {
 	int block = Block_Parse(arg);
 
 	if (block == -1) {
-		Chat_Add2("&e%c: &c\"%s\" is not a valid block name or id.", drawOp_name, arg); 
+		Chat_Add2("&e%c: &c\"%s\" is not a valid block name or id.", drawOp_name, arg);
 		return -1;
 	}
 
 	if (block > Game_Version.MaxCoreBlock && !Block_IsCustomDefined(block)) {
-		Chat_Add2("&e%c: &cThere is no block with id \"%s\".", drawOp_name, arg); 
+		Chat_Add2("&e%c: &cThere is no block with id \"%s\".", drawOp_name, arg);
 		return -1;
 	}
 	return block;

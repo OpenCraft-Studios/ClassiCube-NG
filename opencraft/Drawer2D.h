@@ -74,7 +74,7 @@ CC_API int Drawer2D_TextWidth(struct DrawTextArgs* args);
 /*  NOTE: Height returned only depends on the font. (see Font_CalcHeight) */
 CC_API int Drawer2D_TextHeight(struct DrawTextArgs* args);
 /* Similar to Context2D_DrawText, but trims the text with trailing ".." if wider than maxWidth */
-void Drawer2D_DrawClippedText(struct Context2D* ctx, struct DrawTextArgs* args, 
+void Drawer2D_DrawClippedText(struct Context2D* ctx, struct DrawTextArgs* args,
 								int x, int y, int maxWidth);
 
 /* Creates a texture consisting only of the given text drawn onto it */

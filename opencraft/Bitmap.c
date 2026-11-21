@@ -23,7 +23,7 @@ BitmapCol BitmapColor_Scale(BitmapCol a, float t) {
 	return (a & BITMAPCOLOR_A_MASK) | BitmapColor_R_Bits(R) | BitmapColor_G_Bits(G) | BitmapColor_B_Bits(B);
 }
 
-void Bitmap_UNSAFE_CopyBlock(int srcX, int srcY, int dstX, int dstY, 
+void Bitmap_UNSAFE_CopyBlock(int srcX, int srcY, int dstX, int dstY,
 							struct Bitmap* src, struct Bitmap* dst, int size) {
 	int x, y;
 	for (y = 0; y < size; y++) {
@@ -43,7 +43,7 @@ void Bitmap_TryAllocate(struct Bitmap* bmp, int width, int height) {
 	bmp->scan0 = (BitmapCol*)Mem_TryAlloc(width * height, BITMAPCOLOR_SIZE);
 }
 
-void Bitmap_Scale(struct Bitmap* dst, struct Bitmap* src, 
+void Bitmap_Scale(struct Bitmap* dst, struct Bitmap* src,
 					int srcX, int srcY, int srcWidth, int srcHeight) {
 	BitmapCol* dstRow;
 	BitmapCol* srcRow;
@@ -80,7 +80,7 @@ static cc_result ZLibHeader_Read(struct Stream* s, int* state) {
 		if ((tmp & 0x0F) != 0x08) return ZLIB_ERR_METHOD;
 		/* Upper 4 bits are window size (ignored) */
 		(*state)++;
-		
+
 	/* FALLTHRU */
 	case ZLIB_STATE_FLAGS:
 		Header_ReadU8(tmp);
@@ -189,8 +189,8 @@ static void Png_Reconstruct(cc_uint8 type, cc_uint8 bytesPerPixel, cc_uint8* lin
 			int pb = Math_AbsI(p - b);
 			int pc = Math_AbsI(p - c);
 
-			if (pa <= pb && pa <= pc) { line[i] += a; } 
-			else if (pb <= pc) {        line[i] += b; } 
+			if (pa <= pb && pa <= pc) { line[i] += a; }
+			else if (pb <= pc) {        line[i] += b; }
 			else {                      line[i] += c; }
 		}
 		return;
@@ -246,7 +246,7 @@ static void Png_Expand_RGB_8(int width, BitmapCol* palette, cc_uint8* src, Bitma
 	dst += (width - 1);
 
 	for (; width >= 4; width -= 4) {
-		PNG_Do_RGB__8(); PNG_Do_RGB__8(); 
+		PNG_Do_RGB__8(); PNG_Do_RGB__8();
 		PNG_Do_RGB__8(); PNG_Do_RGB__8();
 	}
 	for (; width > 0; width--) { PNG_Do_RGB__8(); }
@@ -357,7 +357,7 @@ static void ComputeTransparency(struct Bitmap* bmp, BitmapCol col) {
 
 static BitmapCol ExpandRGB(cc_uint8 bitsPerSample, int r, int g, int b) {
 	switch (bitsPerSample) {
-	case 1: 
+	case 1:
 		r *= 255; g *= 255; b *= 255; break;
 	case 2:
 		r *=  85; g *=  85; b *=  85; break;
@@ -537,7 +537,7 @@ cc_result Png_Decode(struct Bitmap* bmp, struct Stream* stream) {
 				} else {
 					cc_uint8* prior = &data[(rowY - 1) * scanlineBytes];
 					Png_Reconstruct(scanline[0], bytesPerPixel, &scanline[1], &prior[1], scanlineSize);
-					
+
 					/* With the RGBA colourspace, each scanline is (1 + width*4) bytes wide */
 					/* Therefore once a row has been reconstructed, the prior row can be converted */
 					/* immediately into the destination colour format */
@@ -593,7 +593,7 @@ cc_result Png_Decode(struct Bitmap* bmp, struct Stream* stream) {
 *#########################################################################################################################*/
 #if !defined CC_BUILD_FILESYSTEM
 /* No point including encoding code when can't save screenshots anyways */
-cc_result Png_Encode(struct Bitmap* bmp, struct Stream* stream, 
+cc_result Png_Encode(struct Bitmap* bmp, struct Stream* stream,
 					Png_RowGetter getRow, cc_bool alpha, void* ctx) {
 	return ERR_NOT_SUPPORTED;
 }
@@ -744,7 +744,7 @@ static cc_result Png_EncodeCore(struct Bitmap* bmp, struct Stream* stream, cc_ui
 	Mem_WriteU32_BE(&tmp[0], PNG_FourCC('I','D','A','T'));
 	if ((res = Stream_Write(&chunk, tmp, 4))) return res;
 
-	ZLib_MakeStream(&zlStream, zlState, &chunk); 
+	ZLib_MakeStream(&zlStream, zlState, &chunk);
 	lineSize = bmp->width * (alpha ? 4 : 3);
 	Mem_Set(prevLine, 0, lineSize);
 
@@ -777,7 +777,7 @@ static cc_result Png_EncodeCore(struct Bitmap* bmp, struct Stream* stream, cc_ui
 	return stream->Seek(stream, stream_end);
 }
 
-cc_result Png_Encode(struct Bitmap* bmp, struct Stream* stream, 
+cc_result Png_Encode(struct Bitmap* bmp, struct Stream* stream,
 					Png_RowGetter getRow, cc_bool alpha, void* ctx) {
 	cc_result res;
 	/* Add 1 for scanline filter type byter */

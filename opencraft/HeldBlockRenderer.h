@@ -3,7 +3,7 @@
 #include <Core.h>
 CC_BEGIN_HEADER
 
-/* 
+/*
 Renders the held block/arm at bottom right of game
 Copyright 2014-2025 ClassiCube | Licensed under BSD-3
 */

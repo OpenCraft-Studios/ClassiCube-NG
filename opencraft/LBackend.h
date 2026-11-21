@@ -3,7 +3,7 @@
 #include <Core.h>
 CC_BEGIN_HEADER
 
-/* 
+/*
 Abstracts the gui drawing backend for the Launcher
 Copyright 2014-2025 ClassiCube | Licensed under BSD-3
 */

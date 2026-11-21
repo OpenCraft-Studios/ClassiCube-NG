@@ -43,7 +43,7 @@ CC_NOINLINE static int LScreen_IndexOf(struct LScreen* s, void* w) {
 
 static void LScreen_DoLayout(struct LScreen* s) {
 	int i;
-	for (i = 0; i < s->numWidgets; i++) 
+	for (i = 0; i < s->numWidgets; i++)
 	{
 		LBackend_LayoutWidget(s->widgets[i]);
 	}
@@ -103,7 +103,7 @@ static void LScreen_KeyDown(struct LScreen* s, int key, cc_bool was, struct Inpu
 		}
 		return;
 	}
-	
+
 	/* Active widget takes input priority over default behaviour */
 	if (s->selectedWidget && s->selectedWidget->VTABLE->KeyDown) {
 		if (s->selectedWidget->VTABLE->KeyDown(s->selectedWidget, key, was, device)) return;
@@ -147,8 +147,8 @@ CC_NOINLINE static void LScreen_Reset(struct LScreen* s) {
 	s->ResetArea      = Launcher_DrawBackground;
 
 	/* reset all widgets mouse state */
-	for (i = 0; i < s->numWidgets; i++) 
-	{ 
+	for (i = 0; i < s->numWidgets; i++)
+	{
 		s->widgets[i]->hovered  = false;
 		s->widgets[i]->selected = false;
 	}
@@ -236,17 +236,17 @@ static void ChooseModeScreen_Activated(struct LScreen* s_) {
 	LLine_Add(s,   &s->seps[0], 490, mode_seps0);
 	LLine_Add(s,   &s->seps[1], 490, mode_seps1);
 
-	LButton_Add(s, &s->btnEnhanced, 145, 35, "Enhanced",                        
+	LButton_Add(s, &s->btnEnhanced, 145, 35, "Enhanced",
 				UseModeEnhanced,   mode_btnEnhanced);
 	LLabel_Add(s,  &s->lblEnhanced[0], "&eEnables custom blocks, changing env", mode_lblEnhanced0);
 	LLabel_Add(s,  &s->lblEnhanced[1], "&esettings, longer messages, and more", mode_lblEnhanced1);
 
-	LButton_Add(s, &s->btnClassicHax, 145, 35, "Classic +hax",                     
+	LButton_Add(s, &s->btnClassicHax, 145, 35, "Classic +hax",
 				UseModeClassicHax, mode_btnClassicHax);
 	LLabel_Add(s,  &s->lblClassicHax[0], "&eSame as Classic mode, except that",    mode_lblClassicHax0);
 	LLabel_Add(s,  &s->lblClassicHax[1], "&ehacks (noclip/fly/speed) are enabled", mode_lblClassicHax1);
 
-	LButton_Add(s, &s->btnClassic, 145, 35, "Classic",                        
+	LButton_Add(s, &s->btnClassic, 145, 35, "Classic",
 				UseModeClassic,    mode_btnClassic);
 	LLabel_Add(s,  &s->lblClassic[0], "&eOnly uses blocks and features from", mode_lblClassic0);
 	LLabel_Add(s,  &s->lblClassic[1], "&ethe original minecraft classic",     mode_lblClassic1);
@@ -254,7 +254,7 @@ static void ChooseModeScreen_Activated(struct LScreen* s_) {
 	if (s->firstTime) {
 		LLabel_Add(s,  &s->lblHelp, "&eClick &fEnhanced &eif you're not sure which mode to choose.", mode_lblHelp);
 	} else {
-		LButton_Add(s, &s->btnBack, 80, 35, "Back", 
+		LButton_Add(s, &s->btnBack, 80, 35, "Back",
 					SwitchToSettings, mode_btnBack);
 	}
 }
@@ -384,7 +384,7 @@ static void ColoursScreen_KeyDown(struct LScreen* s, int key, cc_bool was, struc
 	Input_CalcDelta(key, device, &deltaX, &deltaY);
 	if (key == CCWHEEL_UP)   deltaX = +1;
 	if (key == CCWHEEL_DOWN) deltaX = -1;
-	
+
 	if (deltaX || deltaY) {
 		ColoursScreen_AdjustSelected(s, deltaY * 10 + deltaX);
 	} else {
@@ -419,7 +419,7 @@ static void ColoursScreen_AddWidgets(struct ColoursScreen* s) {
 	LButton_Add(s, &s->btnBack, 80, 35, "Back",
 				SwitchToThemes, clr_btnBack);
 
-	LCheckbox_Add(s, &s->cbClassic, "Classic style", 
+	LCheckbox_Add(s, &s->cbClassic, "Classic style",
 					ColoursScreen_ToggleBG, clr_cbClassic);
 }
 
@@ -472,7 +472,7 @@ LAYOUTS dc_lblStatus[]   = { { ANCHOR_CENTRE,    0 }, { ANCHOR_CENTRE, 70 } };
 static void DirectConnectScreen_UrlFilter(cc_string* str) {
 	cc_string addr, user, mppass;
 	if (!DirectUrl_Claims(str, &addr, &user, &mppass)) return;
-	
+
 	LInput_SetString(&DirectConnectScreen.iptAddress,  &addr);
 	LInput_SetString(&DirectConnectScreen.iptUsername, &user);
 	LInput_SetString(&DirectConnectScreen.iptMppass,   &mppass);
@@ -531,9 +531,9 @@ static void DirectConnectScreen_Activated(struct LScreen* s_) {
 	LInput_Add(s,  &s->iptAddress,  330, "IP address:Port number..", dc_iptAddress);
 	LInput_Add(s,  &s->iptMppass,   330, "Mppass..",                 dc_iptMppass);
 
-	LButton_Add(s, &s->btnConnect, 110, 35, "Connect", 
+	LButton_Add(s, &s->btnConnect, 110, 35, "Connect",
 				DirectConnectScreen_StartClient, dc_btnConnect);
-	LButton_Add(s, &s->btnBack,     80, 35, "Back",    
+	LButton_Add(s, &s->btnBack,     80, 35, "Back",
 				SwitchToMain, dc_btnBack);
 	LLabel_Add(s,  &s->lblStatus,  "", dc_lblStatus);
 
@@ -552,7 +552,7 @@ static void DirectConnectScreen_Load(struct LScreen* s_) {
 	Options_UNSAFE_Get("launcher-dc-username", &user);
 	Options_UNSAFE_Get("launcher-dc-ip",       &ip);
 	Options_UNSAFE_Get("launcher-dc-port",     &port);
-	
+
 	String_InitArray(mppass, mppassBuffer);
 	Options_GetSecure("launcher-dc-mppass", &mppass);
 	String_InitArray(addr, addrBuffer);
@@ -560,7 +560,7 @@ static void DirectConnectScreen_Load(struct LScreen* s_) {
 
 	/* don't want just ':' for address */
 	if (addr.length == 1) addr.length = 0;
-	
+
 	LInput_SetText(&s->iptUsername, &user);
 	LInput_SetText(&s->iptAddress,  &addr);
 	LInput_SetText(&s->iptMppass,   &mppass);
@@ -615,12 +615,12 @@ static void MFAScreen_Cancel(void* w) {
 static void MFAScreen_Activated(struct LScreen* s_) {
 	struct MFAScreen* s = (struct MFAScreen*)s_;
 	s->iptCode.inputType = KEYBOARD_TYPE_INTEGER;
-	
+
 	LLabel_Add(s,  &s->lblTitle,  "",                  mfa_lblTitle);
 	LInput_Add(s,  &s->iptCode,   280, "Login code..", mfa_iptCode);
-	LButton_Add(s, &s->btnSignIn, 100, 35, "Sign in",  
+	LButton_Add(s, &s->btnSignIn, 100, 35, "Sign in",
 				MFAScreen_SignIn, mfa_btnSignIn);
-	LButton_Add(s, &s->btnCancel, 100, 35, "Cancel",   
+	LButton_Add(s, &s->btnCancel, 100, 35, "Cancel",
 				MFAScreen_Cancel, mfa_btnCancel);
 
 	LLabel_SetConst(&s->lblTitle, s->iptCode.text.length ?
@@ -673,21 +673,21 @@ static void SplitScreen_Players4(void* w) { SplitScreen_Start(4); }
 static void SplitScreen_Activated(struct LScreen* s_) {
 	struct SplitScreen* s = (struct SplitScreen*)s_;
 
-	LButton_Add(s, &s->btnPlayers[0], 300, 35, "2 player splitscreen", 
+	LButton_Add(s, &s->btnPlayers[0], 300, 35, "2 player splitscreen",
 				SplitScreen_Players2, sps_btnPlayers2);
-	LButton_Add(s, &s->btnPlayers[1], 300, 35, "3 player splitscreen", 
+	LButton_Add(s, &s->btnPlayers[1], 300, 35, "3 player splitscreen",
 				SplitScreen_Players3, sps_btnPlayers3);
-	LButton_Add(s, &s->btnPlayers[2], 300, 35, "4 player splitscreen", 
+	LButton_Add(s, &s->btnPlayers[2], 300, 35, "4 player splitscreen",
 				SplitScreen_Players4, sps_btnPlayers4);
 
-	LButton_Add(s, &s->btnBack, 100, 35, "Back", 
+	LButton_Add(s, &s->btnBack, 100, 35, "Back",
 				SwitchToMain, sps_btnBack);
 }
 
 void SplitScreen_SetActive(void) {
 	struct SplitScreen* s = &SplitScreen;
 	LScreen_Reset((struct LScreen*)s);
-	
+
 	s->widgets    = split_widgets;
 	s->maxWidgets = Array_Elems(split_widgets);
 
@@ -818,10 +818,10 @@ CC_NOINLINE static cc_uint32 MainScreen_GetVersion(const cc_string* version) {
 	cc_uint8 raw[4] = { 0, 0, 0, 0 };
 	cc_string parts[4];
 	int i, count;
-	
+
 	/* 1.0.1 -> { 1, 0, 1, 0 } */
 	count = String_UNSAFE_Split(version, '.', parts, 4);
-	for (i = 0; i < count; i++) 
+	for (i = 0; i < count; i++)
 	{
 		Convert_ParseUInt8(&parts[i], &raw[i]);
 	}
@@ -858,41 +858,41 @@ static void MainScreen_Activated(struct LScreen* s_) {
 #ifdef CC_BUILD_NETWORKING
 	LInput_Add(s,  &s->iptUsername, 280, "Username..",  main_iptUsername);
 	LInput_Add(s,  &s->iptPassword, 280, "Password..",  main_iptPassword);
-	LButton_Add(s, &s->btnLogin,    100, 35, "Sign in", 
+	LButton_Add(s, &s->btnLogin,    100, 35, "Sign in",
 				MainScreen_Login,  main_btnLogin);
-	LButton_Add(s, &s->btnResume,   100, 35, "Resume",  
+	LButton_Add(s, &s->btnResume,   100, 35, "Resume",
 				MainScreen_Resume, main_btnResume);
 #endif
 
 	LLabel_Add(s,  &s->lblStatus,  "",  main_lblStatus);
 #ifdef CC_BUILD_NETWORKING
-	LButton_Add(s, &s->btnDirect,  200, 35, "Direct connect", 
+	LButton_Add(s, &s->btnDirect,  200, 35, "Direct connect",
 				SwitchToDirectConnect,   main_btnDirect);
 #endif
 	LButton_Add(s, &s->btnSPlayer, 200, 35, "Singleplayer",
 				MainScreen_Singleplayer, main_btnSPlayer);
 #ifdef CC_BUILD_SPLITSCREEN
-	LButton_Add(s, &s->btnSplit,   200, 35, "Splitscreen (WIP)", 
+	LButton_Add(s, &s->btnSplit,   200, 35, "Splitscreen (WIP)",
 				SwitchToSplitScreen,     main_btnSplit);
 #endif
 
 	if (Process_OpenSupported) {
-		LButton_Add(s, &s->btnRegister, 100, 35, "Register", 
+		LButton_Add(s, &s->btnRegister, 100, 35, "Register",
 					MainScreen_Register, main_btnRegister);
 	}
 
-	LButton_Add(s, &s->btnOptions, 100, 35, "Options", 
+	LButton_Add(s, &s->btnOptions, 100, 35, "Options",
 				SwitchToSettings, main_btnOptions);
 
 	if (Platform_Flags & PLAT_FLAG_APP_EXIT) {
 		LLabel_Add(s,  &s->lblUpdate,  "&eChecking..", main_lblUpdate_N);
-		LButton_Add(s, &s->btnUpdates,  100, 35, "Exit", 
+		LButton_Add(s, &s->btnUpdates,  100, 35, "Exit",
 					MainScreen_ExitApp, main_btnUpdates);
 	} else {
-		LLabel_Add(s,  &s->lblUpdate,  "&eChecking..",      
+		LLabel_Add(s,  &s->lblUpdate,  "&eChecking..",
 					Updater_Supported ? main_lblUpdate_N : main_lblUpdate_H);
 		if (Updater_Supported) {
-			LButton_Add(s, &s->btnUpdates,  100, 35, "Updates", 
+			LButton_Add(s, &s->btnUpdates,  100, 35, "Updates",
 						SwitchToUpdates, main_btnUpdates);
 		}
 	}
@@ -1015,7 +1015,7 @@ static void MainScreen_Tick(struct LScreen* s_) {
 void MainScreen_SetActive(void) {
 	struct MainScreen* s = &MainScreen;
 	LScreen_Reset((struct LScreen*)s);
-	
+
 	s->widgets    = main_widgets;
 	s->maxWidgets = Array_Elems(main_widgets);
 
@@ -1066,7 +1066,7 @@ static void CheckResourcesScreen_Next(void* w) {
 }
 
 static void CheckResourcesScreen_AddWidgets(struct CheckResourcesScreen* s) {
-	const char* line1_msg = Resources_MissingRequired ? "Some required resources weren't found" 
+	const char* line1_msg = Resources_MissingRequired ? "Some required resources weren't found"
 														: "Some optional resources weren't found";
 	s->lblStatus.small = true;
 
@@ -1074,9 +1074,9 @@ static void CheckResourcesScreen_AddWidgets(struct CheckResourcesScreen* s) {
 	LLabel_Add(s,  &s->lblLine2,  "Okay to download?", cres_lblLine2);
 	LLabel_Add(s,  &s->lblStatus, "",                  cres_lblStatus);
 
-	LButton_Add(s, &s->btnYes, 70, 35, "Yes", 
+	LButton_Add(s, &s->btnYes, 70, 35, "Yes",
 				CheckResourcesScreen_Yes,  cres_btnYes);
-	LButton_Add(s, &s->btnNo,  70, 35, "No",  
+	LButton_Add(s, &s->btnNo,  70, 35, "No",
 				CheckResourcesScreen_Next, cres_btnNo);
 }
 
@@ -1085,7 +1085,7 @@ static void CheckResourcesScreen_Activated(struct LScreen* s_) {
 	cc_string str; char buffer[STRING_SIZE];
 	float size;
 	CheckResourcesScreen_AddWidgets(s);
-		
+
 	size = Resources_MissingSize / 1024.0f;
 	String_InitArray(str, buffer);
 	String_Format1(&str, "&eDownload size: %f2 megabytes", &size);
@@ -1159,12 +1159,12 @@ static void FetchResourcesScreen_Activated(struct LScreen* s_) {
 	s->lblStatus.small = true;
 
 	LLabel_Add(s,  &s->lblStatus,   "",    fres_lblStatus);
-	LButton_Add(s, &s->btnCancel,   120, 35, "Cancel",                   
+	LButton_Add(s, &s->btnCancel,   120, 35, "Cancel",
 				CheckResourcesScreen_Next, fres_btnCancel);
 	LSlider_Add(s, &s->sdrProgress, 200, 12, BitmapColor_RGB(0, 220, 0), fres_sdrProgress);
 
 	Fetcher_ErrorCallback = FetchResourcesScreen_Error;
-	Fetcher_Run(); 
+	Fetcher_Run();
 }
 
 static void FetchResourcesScreen_UpdateStatus(struct FetchResourcesScreen* s, int reqID) {
@@ -1277,11 +1277,11 @@ static void ServersScreen_OnDoubleclick(int row) {
 
 static void ServersScreen_Connect(void* w) {
 	struct LTable* table = &ServersScreen.table;
-	cc_string* hash      = &ServersScreen.iptHash.text;	
+	cc_string* hash      = &ServersScreen.iptHash.text;
 
 	/* Default to first visible row if no hash currently entered */
-	if (!hash->length && table->rowsCount) { 
-		hash = &LTable_Get(table->topRow)->hash; 
+	if (!hash->length && table->rowsCount) {
+		hash = &LTable_Get(table->topRow)->hash;
 	}
 
 	ServersScreen_DoConnect(hash);
@@ -1318,7 +1318,7 @@ static void ServersScreen_ReloadServers(struct ServersScreen* s) {
 	int i;
 	LTable_Sort(&s->table);
 
-	for (i = 0; i < FetchServersTask.numServers; i++) 
+	for (i = 0; i < FetchServersTask.numServers; i++)
 	{
 		FetchFlagsTask_Add(&FetchServersTask.servers[i]);
 	}
@@ -1328,11 +1328,11 @@ static void ServersScreen_AddWidgets(struct ServersScreen* s) {
 	LInput_Add(s,  &s->iptSearch, 370, "Search servers..",               srv_iptSearch);
 	LInput_Add(s,  &s->iptHash,   475, "classicube.net/server/play/...", srv_iptHash);
 
-	LButton_Add(s, &s->btnBack,    110, 30, "Back",    
+	LButton_Add(s, &s->btnBack,    110, 30, "Back",
 				SwitchToMain,          srv_btnBack);
-	LButton_Add(s, &s->btnConnect, 130, 30, "Connect", 
+	LButton_Add(s, &s->btnConnect, 130, 30, "Connect",
 				ServersScreen_Connect, srv_btnConnect);
-	LButton_Add(s, &s->btnRefresh, 110, 30, "Refresh", 
+	LButton_Add(s, &s->btnRefresh, 110, 30, "Refresh",
 				ServersScreen_Refresh, srv_btnRefresh);
 
 	s->iptSearch.skipsEnter    = true;
@@ -1388,7 +1388,7 @@ static void ServersScreen_Tick(struct LScreen* s_) {
 		LBackend_NeedsRedraw(&s->table);
 	}
 
-	LButton_SetConst(&s->btnRefresh, 
+	LButton_SetConst(&s->btnRefresh,
 				FetchServersTask.Base.success ? "Refresh" : "&cFailed");
 }
 
@@ -1485,29 +1485,29 @@ static void SettingsScreen_DPIScaling(struct LCheckbox* w) {
 
 static void SettingsScreen_AddWidgets(struct SettingsScreen* s) {
 	LLine_Add(s,   &s->sep, 380, set_sep);
-	LButton_Add(s, &s->btnMode, 110, 35, "Mode", 
+	LButton_Add(s, &s->btnMode, 110, 35, "Mode",
 				SwitchToChooseMode, set_btnMode);
 	LLabel_Add(s,  &s->lblMode, "&eChange the enabled features", set_lblMode);
 
 	if (!Options_GetBool(OPT_CLASSIC_MODE, false)) {
-		LButton_Add(s, &s->btnColours, 110, 35, "Theme", 
+		LButton_Add(s, &s->btnColours, 110, 35, "Theme",
 					SwitchToThemes, set_btnColours);
 		LLabel_Add(s,  &s->lblColours, "&eChange how the launcher looks", set_lblColours);
 	}
 
 #if defined CC_BUILD_MOBILE
-	LCheckbox_Add(s, &s->cbExtra, "Force landscape", 
+	LCheckbox_Add(s, &s->cbExtra, "Force landscape",
 				SettingsScreen_LockOrientation, set_cbExtra);
 #else
-	LCheckbox_Add(s, &s->cbExtra, "Close this after game starts", 
+	LCheckbox_Add(s, &s->cbExtra, "Close this after game starts",
 				SettingsScreen_AutoClose,       set_cbExtra);
 #endif
 
-	LCheckbox_Add(s, &s->cbEmpty, "Show empty servers in list", 
+	LCheckbox_Add(s, &s->cbEmpty, "Show empty servers in list",
 				SettingsScreen_ShowEmpty,  set_cbEmpty);
-	LCheckbox_Add(s, &s->cbScale, "Use display scaling", 
+	LCheckbox_Add(s, &s->cbScale, "Use display scaling",
 				SettingsScreen_DPIScaling, set_cbScale);
-	LButton_Add(s,   &s->btnBack, 80, 35, "Back", 
+	LButton_Add(s,   &s->btnBack, 80, 35, "Back",
 				SwitchToMain, set_btnBack);
 }
 
@@ -1578,15 +1578,15 @@ static void ThemesScreen_Nordic(void* w) {
 static void ThemesScreen_Activated(struct LScreen* s_) {
 	struct ThemesScreen* s = (struct ThemesScreen*)s_;
 
-	LButton_Add(s, &s->btnModern,  200, 35, "Modern",  
+	LButton_Add(s, &s->btnModern,  200, 35, "Modern",
 				ThemesScreen_Modern,  the_btnModern);
-	LButton_Add(s, &s->btnClassic, 200, 35, "Classic", 
+	LButton_Add(s, &s->btnClassic, 200, 35, "Classic",
 				ThemesScreen_Classic, the_btnClassic);
-	LButton_Add(s, &s->btnNordic,  200, 35, "Nordic",  
+	LButton_Add(s, &s->btnNordic,  200, 35, "Nordic",
 				ThemesScreen_Nordic,  the_btnNordic);
-	LButton_Add(s, &s->btnCustom,  200, 35, "Custom",  
+	LButton_Add(s, &s->btnCustom,  200, 35, "Custom",
 				SwitchToColours,      the_btnCustom);
-	LButton_Add(s, &s->btnBack,     80, 35, "Back",    
+	LButton_Add(s, &s->btnBack,     80, 35, "Back",
 				SwitchToSettings,     the_btnBack);
 }
 
@@ -1689,14 +1689,14 @@ static void UpdatesScreen_FormatBoth(struct UpdatesScreen* s) {
 static void UpdatesScreen_UpdateHeader(struct UpdatesScreen* s, cc_string* str) {
 	const char* message = s->release ? "release " : "dev build ";
 
-	String_Format2(str, "&eFetching latest %c%c", 
+	String_Format2(str, "&eFetching latest %c%c",
 					message, Updater_Info.builds[s->buildIndex].name);
 }
 
 static void UpdatesScreen_DoFetch(struct UpdatesScreen* s) {
 	cc_string str; char strBuffer[STRING_SIZE];
 	cc_uint64 time;
-	
+
 	time = s->release ? CheckUpdateTask.relTimestamp : CheckUpdateTask.devTimestamp;
 	if (!time || FetchUpdateTask.Base.working) return;
 	FetchUpdateTask_Run(s->release, s->buildIndex);
@@ -1782,7 +1782,7 @@ static void UpdatesScreen_AddWidgets(struct UpdatesScreen* s) {
 	LLabel_Add(s,  &s->lblDev, "Latest dev build: Checking..", upd_lblDev);
 	LLabel_Add(s,  &s->lblStatus, "",              upd_lblStatus);
 	LLabel_Add(s,  &s->lblInfo, Updater_Info.info, upd_lblInfo);
-	LButton_Add(s, &s->btnBack, 80, 35, "Back", 
+	LButton_Add(s, &s->btnBack, 80, 35, "Back",
 				SwitchToMain, upd_btnBack);
 
 	if (builds >= 1) {
@@ -1793,9 +1793,9 @@ static void UpdatesScreen_AddWidgets(struct UpdatesScreen* s) {
 	}
 
 	if (builds >= 2) {
-		LButton_Add(s, &s->btnRel[1], 130, 35, Updater_Info.builds[1].name, 
+		LButton_Add(s, &s->btnRel[1], 130, 35, Updater_Info.builds[1].name,
 					UpdatesScreen_Rel_1, upd_btnRel1_2);
-		LButton_Add(s, &s->btnDev[1], 130, 35, Updater_Info.builds[1].name, 
+		LButton_Add(s, &s->btnDev[1], 130, 35, Updater_Info.builds[1].name,
 					UpdatesScreen_Dev_1, upd_btnDev1_2);
 	}
 }

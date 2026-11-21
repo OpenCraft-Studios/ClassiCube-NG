@@ -3,7 +3,7 @@
 #include <Core.h>
 CC_BEGIN_HEADER
 
-/* 
+/*
 Renders environment of the map (clouds, sky, fog, map sides/edges, skybox, rain/snow)
 Copyright 2014-2025 ClassiCube | Licensed under BSD-3
 */

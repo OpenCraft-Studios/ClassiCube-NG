@@ -42,8 +42,8 @@ struct IGameComponent SystemFonts_Component = {
 #define FallbackFont_GetRows(c) (FallbackFont_ValidChar(c) ? font_bitmap[FallbackFont_ToIndex(c)] : missing_cell)
 #define FallbackFont_GetScale(size) max(1, ((size) >> 3))
 
-static const cc_uint8 missing_cell[CELL_SIZE] = { 
-	0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF 
+static const cc_uint8 missing_cell[CELL_SIZE] = {
+	0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF
 };
 
 /* 8x8 font bitmap, represented with 1 bit for each pixel */
@@ -148,7 +148,7 @@ static const cc_uint8 font_bitmap[][CELL_SIZE] = {
 static int Fallback_CellWidth(const cc_uint8* rows) {
 	int y, width, widest = 0;
 
-	for (y = 0; y < CELL_SIZE; y++) 
+	for (y = 0; y < CELL_SIZE; y++)
 	{
 		widest = max(widest, rows[y]);
 	}
@@ -157,7 +157,7 @@ static int Fallback_CellWidth(const cc_uint8* rows) {
 	return width + 1; /* add 1 for padding */
 }
 
-int FallbackFont_TextWidth(const struct DrawTextArgs* args) { 
+int FallbackFont_TextWidth(const struct DrawTextArgs* args) {
 	cc_string left = args->text, part;
 	int size  = args->font->size;
 	int scale = FallbackFont_GetScale(size);
@@ -166,7 +166,7 @@ int FallbackFont_TextWidth(const struct DrawTextArgs* args) {
 
 	while (Drawer2D_UNSAFE_NextPart(&left, &part, &colorCode))
 	{
-		for (i = 0; i < part.length; i++) 
+		for (i = 0; i < part.length; i++)
 		{
 			cc_uint8 c = part.buffer[i];
 			if (c == ' ') {
@@ -182,7 +182,7 @@ int FallbackFont_TextWidth(const struct DrawTextArgs* args) {
 	return width;
 }
 
-static void Fallback_DrawCell(struct Bitmap* bmp, int x, int y, 
+static void Fallback_DrawCell(struct Bitmap* bmp, int x, int y,
 					int scale, const cc_uint8* rows, BitmapCol color) {
 	int xx, srcX, dstX;
 	int yy, srcY, dstY;
@@ -194,16 +194,16 @@ static void Fallback_DrawCell(struct Bitmap* bmp, int x, int y,
 		for (yy = 0; yy < scale; yy++, dstY++)
 		{
 			if (dstY < 0 || dstY >= bmp->height) continue;
-	
+
 			dst_row = Bitmap_GetRow(bmp, dstY);
 			src_row = rows[srcY];
-	
+
 			for (srcX = 0, dstX = x; srcX < CELL_SIZE; srcX++)
 			{
 				for (xx = 0; xx < scale; xx++, dstX++)
 				{
 					if (dstX < 0 || dstX >= bmp->width) continue;
-		
+
 					if (src_row & (1 << srcX)) {
 						dst_row[dstX] = color;
 					}
@@ -222,8 +222,8 @@ void FallbackFont_DrawText(struct DrawTextArgs* args, struct Bitmap* bmp, int x,
 	BitmapCol color;
 	int i;
 
-	if (shadow) { 
-		x += 1 * scale; 
+	if (shadow) {
+		x += 1 * scale;
 		y += 1 * scale;
 	}
 
@@ -234,8 +234,8 @@ void FallbackFont_DrawText(struct DrawTextArgs* args, struct Bitmap* bmp, int x,
 	{
 		color = Drawer2D_GetColor(colorCode);
 		if (shadow) color = GetShadowColor(color);
-	
-		for (i = 0; i < part.length; i++) 
+
+		for (i = 0; i < part.length; i++)
 		{
 			cc_uint8 c = part.buffer[i];
 			if (c == ' ') { x += SPACE_WIDTH * scale; continue; }
@@ -259,7 +259,7 @@ static void Fallback_PlotCell(int scale, const cc_uint8* rows, FallbackFont_Plot
 
 		for (srcX = 0; srcX < CELL_SIZE; srcX++)
 		{
-			if (!(src_row & (1 << srcX))) continue;			
+			if (!(src_row & (1 << srcX))) continue;
 			dstX = srcX * scale;
 			dstY = srcY * scale;
 
@@ -325,7 +325,7 @@ size_t cc_strlen(const char* a) {
 char* cc_strstr(const char* str, const char* substr) {
 	if (!substr[0]) return (char*)str;
 
-	for (; *str; str++) 
+	for (; *str; str++)
 	{
 		/* Definitely not a match */
 		if (*str != substr[0]) continue;
@@ -358,11 +358,11 @@ void* cc_memchr(const void* ptr, int ch, size_t num) {
 }
 
 static void swap(void* v1, void* v2, int size) {
-	char buffer[1024]; 
+	char buffer[1024];
 
-	Mem_Copy(buffer, v1, size); 
-	Mem_Copy(v1,     v2, size); 
-	Mem_Copy(v2, buffer, size); 
+	Mem_Copy(buffer, v1, size);
+	Mem_Copy(v1,     v2, size);
+	Mem_Copy(v2, buffer, size);
 }
 
 // https://www.geeksforgeeks.org/generic-implementation-of-quicksort-algorithm-in-c/
@@ -371,31 +371,31 @@ static void _qsort(void* v, int size, int left, int right,
 	void* ptrL;
 	void* ptrM;
 	void* ptrI;
-	void* ptrE; 
+	void* ptrE;
 	int i, last, mid;
 
 	if (left >= right) return;
-	mid = (left + right) / 2; 
+	mid = (left + right) / 2;
 
-	ptrL = (char*)v + (left * size); 
-	ptrM = (char*)v + (mid  * size); 
-	swap(ptrL, ptrM, size); 
-	last = left; 
+	ptrL = (char*)v + (left * size);
+	ptrM = (char*)v + (mid  * size);
+	swap(ptrL, ptrM, size);
+	last = left;
 
-	for (i = left + 1; i <= right; i++) 
+	for (i = left + 1; i <= right; i++)
 	{
-		ptrI = (char*)v + (i * size); 
-		if ((*comp)(ptrL, ptrI) > 0) { 
+		ptrI = (char*)v + (i * size);
+		if ((*comp)(ptrL, ptrI) > 0) {
 			last++;
-			ptrE = (char*)v + (last * size); 
-			swap(ptrI, ptrE, size); 
-		} 
+			ptrE = (char*)v + (last * size);
+			swap(ptrI, ptrE, size);
+		}
 	}
 
-	ptrE = (char*)v + (last * size); 
-	swap(ptrL, ptrE, size); 
-	_qsort(v, size, left, last - 1,  comp); 
-	_qsort(v, size, last + 1, right, comp); 
+	ptrE = (char*)v + (last * size);
+	swap(ptrL, ptrE, size);
+	_qsort(v, size, left, last - 1,  comp);
+	_qsort(v, size, last + 1, right, comp);
 }
 
 void cc_qsort(void* v, size_t count, size_t size,
@@ -445,12 +445,12 @@ static void SysFont_Done(struct SysFont* font) {
 	if (!source->meta.file) return;
 	source->Close(source);
 
-	for (i = 0; i < 256; i++) 
+	for (i = 0; i < 256; i++)
 	{
 		if (!font->glyphs[i]) continue;
 		FT_Done_Glyph((FT_Glyph)font->glyphs[i]);
 	}
-	for (i = 0; i < 256; i++) 
+	for (i = 0; i < 256; i++)
 	{
 		if (!font->shadow_glyphs[i]) continue;
 		FT_Done_Glyph((FT_Glyph)font->shadow_glyphs[i]);
@@ -522,7 +522,7 @@ static cc_string font_candidates[] = {
 	String_FromConst("Nimbus Sans"),
 	String_FromConst("Bitstream Charter"),
 	String_FromConst("Cantarell"),
-	String_FromConst("DejaVu Sans Book"), 
+	String_FromConst("DejaVu Sans Book"),
 	String_FromConst("Century Schoolbook L Roman"), /* commonly available on linux */
 	String_FromConst("Liberation Serif"), /* for SerenityOS */
 	String_FromConst("Slate For OnePlus"), /* Android 10, some devices */
@@ -691,7 +691,7 @@ static cc_string Font_DoLookup(const cc_string* fontName, int flags) {
 
 static cc_string Font_Lookup(const cc_string* fontName, int flags) {
 	cc_string path;
-	
+
 	SysFonts_LoadCached();
 	path = Font_DoLookup(fontName, flags);
 	if (path.length) return path;
@@ -833,7 +833,7 @@ int SysFont_TextWidth(struct DrawTextArgs* args) {
 				Platform_Log2("Error %e measuring width of %r", &res, &c);
 				charWidth = 0;
 			} else {
-				charWidth = face->glyph->advance.x;		
+				charWidth = face->glyph->advance.x;
 			}
 
 			font->widths[(cc_uint8)c] = charWidth;
@@ -909,7 +909,7 @@ void SysFont_DrawText(struct DrawTextArgs* args, struct Bitmap* bmp, int x, int 
 	cc_string text = args->text;
 	int descender, height, begX = x;
 	BitmapCol color;
-	
+
 	/* glyph state */
 	FT_BitmapGlyph glyph;
 	FT_Bitmap* img;
@@ -987,8 +987,8 @@ const cc_string* SysFonts_UNSAFE_GetDefault(void) {
 }
 
 void SysFonts_GetNames(struct StringsBuffer* buffer) {
-	static const char* font_names[] = { 
-		"Arial", "Arial Black", "Courier New", "Comic Sans MS", "Georgia", "Garamond", 
+	static const char* font_names[] = {
+		"Arial", "Arial Black", "Courier New", "Comic Sans MS", "Georgia", "Garamond",
 		"Helvetica", "Impact", "Tahoma", "Times New Roman", "Trebuchet MS", "Verdana",
 		"cursive", "fantasy", "monospace", "sans-serif", "serif", "system-ui"
 	};
@@ -1007,7 +1007,7 @@ cc_result SysFont_Make(struct FontDesc* desc, const cc_string* fontName, int siz
 
 	desc->handle = Mem_TryAlloc(fontName->length + 1, 1);
 	if (!desc->handle) return ERR_OUT_OF_MEMORY;
-	
+
 	String_CopyToRaw(desc->handle, fontName->length + 1, fontName);
 	return 0;
 }

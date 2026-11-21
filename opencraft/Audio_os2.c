@@ -36,20 +36,20 @@ ULONG APIENTRY kaiCallback(PVOID data, PVOID buffer, ULONG size) {
 	char* dst = buffer;
 	void* src = ctx->buffers[ctx->drainBuffer];
 	cc_uint32 read = 0;
-	
+
 	if (!src) return 0; // Reached end of playable queue
 
 	while (size) {
-  	cc_uint32 bufferLeft = ctx->bufferSize[ctx->drainBuffer] - ctx->indexIntoBuffer;
+		cc_uint32 bufferLeft = ctx->bufferSize[ctx->drainBuffer] - ctx->indexIntoBuffer;
 		cc_uint32 len = min(bufferLeft, size);
-		
+
 		Mem_Copy(dst, src + ctx->indexIntoBuffer, len);
-		
+
 		dst  += len;
 		read += len;
 		size -= len;
 		ctx->indexIntoBuffer += len;
-		
+
 		// Finished current buffer
 		if (ctx->indexIntoBuffer >= ctx->bufferSize[ctx->drainBuffer]) {
 			// Reset the current buffer
@@ -69,7 +69,7 @@ ULONG APIENTRY kaiCallback(PVOID data, PVOID buffer, ULONG size) {
 
 cc_bool AudioBackend_Init(void) {
 	KAISPEC ksWanted, ksObtained;
-	
+
 	if (kaiInit(KAIM_AUTO) != KAIE_NO_ERROR) {
 		Logger_SimpleWarn(ERROR_BASE, "Kai: Init failed.");
 		return false;
@@ -86,7 +86,7 @@ void AudioBackend_Tick(void) { }
 
 cc_result Audio_Init(struct AudioContext* ctx, int buffers) {
 	int i;
-	
+
 	ctx->count = buffers;
 	for(i = 0; i < AUDIO_MAX_BUFFERS; i++) {
 		ctx->buffers[i] = NULL;
@@ -103,7 +103,7 @@ void Audio_Close(struct AudioContext* ctx) {
 	ctx->count = 0;
 	if (ctx->hkai > 0) {
 		kaiStop(ctx->hkai);
-      kaiClearBuffer(ctx->hkai);
+	  kaiClearBuffer(ctx->hkai);
 		kaiClose(ctx->hkai);
 	}
 }
@@ -111,25 +111,25 @@ void Audio_Close(struct AudioContext* ctx) {
 cc_result Audio_SetFormat(struct AudioContext* ctx, int channels, int sampleRate, int playbackRate) {
 	KAISPEC ksWanted, ksObtained;
 	APIRET rc;
-	
-	ksWanted.usDeviceIndex      = 0;
-   ksWanted.ulType             = KAIT_PLAY;
-   ksWanted.ulBitsPerSample    = 16;
-   ksWanted.ulSamplingRate     = Audio_AdjustSampleRate(sampleRate, playbackRate);
-   ksWanted.ulDataFormat       = 0;
-   ksWanted.ulChannels         = channels;
-   ksWanted.ulNumBuffers       = 2048;
-   ksWanted.ulBufferSize       = 0;
-   ksWanted.fShareable         = TRUE;
-   ksWanted.pfnCallBack        = kaiCallback;
-   ksWanted.pCallBackData      = (PVOID)ctx;
 
-   rc = kaiOpen(&ksWanted, &ksObtained, &ctx->hkai);
-   if (rc != KAIE_NO_ERROR) {
-  	  Logger_SimpleWarn(ERROR_BASE, "Kai: Could not open playback");
-  	  ctx->hkai = 0;
-  	  return rc;
-   }
+	ksWanted.usDeviceIndex      = 0;
+	ksWanted.ulType             = KAIT_PLAY;
+	ksWanted.ulBitsPerSample    = 16;
+	ksWanted.ulSamplingRate     = Audio_AdjustSampleRate(sampleRate, playbackRate);
+	ksWanted.ulDataFormat       = 0;
+	ksWanted.ulChannels         = channels;
+	ksWanted.ulNumBuffers       = 2048;
+	ksWanted.ulBufferSize       = 0;
+	ksWanted.fShareable         = TRUE;
+	ksWanted.pfnCallBack        = kaiCallback;
+	ksWanted.pCallBackData      = (PVOID)ctx;
+
+	rc = kaiOpen(&ksWanted, &ksObtained, &ctx->hkai);
+	if (rc != KAIE_NO_ERROR) {
+		Logger_SimpleWarn(ERROR_BASE, "Kai: Could not open playback");
+		ctx->hkai = 0;
+		return rc;
+	}
 
 	kaiSetSoundState(ctx->hkai, MCI_SET_AUDIO_ALL, true);
 	return 0;
@@ -143,8 +143,8 @@ void Audio_SetVolume(struct AudioContext* ctx, int volume) {
 cc_result Audio_QueueChunk(struct AudioContext* ctx, struct AudioChunk* chunk) {
 	if (ctx->buffers[ctx->fillBuffer])
 		return ERR_INVALID_ARGUMENT; // tried to queue data while either playing or queued still
-	
-   ctx->buffers[ctx->fillBuffer]    = chunk->data;
+
+	ctx->buffers[ctx->fillBuffer]    = chunk->data;
 	ctx->bufferSize[ctx->fillBuffer] = chunk->size;
 	ctx->fillBuffer = (ctx->fillBuffer + 1) % ctx->count;
 	return 0;
@@ -152,19 +152,19 @@ cc_result Audio_QueueChunk(struct AudioContext* ctx, struct AudioChunk* chunk) {
 
 cc_result Audio_Play(struct AudioContext* ctx) {
 	APIRET rc;
-	
+
 	rc = kaiPlay(ctx->hkai);
 	if (rc != KAIE_NO_ERROR) {
 		Logger_SimpleWarn(ERROR_BASE, "Kai: Could start playback");
 		return rc;
 	}
-	
+
 	return 0;
 }
 
 cc_result Audio_Poll(struct AudioContext* ctx, int* inUse) {
 	int i;
-	
+
 	*inUse = 0;
 	for(i = 0; i < ctx->count; i++) {
 		if(ctx->bufferSize[i] > 0) (*inUse)++;
@@ -181,7 +181,7 @@ cc_result StreamContext_SetFormat(struct AudioContext* ctx, int channels, int sa
 }
 
 cc_result StreamContext_Enqueue(struct AudioContext* ctx, struct AudioChunk* chunk) {
-	return Audio_QueueChunk(ctx, chunk); 
+	return Audio_QueueChunk(ctx, chunk);
 }
 
 cc_result StreamContext_Play(struct AudioContext* ctx) {
@@ -205,7 +205,7 @@ cc_bool SoundContext_FastPlay(struct AudioContext* ctx, struct AudioData* data) 
 }
 
 cc_result SoundContext_PlayData(struct AudioContext* ctx, struct AudioData* data) {
-    cc_result res;
+	cc_result res;
 
 	if ((res = Audio_SetFormat(ctx,  data->channels, data->sampleRate, data->rate))) return res;
 	if ((res = Audio_QueueChunk(ctx, &data->chunk))) return res;
@@ -238,4 +238,3 @@ cc_bool Audio_DescribeError(cc_result res, cc_string* dst) {
 	return true;
 }
 #endif
-

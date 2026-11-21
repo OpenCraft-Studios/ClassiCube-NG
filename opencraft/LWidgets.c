@@ -69,7 +69,7 @@ void LWidget_DrawBorder(struct Context2D* ctx, BitmapCol color, int borderX, int
 *------------------------------------------------------ButtonWidget-------------------------------------------------------*
 *#########################################################################################################################*/
 static void LButton_DrawBase(struct Context2D* ctx, int x, int y, int width, int height, cc_bool active) {
-	BitmapCol color = active ? Launcher_Theme.ButtonForeActiveColor 
+	BitmapCol color = active ? Launcher_Theme.ButtonForeActiveColor
 							 : Launcher_Theme.ButtonForeColor;
 
 	if (Launcher_Theme.ClassicBackground) {
@@ -138,7 +138,7 @@ static const struct LWidgetVTABLE lbutton_VTABLE = {
 	LButton_Hover,    LButton_Unhover,   /* Hover  */
 	LButton_OnSelect, LButton_OnUnselect /* Select */
 };
-void LButton_Add(void* screen, struct LButton* w, int width, int height, const char* text, 
+void LButton_Add(void* screen, struct LButton* w, int width, int height, const char* text,
 					LWidgetFunc onClick, const struct LLayout* layouts) {
 	w->VTABLE  = &lbutton_VTABLE;
 	w->type    = LWIDGET_BUTTON;
@@ -171,7 +171,7 @@ static const struct LWidgetVTABLE lcheckbox_VTABLE = {
 	NULL, NULL, /* Hover  */
 	NULL, NULL  /* Select */
 };
-void LCheckbox_Add(void* screen, struct LCheckbox* w, const char* text, 
+void LCheckbox_Add(void* screen, struct LCheckbox* w, const char* text,
 					LCheckboxChanged onChanged, const struct LLayout* layouts) {
 	w->VTABLE  = &lcheckbox_VTABLE;
 	w->type    = LWIDGET_CHECKBOX;
@@ -256,7 +256,7 @@ static void LInput_Backspace(struct LInput* w) {
 
 	if (w->caretPos == -1) {
 		String_DeleteAt(&w->text, w->text.length - 1);
-	} else {	
+	} else {
 		String_DeleteAt(&w->text, w->caretPos - 1);
 		w->caretPos--;
 		if (w->caretPos == -1) w->caretPos = 0;
@@ -346,7 +346,7 @@ static const struct LWidgetVTABLE linput_VTABLE = {
 	LInput_Select, LInput_Unselect, /* Select */
 	NULL, LInput_TextChanged        /* TextChanged */
 };
-void LInput_Add(void* screen, struct LInput* w, int width, const char* hintText, 
+void LInput_Add(void* screen, struct LInput* w, int width, const char* hintText,
 				const struct LLayout* layouts) {
 	w->VTABLE  = &linput_VTABLE;
 	w->type    = LWIDGET_INPUT;
@@ -358,7 +358,7 @@ void LInput_Add(void* screen, struct LInput* w, int width, const char* hintText,
 	if (!w->text.buffer) {
 		String_InitArray(w->text, w->_textBuffer);
 	}
-	
+
 	w->hintText = hintText;
 	w->caretPos = -1;
 	LBackend_InputInit(w, width);
@@ -407,7 +407,7 @@ static const struct LWidgetVTABLE llabel_VTABLE = {
 	NULL, NULL, /* Hover  */
 	NULL, NULL  /* Select */
 };
-void LLabel_Add(void* screen, struct LLabel* w, const char* text, 
+void LLabel_Add(void* screen, struct LLabel* w, const char* text,
 				const struct LLayout* layouts) {
 	w->VTABLE  = &llabel_VTABLE;
 	w->type    = LWIDGET_LABEL;
@@ -445,7 +445,7 @@ static const struct LWidgetVTABLE lline_VTABLE = {
 	NULL, NULL, /* Hover  */
 	NULL, NULL  /* Select */
 };
-void LLine_Add(void* screen, struct LLine* w, int width, 
+void LLine_Add(void* screen, struct LLine* w, int width,
 				const struct LLayout* layouts) {
 	w->VTABLE  = &lline_VTABLE;
 	w->type    = LWIDGET_LINE;
@@ -475,7 +475,7 @@ static const struct LWidgetVTABLE lslider_VTABLE = {
 	NULL, NULL, /* Hover  */
 	NULL, NULL  /* Select */
 };
-void LSlider_Add(void* screen, struct LSlider* w, int width, int height, BitmapCol color, 
+void LSlider_Add(void* screen, struct LSlider* w, int width, int height, BitmapCol color,
 				const struct LLayout* layouts) {
 	w->VTABLE  = &lslider_VTABLE;
 	w->type    = LWIDGET_SLIDER;
@@ -556,7 +556,7 @@ void LTable_FormatUptime(cc_string* dst, int uptime) {
 	String_Format2(dst, "%i%r", &uptime, &unit);
 }
 
-void LTable_ClampTopRow(struct LTable* w) { 
+void LTable_ClampTopRow(struct LTable* w) {
 	if (w->topRow > w->rowsCount - w->visibleRows) {
 		w->topRow = w->rowsCount - w->visibleRows;
 	}
@@ -657,7 +657,7 @@ static const struct LWidgetVTABLE ltable_VTABLE = {
 	LTable_MouseDown, LTable_MouseUp, /* Select */
 	LTable_MouseWheel,      /* Wheel */
 };
-void LTable_Add(void* screen, struct LTable* w, 
+void LTable_Add(void* screen, struct LTable* w,
 				const struct LLayout* layouts) {
 	int i;
 	w->VTABLE     = &ltable_VTABLE;
@@ -667,7 +667,7 @@ void LTable_Add(void* screen, struct LTable* w,
 	w->sortingCol = -1;
 	w->opaque     = true;
 	w->layouts    = layouts;
-	
+
 	for (i = 0; i < w->numColumns; i++) {
 		w->columns[i].width = Display_ScaleX(w->columns[i].width);
 	}
@@ -686,7 +686,7 @@ void LTable_Reset(struct LTable* w) {
 }
 
 static int ShouldShowServer(struct LTable* w, struct ServerInfo* server) {
-	return String_CaselessContains(&server->name, w->filter) 
+	return String_CaselessContains(&server->name, w->filter)
 		&& (Launcher_ShowEmptyServers || server->players > 0);
 }
 

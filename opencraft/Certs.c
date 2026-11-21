@@ -26,7 +26,7 @@ void Certs_BeginCert( struct X509CertContext* ctx, int size) {
 	data = Mem_TryAllocCleared(1, size);
 	if (!data) return;
 
-	ctx->cert         = &ctx->certs[ctx->numCerts++];	
+	ctx->cert         = &ctx->certs[ctx->numCerts++];
 	ctx->cert->data   = data;
 	ctx->cert->offset = 0;
 }
@@ -108,19 +108,19 @@ static X509_STORE* store;
 static cc_bool ossl_loaded;
 
 void CertsBackend_Init(void) {
-	static const struct DynamicLibSym funcs[] = {		
-		DynamicLib_ReqSym(d2i_X509),            DynamicLib_ReqSym(OPENSSL_sk_new_null), 
+	static const struct DynamicLibSym funcs[] = {
+		DynamicLib_ReqSym(d2i_X509),            DynamicLib_ReqSym(OPENSSL_sk_new_null),
 		DynamicLib_ReqSym(OPENSSL_sk_push),     DynamicLib_ReqSym(OPENSSL_sk_pop_free),
 		DynamicLib_ReqSym(X509_new),            DynamicLib_ReqSym(X509_free),
 		DynamicLib_ReqSym(X509_STORE_new),      DynamicLib_ReqSym(X509_STORE_set_default_paths),
 		DynamicLib_ReqSym(X509_STORE_CTX_new),  DynamicLib_ReqSym(X509_STORE_CTX_free),
-		DynamicLib_ReqSym(X509_STORE_CTX_init), DynamicLib_ReqSym(X509_STORE_CTX_get_error),	
+		DynamicLib_ReqSym(X509_STORE_CTX_init), DynamicLib_ReqSym(X509_STORE_CTX_get_error),
 		DynamicLib_ReqSym(X509_verify_cert),    DynamicLib_ReqSym(X509_verify_cert_error_string),
 	};
 	void* lib;
 
 	ossl_loaded = DynamicLib_LoadAll(&cryptoLib,     funcs, Array_Elems(funcs), &lib);
-	if (!lib) { 
+	if (!lib) {
 		ossl_loaded = DynamicLib_LoadAll(&cryptoAlt, funcs, Array_Elems(funcs), &lib);
 	}
 }
@@ -166,7 +166,7 @@ int Certs_VerifyChain(struct X509CertContext* chain) {
 
 	status = _X509_verify_cert(ctx);
 	result = 0;
-	
+
     if (status != 1) {
 		err = _X509_STORE_CTX_get_error(ctx);
         Platform_LogConst(_X509_verify_cert_error_string(err));
@@ -189,7 +189,7 @@ int Certs_VerifyChain(struct X509CertContext* chain) {
 #endif
 
 void CertsBackend_Init(void) {
-	
+
 }
 
 static SecPolicyRef policy;
@@ -197,7 +197,7 @@ static SecPolicyRef policy;
 static void CreateChain(struct X509CertContext* x509, CFMutableArrayRef chain) {
 	struct X509Cert* certs = x509->certs;
 	int i;
-	
+
 #ifdef CC_BUILD_MACOS
 	/* Use older APIs that work on macOS earlier than 10.6 */
 	for (i = 0; i < x509->numCerts; i++)
@@ -205,7 +205,7 @@ static void CreateChain(struct X509CertContext* x509, CFMutableArrayRef chain) {
 		CSSM_DATA data;
 		data.Data   = certs[i].data;
 		data.Length = certs[i].offset;
-		
+
 		SecCertificateRef cert = NULL;
 		int res = SecCertificateCreateFromData(&data, CSSM_CERT_X_509v3, CSSM_CERT_ENCODING_DER, &cert);
 		if (!res && cert) CFArrayAppendValue(chain, cert);
@@ -214,7 +214,7 @@ static void CreateChain(struct X509CertContext* x509, CFMutableArrayRef chain) {
 	for (i = 0; i < x509->numCerts; i++)
 	{
 		CFDataRef data = CFDataCreateWithBytesNoCopy(NULL, certs[i].data, certs[i].offset, kCFAllocatorNull);
-		
+
 		SecCertificateRef cert = SecCertificateCreateWithData(NULL, data);
 		if (cert) CFArrayAppendValue(chain, cert);
 		CFRelease(data);
@@ -227,7 +227,7 @@ static void CreateX509Policy(void) {
 	SecPolicySearchRef search;
 	int err = SecPolicySearchCreate(CSSM_CERT_X_509v3, &CSSMOID_APPLE_X509_BASIC, NULL, &search);
 	if (err) return;
-	
+
 	err = SecPolicySearchCopyNext(search, &policy);
 	CFRelease(search);
 #else
@@ -240,26 +240,26 @@ int Certs_VerifyChain(struct X509CertContext* x509) {
 	CFMutableArrayRef chain;
 	SecTrustRef trust;
 	int res;
-	
+
 	if (!policy) CreateX509Policy();
 	if (!policy) return ERR_OUT_OF_MEMORY;
-	
+
 	chain = CFArrayCreateMutable(NULL, x509->numCerts, &kCFTypeArrayCallBacks);
 	if (!chain) return ERR_OUT_OF_MEMORY;
-	
+
 	CreateChain(x509, chain);
 	trust = NULL;
 	res   = SecTrustCreateWithCertificates(chain, policy, &trust);
-	
+
 	if (!res) {
 		SecTrustResultType result;
 		res = SecTrustEvaluate(trust, &result);
-		
+
 		int is_trusted = result == kSecTrustResultUnspecified || result == kSecTrustResultProceed;
 		if (!res && !is_trusted) res = -1;
 		if (res) Platform_Log1("Cert validation failed: %i", &result);
 	}
-	
+
 	CFRelease(trust);
 	CFRelease(chain);
 	return res;
@@ -273,7 +273,7 @@ static int created_trust;
 void CertsBackend_Init(void) {
 	JNIEnv* env;
 	Java_GetCurrentEnv(env);
-	
+
 	JAVA_sslCreateTrust   = Java_GetSMethod(env, "sslCreateTrust", "()I");
 	JAVA_sslAddCert       = Java_GetSMethod(env, "sslAddCert",     "([B)V");
 	JAVA_sslVerifyChain   = Java_GetSMethod(env, "sslVerifyChain", "()I");
@@ -284,10 +284,10 @@ int Certs_VerifyChain(struct X509CertContext* x509) {
 	jvalue args[1];
 	int i;
 	Java_GetCurrentEnv(env);
-	
+
 	if (!created_trust) created_trust = Java_SCall_Int(env, JAVA_sslCreateTrust, NULL);
 	if (!created_trust) return ERR_NOT_SUPPORTED;
-	
+
 	for (i = 0; i < x509->numCerts; i++)
 	{
 		struct X509Cert* cert = &x509->certs[i];
@@ -364,7 +364,7 @@ int Certs_VerifyChain(struct X509CertContext* x509) {
 		res = chain->TrustStatus.dwErrorStatus;
 		if (res) Platform_Log1("Cert validation failed: %h", &res);
 	}
-	
+
 	_CertFreeCertificateChain(chain);
 	_CertFreeCertificateContext(end_cert);
 	_CertCloseStore(store, 0);

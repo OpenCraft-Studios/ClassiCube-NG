@@ -141,7 +141,7 @@ static BlockID Picking_GetOutside(int x, int y, int z, IVec3 origin) {
 		          X|\         If # represents player and is above the map border,
 		           | \        they should be able to place blocks on other map borders
 		           *--\----   (i.e. same behaviour as when player is inside map)
-				       #  
+				       #
          */
 		if (x == -1           && origin.x >= 0 && z >= 0 && z < World.Length) return BORDER;
 		if (x == World.Width  && origin.x <  0 && z >= 0 && z < World.Length) return BORDER;
@@ -173,7 +173,7 @@ static cc_bool RayTrace(struct RayTracer* t, const Vec3* origin, const Vec3* dir
 	/*  pick blocks on the INSIDE of the map borders instead of OUTSIDE them */
 	insideMap = World_ContainsXZ(pOrigin.x, pOrigin.z) && pOrigin.y >= 0;
 	reachSq   = reach * reach;
-		
+
 	for (i = 0; i < 25000; i++) {
 		x   = t->pos.x; y   = t->pos.y; z   = t->pos.z;
 		v.x = (float)x; v.y = (float)y; v.z = (float)z;
@@ -205,7 +205,7 @@ static cc_bool ClipBlock(struct RayTracer* t) {
 	/* This cell falls on the path of the ray. Now perform an additional AABB test,
 	since some blocks do not occupy a whole cell. */
 	if (!Intersection_RayIntersectsBox(t->origin, t->invDir, t->Min, t->Max, &t0, &t1)) return false;
-	
+
 	Vec3_Mul1(&scaledDir, &t->dir, t0);              /* scaledDir = dir * t0 */
 	Vec3_Add(&t->intersect, &t->origin, &scaledDir); /* intersect = origin + scaledDir */
 
@@ -233,7 +233,7 @@ static cc_bool ClipCamera(struct RayTracer* t) {
 	Vec3_Sub(&t->Min, &t->Min, &picking_adjust);
 	Vec3_Add(&t->Max, &t->Max, &picking_adjust);
 	Intersection_RayIntersectsBox(t->origin, t->invDir, t->Min, t->Max, &t0, &t1);
-	
+
 	Vec3_Mul1(&intersect,   &t->dir, t0);            /* intersect = dir * t0 */
 	Vec3_Add(&t->intersect, &t->origin, &intersect); /* intersect = origin + dir * t0 */
 	SetAsValid(t);

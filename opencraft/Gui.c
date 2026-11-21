@@ -88,7 +88,7 @@ int Gui_Contains(int recX, int recY, int width, int height, int x, int y) {
 
 int Gui_ContainsPointers(int x, int y, int width, int height) {
 	int i, px, py;
-	for (i = 0; i < Pointers_Count; i++) 
+	for (i = 0; i < Pointers_Count; i++)
 	{
 		px = Pointers[i].x;	py = Pointers[i].y;
 
@@ -124,7 +124,7 @@ static void LoadOptions(void) {
 	Gui.ClassicChat      = Options_GetBool(OPT_CLASSIC_CHAT,      false) || Game_PureClassic;
 	Gui.ClassicInventory = Options_GetBool(OPT_CLASSIC_INVENTORY, false) || Game_ClassicMode;
 	Gui.ShowFPS          = Options_GetBool(OPT_SHOW_FPS, true);
-	
+
 	Gui.RawInventoryScale = Options_GetFloat(OPT_INVENTORY_SCALE, 0.25f, 5.0f, 1.0f);
 #if defined CC_BUILD_SYMBIAN_3 || defined CC_BUILD_SYMBIAN_S60V5
 	Gui.RawHotbarScale    = Options_GetFloat(OPT_HOTBAR_SCALE,    0.25f, 5.0f, 2.0f);
@@ -142,7 +142,7 @@ static void LoseAllScreens(void) {
 	struct Screen* s;
 	int i;
 
-	for (i = 0; i < Gui.ScreensCount; i++) 
+	for (i = 0; i < Gui.ScreensCount; i++)
 	{
 		s = Gui_Screens[i];
 		s->VTABLE->ContextLost(s);
@@ -153,7 +153,7 @@ static void OnContextRecreated(void* obj) {
 	struct Screen* s;
 	int i;
 
-	for (i = 0; i < Gui.ScreensCount; i++) 
+	for (i = 0; i < Gui.ScreensCount; i++)
 	{
 		s = Gui_Screens[i];
 		s->VTABLE->ContextRecreated(s);
@@ -166,7 +166,7 @@ void Gui_LayoutAll(void) {
 	struct Screen* s;
 	int i;
 
-	for (i = 0; i < Gui.ScreensCount; i++) 
+	for (i = 0; i < Gui.ScreensCount; i++)
 	{
 		s = Gui_Screens[i];
 		s->VTABLE->Layout(s);
@@ -174,7 +174,7 @@ void Gui_LayoutAll(void) {
 	}
 }
 
-void Gui_RefreshAll(void) { 
+void Gui_RefreshAll(void) {
 	LoseAllScreens();
 	OnContextRecreated(NULL);
 	OnResize(NULL);
@@ -191,12 +191,12 @@ static void Gui_AddCore(struct Screen* s, int priority) {
 	int i, j;
 	if (Gui.ScreensCount >= GUI_MAX_SCREENS) Process_Abort("Hit max screens");
 
-	for (i = 0; i < Gui.ScreensCount; i++) 
+	for (i = 0; i < Gui.ScreensCount; i++)
 	{
 		if (priority <= priorities[i]) continue;
 
 		/* Shift lower priority screens right */
-		for (j = Gui.ScreensCount; j > i; j--) 
+		for (j = Gui.ScreensCount; j > i; j--)
 		{
 			Gui_Screens[j] = Gui_Screens[j - 1];
 			priorities[j]  = priorities[j - 1];
@@ -212,9 +212,9 @@ static void Gui_AddCore(struct Screen* s, int priority) {
 	s->VTABLE->Init(s);
 	s->VTABLE->ContextRecreated(s);
 	s->VTABLE->Layout(s);
-	
+
 	/* for selecting active button etc */
-	for (i = 0; i < Pointers_Count; i++) 
+	for (i = 0; i < Pointers_Count; i++)
 	{
 		s->VTABLE->HandlesPointerMove(s, i, Pointers[i].x, Pointers[i].y);
 	}
@@ -234,7 +234,7 @@ static cc_bool Gui_RemoveCore(struct Screen* s) {
 	int i = IndexOfScreen(s);
 	if (i == -1) return false;
 
-	for (; i < Gui.ScreensCount - 1; i++) 
+	for (; i < Gui.ScreensCount - 1; i++)
 	{
 		Gui_Screens[i] = Gui_Screens[i + 1];
 		priorities[i]  = priorities[i  + 1];
@@ -259,7 +259,7 @@ void Gui_Remove(struct Screen* s) {
 void Gui_Add(struct Screen* s, int priority) {
 	struct Screen* existing;
 	Gui_RemoveCore(s);
-	
+
 	existing = Gui_GetScreen(priority);
 	if (existing) Gui_RemoveCore(existing);
 
@@ -269,7 +269,7 @@ void Gui_Add(struct Screen* s, int priority) {
 
 struct Screen* Gui_GetInputGrab(void) {
 	int i;
-	for (i = 0; i < Gui.ScreensCount; i++) 
+	for (i = 0; i < Gui.ScreensCount; i++)
 	{
 		if (Gui_Screens[i]->grabsInput) return Gui_Screens[i];
 	}
@@ -278,7 +278,7 @@ struct Screen* Gui_GetInputGrab(void) {
 
 struct Screen* Gui_GetBlocksWorld(void) {
 	int i;
-	for (i = 0; i < Gui.ScreensCount; i++) 
+	for (i = 0; i < Gui.ScreensCount; i++)
 	{
 		if (Gui_Screens[i]->blocksWorld) return Gui_Screens[i];
 	}
@@ -287,7 +287,7 @@ struct Screen* Gui_GetBlocksWorld(void) {
 
 struct Screen* Gui_GetClosable(void) {
 	int i;
-	for (i = 0; i < Gui.ScreensCount; i++) 
+	for (i = 0; i < Gui.ScreensCount; i++)
 	{
 		if (Gui_Screens[i]->closable) return Gui_Screens[i];
 	}
@@ -296,7 +296,7 @@ struct Screen* Gui_GetClosable(void) {
 
 struct Screen* Gui_GetScreen(int priority) {
 	int i;
-	for (i = 0; i < Gui.ScreensCount; i++) 
+	for (i = 0; i < Gui.ScreensCount; i++)
 	{
 		if (priorities[i] == priority) return Gui_Screens[i];
 	}
@@ -365,7 +365,7 @@ void Gui_RenderGui(float delta) {
 	if (Gui.BarSize > 0) ShowCinematicBars();
 
 	/* Draw back to front so highest priority screen is on top */
-	for (i = Gui.ScreensCount - 1; i >= 0; i--) 
+	for (i = Gui.ScreensCount - 1; i >= 0; i--)
 	{
 		s = Gui_Screens[i];
 		s->VTABLE->Update(s, delta);
@@ -382,7 +382,7 @@ void Gui_RenderGui(float delta) {
 *-------------------------------------------------------TextAtlas---------------------------------------------------------*
 *#########################################################################################################################*/
 void TextAtlas_Make(struct TextAtlas* atlas, const cc_string* chars, struct FontDesc* font, const cc_string* prefix) {
-	struct DrawTextArgs args; 
+	struct DrawTextArgs args;
 	struct Context2D ctx;
 	int width, height;
 	int i, charWidth;
@@ -391,8 +391,8 @@ void TextAtlas_Make(struct TextAtlas* atlas, const cc_string* chars, struct Font
 	DrawTextArgs_Make(&args, prefix, font, true);
 	width = Drawer2D_TextWidth(&args);
 	atlas->offset = width;
-	
-	for (i = 0; i < chars->length; i++) 
+
+	for (i = 0; i < chars->length; i++)
 	{
 		args.text = String_UNSAFE_Substring(chars, i, 1);
 		charWidth = Drawer2D_TextWidth(&args);
@@ -409,18 +409,18 @@ void TextAtlas_Make(struct TextAtlas* atlas, const cc_string* chars, struct Font
 		args.text = *prefix;
 		Context2D_DrawText(&ctx, &args, 0, 0);
 
-		for (i = 0; i < chars->length; i++) 
+		for (i = 0; i < chars->length; i++)
 		{
 			args.text = String_UNSAFE_Substring(chars, i, 1);
 			Context2D_DrawText(&ctx, &args, atlas->offsets[i], 0);
 		}
 		Context2D_MakeTexture(&atlas->tex, &ctx);
-	}	
+	}
 	Context2D_Free(&ctx);
 
 	atlas->uScale = Context2D_CalcUV(1, ctx.bmp.width);
 	atlas->tex.uv.u2 = atlas->offset * atlas->uScale;
-	atlas->tex.width = atlas->offset;	
+	atlas->tex.width = atlas->offset;
 }
 
 void TextAtlas_Free(struct TextAtlas* atlas) { Gfx_DeleteTexture(&atlas->tex.ID); }
@@ -433,7 +433,7 @@ void TextAtlas_Add(struct TextAtlas* atlas, int charI, struct VertexTextured** v
 	part.uv.u1 = atlas->offsets[charI] * atlas->uScale;
 	part.uv.u2 = part.uv.u1 + width    * atlas->uScale;
 
-	atlas->curX += width;	
+	atlas->curX += width;
 	Gfx_Make2DQuad(&part, PACKEDCOL_WHITE, vertices);
 }
 
@@ -446,7 +446,7 @@ void TextAtlas_AddInt(struct TextAtlas* atlas, int value, struct VertexTextured*
 	}
 	count = String_MakeUInt32((cc_uint32)value, digits);
 
-	for (i = count - 1; i >= 0; i--) 
+	for (i = count - 1; i >= 0; i--)
 	{
 		TextAtlas_Add(atlas, digits[i] - '0' , vertices);
 	}
@@ -467,7 +467,7 @@ void Widget_SetLocation(void* widget, cc_uint8 horAnchor, cc_uint8 verAnchor, in
 void Widget_CalcPosition(void* widget) {
 	struct Widget* w = (struct Widget*)widget;
 	int windowWidth, windowHeight;
-	
+
 #ifdef CC_BUILD_DUALSCREEN
 	windowWidth  = (w->flags & WIDGET_FLAG_MAINSCREEN) ? Window_Main.Width  : Window_Alt.Width;
 	windowHeight = (w->flags & WIDGET_FLAG_MAINSCREEN) ? Window_Main.Height : Window_Alt.Height;
@@ -475,7 +475,7 @@ void Widget_CalcPosition(void* widget) {
 	windowWidth  = Window_Main.Width;
 	windowHeight = Window_Main.Height;
 #endif
-	
+
 	w->x = Gui_CalcPos(w->horAnchor, w->xOffset, w->width , windowWidth );
 	w->y = Gui_CalcPos(w->verAnchor, w->yOffset, w->height, windowHeight);
 }
@@ -520,7 +520,7 @@ void Screen_Render2Widgets(void* screen, float delta) {
 	Gfx_SetVertexFormat(VERTEX_FORMAT_TEXTURED);
 	Gfx_BindDynamicVb(s->vb);
 
-	for (i = 0; i < s->numWidgets; i++) 
+	for (i = 0; i < s->numWidgets; i++)
 	{
 		if (!widgets[i]) continue;
 		offset = Widget_Render2(widgets[i], offset);
@@ -545,7 +545,7 @@ int Screen_DoPointerDown(void* screen, int id, int x, int y) {
 	int i, count = s->numWidgets;
 
 	/* iterate backwards (because last elements rendered are shown over others) */
-	for (i = count - 1; i >= 0; i--) 
+	for (i = count - 1; i >= 0; i--)
 	{
 		struct Widget* w = widgets[i];
 		if (!w || !Widget_Contains(w, x, y)) continue;
@@ -585,7 +585,7 @@ void Screen_BuildMesh(void* screen) {
 	data = Screen_LockVb(s);
 	ptr  = &data;
 
-	for (i = 0; i < s->numWidgets; i++) 
+	for (i = 0; i < s->numWidgets; i++)
 	{
 		if (!widgets[i]) continue;
 		Widget_BuildMesh(widgets[i], ptr);
@@ -598,7 +598,7 @@ void Screen_Layout(void* screen) {
 	struct Widget** widgets = s->widgets;
 	int i;
 
-	for (i = 0; i < s->numWidgets; i++) 
+	for (i = 0; i < s->numWidgets; i++)
 	{
 		if (!widgets[i]) continue;
 		Widget_Layout(widgets[i]);
@@ -611,7 +611,7 @@ void Screen_ContextLost(void* screen) {
 	int i;
 	Gfx_DeleteDynamicVb(&s->vb);
 
-	for (i = 0; i < s->numWidgets; i++) 
+	for (i = 0; i < s->numWidgets; i++)
 	{
 		if (!widgets[i]) continue;
 		Elem_Free(widgets[i]);
@@ -628,7 +628,7 @@ void Screen_PointerUp(void* s, int id, int x, int y) { }
 static void OnMouseWheel(void* obj, float delta) {
 	struct Screen* s;
 	int i;
-	
+
 	for (i = 0; i < Gui.ScreensCount; i++) {
 		s = Gui_Screens[i];
 		s->dirty = true;
@@ -650,7 +650,7 @@ static void OnPointerMove(void* obj, int idx) {
 static void OnAxisUpdate(void* obj, struct PadAxisUpdate* upd) {
 	struct Screen* s;
 	int i;
-	
+
 	for (i = 0; i < Gui.ScreensCount; i++) {
 		s = Gui_Screens[i];
 		if (!s->VTABLE->HandlesPadAxis) continue;
@@ -685,7 +685,7 @@ static struct TextureEntry icons_entry = { "icons.png", IconsPngProcess };
 static void TouchPngProcess(struct Stream* stream, const cc_string* name) {
 	if (!Gui.TouchUI) return;
 
-	Game_UpdateTexture(&Gui.TouchTex, stream, name, NULL, NULL);	
+	Game_UpdateTexture(&Gui.TouchTex, stream, name, NULL, NULL);
 }
 static struct TextureEntry touch_entry = { "touch.png", TouchPngProcess };
 
@@ -693,11 +693,11 @@ static void OnFontChanged(void* obj) { Gui_RefreshAll(); }
 
 static void OnKeyPress(void* obj, int cp) {
 	struct Screen* s;
-	int i; 
+	int i;
 	char c;
 	if (!Convert_TryCodepointToCP437(cp, &c)) return;
 
-	for (i = 0; i < Gui.ScreensCount; i++) 
+	for (i = 0; i < Gui.ScreensCount; i++)
 	{
 		s = Gui_Screens[i];
 		if (s->VTABLE->HandlesKeyPress(s, c)) return;
@@ -708,7 +708,7 @@ static void OnTextChanged(void* obj, const cc_string* str) {
 	struct Screen* s;
 	int i;
 
-	for (i = 0; i < Gui.ScreensCount; i++) 
+	for (i = 0; i < Gui.ScreensCount; i++)
 	{
 		s = Gui_Screens[i];
 		if (s->VTABLE->HandlesTextChanged(s, str)) return;
@@ -743,7 +743,7 @@ static void OnInit(void) {
 	Gradient_Noise(&ctx, BitmapColor_RGB(0x40, 0x30, 0x20), 6, 0, 0, ctx.width, ctx.height);
 	Context2D_MakeTexture(&touchBgTex, &ctx);
 	Context2D_Free(&ctx);
-	
+
 	// Tile the texture to fill the entire screen
 	int tilesX = Math_CeilDiv(Window_Alt.Width,  ctx.width);
 	int tilesY = Math_CeilDiv(Window_Alt.Height, ctx.height);

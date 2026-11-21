@@ -15,7 +15,7 @@
 	#define NOMCX
 	#define NOIME
 	#define CUR_PROCESS_HANDLE ((HANDLE)-1) /* GetCurrentProcess() always returns -1 */
-	
+
 	#include <windows.h>
 	#include <imagehlp.h>
 	#ifndef CC_BUILD_UWP
@@ -226,8 +226,8 @@ static void DumpRegisters(void* ctx) {
 /*########################################################################################################################*
 *------------------------------------------------------Frame dumping------------------------------------------------------*
 *#########################################################################################################################*/
-static void PrintFrame(cc_string* str, cc_uintptr addr, 
-						cc_uintptr symAddr, const char* symName, 
+static void PrintFrame(cc_string* str, cc_uintptr addr,
+						cc_uintptr symAddr, const char* symName,
 						cc_uintptr modBase, const char* modName) {
 	cc_string module;
 	cc_uintptr modAddr = addr - modBase;
@@ -237,7 +237,7 @@ static void PrintFrame(cc_string* str, cc_uintptr addr,
 	module = String_FromReadonly(modName);
 	Utils_UNSAFE_GetFilename(&module);
 	String_Format2(str, "%x - %s", &modAddr, &module);
-	
+
 	if (symName && symName[0]) {
 		offset = (int)(addr - symAddr);
 		String_Format2(str, "(%c+%i)" _NL, symName, &offset);
@@ -268,15 +268,15 @@ static void DumpFrame(HANDLE process, cc_string* trace, cc_uintptr addr) {
 		s.symbol.SizeOfStruct  = sizeof(IMAGEHLP_SYMBOL);
 		_SymGetSymFromAddr(process, addr, NULL, &s.symbol);
 	}
-	
+
 	if (_SymGetModuleInfo) {
 		m.SizeOfStruct    = sizeof(IMAGEHLP_MODULE);
 		_SymGetModuleInfo(process, addr, &m);
 	}
 
 	String_InitArray(str, strBuffer);
-	PrintFrame(&str, addr, 
-				s.symbol.Address, s.symbol.Name, 
+	PrintFrame(&str, addr,
+				s.symbol.Address, s.symbol.Name,
 				m.BaseOfImage, m.ModuleName);
 	String_AppendString(trace, &str);
 
@@ -300,8 +300,8 @@ static void DumpFrame(cc_string* trace, void* addr) {
 	String_InitArray(str, strBuffer);
 	/* alas NSModuleForSymbol doesn't work with raw addresses */
 
-	PrintFrame(&str, (cc_uintptr)addr, 
-				0, NULL, 
+	PrintFrame(&str, (cc_uintptr)addr,
+				0, NULL,
 				0, NULL);
 	String_AppendString(trace, &str);
 	Logger_Log(&str);
@@ -336,8 +336,8 @@ static void DumpFrame(cc_string* trace, void* addr) {
 	String_InitArray(str, strBuffer);
 	dladdr(addr, &s);
 
-	PrintFrame(&str, (cc_uintptr)addr, 
-				(cc_uintptr)s.dli_saddr, s.dli_sname, 
+	PrintFrame(&str, (cc_uintptr)addr,
+				(cc_uintptr)s.dli_saddr, s.dli_sname,
 				(cc_uintptr)s.dli_fbase, s.dli_fname);
 	String_AppendString(trace, &str);
 	Logger_Log(&str);
@@ -379,7 +379,7 @@ static _DWORD_PTR WINAPI GetModuleBaseCallback(HANDLE process, _DWORD_PTR addr) 
 static BOOL WINAPI ReadMemCallback(HANDLE process, _DWORD_PTR baseAddress, PVOID buffer, DWORD size, DWORD* numBytesRead) {
 	SIZE_T numRead = 0;
 	BOOL ok = ReadProcessMemory(CUR_PROCESS_HANDLE, (LPCVOID)baseAddress, buffer, size, &numRead);
-	
+
 	*numBytesRead = (DWORD)numRead; /* DWORD always 32 bits */
 	return ok;
 }
@@ -421,9 +421,9 @@ static int GetFrames(CONTEXT* ctx, cc_uintptr* addrs, int max) {
 	thread     = GetCurrentThread();
 	if (!_StackWalk) return 0;
 
-	for (count = 0; count < max; count++) 
+	for (count = 0; count < max; count++)
 	{
-		if (!_StackWalk(type, curProcess, thread, &frame, ctx, ReadMemCallback, 
+		if (!_StackWalk(type, curProcess, thread, &frame, ctx, ReadMemCallback,
 						FunctionTableAccessCallback, GetModuleBaseCallback, NULL)) break;
 		if (!frame.AddrFrame.Offset) break;
 		addrs[count] = frame.AddrPC.Offset;
@@ -460,7 +460,7 @@ void Logger_Backtrace(cc_string* trace, void* ctx) {
 	/* Skip frames don't want to include in backtrace */
 	/*  frame 0 = thread_stack_pcs */
 	/*  frame 1 = Logger_Backtrace */
-	for (i = 2; i < frames; i++) 
+	for (i = 2; i < frames; i++)
 	{
 		DumpFrame(trace, addrs[i]);
 	}
@@ -485,7 +485,7 @@ void Logger_Backtrace(cc_string* trace, void* ctx) {
 	void* addrs[MAX_BACKTRACE_FRAMES];
 	int i, frames = backtrace(addrs, MAX_BACKTRACE_FRAMES);
 
-	for (i = 0; i < frames; i++) 
+	for (i = 0; i < frames; i++)
 	{
 		DumpFrame(trace, addrs[i]);
 	}
@@ -528,7 +528,7 @@ static void DumpStack(void) {
 	spRegister -= 0x40;
 
 	/* Dump 128 bytes near stack pointer */
-	for (i = 0; i < 8; i++, spRegister += 0x10) 
+	for (i = 0; i < 8; i++, spRegister += 0x10)
 	{
 		String_InitArray(str, strBuffer);
 		String_Format1(&str, "0x%x)", &spRegister);
@@ -609,7 +609,7 @@ static int SkipRange(const cc_string* str) {
 		|| String_ContainsConst(&path, "/vendor/lib");
 }
 #else
-static int SkipRange(const cc_string* str) { 
+static int SkipRange(const cc_string* str) {
 	return
 		/* Ignore GPU iris driver i915 GEM buffers (~60,000 entries for one user) */
 		String_ContainsConst(str, "anon_inode:i915.gem");
@@ -643,7 +643,7 @@ static void DumpMisc(void) {
 	cc_uint32 i, count;
 	const char* path;
 	cc_string str;
-	
+
 	/* TODO: Add Logger_LogRaw / Logger_LogConst too */
 	Logger_Log(&modules);
 	count = _dyld_image_count();
@@ -729,7 +729,7 @@ static void LogCrashHeader(void) {
 	Logger_Log(&msg);
 }
 
-static void CloseLogFile(void) { 
+static void CloseLogFile(void) {
 	if (logStream.meta.file) logStream.Close(&logStream);
 }
 #endif
@@ -875,7 +875,7 @@ static CC_NOINLINE void* GetFrameAddress(int level) {
 void Logger_Backtrace(cc_string* trace, void* ctx) {
 	void* addrs[MAX_BACKTRACE_FRAMES];
 	int i, frames;
-	
+
 	/* See https://gcc.gnu.org/onlinedocs/gcc/Return-Address.html */
 	/*   Note "Calling this function with a nonzero argument can have unpredictable effects, including crashing the calling program" */
 	/*   So this probably only works on x86/x86_64 */
@@ -883,7 +883,7 @@ void Logger_Backtrace(cc_string* trace, void* ctx) {
 	{
 		addrs[i] = GetReturnAddress(i);
 		if (!addrs[i]) break;
-	}	
+	}
 
 	frames = i;
 	for (i = 0; i < frames; i++) {

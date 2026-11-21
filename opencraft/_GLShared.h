@@ -27,7 +27,7 @@
 *#########################################################################################################################*/
 static void GLContext_GetAll(const struct DynamicLibSym* syms, int count) {
 	int i;
-	for (i = 0; i < count; i++) 
+	for (i = 0; i < count; i++)
 	{
 		*syms[i].symAddr = GLContext_GetAddress(syms[i].name);
 	}
@@ -102,10 +102,10 @@ static void ConvertRGBA(void* dst, const void* src, int numPixels) {
 	BitmapCol* s = (BitmapCol*)src;
 	int i;
 
-	/* R,G,B,A byte order regardless of system endian */
-	for (i = 0; i < numPixels; i++, d += 4, s++) 
-    {
-        BitmapCol col = *s;
+	// R,G,B,A byte order regardless of system endian
+	for (i = 0; i < numPixels; i++, d += 4, s++)
+	{
+		BitmapCol col = *s;
 		d[0] = BitmapCol_R(col);
 		d[1] = BitmapCol_G(col);
 		d[2] = BitmapCol_B(col);
@@ -255,7 +255,7 @@ void Gfx_SetFaceCulling(cc_bool enabled) {
 	if (enabled) { _glEnable(GL_CULL_FACE); } else { _glDisable(GL_CULL_FACE); }
 }
 
-static void SetAlphaBlend(cc_bool enabled) { 
+static void SetAlphaBlend(cc_bool enabled) {
 	if (enabled) { _glEnable(GL_BLEND); } else { _glDisable(GL_BLEND); }
 }
 void Gfx_SetAlphaArgBlend(cc_bool enabled) { }
@@ -323,17 +323,17 @@ void Gfx_CalcPerspectiveMatrix(struct Matrix* matrix, float fov, float aspect, f
 /*########################################################################################################################*
 *-----------------------------------------------------------Misc----------------------------------------------------------*
 *#########################################################################################################################*/
-static BitmapCol* GL_GetRow(struct Bitmap* bmp, int y, void* ctx) { 
+static BitmapCol* GL_GetRow(struct Bitmap* bmp, int y, void* ctx) {
 	/* OpenGL stores bitmap in bottom-up order, so flip order when saving */
-	return Bitmap_GetRow(bmp, (bmp->height - 1) - y); 
+	return Bitmap_GetRow(bmp, (bmp->height - 1) - y);
 }
 cc_result Gfx_TakeScreenshot(struct Stream* output) {
 	struct Bitmap bmp;
 	cc_result res;
 	GLint vp[4];
-	
+
 	_glGetIntegerv(GL_VIEWPORT, vp); /* { x, y, width, height } */
-	bmp.width  = vp[2]; 
+	bmp.width  = vp[2];
 	bmp.height = vp[3];
 
 	bmp.scan0  = (BitmapCol*)Mem_TryAlloc(bmp.width * bmp.height, BITMAPCOLOR_SIZE);
@@ -344,9 +344,9 @@ cc_result Gfx_TakeScreenshot(struct Stream* output) {
 	if (convert_rgba) {
 		BitmapCol* tmp = (BitmapCol*)Mem_TryAlloc(bmp.width * bmp.height, BITMAPCOLOR_SIZE);
 		if (!tmp) return ERR_OUT_OF_MEMORY;
-		
+
 		ConvertRGBA(tmp, bmp.scan0, bmp.width * bmp.height);
-		
+
 		Mem_Free(bmp.scan0);
 		bmp.scan0 = tmp;
 	}
@@ -399,8 +399,8 @@ void Gfx_ClearBuffers(GfxBuffers buffers) {
 	int targets = 0;
 	if (buffers & GFX_BUFFER_COLOR) targets |= GL_COLOR_BUFFER_BIT;
 	if (buffers & GFX_BUFFER_DEPTH) targets |= GL_DEPTH_BUFFER_BIT;
-	
-	_glClear(targets); 
+
+	_glClear(targets);
 }
 
 void Gfx_EndFrame(void) {
@@ -448,7 +448,7 @@ static cc_bool UnlockVb(GfxResourceID vb);
 void Gfx_UnlockVb(GfxResourceID vb) {
 	for (;;) {
 		if (UnlockVb(vb)) return;
-		
+
 		if (!Game_ReduceVRAM()) Process_Abort("Out of video memory! (updating static VB)");
 	}
 }

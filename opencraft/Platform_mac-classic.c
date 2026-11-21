@@ -212,9 +212,9 @@ void Platform_EncodePath(cc_filepath* dst, const cc_string* path) {
 	char* str = dst->buffer;
 	str++; // placeholder for length later
 	*str++ = ':';
-	
+
 	// Classic Mac OS uses : to separate directories
-	for (int i = 0; i < path->length; i++) 
+	for (int i = 0; i < path->length; i++)
 	{
 		char c = (char)path->buffer[i];
 		if (c == '/') c = ':';
@@ -388,7 +388,7 @@ cc_result Process_StartGame2(const cc_string* args, int numArgs) {
 	return SetGameArgs(args, numArgs);
 }
 
-void Process_Exit(cc_result code) { 
+void Process_Exit(cc_result code) {
 	ExitToShell();
     for(;;) { }
 }

@@ -1,6 +1,6 @@
 #ifndef CC_CONSTANTS_H
 #define CC_CONSTANTS_H
-/* 
+/*
 Defines useful constants
 Copyright 2014-2025 ClassiCube | Licensed under BSD-3
 */
@@ -59,7 +59,7 @@ Copyright 2014-2025 ClassiCube | Licensed under BSD-3
 #define FACE_BIT_XMAX (1 << FACE_XMAX)
 #define FACE_BIT_ZMIN (1 << FACE_ZMIN)
 #define FACE_BIT_ZMAX (1 << FACE_ZMAX)
-#define FACE_BIT_YMIN (1 << FACE_YMIN) 
+#define FACE_BIT_YMIN (1 << FACE_YMIN)
 #define FACE_BIT_YMAX (1 << FACE_YMAX)
 
 enum SKIN_TYPE { SKIN_64x32, SKIN_64x64, SKIN_64x64_SLIM, SKIN_INVALID = 0xF0 };

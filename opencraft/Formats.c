@@ -112,7 +112,7 @@ cc_result Map_LoadFrom(const cc_string* path) {
 	U8  "Yaw", "Pitch"
 	U16 "Build permissions" (ignored)
 	U8* "Blocks"
-	
+
 	-- this data is only in MCGalaxy maps
 	U8  "Identifier" (0xBD for 'block definitions', i.e. custom blocks)
 	U8* "Data"       (16x16x16 sparsely allocated chunks)
@@ -137,7 +137,7 @@ static const cc_uint8 Lvl_table[256] = {
 	29, 22, 10, 22, 22, 41, 19, 35, 21, 29, 49, 34, 16, 41,  0, 22
 };
 
-static cc_result Lvl_ReadCustomBlocks(struct Stream* stream) {	
+static cc_result Lvl_ReadCustomBlocks(struct Stream* stream) {
 	cc_uint8 chunk[LVL_CHUNKSIZE * LVL_CHUNKSIZE * LVL_CHUNKSIZE];
 	cc_uint8 hasCustom;
 	int baseIndex, index, xx, yy, zz;
@@ -192,7 +192,7 @@ static cc_result Lvl_Load(struct Stream* stream) {
 	struct Stream compStream;
 	struct InflateState state;
 	Inflate_MakeStream2(&compStream, &state, stream);
-	
+
 	if ((res = Map_SkipGZipHeader(stream)))                       return res;
 	if ((res = Stream_Read(&compStream, header, sizeof(header)))) return res;
 	if (Mem_ReadU16_LE(&header[0]) != 1874) return LVL_ERR_VERSION;
@@ -272,7 +272,7 @@ static cc_result Fcm_ReadString(struct Stream* stream) {
 /* Imports a world from a .fcm fCraft server map file (v3 only) */
 /* Used by fCraft/800Craft/LegendCraft/ProCraft */
 static cc_result Fcm_Load(struct Stream* stream) {
-	cc_uint8 header[79];	
+	cc_uint8 header[79];
 	cc_result res;
 	int i, count;
 
@@ -283,11 +283,11 @@ static cc_result Fcm_Load(struct Stream* stream) {
 	if ((res = Stream_Read(stream, header, sizeof(header)))) return res;
 	if (Mem_ReadU32_LE(&header[0]) != 0x0FC2AF40UL)        return FCM_ERR_IDENTIFIER;
 	if (header[4] != 13) return FCM_ERR_REVISION;
-	
+
 	World.Width  = Mem_ReadU16_LE(&header[5]);
 	World.Height = Mem_ReadU16_LE(&header[7]);
 	World.Length = Mem_ReadU16_LE(&header[9]);
-	
+
 	spawn_point->flags = LU_HAS_POS | LU_HAS_YAW | LU_HAS_PITCH;
 	spawn_point->pos.x = ((int)Mem_ReadU32_LE(&header[11])) / 32.0f;
 	spawn_point->pos.y = ((int)Mem_ReadU32_LE(&header[15])) / 32.0f;
@@ -315,8 +315,8 @@ static cc_result Fcm_Load(struct Stream* stream) {
 /*########################################################################################################################*
 *---------------------------------------------------------NBTFile---------------------------------------------------------*
 *#########################################################################################################################*/
-enum NbtTagType { 
-	NBT_END, NBT_I8,  NBT_I16, NBT_I32,  NBT_I64, NBT_F32, 
+enum NbtTagType {
+	NBT_END, NBT_I8,  NBT_I16, NBT_I32,  NBT_I64, NBT_F32,
 	NBT_F64, NBT_I8S, NBT_STR, NBT_LIST, NBT_DICT
 };
 
@@ -350,8 +350,8 @@ struct NbtTag {
 };
 
 static cc_uint8 NbtTag_U8(struct NbtTag* tag) {
-	if (tag->type == NBT_I8) return tag->value.u8; 
-	
+	if (tag->type == NBT_I8) return tag->value.u8;
+
 	tag->result = NBT_ERR_EXPECTED_I8;
 	return 0;
 }
@@ -418,16 +418,16 @@ static cc_result Nbt_ReadString(struct Stream* stream, cc_string* str) {
 }
 
 typedef void (*Nbt_Callback)(struct NbtTag* tag);
-static cc_result Nbt_ReadTag(cc_uint8 typeId, cc_bool readTagName, struct Stream* stream, 
+static cc_result Nbt_ReadTag(cc_uint8 typeId, cc_bool readTagName, struct Stream* stream,
 							struct NbtTag* parent, Nbt_Callback callback, int listIndex) {
 	struct NbtTag tag;
 	cc_uint8 childType;
-	cc_uint8 tmp[5];	
+	cc_uint8 tmp[5];
 	cc_result res;
 	cc_uint32 i, count;
-	
+
 	if (typeId == NBT_END) return 0;
-	tag.type      = typeId; 
+	tag.type      = typeId;
 	tag.parent    = parent;
 	tag.dataSize  = 0;
 	tag.listIndex = listIndex;
@@ -646,9 +646,9 @@ COMPOUND "ClassicWorld" {
 					U8  "ID", U16 "ID2"
 					STR "Name"
 					F32 "Speed"
-					U8  "CollideType", "BlockDraw"					
+					U8  "CollideType", "BlockDraw"
 					U8  "TransmitsLight", "FullBright"
-					U8  "Shape"	, "WalkSound"	
+					U8  "Shape"	, "WalkSound"
 					U8* "Textures", "Fog", "Coords"
 				}
 			}
@@ -688,7 +688,7 @@ static void Cw_Callback_2(struct NbtTag* tag) {
 	}
 	if (!IsTag(tag->parent, "Spawn")) return;
 	spawn_point->flags = LU_HAS_POS | LU_HAS_YAW | LU_HAS_PITCH;
-	
+
 	if (IsTag(tag, "X")) { spawn_point->pos.x = NbtTag_I16(tag); return; }
 	if (IsTag(tag, "Y")) { spawn_point->pos.y = NbtTag_I16(tag); return; }
 	if (IsTag(tag, "Z")) { spawn_point->pos.z = NbtTag_I16(tag); return; }
@@ -758,12 +758,12 @@ static void Cw_Callback_4(struct NbtTag* tag) {
 			Env_SetShadowCol(Cw_ParseColor(ENV_DEFAULT_SHADOW_COLOR)); return;
 		} else if (IsTag(tag, "Skybox")) {
 			Env.SkyboxCol = Cw_ParseColor(ENV_DEFAULT_SKYBOX_COLOR); return;
-		} 
+		}
 	}
 
 	if (IsTag(tag->parent, "BlockDefinitions") && Game_AllowCustomBlocks) {
 		static const cc_string blockStr = String_FromConst("Block");
-		if (!String_CaselessStarts(&tag->name, &blockStr)) return;	
+		if (!String_CaselessStarts(&tag->name, &blockStr)) return;
 
 		/* hack for sprite draw (can't rely on order of tags when reading) */
 		if (Blocks.SpriteOffset[id] == 0) {
@@ -828,7 +828,7 @@ static void Cw_Callback_5(struct NbtTag* tag) {
 			}
 			return;
 		}
-		
+
 		if (IsTag(tag, "WalkSound")) {
 			sound = NbtTag_U8(tag);
 			Blocks.DigSounds[id]  = sound;
@@ -887,14 +887,14 @@ static cc_result Cw_Load(struct Stream* stream) {
 *#########################################################################################################################*/
 /* Rather than bothering following this, I skip a lot of the java serialisation format
      Stream              BlockData        BlockDataTiny      BlockDataLong
-|--------------|     |---------------|  |---------------|  |---------------| 
+|--------------|     |---------------|  |---------------|  |---------------|
 | U16 Magic    |     |>BlockDataTiny |  | TC_BLOCKDATA  |  | TC_BLOCKLONG  |
 | U16 Version  |     |>BlockDataLong |  | U8 Size       |  | U32 Size      |
 | Content[var] |     |_______________|  | U8 Data[size] |  | U8 Data[size] |
 |______________|                        |_______________|  |_______________|
 
     Content
-|--------------| |--------------| 
+|--------------| |--------------|
 | >BlockData   | | >NewString   |
 | >Object      | | >TC_RESET    |
 |______________| | >TC_NULL     |
@@ -904,7 +904,7 @@ static cc_result Cw_Load(struct Stream* stream) {
 
 }*/
 enum JTypeCode {
-	TC_NULL = 0x70, TC_REFERENCE = 0x71, TC_CLASSDESC = 0x72, TC_OBJECT = 0x73, 
+	TC_NULL = 0x70, TC_REFERENCE = 0x71, TC_CLASSDESC = 0x72, TC_OBJECT = 0x73,
 	TC_STRING = 0x74, TC_ARRAY = 0x75, TC_BLOCKDATA = 0x77, TC_ENDBLOCKDATA = 0x78
 };
 enum JFieldType {
@@ -930,7 +930,7 @@ union JValue {
 struct JFieldDesc {
 	cc_uint8 Type;
 	cc_uint8 FieldName[JNAME_SIZE];
-	union JValue Value; 
+	union JValue Value;
 	/* "Value" field here is not accurate to how java deserialising actually works, */
 	/*  but easier to store here since only care about Level class values anyways */
 };
@@ -991,7 +991,7 @@ static cc_result Java_SkipAnnotation(struct Stream* stream) {
 			if ((res = stream->ReadU8(stream, &count))) return res;
 			if ((res = stream->Skip(stream, count)))    return res;
 			break;
-		case TC_ENDBLOCKDATA: 
+		case TC_ENDBLOCKDATA:
 			return 0;
 		default:
 			object.Type = typeCode;
@@ -1017,7 +1017,7 @@ static cc_result Java_ReadFieldDesc(struct Stream* stream, struct JFieldDesc* de
 	if ((res = stream->ReadU8(stream, &desc->Type)))      return res;
 	if ((res = Java_ReadString(stream, desc->FieldName))) return res;
 
-	if (desc->Type == JFIELD_ARRAY || desc->Type == JFIELD_OBJECT) {		
+	if (desc->Type == JFIELD_ARRAY || desc->Type == JFIELD_OBJECT) {
 		return Java_ReadObject(stream, &className);
 	}
 	return 0;
@@ -1038,7 +1038,7 @@ static cc_result Java_ReadNewClassDesc(struct Stream* stream, struct JClassDesc*
 	if ((res = Stream_Read(stream, count, 2))) return res;
 	desc->FieldsCount = Mem_ReadU16_BE(count);
 	if (desc->FieldsCount > Array_Elems(desc->Fields)) return JAVA_ERR_JCLASS_FIELDS;
-	
+
 	for (i = 0; i < desc->FieldsCount; i++) {
 		if ((res = Java_ReadFieldDesc(stream, &desc->Fields[i]))) return res;
 	}
@@ -1064,10 +1064,10 @@ static cc_result Java_ReadClassDesc(struct Stream* stream, struct JClassDesc** d
 			if ((res = Stream_ReadU32_BE(stream, &reference))) return res;
 
 			/* Use a previously defined ClassDescriptor */
-			for (i = 0; i < class_count; i++) 
+			for (i = 0; i < class_count; i++)
 			{
 				if (class_cache[i].Reference != reference) continue;
-				
+
 				*desc = &class_cache[i];
 				return 0;
 			}
@@ -1125,7 +1125,7 @@ static cc_result Java_ReadClassData(struct Stream* stream, struct JClassDesc* de
 	if (!(desc->Flags & SC_SERIALIZABLE))
 		return JAVA_ERR_JOBJECT_FLAGS;
 
-	for (i = 0; i < desc->FieldsCount; i++) 
+	for (i = 0; i < desc->FieldsCount; i++)
 	{
 		field = &desc->Fields[i];
 		if ((res = Java_ReadValue(stream, field->Type, &field->Value))) return res;
@@ -1195,7 +1195,7 @@ static cc_result Java_ReadNewArray(struct Stream* stream, struct JUnion* object)
 
 static cc_result Java_ReadObjectData(struct Stream* stream, struct JUnion* object) {
 	cc_uint32 reference;
-	switch (object->Type) 
+	switch (object->Type)
 	{
 		case TC_STRING:    return Java_ReadNewString(stream, object);
 		case TC_NULL:      return 0;
@@ -1281,7 +1281,7 @@ static cc_result Dat_LoadFormat1(struct Stream* stream) {
 	if ((res = Java_ReadString(stream,   level_name))) return res;
 	if ((res = Java_ReadString(stream, level_author))) return res;
 	if ((res = Stream_Read(stream, header, sizeof(header)))) return res;
-	
+
 	/* bytes 0-8 = created timestamp (currentTimeMillis) */
 	World.Width  = Mem_ReadU16_BE(header +  8);
 	World.Length = Mem_ReadU16_BE(header + 10);
@@ -1313,7 +1313,7 @@ static cc_result Dat_LoadFormat2(struct Stream* stream) {
 	if (obj.Type != TC_OBJECT)                  return DAT_ERR_ROOT_OBJECT;
 	desc = obj.Value.Object;
 
-	for (i = 0; i < desc->FieldsCount; i++) 
+	for (i = 0; i < desc->FieldsCount; i++)
 	{
 		field     = &desc->Fields[i];
 		fieldName = String_FromRaw((char*)field->FieldName, JNAME_SIZE);
@@ -1516,7 +1516,7 @@ static cc_result Cw_WriteBockDef(struct Stream* stream, int b) {
 	TextureLoc tex;
 	cc_uint8 fog;
 	PackedCol col;
-	Vec3 minBB, maxBB;	
+	Vec3 minBB, maxBB;
 
 	/* Hacky unique tag name for each by using hex of block */
 	String_InitArray_NT(name, nameBuffer);
@@ -1593,7 +1593,7 @@ cc_result Cw_Save(struct Stream* stream) {
 	{
 		cur  = Nbt_WriteInt32(cur, "Seed", World.Seed);
 	} *cur++ = NBT_END;
-	
+
 
 	/* TODO: Maybe keep real spawn too? */
 	cur = Nbt_WriteDict(cur, "Spawn");
@@ -1757,7 +1757,7 @@ static int WriteJavaString(cc_uint8* dst, const char* value) {
 	return length;
 }
 
-static cc_result WriteClassDesc(struct Stream* stream, cc_uint8 typecode, const char* klass, 
+static cc_result WriteClassDesc(struct Stream* stream, cc_uint8 typecode, const char* klass,
 								int numFields, const struct JField* fields) {
 	cc_uint8 header[256] = { 0 };
 	static const cc_uint8 footer[] = {
@@ -1776,7 +1776,7 @@ static cc_result WriteClassDesc(struct Stream* stream, cc_uint8 typecode, const 
 
 	if ((res = Stream_Write(stream, header, 15 + length))) return res;
 
-	for (i = 0; i < numFields; i++) 
+	for (i = 0; i < numFields; i++)
 	{
 		header[0] = fields[i].type;
 		length    = WriteJavaString(header + 1, fields[i].name);
@@ -1837,11 +1837,11 @@ cc_result Dat_Save(struct Stream* stream) {
 	int i, value;
 
 	if ((res = Stream_Write(stream, header, sizeof(header)))) return res;
-	if ((res = WriteClassDesc(stream, TC_OBJECT, "com.mojang.minecraft.level.Level", 
+	if ((res = WriteClassDesc(stream, TC_OBJECT, "com.mojang.minecraft.level.Level",
 					Array_Elems(level_fields), level_fields))) return res;
 
 	/* Write field values */
-	for (i = 0; i < Array_Elems(level_fields); i++) 
+	for (i = 0; i < Array_Elems(level_fields); i++)
 	{
 		field = &level_fields[i];
 

@@ -67,7 +67,7 @@ cc_bool Intersection_RayIntersectsRotatedBox(Vec3 origin, Vec3 dir, struct Entit
 	   ====>* x *    rotation to the rotated AABB    | x |   a standard AABB test
 			 \ /     and ray origin and direction    *---*   with the rotated ray
 			  *                                     /
-												   /                           
+												   /
 	*/
 	Vec3_Sub(&delta, &origin, &target->Position);   /* delta  = origin - target.Position */
 	delta = Intersection_InverseRotate(delta, target); /* delta  = UndoRotation(delta) */
@@ -85,7 +85,7 @@ cc_bool Intersection_RayIntersectsRotatedBox(Vec3 origin, Vec3 dir, struct Entit
 cc_bool Intersection_RayIntersectsBox(Vec3 origin, Vec3 invDir, Vec3 min, Vec3 max, float* t0, float* t1) {
 	float tmin, tmax, tymin, tymax, tzmin, tzmax;
 	*t0 = 0; *t1 = 0;
-	
+
 	if (invDir.x >= 0) {
 		tmin = (min.x - origin.x) * invDir.x;
 		tmax = (max.x - origin.x) * invDir.x;

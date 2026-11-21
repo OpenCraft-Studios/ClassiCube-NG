@@ -25,7 +25,7 @@ static struct CameraState {
 
 static void Camera_OnRawMovement(float deltaX, float deltaY, int deviceIndex) {
 	int i = Game_MapState(deviceIndex);
-	states[i].deltaX += deltaX; 
+	states[i].deltaX += deltaX;
 	states[i].deltaY += deltaY;
 }
 
@@ -95,7 +95,7 @@ static Vec2 PerspectiveCamera_GetMouseDelta(float delta) {
 		speedY = states[i].deltaY;
 	}
 
-	v.x = speedX * sensitivity; 
+	v.x = speedX * sensitivity;
 	v.y = speedY * sensitivity;
 	if (Camera.Invert) v.y = -v.y;
 	return v;
@@ -107,11 +107,11 @@ static void PerspectiveCamera_UpdateMouseRotation(struct LocalPlayer* p, float d
 	Vec2 rot = PerspectiveCamera_GetMouseDelta(delta);
 
 	if (Input_IsAltPressed() && Camera.Active->isThirdPerson) {
-		cam_rotOffset.x += rot.x; 
+		cam_rotOffset.x += rot.x;
 		cam_rotOffset.y += rot.y;
 		return;
 	}
-	
+
 	update.flags = LU_HAS_YAW | LU_HAS_PITCH;
 	update.yaw   = e->next.yaw   + rot.x;
 	update.pitch = e->next.pitch + rot.y;
@@ -129,7 +129,7 @@ static void PerspectiveCamera_UpdateMouse(struct LocalPlayer* p, float delta) {
 	if (!Gui.InputGrab && Window_Main.Focused) Window_UpdateRawMouse();
 
 	PerspectiveCamera_UpdateMouseRotation(p, delta);
-	states[i].deltaX = 0; 
+	states[i].deltaX = 0;
 	states[i].deltaY = 0;
 }
 
@@ -140,13 +140,13 @@ static void PerspectiveCamera_CalcViewBobbing(struct LocalPlayer* p, float t, fl
 	float vel, fall, xTilt, yTilt;
 	float bobStrength, bobbingHor, bobbingVer;
 	float velTiltStrength;
-	
+
 	if (!Game_ViewBobbing) {
 		Camera.TiltM     = Matrix_Identity;
 		Camera.TiltPitch = 0.0f;
 		return;
 	}
-	
+
 	bobStrength = Math_Lerp(e->Anim.BobStrengthO, e->Anim.BobStrengthN, t);
 	// See BobbingModel in AnimatedComp_GetCurrent
 	bobbingHor  = Math_CosF(e->Anim.WalkTime)            * e->Anim.Swing * (2.5f/16.0f);
@@ -182,7 +182,7 @@ static Vec2 FirstPersonCamera_GetOrientation(void) {
 	struct Entity* e = &p->Base;
 
 	Vec2 v;
-	v.x = e->Yaw   * MATH_DEG2RAD; 
+	v.x = e->Yaw   * MATH_DEG2RAD;
 	v.y = e->Pitch * MATH_DEG2RAD;
 	return v;
 }
@@ -194,7 +194,7 @@ static Vec3 FirstPersonCamera_GetPosition(float t) {
 	Vec3 camPos   = Entity_GetEyePosition(e);
 	float yaw     = e->Yaw * MATH_DEG2RAD;
 	PerspectiveCamera_CalcViewBobbing(p, t, 1);
-	
+
 	camPos.y += Camera.BobbingVer;
 	camPos.x += Camera.BobbingHor * Math_CosF(yaw);
 	camPos.z += Camera.BobbingHor * Math_SinF(yaw);
@@ -222,12 +222,12 @@ static Vec2 ThirdPersonCamera_GetOrientation(void) {
 	struct LocalPlayer* p = Entities.CurPlayer;
 	struct Entity* e = &p->Base;
 
-	Vec2 v;	
-	v.x = e->Yaw   * MATH_DEG2RAD; 
+	Vec2 v;
+	v.x = e->Yaw   * MATH_DEG2RAD;
 	v.y = e->Pitch * MATH_DEG2RAD;
 	if (cam_isForwardThird) { v.x += MATH_PI; v.y = -v.y; }
 
-	v.x += cam_rotOffset.x * MATH_DEG2RAD; 
+	v.x += cam_rotOffset.x * MATH_DEG2RAD;
 	v.y += cam_rotOffset.y * MATH_DEG2RAD;
 	return v;
 }
@@ -263,7 +263,7 @@ static cc_bool ThirdPersonCamera_Zoom(float amount) {
 	float* dist   = cam_isForwardThird ? &dist_forward : &dist_third;
 	float newDist = *dist - amount;
 
-	*dist = max(newDist, 2.0f); 
+	*dist = max(newDist, 2.0f);
 	return true;
 }
 

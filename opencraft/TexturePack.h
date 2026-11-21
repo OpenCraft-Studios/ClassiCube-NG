@@ -3,7 +3,7 @@
 #include "Bitmap.h"
 CC_BEGIN_HEADER
 
-/* 
+/*
 Contains everything relating to texture packs
   - Extracting the textures from a .zip archive
   - Caching terrain atlases and texture packs to avoid redundant downloads

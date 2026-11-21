@@ -109,7 +109,7 @@ static void HttpUrl_Parse(const cc_string* src, struct HttpUrl* url) {
 
 	String_InitArray(url->address, url->_addressBuffer);
 	/* Converts e.g. "dl.dropbox.com" into "dl.dropboxusercontent.com" */
-	for (i = 0; i < Array_Elems(url_rewrite_srcs); i++) 
+	for (i = 0; i < Array_Elems(url_rewrite_srcs); i++)
 	{
 		if (!String_Equals(&addr, &url_rewrite_srcs[i])) continue;
 
@@ -126,10 +126,10 @@ static void HttpUrl_Parse(const cc_string* src, struct HttpUrl* url) {
 
 static cc_result HttpUrl_ResolveRedirect(struct HttpUrl* parts, const cc_string* url) {
 	/* absolute URL */
-	if (String_IndexOfConst(url, "http://") == 0 || String_IndexOfConst(url, "https://") == 0) {		
+	if (String_IndexOfConst(url, "http://") == 0 || String_IndexOfConst(url, "https://") == 0) {
 		HttpUrl_Parse(url, parts);
 		return 0;
-	} 
+	}
 
 	/* Root relative URL */
 	if (url->buffer[0] == '/' && (url->length == 1 || url->buffer[1] != '/')) {
@@ -245,7 +245,7 @@ static cc_result HttpConnection_Read(struct HttpConnection* conn, cc_uint8* data
 }
 
 static cc_result HttpConnection_Write(struct HttpConnection* conn, const cc_uint8* data, cc_uint32 count, cc_uint32* sent) {
-	if (conn->sslCtx) 
+	if (conn->sslCtx)
 		return SSL_Write(conn->sslCtx, data, count, sent);
 
 	return Socket_Write(conn->socket, data, count, sent);
@@ -390,7 +390,7 @@ static void HttpClient_Serialise(struct HttpClientState* state, cc_string* dst) 
 
 	Http_SetRequestHeaders(req, dst);
 	String_AppendConst(dst, "\r\n");
-	
+
 	/* Write request message body */
 	if (req->data) {
 		String_AppendAll(dst, req->data, req->size);
@@ -433,7 +433,7 @@ static cc_bool HttpClient_HasBody(struct HttpRequest* req) {
 static int HttpClient_BeginBody(struct HttpRequest* req, struct HttpClientState* state) {
 	if (!HttpClient_HasBody(req))
 		return HTTP_RESPONSE_STATE_DONE;
-	
+
 	if (state->chunked)
 		return HTTP_RESPONSE_STATE_CHUNK_HEADER;
 	if (req->contentLength)
@@ -447,7 +447,7 @@ static int HttpClient_BeginBody(struct HttpRequest* req, struct HttpClientState*
 static int HttpClient_GetChunkLength(const cc_string* line) {
 	int length = 0, i, part;
 
-	for (i = 0; i < line->length; i++) 
+	for (i = 0; i < line->length; i++)
 	{
 		char c = line->buffer[i];
 		/* RFC 7230, section 4.1.1 - Chunk Extensions */
@@ -474,17 +474,17 @@ static cc_result HttpClient_Process(struct HttpClientState* state, char* buffer,
 
 		case HTTP_RESPONSE_STATE_HEADER:
 		{
-			for (; offset < total;) 
+			for (; offset < total;)
 			{
 				char c = buffer[offset++];
 				if (c == '\r') continue;
 				if (c != '\n') {
 					/* Warn when a header would be truncated */
-					if (state->header.length == HTTP_HEADER_MAX_LENGTH) 
+					if (state->header.length == HTTP_HEADER_MAX_LENGTH)
 						return HTTP_ERR_TRUNCATED;
 
-					String_Append(&state->header, c); 
-					continue; 
+					String_Append(&state->header, c);
+					continue;
 				}
 
 				/* Zero length header = end of message headers */
@@ -517,7 +517,7 @@ static cc_result HttpClient_Process(struct HttpClientState* state, char* buffer,
 			if (!req->data) Process_Abort("Http state broken, please report this");
 
 			Mem_Copy(req->data + req->size, buffer + offset, read);
-			Http_BufferExpanded(req, read); 
+			Http_BufferExpanded(req, read);
 
 			state->dataLeft -= read;
 			offset += read;
@@ -532,7 +532,7 @@ static cc_result HttpClient_Process(struct HttpClientState* state, char* buffer,
 		/* RFC 7230, section 4.1 - Chunked Transfer Coding */
 		case HTTP_RESPONSE_STATE_CHUNK_HEADER:
 		{
-			for (; offset < total;) 
+			for (; offset < total;)
 			{
 				char c = buffer[offset++];
 				if (c == '\r') continue;
@@ -572,7 +572,7 @@ static cc_result HttpClient_Process(struct HttpClientState* state, char* buffer,
 		/* RFC 7230, section 4.1.2 - Chunked Trailer Part */
 		case HTTP_RESPONSE_STATE_CHUNK_TRAILERS:
 		{
-			for (; offset < total;) 
+			for (; offset < total;)
 			{
 				char c = buffer[offset++];
 				if (c == '\r') continue;
@@ -585,7 +585,7 @@ static cc_result HttpClient_Process(struct HttpClientState* state, char* buffer,
 				}
 				state->header.length = 0;
 			}
-		} 
+		}
 		break;
 
 		default:
@@ -602,7 +602,7 @@ static cc_result HttpClient_ParseResponse(struct HttpClientState* state) {
 	cc_uint32 total;
 	cc_result res;
 
-	for (;;) 
+	for (;;)
 	{
 		dst = state->dataLeft > INPUT_BUFFER_LEN ? (req->data + req->size) : buffer;
 		res = HttpConnection_Read(state->conn, dst, INPUT_BUFFER_LEN, &total);
@@ -617,7 +617,7 @@ static cc_result HttpClient_ParseResponse(struct HttpClientState* state) {
 			/* When there is more than INPUT_BUFFER_LEN bytes of unread data/content, */
 			/*  there is no need to run the HTTP client state machine - just read directly */
 			/*  into the output buffer to avoid a pointless Mem_Copy call */
-			Http_BufferExpanded(req, total); 
+			Http_BufferExpanded(req, total);
 			state->dataLeft -= total;
 		} else {
 			res = HttpClient_Process(state, (char*)buffer, total);
@@ -678,7 +678,7 @@ static cc_result HttpBackend_Do(struct HttpRequest* req) {
 	HttpClientState_Init(&state, req);
 
 	for (;;) {
-		Platform_Log4("Fetching %c%s%s (%c)", state.url.https ? "https://" : "http://", 
+		Platform_Log4("Fetching %c%s%s (%c)", state.url.https ? "https://" : "http://",
 					&state.url.address, &state.url.resource, verbs[req->requestType]);
 
 		res = HttpBackend_PerformRequest(&state);
@@ -883,7 +883,7 @@ static void Http_Init(void) {
 	pendingMutex    = Mutex_Create("HTTP pending");
 	processedMutex  = Mutex_Create("HTTP processed");
 	curRequestMutex = Mutex_Create("HTTP current");
-	
+
 	Thread_Run(&workerThread, WorkerLoop, 128 * 1024, "HTTP");
 }
 #endif

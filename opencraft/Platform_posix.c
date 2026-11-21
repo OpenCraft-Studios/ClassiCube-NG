@@ -140,7 +140,7 @@ void DateTime_CurrentLocal(struct cc_datetime* t) {
 	struct timeval cur;
 	struct tm loc_time;
 	time_t s;
-	
+
 	gettimeofday(&cur, NULL);
 	s = cur.tv_sec;
 	localtime_r(&s, &loc_time);
@@ -439,15 +439,15 @@ void Thread_Run(void** handle, Thread_StartFunc func, int stackSize, const char*
 	pthread_t* ptr = (pthread_t*)Mem_Alloc(1, sizeof(pthread_t), "thread");
 	pthread_attr_t attrs;
 	int res;
-	
+
 	*handle = ptr;
 	pthread_attr_init(&attrs);
 	pthread_attr_setstacksize(&attrs, stackSize);
-	
+
 	res = pthread_create(ptr, &attrs, ExecThread, (void*)func);
 	if (res) Process_Abort2(res, "Creating thread");
 	pthread_attr_destroy(&attrs);
-	
+
 #if defined CC_BUILD_LINUX
 	static int (*FP_pthread_setname_np)(pthread_t thread, const char* name);
 	/* Not available on old libc versions, so load it dynamically */
@@ -512,7 +512,7 @@ struct WaitData {
 void* Waitable_Create(const char* name) {
 	struct WaitData* ptr = (struct WaitData*)Mem_Alloc(1, sizeof(struct WaitData), "waitable");
 	int res;
-	
+
 	res = pthread_cond_init(&ptr->cond, NULL);
 	if (res) Process_Abort2(res, "Creating waitable");
 	res = pthread_mutex_init(&ptr->mutex, NULL);
@@ -525,7 +525,7 @@ void* Waitable_Create(const char* name) {
 void Waitable_Free(void* handle) {
 	struct WaitData* ptr = (struct WaitData*)handle;
 	int res;
-	
+
 	res = pthread_cond_destroy(&ptr->cond);
 	if (res) Process_Abort2(res, "Destroying waitable");
 	res = pthread_mutex_destroy(&ptr->mutex);
@@ -644,7 +644,7 @@ void Platform_LoadSysFonts(void) {
 		String_FromConst("/usr/local/share/fonts")
 	};
 #endif
-	for (i = 0; i < Array_Elems(dirs); i++) 
+	for (i = 0; i < Array_Elems(dirs); i++)
 	{
 		Platform_Log1("Searching for fonts in %s", &dirs[i]);
 		Directory_Enum(&dirs[i], NULL, FontDirCallback);
@@ -674,7 +674,7 @@ static char sockaddr_size_check[sizeof(union SocketAddress) < CC_SOCKETADDR_MAXS
 cc_bool SockAddr_ToString(const cc_sockaddr* addr, cc_string* dst) {
 	struct sockaddr_in* addr4 = (struct sockaddr_in*)addr->data;
 
-	if (addr4->sin_family == AF_INET) 
+	if (addr4->sin_family == AF_INET)
 		return IPv4_ToString(&addr4->sin_addr, &addr4->sin_port, dst);
 	return false;
 }
@@ -687,7 +687,7 @@ static cc_bool ParseIPv4(const cc_string* ip, int port, cc_sockaddr* dst) {
 	addr4->sin_addr.s_addr = ip_addr;
 	addr4->sin_family      = AF_INET;
 	addr4->sin_port        = SockAddr_EncodePort(port);
-		
+
 	dst->size = sizeof(*addr4);
 	return true;
 }
@@ -696,10 +696,10 @@ static cc_bool ParseIPv4(const cc_string* ip, int port, cc_sockaddr* dst) {
 static cc_bool ParseIPv6(const char* ip, int port, cc_sockaddr* dst) {
 	union SocketAddress* addr = (union SocketAddress*)dst->data;
 	if (inet_pton(AF_INET6, ip, &addr->v6.sin6_addr) <= 0) return false;
-	
+
 	addr->v6.sin6_family = AF_INET6;
 	addr->v6.sin6_port   = SockAddr_EncodePort(port);
-		
+
 	dst->size  = sizeof(addr->v6);
 	return true;
 }
@@ -719,7 +719,7 @@ static cc_result ParseHost(const char* host, int port, cc_sockaddr* addrs, int* 
 
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol = IPPROTO_TCP;
-	
+
 	String_InitArray(portStr,  portRaw);
 	String_AppendInt(&portStr, port);
 	portRaw[portStr.length] = '\0';
@@ -734,7 +734,7 @@ static cc_result ParseHost(const char* host, int port, cc_sockaddr* addrs, int* 
 		if (cur->ai_family != AF_INET) continue;
 		SocketAddr_Set(&addrs[i], cur->ai_addr, cur->ai_addrlen); i++;
 	}
-	
+
 	for (cur = result; cur && i < SOCKET_MAX_ADDRS; cur = cur->ai_next)
 	{
 		if (cur->ai_family == AF_INET) continue;
@@ -751,12 +751,12 @@ static cc_result ParseHost(const char* host, int port, cc_sockaddr* addrs, int* 
 	struct sockaddr_in* addr4;
 	char* src_addr;
 	int i;
-	
+
 	// Must have at least one IPv4 address
 	if (res->h_addrtype != AF_INET) return ERR_INVALID_ARGUMENT;
 	if (!res->h_addr_list)          return ERR_INVALID_ARGUMENT;
 
-	for (i = 0; i < SOCKET_MAX_ADDRS; i++) 
+	for (i = 0; i < SOCKET_MAX_ADDRS; i++)
 	{
 		src_addr = res->h_addr_list[i];
 		if (!src_addr) break;
@@ -788,7 +788,7 @@ cc_result Socket_SetNonBlocking(cc_socket s, cc_bool nonblocking) {
 	if (res == -1) return errno;
 
 	int flags = res & ~O_NONBLOCK;
-	if (nonblocking) flags |= O_NONBLOCK;          
+	if (nonblocking) flags |= O_NONBLOCK;
 
 	res = fcntl(s, F_SETFL, flags);
 	return res == -1 ? errno : 0;
@@ -808,7 +808,7 @@ void Socket_Close(cc_socket s) {
 
 cc_result Socket_Connect(cc_socket s, cc_sockaddr* addr) {
 	struct sockaddr* raw = (struct sockaddr*)addr->data;
-	
+
 	int res = connect(s, raw, addr->size);
 	return res == -1 ? errno : 0;
 }
@@ -857,7 +857,7 @@ cc_result Socket_Poll(cc_socket s, int timeoutMS, int mode, cc_bool* success) {
 	pfd.fd     = s;
 	pfd.events = mode == SOCKET_POLL_READ ? POLLIN : POLLOUT;
 	if (poll(&pfd, 1, timeoutMS) == -1) { *success = false; return errno; }
-	
+
 	/* to match select, closed socket still counts as readable */
 	flags    = mode == SOCKET_POLL_READ ? (POLLIN | POLLHUP) : POLLOUT;
 	*success = (pfd.revents & flags) != 0;
@@ -911,7 +911,7 @@ cc_result Process_StartGame2(const cc_string* args, int numArgs) {
 	path[len] = '\0';
 	argv[0]   = path;
 
-	for (i = 0, j = 1; i < numArgs; i++, j++) 
+	for (i = 0, j = 1; i < numArgs; i++, j++)
 	{
 		String_EncodeUtf8(raw[i], &args[i]);
 		argv[j] = raw[i];
@@ -933,7 +933,7 @@ cc_result Process_StartOpen(const cc_string* args) {
 	UInt8 str[NATIVE_STR_LEN];
 	CFURLRef urlCF;
 	int len;
-	
+
 	len   = String_EncodeUtf8(str, args);
 	urlCF = CFURLCreateWithBytes(kCFAllocatorDefault, str, len, kCFStringEncodingUTF8, NULL);
 	LSOpenCFURLRef(urlCF, NULL);
@@ -960,10 +960,10 @@ cc_result Process_StartOpen(const cc_string* args) {
 	HAB hAnchor = WinQueryAnchorBlock(WinQueryActiveWindow(HWND_DESKTOP));
 	RESULTCODES result = { 0 };
    PROGDETAILS details;
-	
+
 	// We get URL
 	String_EncodeUtf8(str, args);
-	
+
 	// Initialize buffers
 	Mem_Set(path, 0, sizeof(path));
 	Mem_Set(parambuffer, 0, sizeof(parambuffer));
@@ -971,11 +971,11 @@ cc_result Process_StartOpen(const cc_string* args) {
 
 	// We have to look in the OS/2 configuration for the default browser.
 	// First step: Find the configuration files
- 	if (!PrfQueryProfile(hAnchor, &profile)) {
+	if (!PrfQueryProfile(hAnchor, &profile)) {
 		ShowErrorMessage(str);
 		return 0;
 	}
-	
+
 	// Second step: Open the configuration files and read exe path and parameters
 	os2Ini = PrfOpenProfile(hAnchor, userPath);
 	if (os2Ini == NULLHANDLE) {
@@ -1014,7 +1014,7 @@ cc_result Process_StartOpen(const cc_string* args) {
 		ShowErrorMessage(str);
 		return 0;
 	}
-	
+
 	return 0;
 }
 #else
@@ -1225,7 +1225,7 @@ cc_result Updater_Start(const char** action) {
 	*action = "Getting executable path";
 	if ((res = Process_RawGetExePath(path, &len))) return res;
 	path[len] = '\0';
-	
+
 	/* Because the process is only referenced by inode, we can */
 	/* just unlink current filename and rename updated file to it */
 	*action = "Deleting executable";
@@ -1422,13 +1422,13 @@ static void DecodeMachineID(char* tmp, int len, cc_uint32* key) {
 	cc_uint8* dst = (cc_uint8*)key;
 
 	/* Get each valid hex character */
-	for (i = 0, j = 0; i < len && j < MACHINEID_LEN; i++) 
+	for (i = 0, j = 0; i < len && j < MACHINEID_LEN; i++)
 	{
 		c = PackedCol_DeHex(tmp[i]);
 		if (c != -1) hex[j++] = c;
 	}
 
-	for (i = 0; i < MACHINEID_LEN / 2; i++) 
+	for (i = 0; i < MACHINEID_LEN / 2; i++)
 	{
 		dst[i] = (hex[i * 2] << 4) | hex[i * 2 + 1];
 	}
@@ -1471,7 +1471,7 @@ static cc_result GetMachineID(cc_uint32* key) {
 
 	devID = IORegistryEntryCreateCFProperty(registry, CFSTR(kIOPlatformUUIDKey), kCFAllocatorDefault, 0);
 	if (devID && CFStringGetCString(devID, tmp, sizeof(tmp), kCFStringEncodingUTF8)) {
-		DecodeMachineID(tmp, String_Length(tmp), key);	
+		DecodeMachineID(tmp, String_Length(tmp), key);
 	}
 #else
     registry = IOServiceGetMatchingService(masterPortDefault,
@@ -1567,7 +1567,7 @@ cc_result Platform_GetEntropy(void* data, int len) {
 	int ret;
 	int fd = open("/dev/urandom", O_RDONLY);
 	if (fd < 0) return ERR_NOT_SUPPORTED;
-	
+
 	// TODO: check return code? and partial reads?
 	ret = read(fd, data, len);
 	close(fd);
@@ -1598,7 +1598,7 @@ int Platform_GetCommandLineArgs(int argc, STRING_REF char** argv, cc_string* arg
 	#endif
 
 	count = min(argc, GAME_MAX_CMDARGS);
-	for (i = 0; i < count; i++) 
+	for (i = 0; i < count; i++)
 	{
 		/* -d[directory] argument used to change directory data is stored in */
 		if (argv[i][0] == '-' && argv[i][1] == 'd' && argv[i][2]) {
@@ -1627,11 +1627,11 @@ static cc_bool IsProblematicWorkingDirectory(void) {
 
 	IGNORE_RETURN_VALUE(getcwd(path, 2048));
 	curDir = String_FromReadonly(path);
-	
+
 	home = getenv("HOME");
 	if (!home) return false;
 	homeDir = String_FromReadonly(home);
-	
+
 	if (String_Equals(&curDir, &homeDir)) {
 		Platform_LogConst("Working directory is $HOME! Changing to executable directory..");
 		return true;
@@ -1645,7 +1645,7 @@ cc_result Platform_SetDefaultCurrentDirectory(int argc, char **argv) {
 	int i, len = 0;
 	cc_result res;
 	if (!IsProblematicWorkingDirectory()) return 0;
-	
+
 	res = Process_RawGetExePath(path, &len);
 	if (res) return res;
 

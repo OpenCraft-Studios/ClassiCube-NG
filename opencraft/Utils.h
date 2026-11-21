@@ -3,7 +3,7 @@
 #include <Core.h>
 CC_BEGIN_HEADER
 
-/* 
+/*
 Provides various utility functions
 Copyright 2014-2025 ClassiCube | Licensed under BSD-3
 */

@@ -3,7 +3,7 @@
 #include <Core.h>
 CC_BEGIN_HEADER
 
-/* 
+/*
 Implements all of the screens/menus in the launcher
 Copyright 2014-2025 ClassiCube | Licensed under BSD-3
 */
@@ -40,7 +40,7 @@ struct LScreen { LScreen_Layout };
 void LScreen_SelectWidget(struct LScreen* s, int idx, struct LWidget* w, cc_bool was);
 void LScreen_UnselectWidget(struct LScreen* s, int idx, struct LWidget* w);
 void LScreen_AddWidget(void* screen, void* widget);
-	
+
 void ChooseModeScreen_SetActive(cc_bool firstTime);
 void ColoursScreen_SetActive(void);
 void DirectConnectScreen_SetActive(void);

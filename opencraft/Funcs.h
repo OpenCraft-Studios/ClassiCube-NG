@@ -3,7 +3,7 @@
 #include <Core.h>
 CC_BEGIN_HEADER
 
-/* 
+/*
 Simple function implementations
   NOTE: doing min(x++, y) etc will increment x twice!
 Copyright 2014-2025 ClassiCube | Licensed under BSD-3

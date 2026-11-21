@@ -75,7 +75,7 @@ struct LButton {
 	cc_string text;
 	int _textWidth, _textHeight;
 };
-CC_NOINLINE void LButton_Add(void* screen, struct LButton* w, int width, int height, const char* text, 
+CC_NOINLINE void LButton_Add(void* screen, struct LButton* w, int width, int height, const char* text,
 							LWidgetFunc onClick, const struct LLayout* layouts);
 CC_NOINLINE void LButton_SetConst(struct LButton* w, const char* text);
 CC_NOINLINE void LButton_DrawBackground(struct Context2D* ctx, int x, int y, int width, int height, cc_bool active);
@@ -88,7 +88,7 @@ struct LCheckbox {
 	cc_string text;
 	LCheckboxChanged ValueChanged;
 };
-CC_NOINLINE void LCheckbox_Add(void* screen, struct LCheckbox* w, const char* text, 
+CC_NOINLINE void LCheckbox_Add(void* screen, struct LCheckbox* w, const char* text,
 								LCheckboxChanged onChanged, const struct LLayout* layouts);
 CC_NOINLINE void LCheckbox_Set(struct LCheckbox* w, cc_bool value);
 
@@ -114,7 +114,7 @@ struct LInput {
 	int _textHeight;
 	char _textBuffer[STRING_SIZE * 2];
 };
-CC_NOINLINE void LInput_Add(void* screen, struct LInput* w, int width, const char* hintText, 
+CC_NOINLINE void LInput_Add(void* screen, struct LInput* w, int width, const char* hintText,
 							const struct LLayout* layouts);
 CC_NOINLINE void LInput_UNSAFE_GetText(struct LInput* w, cc_string* text);
 CC_NOINLINE void LInput_SetText(struct LInput* w, const cc_string* text);
@@ -133,7 +133,7 @@ struct LLabel {
 	cc_string text;
 	char _textBuffer[STRING_SIZE];
 };
-CC_NOINLINE void LLabel_Add(void* screen, struct LLabel* w, const char* text, 
+CC_NOINLINE void LLabel_Add(void* screen, struct LLabel* w, const char* text,
 							const struct LLayout* layouts);
 CC_NOINLINE void LLabel_SetText(struct LLabel* w, const cc_string* text);
 CC_NOINLINE void LLabel_SetConst(struct LLabel* w, const char* text);
@@ -143,7 +143,7 @@ struct LLine {
 	LWidget_Layout
 	int _width;
 };
-CC_NOINLINE void LLine_Add(void* screen, struct LLine* w, int width, 
+CC_NOINLINE void LLine_Add(void* screen, struct LLine* w, int width,
 							const struct LLayout* layouts);
 CC_NOINLINE BitmapCol LLine_GetColor(void);
 #define LLINE_HEIGHT 2
@@ -154,7 +154,7 @@ struct LSlider {
 	int value, _width, _height;
 	BitmapCol color;
 };
-CC_NOINLINE void LSlider_Add(void* screen, struct LSlider* w, int width, int height, BitmapCol color, 
+CC_NOINLINE void LSlider_Add(void* screen, struct LSlider* w, int width, int height, BitmapCol color,
 							const struct LLayout* layouts);
 CC_NOINLINE void LSlider_SetProgress(struct LSlider* w, int progress);
 
@@ -228,7 +228,7 @@ struct LTableCell { struct LTable* table; int x, y, width; };
 
 /* Initialises a table. */
 /* NOTE: Must also call LTable_Reset to make a table actually useful. */
-void LTable_Add(void* screen, struct LTable* table, 
+void LTable_Add(void* screen, struct LTable* table,
 				const struct LLayout* layouts);
 /* Resets state of a table (reset sorter, filter, etc) */
 void LTable_Reset(struct LTable* table);

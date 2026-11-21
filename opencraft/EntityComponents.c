@@ -36,7 +36,7 @@ static void AnimatedComp_DoTilt(float* tilt, cc_bool reduce) {
 static void AnimatedComp_PerpendicularAnim(struct AnimatedComp* anim, float flapSpeed, float idleXRot, float idleZRot, cc_bool left) {
 	float verAngle = 0.5f + 0.5f * Math_SinF(anim->WalkTime * flapSpeed);
 	float horAngle = Math_CosF(anim->WalkTime);
-	float zRot = -idleZRot - verAngle * anim->Swing * ANIM_MAX_ANGLE;	
+	float zRot = -idleZRot - verAngle * anim->Swing * ANIM_MAX_ANGLE;
 	float xRot =  idleXRot + horAngle * anim->Swing * ANIM_ARM_MAX * 1.5f;
 
 	if (left) {
@@ -114,7 +114,7 @@ void AnimatedComp_GetCurrent(struct Entity* e, float t) {
 *------------------------------------------------------TiltComponent------------------------------------------------------*
 *#########################################################################################################################*/
 void TiltComp_Init(struct TiltComp* anim) {
-	anim->VelTiltStrengthO = 1.0f; 
+	anim->VelTiltStrengthO = 1.0f;
 	anim->VelTiltStrengthN = 1.0f;
 }
 
@@ -235,7 +235,7 @@ void HacksComp_RecheckFlags(struct HacksComp* hacks) {
 
 void HacksComp_Update(struct HacksComp* hacks) {
 	if (!hacks->CanFly || !hacks->Enabled) {
-		HacksComp_SetFlying(hacks, false); 
+		HacksComp_SetFlying(hacks, false);
 		hacks->FlyingDown = false; hacks->FlyingUp = false;
 	}
 	if (!hacks->CanNoclip || !hacks->Enabled) {
@@ -431,8 +431,8 @@ static void LocalInterpComp_SetPosition(struct Entity* e, struct LocationUpdate*
 	yOffset = e->next.pos.y - Math_Floor(e->next.pos.y);
 	if (yOffset < ENTITY_ADJUSTMENT) e->next.pos.y += ENTITY_ADJUSTMENT;
 
-	if (mode == LU_POS_ABSOLUTE_INSTANT) { 
-		e->prev.pos = e->next.pos; e->Position = e->next.pos; 
+	if (mode == LU_POS_ABSOLUTE_INSTANT) {
+		e->prev.pos = e->next.pos; e->Position = e->next.pos;
 	}
 }
 
@@ -513,7 +513,7 @@ static void Collisions_ClipZ(struct Entity* e, Vec3* size, struct AABB* entityBB
 }
 
 static cc_bool Collisions_CanSlideThrough(struct AABB* adjFinalBB) {
-	IVec3 bbMin, bbMax; 
+	IVec3 bbMin, bbMax;
 	struct AABB blockBB;
 	BlockID block;
 	Vec3 v;
@@ -548,7 +548,7 @@ static cc_bool Collisions_DidSlide(struct CollisionsComp* comp, struct AABB* blo
 		float blockBB_MaxX = min(blockBB->Max.x, blockBB->Min.x + size->x / 2);
 		float blockBB_MinZ = max(blockBB->Min.z, blockBB->Max.z - size->z / 2);
 		float blockBB_MaxZ = min(blockBB->Max.z, blockBB->Min.z + size->z / 2);
-		
+
 		adjBB.Min.x = min(finalBB->Min.x, blockBB_MinX + COLLISIONS_ADJ);
 		adjBB.Max.x = max(finalBB->Max.x, blockBB_MaxX - COLLISIONS_ADJ);
 		adjBB.Min.y = blockBB->Max.y + COLLISIONS_ADJ;
@@ -574,7 +574,7 @@ static void Collisions_ClipXMin(struct CollisionsComp* comp, struct AABB* blockB
 	}
 }
 
-static void Collisions_ClipXMax(struct CollisionsComp* comp, struct AABB* blockBB, struct AABB* entityBB, 
+static void Collisions_ClipXMax(struct CollisionsComp* comp, struct AABB* blockBB, struct AABB* entityBB,
 								cc_bool wasOn, struct AABB* finalBB, struct AABB* extentBB, Vec3* size) {
 	if (!wasOn || !Collisions_DidSlide(comp, blockBB, size, finalBB, entityBB, extentBB)) {
 		comp->Entity->Position.x = blockBB->Max.x + size->x / 2 + COLLISIONS_ADJ;
@@ -583,7 +583,7 @@ static void Collisions_ClipXMax(struct CollisionsComp* comp, struct AABB* blockB
 	}
 }
 
-static void Collisions_ClipZMax(struct CollisionsComp* comp, struct AABB* blockBB, struct AABB* entityBB, 
+static void Collisions_ClipZMax(struct CollisionsComp* comp, struct AABB* blockBB, struct AABB* entityBB,
 								cc_bool wasOn, struct AABB* finalBB, struct AABB* extentBB, Vec3* size) {
 	if (!wasOn || !Collisions_DidSlide(comp, blockBB, size, finalBB, entityBB, extentBB)) {
 		comp->Entity->Position.z = blockBB->Max.z + size->z / 2 + COLLISIONS_ADJ;
@@ -601,14 +601,14 @@ static void Collisions_ClipZMin(struct CollisionsComp* comp, struct AABB* blockB
 	}
 }
 
-static void Collisions_ClipYMin(struct CollisionsComp* comp, struct AABB* blockBB, struct AABB* entityBB, 
+static void Collisions_ClipYMin(struct CollisionsComp* comp, struct AABB* blockBB, struct AABB* entityBB,
 								struct AABB* extentBB, Vec3* size) {
 	comp->Entity->Position.y = blockBB->Min.y - size->y - COLLISIONS_ADJ;
 	Collisions_ClipY(comp->Entity, size, entityBB, extentBB);
 	comp->HitYMin = true;
 }
 
-static void Collisions_ClipYMax(struct CollisionsComp* comp, struct AABB* blockBB, struct AABB* entityBB, 
+static void Collisions_ClipYMax(struct CollisionsComp* comp, struct AABB* blockBB, struct AABB* entityBB,
 								struct AABB* extentBB, Vec3* size) {
 	comp->Entity->Position.y = blockBB->Max.y + COLLISIONS_ADJ;
 	comp->Entity->OnGround = true;
@@ -652,7 +652,7 @@ static void Collisions_CollideWithReachableBlocks(struct CollisionsComp* comp, i
 		}
 
 		/* Calculate the location of the entity when it collides with this block */
-		v = entity->Velocity; 
+		v = entity->Velocity;
 		v.x *= tx; v.y *= ty; v.z *= tz;
 		/* Inlined ABBB_Offset */
 		Vec3_Add(&finalBB.Min, &entityBB->Min, &v);
@@ -877,12 +877,12 @@ static float PhysicsComp_LowestModifier(struct PhysicsComp* comp, struct AABB* b
 	int x, y, z;
 
 	IVec3_Floor(&bbMin, &bounds->Min);
-	IVec3_Floor(&bbMax, &bounds->Max);	
+	IVec3_Floor(&bbMax, &bounds->Max);
 
 	bbMin.x = max(bbMin.x, 0); bbMax.x = min(bbMax.x, World.MaxX);
 	bbMin.y = max(bbMin.y, 0); bbMax.y = min(bbMax.y, World.MaxY);
 	bbMin.z = max(bbMin.z, 0); bbMax.z = min(bbMax.z, World.MaxZ);
-	
+
 	for (y = bbMin.y; y <= bbMax.y; y++) { v.y = (float)y;
 		for (z = bbMin.z; z <= bbMax.z; z++) { v.z = (float)z;
 			for (x = bbMin.x; x <= bbMax.x; x++) { v.x = (float)x;
@@ -915,7 +915,7 @@ static float PhysicsComp_GetSpeed(struct HacksComp* hacks, float speedMul, cc_bo
 static float PhysicsComp_GetBaseSpeed(struct PhysicsComp* comp) {
 	struct AABB bounds;
 	float baseModifier, solidModifier;
-	
+
 	Entity_GetBounds(comp->Entity, &bounds);
 	comp->UseLiquidGravity = false;
 
@@ -950,7 +950,7 @@ void PhysicsComp_PhysicsTick(struct PhysicsComp* comp, Vec3 vel) {
 
 	womSpeedBoost = hacks->CanDoubleJump && hacks->WOMStyleHacks;
 	if (!hacks->Floating && womSpeedBoost) {
-		if (comp->MultiJumps == 1)     { horSpeed *= 46.5f; verSpeed *= 7.5f; } 
+		if (comp->MultiJumps == 1)     { horSpeed *= 46.5f; verSpeed *= 7.5f; }
 		else if (comp->MultiJumps > 1) { horSpeed *= 93.0f; verSpeed *= 10.0f; }
 	}
 

@@ -73,7 +73,7 @@ static void ZipFile_InspectEntries(const cc_string* path, Zip_SelectEntry select
 	if (ReturnCode_IsNotFound(res)) return;
 	if (res) { Logger_IOWarn2(res, "opening", &raw_path); return; }
 
-	res = Zip_Extract(&stream, selector, NULL, 
+	res = Zip_Extract(&stream, selector, NULL,
 						entries, Array_Elems(entries));
 	if (res) Logger_IOWarn2(res, "inspecting", &raw_path);
 
@@ -117,11 +117,11 @@ static cc_result ZipWriter_LocalFile(struct Stream* s, struct ResourceZipEntry* 
 	Mem_WriteU16_LE(header + 8,  0);           /* compression method */
 	Mem_WriteU16_LE(header + 10, modTime);     /* last modified */
 	Mem_WriteU16_LE(header + 12, modDate);     /* last modified */
-	
+
 	Mem_WriteU32_LE(header + 14, e->crc32);    /* CRC32 */
 	Mem_WriteU32_LE(header + 18, e->size);     /* Compressed size */
 	Mem_WriteU32_LE(header + 22, e->size);     /* Uncompressed size */
-	 
+
 	Mem_WriteU16_LE(header + 26, filenameLen); /* name length */
 	Mem_WriteU16_LE(header + 28, 0);           /* extra field length */
 
@@ -229,7 +229,7 @@ static cc_result ZipWriter_WritePng(struct Stream* dst, struct ResourceZipEntry*
 static cc_result SoundPatcher_Save(struct Stream* s, struct ResourceZipEntry* e);
 static cc_result ZipWriter_WriteWav(struct Stream* dst, struct ResourceZipEntry* e) {
 	cc_result res;
-	
+
 	if ((res = ZipWriter_LocalFile(dst, e))) return res;
 	if ((res = SoundPatcher_Save(dst,   e))) return res;
 	return ZipWriter_FixupLocalFile(dst, e);
@@ -255,9 +255,9 @@ static cc_result ZipFile_WriteEntries(struct Stream* s, struct ResourceZipEntry*
 			if ((res = ZipWriter_WriteWav(s,  e))) return res;
 		} else {
 			if ((res = ZipWriter_WriteData(s, e))) return res;
-		} 
+		}
 	}
-	
+
 	if ((res = s->Position(s, &beg))) return res;
 	for (i = 0; i < numEntries; i++)
 	{
@@ -278,7 +278,7 @@ static void ZipFile_Create(const cc_string* path, struct ResourceZipEntry* entri
 	if (res) {
 		Logger_IOWarn2(res, "creating", &raw_path); return;
 	}
-		
+
 	res = ZipFile_WriteEntries(&s, entries, numEntries);
 	if (res) Logger_IOWarn2(res, "making", &raw_path);
 
@@ -315,7 +315,7 @@ static void MusicAssets_CheckExistence(void) {
 	int i;
 	String_InitArray(path, pathBuffer);
 
-	for (i = 0; i < Array_Elems(musicAssets); i++) 
+	for (i = 0; i < Array_Elems(musicAssets); i++)
 	{
 		path.length = 0;
 		String_Format1(&path, "audio/%c", musicAssets[i].name);
@@ -327,7 +327,7 @@ static void MusicAssets_CheckExistence(void) {
 
 static void MusicAssets_CountMissing(void) {
 	int i;
-	for (i = 0; i < Array_Elems(musicAssets); i++) 
+	for (i = 0; i < Array_Elems(musicAssets); i++)
 	{
 		if (musicAssets[i].downloaded) continue;
 
@@ -344,14 +344,14 @@ CC_NOINLINE static int MusicAsset_Download(const char* hash) {
 	cc_string url; char urlBuffer[URL_MAX_SIZE];
 
 	String_InitArray(url, urlBuffer);
-	String_Format3(&url, "https://resources.download.minecraft.net/%r%r/%c", 
+	String_Format3(&url, "https://resources.download.minecraft.net/%r%r/%c",
 					&hash[0], &hash[1], hash);
 	return Http_AsyncGetData(&url, 0);
 }
 
 static void MusicAssets_DownloadAssets(void) {
 	int i;
-	for (i = 0; i < Array_Elems(musicAssets); i++) 
+	for (i = 0; i < Array_Elems(musicAssets); i++)
 	{
 		if (musicAssets[i].downloaded) continue;
 		musicAssets[i].reqID = MusicAsset_Download(musicAssets[i].hash);
@@ -360,7 +360,7 @@ static void MusicAssets_DownloadAssets(void) {
 
 static const char* MusicAssets_GetRequestName(int reqID) {
 	int i;
-	for (i = 0; i < Array_Elems(musicAssets); i++) 
+	for (i = 0; i < Array_Elems(musicAssets); i++)
 	{
 		if (reqID == musicAssets[i].reqID) return musicAssets[i].name;
 	}
@@ -393,7 +393,7 @@ static void MusicAsset_Check(struct MusicAsset* music) {
 
 static void MusicAssets_CheckStatus(void) {
 	int i;
-	for (i = 0; i < Array_Elems(musicAssets); i++) 
+	for (i = 0; i < Array_Elems(musicAssets); i++)
 	{
 		if (musicAssets[i].downloaded) continue;
 		MusicAsset_Check(&musicAssets[i]);
@@ -581,7 +581,7 @@ static struct SoundAsset* SoundAssest_Find(const cc_string* name) {
 	struct SoundAsset* a;
 	int i;
 
-	for (i = 0; i < Array_Elems(soundAssets); i++) 
+	for (i = 0; i < Array_Elems(soundAssets); i++)
 	{
 		a = &soundAssets[i];
 		if (String_CaselessEqualsConst(name, a->filename)) return a;
@@ -650,7 +650,7 @@ static void SoundAssets_DownloadAssets(void) {
 
 static const char* SoundAssets_GetRequestName(int reqID) {
 	int i;
-	for (i = 0; i < Array_Elems(soundAssets); i++) 
+	for (i = 0; i < Array_Elems(soundAssets); i++)
 	{
 		if (reqID == soundAssets[i].reqID) return soundAssets[i].filename;
 	}
@@ -699,7 +699,7 @@ static int ccTexturesReqID;
 static void CCTextures_CheckExistence(void) {
 	cc_filepath path;
 	Platform_EncodePath(&path, &ccTexPack);
-	
+
 	ccTexturesExist = File_Exists(&path);
 }
 
@@ -811,15 +811,15 @@ static struct ResourceZipEntry defaultZipEntries[] = {
 	/* classic jar files */
 	{ "terrain.png",  RESOURCE_TYPE_PNG  }, { "particles.png",   RESOURCE_TYPE_DATA },
 	{ "clouds.png",   RESOURCE_TYPE_DATA }, { "rain.png",        RESOURCE_TYPE_DATA },
-	{ "char.png",     RESOURCE_TYPE_DATA }, { "default.png",     RESOURCE_TYPE_DATA }, 
+	{ "char.png",     RESOURCE_TYPE_DATA }, { "default.png",     RESOURCE_TYPE_DATA },
 	{ "icons.png",    RESOURCE_TYPE_DATA }, { "gui_classic.png", RESOURCE_TYPE_DATA },
-	{ "creeper.png",  RESOURCE_TYPE_DATA }, { "pig.png",         RESOURCE_TYPE_DATA }, 
+	{ "creeper.png",  RESOURCE_TYPE_DATA }, { "pig.png",         RESOURCE_TYPE_DATA },
 	{ "sheep.png",    RESOURCE_TYPE_DATA }, { "sheep_fur.png",   RESOURCE_TYPE_DATA },
-	{ "skeleton.png", RESOURCE_TYPE_DATA }, { "spider.png",      RESOURCE_TYPE_DATA }, 
+	{ "skeleton.png", RESOURCE_TYPE_DATA }, { "spider.png",      RESOURCE_TYPE_DATA },
 	{ "zombie.png",   RESOURCE_TYPE_DATA },
 	/* other files */
 	{ "snow.png", RESOURCE_TYPE_DATA }, { "chicken.png",    RESOURCE_TYPE_DATA },
-	{ "gui.png",  RESOURCE_TYPE_DATA }, { "animations.png", RESOURCE_TYPE_PNG  }, 
+	{ "gui.png",  RESOURCE_TYPE_DATA }, { "animations.png", RESOURCE_TYPE_PNG  },
 	{ "animations.txt", RESOURCE_TYPE_CONST, sizeof(ANIMS_TXT) - 1, (cc_uint8*)ANIMS_TXT },
 #ifdef CC_BUILD_MOBILE
 	{ "touch.png", RESOURCE_TYPE_DATA }
@@ -830,7 +830,7 @@ CC_NOINLINE static struct ResourceZipEntry* ZipEntries_Find(const cc_string* nam
 	struct ResourceZipEntry* e;
 	int i;
 
-	for (i = 0; i < Array_Elems(defaultZipEntries); i++) 
+	for (i = 0; i < Array_Elems(defaultZipEntries); i++)
 	{
 		e = &defaultZipEntries[i];
 		if (String_CaselessEqualsConst(name, e->filename)) return e;
@@ -876,7 +876,7 @@ static int numDefaultZipSources, numDefaultZipProcessed;
 
 static void MCCTextures_ResetState(void) {
 	int i;
-	for (i = 0; i < Array_Elems(defaultZipEntries); i++) 
+	for (i = 0; i < Array_Elems(defaultZipEntries); i++)
 	{
 		if (defaultZipEntries[i].type == RESOURCE_TYPE_CONST) continue;
 
@@ -920,8 +920,8 @@ static cc_result ClassicPatcher_ExtractFiles(struct HttpRequest* req) {
 	cc_result res;
 	struct ZipEntry entries[64];
 	Stream_ReadonlyMemory(&src, req->data, req->size);
-	
-	return Zip_Extract(&src, 
+
+	return Zip_Extract(&src,
 			ClassicPatcher_SelectEntry, ClassicPatcher_ProcessEntry,
 			entries, Array_Elems(entries));
 }
@@ -1003,7 +1003,7 @@ static cc_result ModernPatcher_MakeAnimations(struct Stream* data) {
 		Bitmap_UNSAFE_CopyBlock(0, i, i, 0, &bmp, anim, 16);
 	}
 
-	Mem_Free(bmp.scan0); 
+	Mem_Free(bmp.scan0);
 	return 0;
 }
 
@@ -1034,7 +1034,7 @@ static cc_result ModernPatcher_ExtractFiles(struct HttpRequest* req) {
 	struct ZipEntry entries[64];
 	Stream_ReadonlyMemory(&src, req->data, req->size);
 
-	return Zip_Extract(&src, 
+	return Zip_Extract(&src,
 			ModernPatcher_SelectEntry, ModernPatcher_ProcessEntry,
 			entries, Array_Elems(entries));
 }
@@ -1179,7 +1179,7 @@ static void MCCTextures_DownloadAssets(void) {
 
 static const char* MCCTextures_GetRequestName(int reqID) {
 	int i;
-	for (i = 0; i < numDefaultZipSources; i++) 
+	for (i = 0; i < numDefaultZipSources; i++)
 	{
 		if (reqID == defaultZipSources[i].reqID) return defaultZipSources[i].name;
 	}
@@ -1200,7 +1200,7 @@ static void MCCTextures_CheckSource(struct ZipfileSource* source) {
 	struct HttpRequest item;
 	cc_result res;
 	if (!Fetcher_Get(source->reqID, &item)) return;
-	
+
 	source->downloaded = true;
 	res = source->Process(&item);
 
@@ -1216,7 +1216,7 @@ static void MCCTextures_CheckSource(struct ZipfileSource* source) {
 
 static void MCCTextures_CheckStatus(void) {
 	int i;
-	for (i = 0; i < numDefaultZipSources; i++) 
+	for (i = 0; i < numDefaultZipSources; i++)
 	{
 		if (defaultZipSources[i].downloaded) continue;
 		MCCTextures_CheckSource(&defaultZipSources[i]);
@@ -1329,7 +1329,7 @@ CC_NOINLINE static cc_bool Fetcher_Get(int reqID, struct HttpRequest* item) {
 
 	Fetcher_Fail(item);
 	HttpRequest_Free(item);
-	
+
 	Fetcher_Finish();
 	return false;
 }
@@ -1343,7 +1343,7 @@ void Fetcher_Update(void) {
 		asset_sets[i]->CheckStatus();
 	}
 
-	if (Fetcher_Downloaded != Resources_MissingCount) return; 
+	if (Fetcher_Downloaded != Resources_MissingCount) return;
 	Fetcher_Finish();
 }
 #endif

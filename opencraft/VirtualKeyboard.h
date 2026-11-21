@@ -122,7 +122,7 @@ static int VirtualKeyboard_GetSelected(void) {
 
 	int idx = kb_curX + kb->cellsPerRow * kb_curY;
 	Math_Clamp(idx, 0, maxCells - 1);
-	
+
 	// Skip over invisible cells
 	while (KB_IsInvisible(idx)) idx--;
 	return idx;
@@ -142,7 +142,7 @@ static void VirtualKeyboard_Draw(struct Context2D* ctx) {
 	int row, cell;
 	int i = 0, x, y, w, h, dx, dy;
 	int selected = VirtualKeyboard_GetSelected();
-	
+
 	Drawer2D.Colors['f'] = Drawer2D.Colors['0'];
 	if (kb_needsHook) VirtualKeyboard_Hook();
 
@@ -170,7 +170,7 @@ static void VirtualKeyboard_Draw(struct Context2D* ctx) {
 		}
 		y += kb_tileHeight;
 	}
-	
+
 	Drawer2D.Colors['f'] = Drawer2D.Colors['F'];
 }
 
@@ -216,7 +216,7 @@ static void VirtualKeyboard_Scroll(int xDelta, int yDelta) {
 
 	kb_curX += xDelta;
 	kb_curY += yDelta;
-	
+
 	VirtualKeyboard_Clamp();
 	KB_MarkDirty();
 }
@@ -394,7 +394,7 @@ static void VirtualKeyboard_MakeTexture(void) {
 		Context2D_MakeTexture(&kb_texture, &ctx);
 	}
 	Context2D_Free(&ctx);
-	
+
 	int x, y;
 	VirtualKeyboard_CalcPosition(&x, &y, VirtualKeyboard_WindowWidth(), VirtualKeyboard_WindowHeight());
 	kb_texture.x = x; kb_texture.y = y;
@@ -403,21 +403,21 @@ static void VirtualKeyboard_MakeTexture(void) {
 /* TODO hook into context lost etc */
 static void VirtualKeyboard_Display3D(float delta) {
 	if (!DisplayInfo.ShowingSoftKeyboard) return;
-	
+
 	if (!kb_vb) {
 		kb_vb = Gfx_CreateDynamicVb(VERTEX_FORMAT_TEXTURED, 4);
 		if (!kb_vb) return;
-	}	
-	
+	}
+
 	if (!kb_texture.ID) {
 		VirtualKeyboard_MakeTexture();
 		if (!kb_texture.ID) return;
 	}
-	
+
 	Gfx_3DS_SetRenderScreen(BOTTOM_SCREEN);
 	Gfx_SetVertexFormat(VERTEX_FORMAT_TEXTURED);
 	Gfx_BindTexture(kb_texture.ID);
-	
+
 	struct VertexTextured* data = (struct VertexTextured*)Gfx_LockDynamicVb(kb_vb, VERTEX_FORMAT_TEXTURED, 4);
 	struct VertexTextured** ptr = &data;
 	Gfx_Make2DQuad(&kb_texture, PACKEDCOL_WHITE, ptr);
@@ -480,7 +480,7 @@ static void VirtualKeyboard_Close(void) {
 		VirtualKeyboard_Close2D();
 	if (KB_MarkDirty == VirtualKeyboard_MarkDirty3D)
 		VirtualKeyboard_Close3D();
-		
+
 	Event_Unregister_(&ControllerEvents.AxisUpdate, NULL, VirtualKeyboard_PadAxis);
 	PointerHooks.DownHook = NULL;
 	PointerHooks.MoveHook = NULL;

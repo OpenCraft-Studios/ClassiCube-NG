@@ -24,7 +24,7 @@ static void PlotOnscreen(int x, int y, void* ctx) {
 	x += pos->x;
 	y += pos->y;
 	if (x >= pos->bmp->width || y >= pos->bmp->height) return;
-	
+
 	BitmapCol* row = Bitmap_GetRow(pos->bmp, y);
 	row[x] = BITMAPCOLOR_WHITE;
 }
@@ -36,8 +36,8 @@ static int DrawText(const char* msg, struct Bitmap* bmp, int y) {
 	pos.y   = y;
 
 	int scale = max(1, 2 * DisplayInfo.ScaleY);
-	
-	while (*msg) 
+
+	while (*msg)
 	{
 		char c = *msg;
 		if (pos.x + 20 >= bmp->width || c == '\n') {

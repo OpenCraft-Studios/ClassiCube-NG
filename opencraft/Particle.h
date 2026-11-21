@@ -4,7 +4,7 @@
 #include "PackedCol.h"
 CC_BEGIN_HEADER
 
-/* 
+/*
 Represents particle effects, and manages rendering and spawning particles
 Copyright 2014-2025 ClassiCube | Licensed under BSD-3
 */

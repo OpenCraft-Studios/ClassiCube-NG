@@ -21,11 +21,11 @@ int Menu_PointerMove(void* screen, int id, int x, int y);
 int Menu_DoPointerMove(void* screen, int id, int x, int y);
 
 struct SimpleButtonDesc { short x, y; const char* title; Widget_LeftClick onClick; };
-void Menu_AddButtons(void* screen, struct ButtonWidget* btns, int width, 
+void Menu_AddButtons(void* screen, struct ButtonWidget* btns, int width,
 					const struct SimpleButtonDesc* descs, int count);
-void Menu_LayoutButtons(struct ButtonWidget* btns, 
+void Menu_LayoutButtons(struct ButtonWidget* btns,
 					const struct SimpleButtonDesc* descs, int count);
-void Menu_SetButtons(struct ButtonWidget* btns, struct FontDesc* font, 
+void Menu_SetButtons(struct ButtonWidget* btns, struct FontDesc* font,
 					const struct SimpleButtonDesc* descs, int count);
 void Menu_LayoutBack(struct ButtonWidget* btn);
 
@@ -77,7 +77,7 @@ void MenuInputOverlay_Close(cc_bool valid);
 
 typedef cc_bool (*Button_GetBool)(void);
 typedef void    (*Button_SetBool)(cc_bool value);
-void MenuOptionsScreen_AddBool(struct MenuOptionsScreen* s, const char* name, 
+void MenuOptionsScreen_AddBool(struct MenuOptionsScreen* s, const char* name,
 								Button_GetBool getValue, Button_SetBool setValue, const char* desc);
 
 typedef int  (*Button_GetEnum)(void);

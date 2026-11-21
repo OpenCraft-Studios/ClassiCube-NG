@@ -133,12 +133,12 @@ void Model_SetupState(struct Model* model, struct Entity* e) {
 		Models.Cols[2] = PackedCol_Scale(color, PACKEDCOL_SHADE_Z);
 		Models.Cols[4] = PackedCol_Scale(color, PACKEDCOL_SHADE_X);
 	} else {
-		Models.Cols[1] = color; 
-		Models.Cols[2] = color; 
+		Models.Cols[1] = color;
+		Models.Cols[2] = color;
 		Models.Cols[4] = color;
 	}
 
-	Models.Cols[3] = Models.Cols[2]; 
+	Models.Cols[3] = Models.Cols[2];
 	Models.Cols[5] = Models.Cols[4];
 	yawDelta = e->Yaw - e->RotY;
 
@@ -174,7 +174,7 @@ void Model_UpdateVB(void) {
 	struct Model* model = Models.Active;
 	if (!Models.Vb)
 		Models.Vb = Gfx_CreateDynamicVb(VERTEX_FORMAT_TEXTURED, Models.MaxVertices);
-	
+
 	Gfx_SetDynamicVbData(Models.Vb, Models.Vertices, model->index);
 	Gfx_DrawVb_IndexedTris(model->index);
 	model->index = 0;
@@ -217,7 +217,7 @@ void Model_DrawPart(struct ModelPart* part) {
 	float uScale = Models.uScale;
 	float vScale = Models.vScale;
 
-	for (i = 0; i < count; i++) 
+	for (i = 0; i < count; i++)
 	{
 		v = *src;
 		dst->x = v.x; dst->y = v.y; dst->z = v.z;
@@ -243,7 +243,7 @@ void Model_DrawRotate(float angleX, float angleY, float angleZ, struct ModelPart
 	float cosY = Math_CosF(-angleY), sinY = Math_SinF(-angleY);
 	float cosZ = Math_CosF(-angleZ), sinZ = Math_SinF(-angleZ);
 	float t, x = part->rotX, y = part->rotY, z = part->rotZ;
-	
+
 	struct ModelVertex v;
 	int i, count = part->count;
 
@@ -316,7 +316,7 @@ void Model_RenderArm(struct Model* model, struct Entity* e) {
 void Model_DrawArmPart(struct ModelPart* part) {
 	struct Model* model  = Models.Active;
 	struct ModelPart arm = *part;
-	arm.rotX = model->armX / 16.0f; 
+	arm.rotX = model->armX / 16.0f;
 	arm.rotY = (model->armY + model->armY / 2) / 16.0f;
 
 	if (Models.ClassicArms) {
@@ -338,23 +338,23 @@ void BoxDesc_BuildBox(struct ModelPart* part, const struct BoxDesc* desc) {
 	struct Model* m = Models.Active;
 
 	BoxDesc_YQuad2(m, x1, x2, z2, z1, y2, /* top */
-		x + sidesW + bodyW,                  y, 
+		x + sidesW + bodyW,                  y,
 		x + sidesW,                          y + sidesW);
 	BoxDesc_YQuad2(m, x2, x1, z2, z1, y1, /* bottom */
 		x + sidesW + bodyW,                  y,
 		x + sidesW + bodyW + bodyW,          y + sidesW);
 	BoxDesc_ZQuad2(m, x1, x2, y1, y2, z1, /* front */
-		x + sidesW + bodyW,                  y + sidesW, 
-		x + sidesW,                          y + sidesW + bodyH); 
+		x + sidesW + bodyW,                  y + sidesW,
+		x + sidesW,                          y + sidesW + bodyH);
 	BoxDesc_ZQuad2(m, x2, x1, y1, y2, z2, /* back */
-		x + sidesW + bodyW + sidesW + bodyW, y + sidesW, 
+		x + sidesW + bodyW + sidesW + bodyW, y + sidesW,
 		x + sidesW + bodyW + sidesW,         y + sidesW + bodyH);
 	BoxDesc_XQuad2(m, z1, z2, y1, y2, x2,  /* left */
-		x + sidesW,                          y + sidesW, 
+		x + sidesW,                          y + sidesW,
 		x,                                   y + sidesW + bodyH);
 	BoxDesc_XQuad2(m, z2, z1, y1, y2, x1, /* right */
-		x + sidesW + bodyW + sidesW,         y + sidesW, 
-		x + sidesW + bodyW,                  y + sidesW + bodyH); 
+		x + sidesW + bodyW + sidesW,         y + sidesW,
+		x + sidesW + bodyW,                  y + sidesW + bodyH);
 
 	ModelPart_Init(part, m->index - MODEL_BOX_VERTICES, MODEL_BOX_VERTICES,
 		desc->rotX, desc->rotY, desc->rotZ);
@@ -383,8 +383,8 @@ void BoxDesc_BuildRotatedBox(struct ModelPart* part, const struct BoxDesc* desc)
 		x,                                   y + sidesW,
 		x + sidesW,                          y + sidesW + bodyH);
 	BoxDesc_XQuad2(m, y1, y2, z2, z1, x1, /* right */
-		x + sidesW + bodyW,                  y + sidesW, 
-		x + sidesW + bodyW + sidesW,         y + sidesW + bodyH); 
+		x + sidesW + bodyW,                  y + sidesW,
+		x + sidesW + bodyW + sidesW,         y + sidesW + bodyH);
 
 	/* rotate left and right 90 degrees	*/
 	for (i = m->index - 8; i < m->index; i++) {
@@ -489,10 +489,10 @@ void Model_Register(struct Model* model) {
 void Model_Unregister(struct Model* model) {
 	struct Model* cur;
 	int i;
-	LinkedList_Remove(model, cur, models_head, models_tail); 
+	LinkedList_Remove(model, cur, models_head, models_tail);
 
 	/* unset this model from all entities, replacing with default fallback */
-	for (i = 0; i < ENTITIES_MAX_COUNT; i++) 
+	for (i = 0; i < ENTITIES_MAX_COUNT; i++)
 	{
 		struct Entity* e = Entities.List[i];
 		if (e && e->Model == model) {
@@ -509,7 +509,7 @@ void Model_RegisterTexture(struct ModelTex* tex) {
 static void Models_TextureChanged(void* obj, struct Stream* stream, const cc_string* name) {
 	struct ModelTex* tex;
 
-	for (tex = textures_head; tex; tex = tex->next) 
+	for (tex = textures_head; tex; tex = tex->next)
 	{
 		if (!String_CaselessEqualsConst(name, tex->name)) continue;
 
@@ -572,7 +572,7 @@ void CustomModel_BuildPart(struct CustomModel* cm, struct CustomModelPartDef* pa
 		part->u1[4],                         part->v1[4],
 		part->u2[4],                         part->v2[4]);
 	BoxDesc_XQuad2(&cm->model, z2, z1, y1, y2, x1, /* right */
-		part->u1[5],                         part->v1[5], 
+		part->u1[5],                         part->v1[5],
 		part->u2[5],                         part->v2[5]);
 
 	ModelPart_Init(&p->modelPart, cm->model.index - MODEL_BOX_VERTICES, MODEL_BOX_VERTICES,
@@ -676,21 +676,21 @@ static void CustomModel_DrawPart(
 	float value = 0.0f;
 
 	if (part->fullbright) {
-		for (i = 0; i < FACE_COUNT; i++) 
+		for (i = 0; i < FACE_COUNT; i++)
 		{
 			oldCols[i] = Models.Cols[i];
 			Models.Cols[i] = PACKEDCOL_WHITE;
 		}
 	}
-	
+
 	/* bbmodels use xyz rotation order */
 	Models.Rotation = ROTATE_ORDER_XYZ;
-	
+
 	rotX = part->rotation.x * MATH_DEG2RAD;
 	rotY = part->rotation.y * MATH_DEG2RAD;
 	rotZ = part->rotation.z * MATH_DEG2RAD;
 
-	for (animIndex = 0; animIndex < MAX_CUSTOM_MODEL_ANIMS; animIndex++) 
+	for (animIndex = 0; animIndex < MAX_CUSTOM_MODEL_ANIMS; animIndex++)
 	{
 		struct CustomModelAnim* anim = &part->anims[animIndex];
 		type = part->animType[animIndex];
@@ -698,7 +698,7 @@ static void CustomModel_DrawPart(
 
 		if (type == CustomModelAnimType_None) continue;
 		value = CustomModel_GetAnimValue(type, anim, e);
-	
+
 		if (
 			!modifiedVertices &&
 			(type == CustomModelAnimType_SinTranslate ||
@@ -717,7 +717,7 @@ static void CustomModel_DrawPart(
 				sizeof(struct ModelVertex) * MODEL_BOX_VERTICES
 			);
 		}
-		
+
 		if (
 			type == CustomModelAnimType_SinTranslate ||
 			type == CustomModelAnimType_SinTranslateVelocity ||
@@ -766,7 +766,7 @@ static void CustomModel_DrawPart(
 			if (type == CustomModelAnimType_Head) {
 				head = true;
 			}
-			
+
 			switch (axis) {
 				case CustomModelAnimAxis_X:
 					rotX += value;
@@ -798,7 +798,7 @@ static void CustomModel_DrawPart(
 	}
 
 	if (part->fullbright) {
-		for (i = 0; i < FACE_COUNT; i++) 
+		for (i = 0; i < FACE_COUNT; i++)
 		{
 			Models.Cols[i] = oldCols[i];
 		}
@@ -814,7 +814,7 @@ static void CustomModel_Draw(struct Entity* e) {
 	Models.vScale = e->vScale / cm->vScale;
 	Model_LockVB(e, cm->numParts * MODEL_BOX_VERTICES);
 
-	for (i = 0; i < cm->numParts; i++) 
+	for (i = 0; i < cm->numParts; i++)
 	{
 		CustomModel_DrawPart(&cm->parts[i], cm, e);
 	}
@@ -850,7 +850,7 @@ static void CustomModel_DrawArm(struct Entity* e) {
 	Models.vScale = 1.0f / cm->vScale;
 	Model_LockVB(e, cm->numArmParts * MODEL_BOX_VERTICES);
 
-	for (i = 0; i < cm->numParts; i++) 
+	for (i = 0; i < cm->numParts; i++)
 	{
 		struct CustomModelPart* part = &cm->parts[i];
 		if (part->firstPersonArm) {
@@ -912,7 +912,7 @@ static void CustomModel_FreeAll(void) {
 	if (!custom_models) return;
 #endif
 
-	for (i = 0; i < MAX_CUSTOM_MODELS; i++) 
+	for (i = 0; i < MAX_CUSTOM_MODELS; i++)
 	{
 		CustomModel_Undefine(&custom_models[i]);
 	}
@@ -1005,18 +1005,18 @@ static void HumanModel_MakeParts(void) {
 		BoxDesc_Tex(0,0),
 		BoxDesc_Box(-4,24,-4, 4,32,4),
 		BoxDesc_Rot(0,24,0),
-	}; 
+	};
 	static const struct BoxDesc torso = {
 		BoxDesc_Tex(16,16),
 		BoxDesc_Box(-4,12,-2, 4,24,2),
 		BoxDesc_Rot(0,12,0),
-	}; 
+	};
 	static const struct BoxDesc hat = {
 		BoxDesc_Tex(32,0),
 		BoxDesc_Dims(-4,24,-4, 4,32,4),
 		BoxDesc_Bounds(-4.5f,23.5f,-4.5f, 4.5f,32.5f,4.5f),
 		BoxDesc_Rot(0,24,0),
-	}; 
+	};
 	static const struct BoxDesc torsoL = {
 		BoxDesc_Tex(16,32),
 		BoxDesc_Dims(-4,12,-2, 4,24,2),
@@ -1158,7 +1158,7 @@ static void HumanModel_GetBounds(struct Entity* e) { Model_RetAABB(-8,0,-4, 8,32
 
 static CC_BIG_VAR struct ModelVertex human_vertices[MODEL_BOX_VERTICES * (7 + 7 + 4)];
 static struct ModelTex human_tex = { "char.png" };
-static struct Model  human_model = { 
+static struct Model  human_model = {
 	"humanoid", human_vertices, &human_tex,
 	HumanModel_MakeParts, HumanModel_Draw,
 	HumanModel_GetNameY,  HumanModel_GetEyeY,
@@ -1189,7 +1189,7 @@ CC_NOINLINE static void ChibiModel_ScalePart(struct ModelPart* dst, struct Model
 
 	*dst = *src;
 	dst->rotX *= 0.5f; dst->rotY *= 0.5f; dst->rotZ *= 0.5f;
-	
+
 	for (i = src->offset; i < src->offset + src->count; i++) {
 		chibi->vertices[i] = human_model.vertices[i];
 
@@ -1222,7 +1222,7 @@ static void ChibiModel_MakeParts(void) {
 		BoxDesc_Dims(-4,12,-4, 4,20,4),
 		BoxDesc_Bounds(-4.25f,11.75f,-4.25f, 4.25f,20.25f,4.25f),
 		BoxDesc_Rot(0,13,0),
-	}; 
+	};
 
 	/* Chibi is mostly just half scale humanoid */
 	ChibiModel_ScalePart(&chibi_set.torso,      &human_set.torso);
@@ -1254,14 +1254,14 @@ static void ChibiModel_GetBounds(struct Entity* e) { Model_RetAABB(-4,0,-4, 4,16
 static struct ModelVertex chibi_vertices[MODEL_BOX_VERTICES * (7 + 7 + 4)];
 static struct Model chibi_model = { "chibi", chibi_vertices, &human_tex,
 	ChibiModel_MakeParts, ChibiModel_Draw,
-	ChibiModel_GetNameY,  ChibiModel_GetEyeY, 
+	ChibiModel_GetNameY,  ChibiModel_GetEyeY,
 	ChibiModel_GetSize,   ChibiModel_GetBounds
 };
 
 static void ChibiModel_Register(void) {
 	Model_Init(&chibi_model);
 	chibi_model.DrawArm  = ChibiModel_DrawArm;
-	chibi_model.armX = 3; 
+	chibi_model.armX = 3;
 	chibi_model.armY = 6;
 
 	chibi_model.calcHumanAnims = true;
@@ -1432,13 +1432,13 @@ static void ChickenModel_MakeParts(void) {
 		BoxDesc_Tex(24,13),
 		BoxDesc_Box(-4,7,-3, -3,11,3),
 		BoxDesc_Rot(-3,11,0),
-	}; 
+	};
 	static const struct BoxDesc rWing = {
 		BoxDesc_Tex(24,13),
 		BoxDesc_Box(3,7,-3, 4,11,3),
 		BoxDesc_Rot(3,11,0),
-	}; 
-	
+	};
+
 	BoxDesc_BuildBox(&chicken_head,   &head);
 	BoxDesc_BuildBox(&chicken_wattle, &wattle);
 	BoxDesc_BuildBox(&chicken_beak,   &beak);
@@ -1464,7 +1464,7 @@ static void ChickenModel_Draw(struct Entity* e) {
 	Model_DrawRotate(0, 0, -Math_AbsF(e->Anim.LeftArmX), &chicken_leftWing,  false);
 	Model_DrawRotate(0, 0,  Math_AbsF(e->Anim.LeftArmX), &Chicken_RightWing, false);
 
-	for (i = 0; i < FACE_COUNT; i++) 
+	for (i = 0; i < FACE_COUNT; i++)
 	{
 		Models.Cols[i] = PackedCol_Scale(color, 0.7f);
 	}
@@ -1513,28 +1513,28 @@ static void CreeperModel_MakeParts(void) {
 		BoxDesc_Tex(16,16),
 		BoxDesc_Box(-4,6,-2, 4,18,2),
 		BoxDesc_Rot(0,6,0),
-	}; 
+	};
 	static const struct BoxDesc lFront = {
 		BoxDesc_Tex(0,16),
 		BoxDesc_Box(-4,0,-6, 0,6,-2),
 		BoxDesc_Rot(0,6,-2),
-	}; 
+	};
 	static const struct BoxDesc rFront = {
 		BoxDesc_Tex(0,16),
 		BoxDesc_Box(0,0,-6, 4,6,-2),
 		BoxDesc_Rot(0,6,-2),
-	}; 
+	};
 	static const struct BoxDesc lBack = {
 		BoxDesc_Tex(0,16),
 		BoxDesc_Box(-4,0,2, 0,6,6),
 		BoxDesc_Rot(0,6,2),
-	}; 
+	};
 	static const struct BoxDesc rBack = {
 		BoxDesc_Tex(0,16),
 		BoxDesc_Box(0,0,2, 4,6,6),
 		BoxDesc_Rot(0,6,2),
 	};
-	
+
 	BoxDesc_BuildBox(&creeper_head,  &head);
 	BoxDesc_BuildBox(&creeper_torso, &torso);
 	BoxDesc_BuildBox(&creeper_leftLegFront,  &lFront);
@@ -1565,7 +1565,7 @@ static void CreeperModel_GetBounds(struct Entity* e) { Model_RetAABB(-4,0,-6, 4,
 
 static struct ModelVertex creeper_vertices[MODEL_BOX_VERTICES * 6];
 static struct ModelTex creeper_tex = { "creeper.png" };
-static struct Model creeper_model  = { 
+static struct Model creeper_model  = {
 	"creeper", creeper_vertices, &creeper_tex,
 	CreeperModel_MakeParts, CreeperModel_Draw,
 	CreeperModel_GetNameY,  CreeperModel_GetEyeY,
@@ -1591,33 +1591,33 @@ static void PigModel_MakeParts(void) {
 		BoxDesc_Tex(0,0),
 		BoxDesc_Box(-4,8,-14, 4,16,-6),
 		BoxDesc_Rot(0,12,-6),
-	}; 
+	};
 	static const struct BoxDesc torso = {
 		BoxDesc_Tex(28,8),
 		BoxDesc_Box(-5,6,-8, 5,14,8),
 		BoxDesc_Rot(0,6,0),
-	}; 
+	};
 	static const struct BoxDesc lFront = {
 		BoxDesc_Tex(0,16),
 		BoxDesc_Box(-5,0,-7, -1,6,-3),
 		BoxDesc_Rot(0,6,-5),
-	}; 
+	};
 	static const struct BoxDesc rFront = {
 		BoxDesc_Tex(0,16),
 		BoxDesc_Box(1,0,-7, 5,6,-3),
 		BoxDesc_Rot(0,6,-5),
-	}; 
+	};
 	static const struct BoxDesc lBack = {
 		BoxDesc_Tex(0,16),
 		BoxDesc_Box(-5,0,5, -1,6,9),
 		BoxDesc_Rot(0,6,7),
-	}; 
+	};
 	static const struct BoxDesc rBack = {
 		BoxDesc_Tex(0,16),
 		BoxDesc_Box(1,0,5, 5,6,9),
 		BoxDesc_Rot(0,6,7),
-	}; 
-	
+	};
+
 	BoxDesc_BuildBox(&pig_head,          &head);
 	BoxDesc_BuildRotatedBox(&pig_torso,  &torso);
 	BoxDesc_BuildBox(&pig_leftLegFront,  &lFront);
@@ -1682,22 +1682,22 @@ static void SheepModel_MakeParts(void) {
 		BoxDesc_Tex(28,8),
 		BoxDesc_Box(-4,12,-8, 4,18,8),
 		BoxDesc_Rot(0,12,0),
-	}; 	
+	};
 	static const struct BoxDesc lFront = {
 		BoxDesc_Tex(0,16),
 		BoxDesc_Box(-5,0,-7, -1,12,-3),
 		BoxDesc_Rot(0,12,-5),
-	}; 
+	};
 	static const struct BoxDesc rFront = {
 		BoxDesc_Tex(0,16),
 		BoxDesc_Box(1,0,-7, 5,12,-3),
 		BoxDesc_Rot(0,12,-5),
-	}; 
+	};
 	static const struct BoxDesc lBack = {
 		BoxDesc_Tex(0,16),
 		BoxDesc_Box(-5,0,5, -1,12,9),
 		BoxDesc_Rot(0,12,7),
-	}; 
+	};
 	static const struct BoxDesc rBack = {
 		BoxDesc_Tex(0,16),
 		BoxDesc_Box(1,0,5, 5,12,9),
@@ -1709,7 +1709,7 @@ static void SheepModel_MakeParts(void) {
 		BoxDesc_Dims(-3,16,-12, 3,22,-6),
 		BoxDesc_Bounds(-3.5f,15.5f,-12.5f, 3.5f,22.5f,-5.5f),
 		BoxDesc_Rot(0,18,-8),
-	}; 
+	};
 	static const struct BoxDesc fTorso = {
 		BoxDesc_Tex(28,8),
 		BoxDesc_Dims(-4,12,-8, 4,18,8),
@@ -1733,13 +1733,13 @@ static void SheepModel_MakeParts(void) {
 		BoxDesc_Dims(-5,6,5, -1,12,9),
 		BoxDesc_Bounds(-5.5f,5.5f,4.5f, -0.5f,12.5f,9.5f),
 		BoxDesc_Rot(0,12,7),
-	}; 
+	};
 	static const struct BoxDesc frBack = {
 		BoxDesc_Tex(0,16),
 		BoxDesc_Dims(1,6,5, 5,12,9),
 		BoxDesc_Bounds(0.5f,5.5f,4.5f, 5.5f,12.5f,9.5f),
 		BoxDesc_Rot(0,12,7),
-	}; 
+	};
 
 	BoxDesc_BuildBox(&sheep_head,          &head);
 	BoxDesc_BuildRotatedBox(&sheep_torso,  &torso);
@@ -1747,7 +1747,7 @@ static void SheepModel_MakeParts(void) {
 	BoxDesc_BuildBox(&sheep_rightLegFront, &rFront);
 	BoxDesc_BuildBox(&sheep_leftLegBack,   &lBack);
 	BoxDesc_BuildBox(&sheep_rightLegBack,  &rBack);
-	
+
 	BoxDesc_BuildBox(&fur_head,          &fHead);
 	BoxDesc_BuildRotatedBox(&fur_torso,  &fTorso);
 	BoxDesc_BuildBox(&fur_leftLegFront,  &flFront);
@@ -1841,27 +1841,27 @@ static void SkeletonModel_MakeParts(void) {
 		BoxDesc_Tex(16,16),
 		BoxDesc_Box(-4,12,-2, 4,24,2),
 		BoxDesc_Rot(0,12,0),
-	}; 
+	};
 	static const struct BoxDesc lLeg = {
 		BoxDesc_Tex(0,16),
 		BoxDesc_Box(-1,0,-1, -3,12,1),
 		BoxDesc_Rot(0,12,0),
-	}; 
+	};
 	static const struct BoxDesc rLeg = {
 		BoxDesc_Tex(0,16),
 		BoxDesc_Box(1,0,-1, 3,12,1),
 		BoxDesc_Rot(0,12,0),
-	}; 
+	};
 	static const struct BoxDesc lArm = {
 		BoxDesc_Tex(40,16),
 		BoxDesc_Box(-4,12,-1, -6,24,1),
 		BoxDesc_Rot(-5,23,0),
-	}; 
+	};
 	static const struct BoxDesc rArm = {
 		BoxDesc_Tex(40,16),
 		BoxDesc_Box(4,12,-1, 6,24,1),
 		BoxDesc_Rot(5,23,0),
-	}; 
+	};
 
 	BoxDesc_BuildBox(&skeleton_head,  &head);
 	BoxDesc_BuildBox(&skeleton_torso, &torso);
@@ -1933,23 +1933,23 @@ static void SpiderModel_MakeParts(void) {
 		BoxDesc_Tex(0,0),
 		BoxDesc_Box(-3,5,3, 3,11,-3),
 		BoxDesc_Rot(0,5,0),
-	}; 
+	};
 	static const struct BoxDesc end = {
 		BoxDesc_Tex(0,12),
 		BoxDesc_Box(-5,4,3, 5,12,15),
 		BoxDesc_Rot(0,4,9),
-	}; 
+	};
 	static const struct BoxDesc lLeg = {
 		BoxDesc_Tex(18,0),
 		BoxDesc_Box(-19,7,-1, -3,9,1),
 		BoxDesc_Rot(-3,8,0),
-	}; 
+	};
 	static const struct BoxDesc rLeg = {
 		BoxDesc_Tex(18,0),
 		BoxDesc_Box(3,7,-1, 19,9,1),
 		BoxDesc_Rot(3,8,0),
 	};
-	
+
 	BoxDesc_BuildBox(&spider_head, &head);
 	BoxDesc_BuildBox(&spider_link, &link);
 	BoxDesc_BuildBox(&spider_end,  &end);
@@ -2027,8 +2027,8 @@ static void ZombieModel_GetBounds(struct Entity* e) { Model_RetAABB(-4,0,-4, 4,3
 static struct ModelTex zombie_tex = { "zombie.png" };
 static struct Model zombie_model  = { "zombie", human_vertices, &zombie_tex,
 	Model_NoParts,       ZombieModel_Draw,
-	HumanModel_GetNameY, HumanModel_GetEyeY, 
-	HumanModel_GetSize,  ZombieModel_GetBounds 
+	HumanModel_GetNameY, HumanModel_GetEyeY,
+	HumanModel_GetSize,  ZombieModel_GetBounds
 };
 
 static void ZombieModel_Register(void) {
@@ -2181,7 +2181,7 @@ static void BlockModel_BuildParts(struct Entity* e, cc_bool sprite) {
 		max = Blocks.RenderMaxBB[bModel_block];
 
 		Drawer.X1 = min.x - 0.5f; Drawer.Y1 = min.y; Drawer.Z1 = min.z - 0.5f;
-		Drawer.X2 = max.x - 0.5f; Drawer.Y2 = max.y; Drawer.Z2 = max.z - 0.5f;		
+		Drawer.X2 = max.x - 0.5f; Drawer.Y2 = max.y; Drawer.Z2 = max.z - 0.5f;
 
 		loc = BlockModel_GetTex(FACE_YMIN); Drawer_YMin(1, Models.Cols[1], loc, &ptr);
 		loc = BlockModel_GetTex(FACE_ZMIN); Drawer_ZMin(1, Models.Cols[3], loc, &ptr);
@@ -2198,7 +2198,7 @@ static void BlockModel_DrawParts(void) {
 	int lastTexIndex, i, offset = 0, count = 0;
 
 	lastTexIndex = bModel_texIndices[0];
-	for (i = 0; i < bModel_index; i++, count += 4) 
+	for (i = 0; i < bModel_index; i++, count += 4)
 	{
 		if (bModel_texIndices[i] == lastTexIndex) continue;
 
@@ -2206,14 +2206,14 @@ static void BlockModel_DrawParts(void) {
 		Atlas1D_Bind(lastTexIndex);
 		Gfx_DrawVb_IndexedTris_Range(count, offset, DRAW_HINT_NONE);
 		lastTexIndex = bModel_texIndices[i];
-			
+
 		offset += count;
 		count   = 0;
 	}
 
 	/* Leftover vertices */
 	if (!count) return;
-	Atlas1D_Bind(lastTexIndex); 
+	Atlas1D_Bind(lastTexIndex);
 	Gfx_DrawVb_IndexedTris_Range(count, offset, DRAW_HINT_NONE);
 }
 
@@ -2423,7 +2423,7 @@ static void OnContextLost(void* obj) {
 	Gfx_DeleteDynamicVb(&Models.Vb);
 	if (Gfx.ManagedTextures) return;
 
-	for (tex = textures_head; tex; tex = tex->next) 
+	for (tex = textures_head; tex; tex = tex->next)
 	{
 		Gfx_DeleteTexture(&tex->texID);
 	}

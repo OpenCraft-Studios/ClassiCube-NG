@@ -102,7 +102,7 @@ void Inventory_AddDefault(BlockID block) {
 	if (block > BLOCK_MAX_CPE) {
 		Inventory.Map[block - 1] = block; return;
 	}
-	
+
 	for (slot = 0; slot < BLOCK_MAX_CPE; slot++) {
 		if (DefaultMapping(slot) != block) continue;
 		Inventory.Map[slot] = block;
@@ -131,7 +131,7 @@ static void OnInit(void) {
 	BlockID* inv = Inventory.Table;
 	OnReset();
 	Inventory.BlocksPerRow = Game_Version.BlocksPerRow;
-	
+
 	for (i = 0; i < 9; i++) {
 		inv[i] = Game_Version.Hotbar[i];
 	}

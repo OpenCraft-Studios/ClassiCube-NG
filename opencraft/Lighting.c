@@ -202,7 +202,7 @@ static void ClassicLighting_ResetNeighbour(int x, int y, int z, BlockID block, i
 		}
 	} else {
 		for (cy = maxCy; cy >= minCy; cy--) {
-			minY = (cy << CHUNK_SHIFT); 
+			minY = (cy << CHUNK_SHIFT);
 			maxY = (cy << CHUNK_SHIFT) + CHUNK_MAX;
 			if (maxY > World.MaxY) maxY = World.MaxY;
 

@@ -122,7 +122,7 @@ struct Entity {
 	struct AABB ModelAABB;
 	Vec3 ModelScale, Size;
 	int _skinReqID;
-	
+
 	cc_uint8 SkinType;
 	cc_uint8 SkinFetchState;
 	cc_bool NoShade, OnGround;

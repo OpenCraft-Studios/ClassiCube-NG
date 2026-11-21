@@ -57,12 +57,12 @@ struct CpeExt {
 cc_bool cpe_needD3Fix;
 static int cpe_serverExtensionsCount, cpe_pingTicks;
 
-static struct CpeExt 
+static struct CpeExt
 	clickDist_Ext       = { "ClickDistance", 1 },
 	customBlocks_Ext    = { "CustomBlocks", 1 },
-	heldBlock_Ext       = { "HeldBlock", 1 },  
+	heldBlock_Ext       = { "HeldBlock", 1 },
 	emoteFix_Ext        = { "EmoteFix", 1 },
-	textHotKey_Ext      = { "TextHotKey", 1 },  
+	textHotKey_Ext      = { "TextHotKey", 1 },
 	extPlayerList_Ext   = { "ExtPlayerList", 2 },
 	envColors_Ext       = { "EnvColors", 1 },
 	selectionCuboid_Ext = { "SelectionCuboid", 1 },
@@ -117,7 +117,7 @@ static struct CpeExt* cpe_clientExtensions[] = {
 #ifdef EXTENDED_BLOCKS
 	&extBlocks_Ext,
 #endif
-}; 
+};
 #define IsSupported(ext) (ext.serverVersion > 0)
 
 
@@ -263,13 +263,13 @@ static cc_bool wom_sendId, wom_sentId;
 static void WoM_CheckMotd(void) {
 	cc_string url; char urlBuffer[STRING_SIZE];
 	cc_string motd, host;
-	int index;	
+	int index;
 
 	motd = Server.MOTD;
 	if (!motd.length) return;
 	index = String_IndexOfConst(&motd, "cfg=");
 	if (Game_PureClassic || index == -1) return;
-	
+
 	host = String_UNSAFE_SubstringAt(&motd, index + 4);
 	String_InitArray(url, urlBuffer);
 	String_Format1(&url, "http://%s", &host);
@@ -403,7 +403,7 @@ static cc_result MapState_Read(struct MapState* m) {
 
 	if (m->sizeIndex < MAP_SIZE_LEN) {
 		left = MAP_SIZE_LEN - m->sizeIndex;
-		res  = m->stream.Read(&m->stream, &m->size[m->sizeIndex], left, &read); 
+		res  = m->stream.Read(&m->stream, &m->size[m->sizeIndex], left, &read);
 
 		m->sizeIndex += read;
 		if (res) return res;
@@ -515,7 +515,7 @@ static void Classic_Handshake(cc_uint8* data) {
 
 	hacks = &Entities.CurPlayer->Hacks;
 	UpdateUserType(hacks, *data);
-	
+
 	String_Copy(&hacks->HacksFlags,         &Server.Name);
 	String_AppendString(&hacks->HacksFlags, &Server.MOTD);
 	HacksComp_RecheckFlags(hacks);
@@ -632,7 +632,7 @@ static void Classic_LevelFinalise(cc_uint8* data) {
 		Chat_AddRaw("   &cAttempted to load map over 2 GB in size");
 		FreeMapStates();
 	}
-	
+
 #ifdef EXTENDED_BLOCKS
 	/* defer allocation of second map array if possible */
 	if (IsSupported(extBlocks_Ext) && map2.blocks) {
@@ -679,7 +679,7 @@ static void Classic_AddEntity(cc_uint8* data) {
 
 static void Classic_EntityTeleport(cc_uint8* data) {
 	EntityID id = *data++;
-	Classic_ReadAbsoluteLocation(data, id, 
+	Classic_ReadAbsoluteLocation(data, id,
 		LU_HAS_POS | LU_HAS_YAW | LU_HAS_PITCH | LU_POS_ABSOLUTE_SMOOTH | LU_ORI_INTERPOLATE);
 }
 
@@ -786,8 +786,8 @@ static void Classic_ReadAbsoluteLocation(cc_uint8* data, EntityID id, cc_uint8 f
 	}
 
 	update.flags = flags;
-	update.pos.x = x/32.0f; 
-	update.pos.y = y/32.0f; 
+	update.pos.x = x/32.0f;
+	update.pos.y = y/32.0f;
 	update.pos.z = z/32.0f;
 	update.yaw   = Math_Packed2Deg(*data++);
 	update.pitch = Math_Packed2Deg(*data++);
@@ -970,7 +970,7 @@ static void CPE_SendCpeExtInfoReply(void) {
 #endif
 	CPE_SendExtInfo(count);
 
-	for (i = 0; i < Array_Elems(cpe_clientExtensions); i++) 
+	for (i = 0; i < Array_Elems(cpe_clientExtensions); i++)
 	{
 		ext  = cpe_clientExtensions[i];
 		name = String_FromReadonly(ext->name);
@@ -1108,7 +1108,7 @@ static void CPE_SetTextHotkey(cc_uint8* data) {
 	cc_uint32 keyCode = Mem_ReadU32_BE(&data[128]);
 	cc_uint8 keyMods  = data[132];
 	int key;
-	
+
 	if (keyCode > 255) return;
 	key = Hotkeys_LWJGL[keyCode];
 	if (!key) return;
@@ -1119,10 +1119,10 @@ static void CPE_SetTextHotkey(cc_uint8* data) {
 		StoredHotkeys_Load(key, keyMods);
 	} else if (action.buffer[action.length - 1] == '\n') {
 		action.length--;
-		Hotkeys_Add(key, keyMods, &action, 
+		Hotkeys_Add(key, keyMods, &action,
 					HOTKEY_FLAG_AUTO_DEFINED);
 	} else { /* more input needed by user */
-		Hotkeys_Add(key, keyMods, &action, 
+		Hotkeys_Add(key, keyMods, &action,
 					HOTKEY_FLAG_AUTO_DEFINED | HOTKEY_FLAG_STAYS_OPEN);
 	}
 }
@@ -1184,7 +1184,7 @@ static void CPE_SetEnvCol(cc_uint8* data) {
 	PackedCol c;
 	cc_uint8 variable;
 	cc_bool invalid;
-	
+
 	variable = data[0];
 	invalid  = data[1] || data[3] || data[5];
 	/* R,G,B are actually 16 bit unsigned integers */
@@ -1193,15 +1193,15 @@ static void CPE_SetEnvCol(cc_uint8* data) {
 
 	if (variable == 0) {
 		Env_SetSkyCol(invalid        ? ENV_DEFAULT_SKY_COLOR      : c);
-	} else if (variable == 1) {	     
+	} else if (variable == 1) {
 		Env_SetCloudsCol(invalid     ? ENV_DEFAULT_CLOUDS_COLOR   : c);
-	} else if (variable == 2) {	     
+	} else if (variable == 2) {
 		Env_SetFogCol(invalid        ? ENV_DEFAULT_FOG_COLOR      : c);
-	} else if (variable == 3) {	     
+	} else if (variable == 3) {
 		Env_SetShadowCol(invalid     ? ENV_DEFAULT_SHADOW_COLOR   : c);
-	} else if (variable == 4) {	     
+	} else if (variable == 4) {
 		Env_SetSunCol(invalid        ? ENV_DEFAULT_SUN_COLOR      : c);
-	} else if (variable == 5) {	     
+	} else if (variable == 5) {
 		Env_SetSkyboxCol(invalid     ? ENV_DEFAULT_SKYBOX_COLOR   : c);
 	} else if (variable == 6) {
 		Env_SetLavaLightCol(invalid ? ENV_DEFAULT_LAVALIGHT_COLOR : c);
@@ -1211,7 +1211,7 @@ static void CPE_SetEnvCol(cc_uint8* data) {
 }
 
 static void CPE_SetBlockPermission(cc_uint8* data) {
-	BlockID block; 
+	BlockID block;
 	ReadBlock(data, block);
 
 	Blocks.CanPlace[block]  = *data++ != 0;
@@ -1293,7 +1293,7 @@ static void CPE_BulkBlockUpdate(cc_uint8* data) {
 		indices[i] = Mem_ReadU32_BE(data); data += 4;
 	}
 	data += (BULK_MAX_BLOCKS - count) * 4;
-	
+
 	for (i = 0; i < count; i++) {
 		blocks[i] = data[i];
 	}
@@ -1749,7 +1749,7 @@ static void CPE_DefineModelPart(cc_uint8* data) {
 	p.max.z = GetFloat(data + 21);
 
 	/* read u, v coords for our 6 faces */
-	for (i = 0; i < 6; i++) 
+	for (i = 0; i < 6; i++)
 	{
 		p.u1[i] = Mem_ReadU16_BE(data + 25 + (i*8 + 0));
 		p.v1[i] = Mem_ReadU16_BE(data + 25 + (i*8 + 2));
@@ -1772,7 +1772,7 @@ static void CPE_DefineModelPart(cc_uint8* data) {
 		p.flags = data[165];
 
 		data += 97;
-		for (i = 0; i < MAX_CUSTOM_MODEL_ANIMS; i++) 
+		for (i = 0; i < MAX_CUSTOM_MODEL_ANIMS; i++)
 		{
 			cc_uint8 tmp = *data++;
 			part->animType[i] = tmp & 0x3F;
@@ -1828,7 +1828,7 @@ static void BlockDefs_OnBrightnessPropertyUpdated(BlockID block, cc_uint8 oldPro
 }
 
 static TextureLoc BlockDefs_Tex(cc_uint8** ptr) {
-	TextureLoc loc; 
+	TextureLoc loc;
 	cc_uint8* data = *ptr;
 
 	if (!IsSupported(extTextures_Ext)) {
@@ -1853,7 +1853,7 @@ static BlockID BlockDefs_DefineBlockCommonStart(cc_uint8** ptr, cc_bool uniqueSi
 	oldBlocksLight = Blocks.BlocksLight[block];
 	oldBrightness = Blocks.Brightness[block];
 	Block_ResetProps(block);
-	
+
 	name = UNSAFE_GetString(data); data += STRING_SIZE;
 	Block_SetName(block, &name);
 	Blocks.Collide[block] = *data++;
@@ -1923,7 +1923,7 @@ static void BlockDefs_UndefineBlock(cc_uint8* data) {
 
 static void BlockDefs_DefineBlockExt(cc_uint8* data) {
 	Vec3 minBB, maxBB;
-	BlockID block = BlockDefs_DefineBlockCommonStart(&data, 
+	BlockID block = BlockDefs_DefineBlockCommonStart(&data,
 						blockDefsExt_Ext.serverVersion >= 2);
 
 	minBB.x = (cc_int8)(*data++) / 16.0f;

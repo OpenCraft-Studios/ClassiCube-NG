@@ -1,10 +1,10 @@
-/* 
+/*
 NOTE: This file contains the common entrypoint code for ClassiCube.
 
 This file is included by platform backend files (e.g. see Platform_Windows.c, Platform_Posix.c)
 This separation is necessary because some platforms require special 'main' functions.
 
-Eg. the webclient 'main' function loads IndexedDB, and when that has asynchronously finished, 
+Eg. the webclient 'main' function loads IndexedDB, and when that has asynchronously finished,
   then calls the 'web_main' callback - which actually runs ClassiCube
 */
 #include "Logger.h"
@@ -38,7 +38,7 @@ cc_bool Resume_Parse(struct ResumeInfo* info, cc_bool full) {
 	String_InitArray(info->mppass, info->_mppassBuffer);
 	Options_GetSecure(ROPT_MPPASS, &info->mppass);
 
-	return 
+	return
 		info->user.length && info->mppass.length &&
 		info->ip.length   && info->port.length;
 }
@@ -111,7 +111,7 @@ CC_NOINLINE static void WarnMissingArgs(int argsCount, const cc_string* args) {
 	String_InitArray(tmp, tmpBuffer);
 
 	String_AppendConst(&tmp, "Missing IP and/or port - ");
-	for (i = 0; i < argsCount; i++) { 
+	for (i = 0; i < argsCount; i++) {
 		String_AppendString(&tmp, &args[i]);
 		String_Append(&tmp, ' ');
 	}
@@ -128,12 +128,12 @@ static void SetupProgram(int argc, char** argv) {
 	Window_PreInit();
 	Gamepads_PreInit();
 	Platform_Init();
-	
+
 	res = Platform_SetDefaultCurrentDirectory(argc, argv);
 	Options_Load();
 	Window_Init();
 	Gamepads_Init();
-	
+
 	if (res) Logger_SysWarn(res, "setting current directory");
 	Platform_LogConst("Starting " GAME_APP_NAME " ..");
 	String_InitArray(Server.Address, ipBuffer);
@@ -143,7 +143,7 @@ static void SetupProgram(int argc, char** argv) {
 static cc_bool IsOpenableFile(const cc_string* path) {
 	cc_filepath str;
 	if (!SP_HasDir(path)) return false;
-	
+
 	Platform_EncodePath(&str, path);
 	return File_Exists(&str);
 }
@@ -173,7 +173,7 @@ cc_string args[GAME_MAX_CMDARGS];
 #ifdef _MSC_VER
 	/* NOTE: Make sure to comment this out before pushing a commit */
 	//cc_string rawArgs = String_FromConst("UnknownShadow200 fffff 127.0.0.1 25565");
-	//cc_string rawArgs = String_FromConst("UnknownShadow200"); 
+	//cc_string rawArgs = String_FromConst("UnknownShadow200");
 	//argsCount = String_UNSAFE_Split(&rawArgs, ' ', args, 4);
 #endif
 
@@ -194,8 +194,8 @@ cc_string args[GAME_MAX_CMDARGS];
 			WarnInvalidArg("No server to resume to", &args[0]);
 			return ARG_RESULT_INVALID_ARGS;
 		}
-	
-		if (!ParseMPArgs(&r.user, &r.mppass, &r.ip, &r.port)) 
+
+		if (!ParseMPArgs(&r.user, &r.mppass, &r.ip, &r.port))
 			return ARG_RESULT_INVALID_ARGS;
 		return ARG_RESULT_RUN_GAME;
 	}
@@ -228,7 +228,7 @@ cc_string args[GAME_MAX_CMDARGS];
 		String_Copy(&Game_Username, &args[0]);
 		return ARG_RESULT_RUN_GAME;
 	}
-	
+
 	/* 2 to 3 arguments - unsupported at present */
 	if (argsCount < 4) {
 		WarnMissingArgs(argsCount, args);

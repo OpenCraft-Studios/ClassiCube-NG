@@ -48,13 +48,13 @@ static int maxChunkUpdates;
 static int chunksCount;
 
 static void ChunkInfo_Init(struct ChunkInfo* chunk, int x, int y, int z) {
-	chunk->centreX = x + HALF_CHUNK_SIZE; chunk->centreY = y + HALF_CHUNK_SIZE; 
+	chunk->centreX = x + HALF_CHUNK_SIZE; chunk->centreY = y + HALF_CHUNK_SIZE;
 	chunk->centreZ = z + HALF_CHUNK_SIZE;
 #if CC_GFX_BACKEND != CC_GFX_BACKEND_GL11
 	chunk->vb = 0;
 #endif
 
-	chunk->visible  = true;  
+	chunk->visible  = true;
 	chunk->empty    = false;
 	chunk->allAir   = false;
 	chunk->noData   = true;
@@ -207,9 +207,9 @@ void MapRenderer_RenderNormal(float delta) {
 
 	Gfx_SetVertexFormat(VERTEX_FORMAT_TEXTURED);
 	Gfx_SetAlphaTest(true);
-	
+
 	Gfx_EnableMipmaps();
-	for (batch = 0; batch < MapRenderer_1DUsedCount; batch++) 
+	for (batch = 0; batch < MapRenderer_1DUsedCount; batch++)
 	{
 		if (normPartsCount[batch] <= 0) continue;
 		if (hasNormParts[batch] || checkNormParts[batch]) {
@@ -285,7 +285,7 @@ void MapRenderer_RenderTranslucent(float delta) {
 	Gfx_SetAlphaBlending(false);
 	Gfx_DepthOnlyRendering(true);
 
-	for (batch = 0; batch < MapRenderer_1DUsedCount; batch++) 
+	for (batch = 0; batch < MapRenderer_1DUsedCount; batch++)
 	{
 		if (tranPartsCount[batch] <= 0) continue;
 		if (hasTranParts[batch] || checkTranParts[batch]) {
@@ -301,7 +301,7 @@ void MapRenderer_RenderTranslucent(float delta) {
 	Gfx_SetDepthWrite(false); /* already calculated depth values in depth pass */
 
 	Gfx_EnableMipmaps();
-	for (batch = 0; batch < MapRenderer_1DUsedCount; batch++) 
+	for (batch = 0; batch < MapRenderer_1DUsedCount; batch++)
 	{
 		if (tranPartsCount[batch] <= 0) continue;
 		if (!hasTranParts[batch]) continue;
@@ -335,7 +335,7 @@ static void DeleteChunk(struct ChunkInfo* chunk) {
 	Gfx_DeleteVb(&chunk->vb);
 #endif
 
-	chunk->empty  = false; 
+	chunk->empty  = false;
 	chunk->allAir = false;
 	chunk->noData = true;
 	chunk->dirty  = true;
@@ -348,7 +348,7 @@ static void DeleteChunk(struct ChunkInfo* chunk) {
 	if (chunk->normalParts) {
 		ptr = chunk->normalParts;
 		for (i = 0; i < MapRenderer_1DUsedCount; i++, ptr += chunksCount) {
-			if (ptr->offset < 0) continue; 
+			if (ptr->offset < 0) continue;
 			normPartsCount[i]--;
 #if CC_GFX_BACKEND == CC_GFX_BACKEND_GL11
 			for (j = 0; j < CHUNKPART_MAX_VBS; j++) Gfx_DeleteVb(&ptr->vbs[j]);
@@ -383,7 +383,7 @@ static void BuildChunk(struct ChunkInfo* chunk, int* chunkUpdates) {
 	chunk->noData = !chunk->normalParts && !chunk->translucentParts;
 	chunk->empty  = chunk->noData;
 	if (chunk->empty) return;
-	
+
 	if (chunk->normalParts) {
 		ptr = chunk->normalParts;
 		for (i = 0; i < MapRenderer_1DUsedCount; i++, ptr += chunksCount) {
@@ -474,7 +474,7 @@ static void RefreshChunks(void) {
 	int i;
 	if (!mapChunks) return;
 
-	for (i = 0; i < chunksCount; i++) 
+	for (i = 0; i < chunksCount; i++)
 	{
 		ChunkInfo_Refresh(&mapChunks[i]);
 	}
@@ -484,7 +484,7 @@ static void DeleteChunks(void) {
 	int i;
 	if (!mapChunks) return;
 
-	for (i = 0; i < chunksCount; i++) 
+	for (i = 0; i < chunksCount; i++)
 	{
 		DeleteChunk(&mapChunks[i]);
 	}
@@ -563,12 +563,12 @@ static int UpdateChunksAndVisibility(int* chunkUpdates) {
 	struct ChunkInfo* chunk;
 	int i, j = 0, distSqr, res;
 
-	for (i = 0; i < chunksCount; i++) 
+	for (i = 0; i < chunksCount; i++)
 	{
 		chunk = sortedChunks[i];
 		if (chunk->empty) continue;
 		distSqr = distances[i];
-		
+
 		/* Auto unload chunks far away chunks */
 		if (!chunk->noData && distSqr >= buildDistSqr + 32 * 16) {
 			DeleteChunk(chunk); continue;
@@ -599,7 +599,7 @@ static int UpdateChunksStill(int* chunkUpdates) {
 	struct ChunkInfo* chunk;
 	int i, j = 0, distSqr, res;
 
-	for (i = 0; i < chunksCount; i++) 
+	for (i = 0; i < chunksCount; i++)
 	{
 		chunk = sortedChunks[i];
 		if (chunk->empty) continue;
@@ -637,7 +637,7 @@ static void UpdateChunks(float delta) {
 	int chunkUpdates = 0;
 
 	/* Build more chunks if 30 FPS or over, otherwise slowdown */
-	chunksTarget += delta < CHUNK_TARGET_TIME ? 1 : -1; 
+	chunksTarget += delta < CHUNK_TARGET_TIME ? 1 : -1;
 	Math_Clamp(chunksTarget, 4, maxChunkUpdates);
 
 	p = Entities.CurPlayer;

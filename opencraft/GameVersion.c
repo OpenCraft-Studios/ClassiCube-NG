@@ -18,11 +18,11 @@ static const cc_uint8 v6_inventory[] = {
 	BLOCK_INDIGO, BLOCK_VIOLET, BLOCK_MAGENTA, BLOCK_PINK, BLOCK_BLACK, BLOCK_GRAY, BLOCK_WHITE,
 };
 static const cc_uint8 v5_inventory[] = {
-	BLOCK_STONE, BLOCK_COBBLE, BLOCK_DIRT, BLOCK_WOOD, BLOCK_LOG, BLOCK_LEAVES, 
+	BLOCK_STONE, BLOCK_COBBLE, BLOCK_DIRT, BLOCK_WOOD, BLOCK_LOG, BLOCK_LEAVES,
 	BLOCK_SAPLING, BLOCK_SAND, BLOCK_GRAVEL, BLOCK_GLASS, BLOCK_SPONGE,
 };
 static const cc_uint8 v4_inventory[] = {
-	BLOCK_STONE, BLOCK_COBBLE, BLOCK_DIRT, BLOCK_WOOD, BLOCK_LOG, BLOCK_LEAVES, 
+	BLOCK_STONE, BLOCK_COBBLE, BLOCK_DIRT, BLOCK_WOOD, BLOCK_LOG, BLOCK_LEAVES,
 	BLOCK_SAPLING, BLOCK_SAND, BLOCK_GRAVEL,
 };
 
@@ -39,33 +39,33 @@ static const cc_uint8 v4_hotbar[] = {
 	BLOCK_STONE, BLOCK_DIRT, BLOCK_COBBLE, BLOCK_WOOD, BLOCK_SAPLING, BLOCK_LOG, BLOCK_LEAVES, BLOCK_SAND, BLOCK_GRAVEL
 };
 
-static const struct GameVersion version_cpe  = { 
-	"0.30",     true, VERSION_CPE, 
-	PROTOCOL_0030, BLOCK_MAX_CPE, 
+static const struct GameVersion version_cpe  = {
+	"0.30",     true, VERSION_CPE,
+	PROTOCOL_0030, BLOCK_MAX_CPE,
 	10, sizeof(v7_inventory), NULL,         v7_hotbar,
 	"texpacks/default.zip"
 };
 static const struct GameVersion version_0030 = {
 	"0.30",    false, VERSION_0030,
-	PROTOCOL_0030, BLOCK_OBSIDIAN, 
+	PROTOCOL_0030, BLOCK_OBSIDIAN,
 	 9, sizeof(v7_inventory), v7_inventory, v7_hotbar,
 	 "texpacks/default.zip"
 };
 static const struct GameVersion version_0023 = {
 	"0.0.23a", false, VERSION_0023,
-	PROTOCOL_0020, BLOCK_GOLD, 
+	PROTOCOL_0020, BLOCK_GOLD,
 	 8, sizeof(v6_inventory), v6_inventory, v6_hotbar,
 	 "texpacks/default_0023.zip"
 };
 static const struct GameVersion version_0019 = {
 	"0.0.19a", false, VERSION_0019,
-	PROTOCOL_0019, BLOCK_GLASS, 
+	PROTOCOL_0019, BLOCK_GLASS,
 	 6, sizeof(v5_inventory), v5_inventory, v5_hotbar,
 	 "texpacks/default_0023.zip"
 };
 static const struct GameVersion version_0017 = {
 	"0.0.17a", false, VERSION_0017,
-	PROTOCOL_0017, BLOCK_LEAVES, 
+	PROTOCOL_0017, BLOCK_LEAVES,
 	 6, sizeof(v4_inventory), v4_inventory, v4_hotbar,
 	 "texpacks/default_0023.zip"
 };

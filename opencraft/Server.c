@@ -70,7 +70,7 @@ int Ping_NextPingId(void) {
 	ping_entries[head].id   = next;
 	ping_entries[head].sent = Stopwatch_Measure();
 	ping_entries[head].recv = 0;
-	
+
 	ping_head = head;
 	return next;
 }
@@ -92,7 +92,7 @@ int Ping_AveragePingMS(void) {
 	for (i = 0; i < Array_Elems(ping_entries); i++) {
 		struct PingEntry entry = ping_entries[i];
 		if (!entry.sent || !entry.recv) continue;
-	
+
 		total += entry.recv - entry.sent;
 		measures++;
 	}
@@ -167,7 +167,7 @@ static void SPConnection_AddPart(const cc_string* text) {
 		String_Append(&tmp, sp_lastCol);
 	}
 	String_AppendString(&tmp, text);
-	
+
 	/* Replace all % with & */
 	for (i = 0; i < tmp.length; i++) {
 		if (tmp.buffer[i] == '%') tmp.buffer[i] = '&';
@@ -204,7 +204,7 @@ static cc_bool SPConnection_Tick(struct ScheduledTask2* task) {
 	if (Server.Disconnected) return true;
 	/* 60 -> 20 ticks a second */
 	if ((ticks++ % 3) != 0)  return true;
-	
+
 	Physics_Tick();
 	TexturePack_CheckPending();
 	return true;
@@ -219,7 +219,7 @@ static void SPConnection_Init(void) {
 	Server.SendBlock    = SPConnection_SendBlock;
 	Server.SendChat     = SPConnection_SendChat;
 	Server.SendData     = SPConnection_SendData;
-	
+
 	Server.SupportsFullCP437       = !Game_ClassicMode;
 	Server.SupportsPartialMessages = true;
 	Server.IsSinglePlayer          = true;
@@ -318,7 +318,7 @@ static void MPConnection_BeginConnect(void) {
 	Blocks.CanPlace[BLOCK_STILL_LAVA] = false;  Blocks.CanDelete[BLOCK_STILL_LAVA] = false;
 	Blocks.CanPlace[BLOCK_STILL_WATER] = false; Blocks.CanDelete[BLOCK_STILL_WATER] = false;
 	Blocks.CanPlace[BLOCK_BEDROCK] = false;     Blocks.CanDelete[BLOCK_BEDROCK] = false;
-	
+
 	res = Socket_ParseAddress(&Server.Address, Server.Port, addrs, &numValidAddrs);
 	if (res == ERR_INVALID_ARGUMENT) {
 		MPConnection_Fail(&invalid_reason); return;
@@ -417,9 +417,9 @@ static cc_bool MPConnection_Tick(struct ScheduledTask2* task) {
 	if (Server.Disconnected) return true;
 	if (net_connecting) { MPConnection_TickConnect(); return true; }
 
-	/* NOTE: using a read call that is a multiple of 4096 (appears to?) improve read performance */	
+	/* NOTE: using a read call that is a multiple of 4096 (appears to?) improve read performance */
 	res = Socket_Read(net_socket, net_readCurrent, 4096 * 4, &read);
-	
+
 	if (res) {
 		/* 'no data available for non-blocking read' is an expected error */
 		if (res == ReturnCode_SocketInProgess)  res = 0;
@@ -460,7 +460,7 @@ static cc_bool MPConnection_Tick(struct ScheduledTask2* task) {
 		/* If so, copy last few unprocessed bytes back to beginning of buffer */
 		/* These bytes are then later combined with subsequently read TCP packet data */
 		remaining = (int)(readEnd - readCur);
-		for (i = 0; i < remaining; i++) 
+		for (i = 0; i < remaining; i++)
 		{
 			net_readBuffer[i] = readCur[i];
 		}
@@ -528,7 +528,7 @@ static void OnNewMap(void) {
 	if (Server.IsSinglePlayer) return;
 
 	/* wipe all existing entities */
-	for (i = 0; i < MAX_NET_PLAYERS; i++) 
+	for (i = 0; i < MAX_NET_PLAYERS; i++)
 	{
 		Entities_Remove(i);
 	}

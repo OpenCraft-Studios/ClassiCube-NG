@@ -113,7 +113,7 @@ static void Entity_SetBlockModel(struct Entity* e, const cc_string* model) {
 	if (raw == -1) {
 		/* use default humanoid model */
 		e->Model      = Models.Human;
-	} else {	
+	} else {
 		e->ModelBlock = (BlockID)raw;
 		e->Model      = Model_Get(&block);
 	}
@@ -209,7 +209,7 @@ cc_bool Entity_TouchesAnyWater(struct Entity* e) {
 *#########################################################################################################################*/
 /* Copies skin data from another entity */
 static void Entity_CopySkin(struct Entity* dst, struct Entity* src) {
-	dst->TextureId	= src->TextureId;	
+	dst->TextureId	= src->TextureId;
 	dst->SkinType	= src->SkinType;
 	dst->uScale		= src->uScale;
 	dst->vScale		= src->vScale;
@@ -218,7 +218,7 @@ static void Entity_CopySkin(struct Entity* dst, struct Entity* src) {
 /* Resets skin data for the given entity */
 static void Entity_ResetSkin(struct Entity* e) {
 	e->TextureId    = 0;
-	e->uScale 		= 1.0f; 
+	e->uScale 		= 1.0f;
 	e->vScale 		= 1.0f;
 }
 
@@ -229,7 +229,7 @@ static void CheckSkin_Unchecked(struct Entity* e) {
 	int i;
 
 	skin = String_FromRawArray(e->SkinRaw);
-	for (i = 0; i < ENTITIES_MAX_COUNT; i++) 
+	for (i = 0; i < ENTITIES_MAX_COUNT; i++)
 	{
 		other = Entities.List[i];
 		if (!other) continue;
@@ -259,10 +259,10 @@ static void Entity_SetSkinAll(struct Entity* source, cc_bool reset) {
 	struct Entity* e;
 	cc_string skin, eSkin;
 	int i;
-	
+
 	skin = String_FromRawArray(source->SkinRaw);
 
-	for (i = 0; i < ENTITIES_MAX_COUNT; i++) 
+	for (i = 0; i < ENTITIES_MAX_COUNT; i++)
 	{
 		if (!Entities.List[i]) continue;
 
@@ -316,7 +316,7 @@ static cc_result EnsurePow2Skin(struct Entity* e, struct Bitmap* bmp) {
 	height = Math_NextPowOf2(bmp->height);
 	if (width == bmp->width && height == bmp->height) return 0;
 
-	scaled.width  = width; 
+	scaled.width  = width;
 	scaled.height = height;
 	scaled.scan0  = (BitmapCol*)Mem_TryAllocCleared(width * height, BITMAPCOLOR_SIZE);
 	if (!scaled.scan0) return ERR_OUT_OF_MEMORY;
@@ -429,7 +429,7 @@ static void DerefDownloadingSkin(struct Entity* src) {
 	cc_string skin = String_FromRawArray(src->SkinRaw);
 	int i;
 
-	for (i = 0; i < ENTITIES_MAX_COUNT; i++) 
+	for (i = 0; i < ENTITIES_MAX_COUNT; i++)
 	{
 		if (!Entities.List[i]) continue;
 		e  = Entities.List[i];
@@ -439,7 +439,7 @@ static void DerefDownloadingSkin(struct Entity* src) {
 		TransferSkinDownload(e, src);
 		return;
 	}
-	
+
 	Platform_Log1("Cancelling skin download: %s", &skin);
 	Http_TryCancel(src->_skinReqID);
 }
@@ -511,7 +511,7 @@ static cc_bool Entities_Tick(struct ScheduledTask2* task) {
 void Entities_RenderModels(float delta, float t) {
 	int i;
 	Gfx_SetAlphaTest(true);
-	
+
 	for (i = 0; i < ENTITIES_MAX_COUNT; i++)
 	{
 		if (!Entities.List[i]) continue;
@@ -623,7 +623,7 @@ void TabList_Set(EntityID id, const cc_string* player_, const cc_string* list, c
 	cc_string player; char playerBuffer[STRING_SIZE];
 	String_InitArray(player, playerBuffer);
 	String_AppendColorless(&player, player_);
-	
+
 	if (TabList.NameOffsets[id]) {
 		oldPlayer = TabList_UNSAFE_GetPlayer(id);
 		oldList   = TabList_UNSAFE_GetList(id);
@@ -865,7 +865,7 @@ static void LocalPlayer_DoRespawn(struct LocalPlayer* p) {
 	int y;
 
 	if (!World.Loaded) return;
-	IVec3_Floor(&pos, &spawn);	
+	IVec3_Floor(&pos, &spawn);
 
 	/* Spawn player at highest solid position to match vanilla Minecraft classic */
 	/* Only when player can noclip, since this can let you 'clip' to above solid blocks */
@@ -907,7 +907,7 @@ static void LocalPlayer_DoRespawn(struct LocalPlayer* p) {
 static cc_bool LocalPlayer_HandleRespawn(int key, struct InputDevice* device) {
 	struct LocalPlayer* p = &LocalPlayer_Instances[device->mappedIndex];
 	if (Gui.InputGrab) return false;
-	
+
 	if (p->Hacks.CanRespawn) {
 		LocalPlayer_DoRespawn(p);
 		return true;
@@ -921,7 +921,7 @@ static cc_bool LocalPlayer_HandleRespawn(int key, struct InputDevice* device) {
 static cc_bool LocalPlayer_HandleSetSpawn(int key, struct InputDevice* device) {
 	struct LocalPlayer* p = &LocalPlayer_Instances[device->mappedIndex];
 	if (Gui.InputGrab) return false;
-	
+
 	if (p->Hacks.CanRespawn) {
 
 		if (!p->Hacks.CanNoclip && !p->Base.OnGround) {
@@ -939,7 +939,7 @@ static cc_bool LocalPlayer_HandleSetSpawn(int key, struct InputDevice* device) {
 			p->Spawn.y = p->Base.Position.y;
 			p->Spawn.z = Math_Floor(p->Base.Position.z) + 0.5f;
 		}
-		
+
 		p->SpawnYaw   = p->Base.Yaw;
 		if (!Game_ClassicMode) p->SpawnPitch = p->Base.Pitch;
 
@@ -1034,7 +1034,7 @@ static void LocalPlayer_ReleaseSpeed(int key, struct InputDevice* device) {
 static cc_bool LocalPlayer_TriggerFlyUp(int key, struct InputDevice* device) {
 	struct HacksComp* hacks = &LocalPlayer_Instances[device->mappedIndex].Hacks;
 	if (Gui.InputGrab) return false;
-	
+
 	hacks->FlyingUp = true;
 	return hacks->CanFly && hacks->Enabled;
 }
@@ -1042,7 +1042,7 @@ static cc_bool LocalPlayer_TriggerFlyUp(int key, struct InputDevice* device) {
 static cc_bool LocalPlayer_TriggerFlyDown(int key, struct InputDevice* device) {
 	struct HacksComp* hacks = &LocalPlayer_Instances[device->mappedIndex].Hacks;
 	if (Gui.InputGrab) return false;
-	
+
 	hacks->FlyingDown = true;
 	return hacks->CanFly && hacks->Enabled;
 }
@@ -1097,17 +1097,17 @@ cc_bool LocalPlayer_CheckCanZoom(struct LocalPlayer* p) {
 void LocalPlayers_MoveToSpawn(struct LocationUpdate* update) {
 	struct LocalPlayer* p;
 	int i;
-	
+
 	for (i = 0; i < Game_NumStates; i++)
 	{
 		p = &LocalPlayer_Instances[i];
 		p->Base.VTABLE->SetLocation(&p->Base, update);
-		
+
 		if (update->flags & LU_HAS_POS)   p->Spawn      = update->pos;
 		if (update->flags & LU_HAS_YAW)   p->SpawnYaw   = update->yaw;
 		if (update->flags & LU_HAS_PITCH) p->SpawnPitch = update->pitch;
 	}
-	
+
 	/* TODO: This needs to be before new map... */
 	Camera.CurrentPos = Camera.Active->GetPosition(0.0f);
 }

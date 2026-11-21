@@ -3,7 +3,7 @@
 #include <Core.h>
 CC_BEGIN_HEADER
 
-/* 
+/*
 Represents a connection to either a multiplayer or an internal singleplayer server
 Copyright 2014-2025 ClassiCube | Licensed under BSD-3
 */

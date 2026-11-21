@@ -28,8 +28,8 @@ int Mem_Equal(const void* a, const void* b, cc_uint32 numBytes) {
 	const char* src = (const char*)a;
 	const char* dst = (const char*)b;
 
-	while (numBytes--) { 
-		if (*src++ != *dst++) return false; 
+	while (numBytes--) {
+		if (*src++ != *dst++) return false;
 	}
 	return true;
 }
@@ -50,10 +50,10 @@ void* Mem_Copy(void* dst, const void* src, unsigned numBytes) {
 	return dst;
 }
 
-void* Mem_Move(void* dst, const void* src, unsigned numBytes) { 
+void* Mem_Move(void* dst, const void* src, unsigned numBytes) {
 	char* sp = (char*)src;
 	char* dp = (char*)dst;
-	
+
 	/* Check if destination range overlaps source range */
 	/* If this happens, then need to copy backwards */
 	if (dp >= sp && dp < (sp + numBytes)) {
@@ -76,7 +76,7 @@ void* Mem_Move(void* dst, const void* src, unsigned numBytes) { return (void*)me
 /*########################################################################################################################*
 *---------------------------------------------------Memory management-----------------------------------------------------*
 *#########################################################################################################################*/
-CC_NOINLINE static void AbortOnAllocFailed(const char* place) {	
+CC_NOINLINE static void AbortOnAllocFailed(const char* place) {
 	cc_string log; char logBuffer[STRING_SIZE+20 + 1];
 	String_InitArray_NT(log, logBuffer);
 
@@ -106,7 +106,7 @@ void* Mem_Realloc(void* mem, cc_uint32 numElems, cc_uint32 elemsSize, const char
 static CC_NOINLINE cc_uint32 CalcMemSize(cc_uint32 numElems, cc_uint32 elemsSize) {
 	cc_uint32 numBytes;
 	if (!numElems || !elemsSize) return 1; /* treat 0 size as 1 byte */
-	
+
 	numBytes = numElems * elemsSize;
 	if (numBytes / elemsSize != numElems) return 0; /* Overflow */
 	return numBytes;
@@ -167,11 +167,11 @@ static cc_bool gameHasArgs;
 
 static CC_INLINE cc_result SetGameArgs(const cc_string* args, int numArgs) {
 	int i;
-	for (i = 0; i < numArgs; i++) 
+	for (i = 0; i < numArgs; i++)
 	{
 		String_CopyToRawArray(gameArgs[i], &args[i]);
 	}
-	
+
 	gameHasArgs = true;
 	gameNumArgs = numArgs;
 	return 0;
@@ -179,11 +179,11 @@ static CC_INLINE cc_result SetGameArgs(const cc_string* args, int numArgs) {
 
 static CC_INLINE int GetGameArgs(cc_string* args) {
 	int i, count = gameNumArgs;
-	for (i = 0; i < count; i++) 
+	for (i = 0; i < count; i++)
 	{
 		args[i] = String_FromRawArray(gameArgs[i]);
 	}
-	
+
 	/* clear arguments so after game is closed, launcher is started */
 	gameNumArgs = 0;
 	return count;
@@ -195,13 +195,13 @@ int Platform_GetCommandLineArgs(int argc, STRING_REF char** argv, cc_string* arg
 	/* Consoles *sometimes* doesn't use argv[0] for program name and so argc will be 0 */
 	//* (e.g. when running via some emulators) */
 	if (!argc) return 0;
-	
+
 	argc--; argv++; /* skip executable path argument */
 
 	int count = min(argc, GAME_MAX_CMDARGS);
 	Platform_Log1("ARGS: %i", &count);
-	
-	for (int i = 0; i < count; i++) 
+
+	for (int i = 0; i < count; i++)
 	{
 		args[i] = String_FromReadonly(argv[i]);
 		Platform_Log2("  ARG %i = %c", &i, argv[i]);
@@ -255,10 +255,10 @@ cc_bool DynamicLib_LoadAll(const cc_string* path, const struct DynamicLibSym* sy
 	for (i = 0; i < count; i++) {
 		addr = DynamicLib_Get2(lib, syms[i].name);
 		*syms[i].symAddr = addr;
-				
+
 		if (addr || !syms[i].required) continue;
 		symName = String_FromReadonly(syms[i].name);
-		
+
 		Logger_DynamicLibWarn("loading symbol", &symName);
 		foundAllRequired = false;
 	}
@@ -276,7 +276,7 @@ static void EncipherBlock(cc_uint32* v, const cc_uint32* key, cc_string* dst) {
 	cc_uint32 v0 = v[0], v1 = v[1], sum = 0, delta = 0x9E3779B9;
 	int i;
 
-	for (i = 0; i < 12; i++) 
+	for (i = 0; i < 12; i++)
 	{
 		v0  += (((v1 << 4) ^ (v1 >> 5)) + v1) ^ (sum + key[sum & 3]);
 		sum += delta;
@@ -290,7 +290,7 @@ static void DecipherBlock(cc_uint32* v, const cc_uint32* key) {
 	cc_uint32 v0 = v[0], v1 = v[1], delta = 0x9E3779B9, sum = delta * 12;
 	int i;
 
-	for (i = 0; i < 12; i++) 
+	for (i = 0; i < 12; i++)
 	{
 		v1  -= (((v0 << 4) ^ (v0 >> 5)) + v0) ^ (sum + key[(sum>>11) & 3]);
 		sum -= delta;
@@ -300,7 +300,7 @@ static void DecipherBlock(cc_uint32* v, const cc_uint32* key) {
 }
 
 #define ENC1 0xCC005EC0
-#define ENC2 0x0DA4A0DE 
+#define ENC2 0x0DA4A0DE
 #define ENC3 0xC0DED000
 #define MACHINEID_LEN 32
 #define ENC_SIZE 8 /* 2 32 bit ints per block */
@@ -318,7 +318,7 @@ cc_result Platform_Encrypt(const void* data, int len, cc_string* dst) {
 	EncipherBlock(header + 0, key, dst);
 	EncipherBlock(header + 2, key, dst);
 
-	for (; len > 0; len -= ENC_SIZE, src += ENC_SIZE) 
+	for (; len > 0; len -= ENC_SIZE, src += ENC_SIZE)
 	{
 		header[0] = 0; header[1] = 0;
 		Mem_Copy(header, src, min(len, ENC_SIZE));
@@ -347,7 +347,7 @@ cc_result Platform_Decrypt(const void* data, int len, cc_string* dst) {
 	if (header[3] > len) return ERR_INVALID_ARGUMENT;
 	dataLen = header[3];
 
-	for (; dataLen > 0; len -= ENC_SIZE, src += ENC_SIZE, dataLen -= ENC_SIZE) 
+	for (; dataLen > 0; len -= ENC_SIZE, src += ENC_SIZE, dataLen -= ENC_SIZE)
 	{
 		header[0] = 0; header[1] = 0;
 		Mem_Copy(header, src, min(len, ENC_SIZE));
@@ -380,11 +380,11 @@ static CC_INLINE cc_bool ParseIPv4Address(const cc_string* addr, cc_uint32* ip) 
 		cc_uint8 bytes[4];
 		cc_uint32 value;
 	} raw;
-	
+
 	/* 4+1 in case user tries '1.1.1.1.1' */
 	if (String_UNSAFE_Split(addr, '.', parts, 4 + 1) != 4) return false;
 
-	for (i = 0; i < 4; i++) 
+	for (i = 0; i < 4; i++)
 	{
 		if (!Convert_ParseUInt8(&parts[i], &raw.bytes[i])) return false;
 	}

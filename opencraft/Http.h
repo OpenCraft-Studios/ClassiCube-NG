@@ -4,7 +4,7 @@
 #include <Core.h>
 CC_BEGIN_HEADER
 
-/* 
+/*
 Aysnchronously performs http GET, HEAD, and POST requests
   Typically this is used to download skins, texture packs, etc
 Copyright 2014-2025 ClassiCube | Licensed under BSD-3

@@ -34,7 +34,7 @@ void Particle_DoRender(const Vec2* size, const Vec3* pos, const TextureRec* rec,
 	sX = size->x * 0.5f; sY = size->y * 0.5f;
 	centre = *pos; centre.y += sY;
 	view   = &Gfx.View;
-	
+
 	aX = view->row1.x * sX; aY = view->row2.x * sX; aZ = view->row3.x * sX; /* right * size.x * 0.5f */
 	bX = view->row1.y * sY; bY = view->row2.y * sY; bZ = view->row3.y * sY; /* up    * size.y * 0.5f */
 
@@ -67,7 +67,7 @@ static cc_bool ClipY(struct Particle* p, int y, cc_bool topFace, CanPassThroughF
 	cc_bool collideVer;
 
 	if (y < 0) {
-		p->nextPos.y = ENTITY_ADJUSTMENT; 
+		p->nextPos.y = ENTITY_ADJUSTMENT;
 		p->lastPos.y = ENTITY_ADJUSTMENT;
 
 		Vec3_Set(p->velocity, 0,0,0);
@@ -111,7 +111,7 @@ static cc_bool PhysicsTick(struct Particle* p, float gravity, CanPassThroughFunc
 
 	p->velocity.y -= gravity * delta;
 	begY = Math_Floor(p->nextPos.y);
-	
+
 	Vec3_Mul1(&velocity, &p->velocity, delta * 3.0f);
 	Vec3_Add(&p->nextPos, &p->nextPos, &velocity);
 	endY = Math_Floor(p->nextPos.y);
@@ -163,8 +163,8 @@ static void Rain_Render(float t) {
 	struct VertexTextured* data;
 	int i;
 	if (!rain_count) return;
-	
-	data = (struct VertexTextured*)Gfx_LockDynamicVb(particles_VB, 
+
+	data = (struct VertexTextured*)Gfx_LockDynamicVb(particles_VB,
 										VERTEX_FORMAT_TEXTURED, rain_count * 4);
 	for (i = 0; i < rain_count; i++) {
 		RainParticle_Render(&rain_Particles[i], t, data);
@@ -249,7 +249,7 @@ static void TerrainParticle_Render(struct TerrainParticle* p, float t, struct Ve
 
 	Vec3_Lerp(&pos, &p->base.lastPos, &p->base.nextPos, t);
 	size.x = p->base.size * 0.015625f; size.y = size.x;
-	
+
 	if (!Blocks.Brightness[p->block]) {
 		x = Math_Floor(pos.x); y = Math_Floor(pos.y); z = Math_Floor(pos.z);
 		col = Lighting.Color_XSide(x, y, z);
@@ -282,10 +282,10 @@ static void Terrain_Render(float t) {
 	int i, index;
 	if (!terrain_count) return;
 
-	data = (struct VertexTextured*)Gfx_LockDynamicVb(particles_VB, 
+	data = (struct VertexTextured*)Gfx_LockDynamicVb(particles_VB,
 										VERTEX_FORMAT_TEXTURED, terrain_count * 4);
 	Terrain_Update1DCounts();
-	for (i = 0; i < terrain_count; i++) 
+	for (i = 0; i < terrain_count; i++)
 	{
 		index = Atlas1D_Index(terrain_particles[i].texLoc);
 		ptr   = data + terrain_1DIndices[index];
@@ -295,7 +295,7 @@ static void Terrain_Render(float t) {
 	}
 
 	Gfx_UnlockDynamicVb(particles_VB);
-	for (i = 0; i < Atlas1D.Count; i++) 
+	for (i = 0; i < Atlas1D.Count; i++)
 	{
 		int partCount = terrain_1DCount[i];
 		if (!partCount) continue;
@@ -307,7 +307,7 @@ static void Terrain_Render(float t) {
 }
 
 static void Terrain_RemoveAt(int i) {
-	for (; i < terrain_count - 1; i++) 
+	for (; i < terrain_count - 1; i++)
 	{
 		terrain_particles[i] = terrain_particles[i + 1];
 	}
@@ -316,7 +316,7 @@ static void Terrain_RemoveAt(int i) {
 
 static void Terrain_Tick(float delta) {
 	int i;
-	for (i = 0; i < terrain_count; i++) 
+	for (i = 0; i < terrain_count; i++)
 	{
 		if (TerrainParticle_Tick(&terrain_particles[i], delta)) {
 			Terrain_RemoveAt(i); i--;
@@ -336,7 +336,7 @@ void Particles_BreakBlockEffect(IVec3 coords, BlockID old, BlockID now) {
 	int minX, minZ, maxX, maxZ;
 	int minU, minV, maxU, maxV;
 	int maxUsedU, maxUsedV;
-	
+
 	/* per-particle variables */
 	float cellX, cellY, cellZ;
 	Vec3 cell;
@@ -345,7 +345,7 @@ void Particles_BreakBlockEffect(IVec3 coords, BlockID old, BlockID now) {
 	if (now != BLOCK_AIR || Blocks.Draw[old] == DRAW_GAS) return;
 	IVec3_ToVec3(&origin, &coords);
 	loc = Block_Tex(old, FACE_XMIN);
-	
+
 	baseRec = Atlas1D_TexRec(loc, 1, &texIndex);
 	uScale  = (1.0f/16.0f); vScale = (1.0f/16.0f) * Atlas1D.InvTileSize;
 
@@ -390,7 +390,7 @@ void Particles_BreakBlockEffect(IVec3 coords, BlockID old, BlockID now) {
 				rec.v2 = rec.v1 + 4 * vScale;
 				rec.u2 = min(rec.u2, maxU2) - 0.01f * uScale;
 				rec.v2 = min(rec.v2, maxV2) - 0.01f * vScale;
-		
+
 				Vec3_Add(&p->base.lastPos, &origin, &cell);
 				p->base.nextPos  = p->base.lastPos;
 				p->base.lifetime = 0.3f + Random_Float(&rnd) * 1.2f;
@@ -427,7 +427,7 @@ static cc_uint8 collideFlags;
 
 static cc_bool CustomParticle_CanPass(BlockID block) {
 	cc_uint8 draw, collide;
-	
+
 	draw = Blocks.Draw[block];
 	if (draw == DRAW_TRANSPARENT_THICK && !(collideFlags & LEAF_COLLIDES)) return true;
 
@@ -476,7 +476,7 @@ static void Custom_Render(float t) {
 	int i;
 	if (!custom_count) return;
 
-	data = (struct VertexTextured*)Gfx_LockDynamicVb(particles_VB, 
+	data = (struct VertexTextured*)Gfx_LockDynamicVb(particles_VB,
 										VERTEX_FORMAT_TEXTURED, custom_count * 4);
 	for (i = 0; i < custom_count; i++) {
 		CustomParticle_Render(&custom_particles[i], t, data);
@@ -513,7 +513,7 @@ void Particles_CustomEffect(int effectID, float x, float y, float z, float origi
 
 	origin.x = originX; origin.y = originY; origin.z = originZ;
 
-	for (i = 0; i < count; i++) 
+	for (i = 0; i < count; i++)
 	{
 		if (custom_count == PARTICLES_MAX) Custom_RemoveAt(0);
 		p = &custom_particles[custom_count++];
@@ -533,7 +533,7 @@ void Particles_CustomEffect(int effectID, float x, float y, float z, float origi
 		p->base.lastPos.x = x + offset.x * d;
 		p->base.lastPos.y = y + offset.y * d;
 		p->base.lastPos.z = z + offset.z * d;
-		
+
 		Vec3_Sub(&delta, &p->base.lastPos, &origin);
 		Vec3_Normalise(&delta);
 
@@ -600,7 +600,7 @@ static struct TextureEntry particles_entry = { "particles.png", ParticlesPngProc
 
 
 static void OnContextLost(void* obj) {
-	Gfx_DeleteDynamicVb(&particles_VB); 
+	Gfx_DeleteDynamicVb(&particles_VB);
 
 	if (Gfx.ManagedTextures) return;
 	Gfx_DeleteTexture(&particles_TexId);
