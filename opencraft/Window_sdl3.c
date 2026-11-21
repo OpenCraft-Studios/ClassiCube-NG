@@ -1,5 +1,8 @@
+#if CC_WIN_BACKEND == CC_WIN_BACKEND_SDL3 && !defined(_CLANGD)
+#error Do not compile what you're not going to use!
+#endif
+
 #include <Core.h>
-#if CC_WIN_BACKEND == CC_WIN_BACKEND_SDL3
 #undef CC_BUILD_EGL /* eglCreateWindowSurface can't use an SDL window */
 #include "_WindowBase.h"
 #include <Graphics.h>
@@ -27,16 +30,16 @@ static void Window_SDLFail(const char* place) {
 
 void Window_PreInit(void) {
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD);
-	#ifdef CC_BUILD_FLATPAK
+#ifdef CC_BUILD_FLATPAK
 	SDL_SetHint(SDL_HINT_APP_ID, "net.classicube.flatpak.client");
-	#endif
+#endif
 	DisplayInfo.CursorVisible = true;
 }
 
 void Window_Init(void) {
 	int displayID = SDL_GetPrimaryDisplay();
 	Input.Sources = INPUT_SOURCE_NORMAL;
-	
+
 	const SDL_DisplayMode* mode = SDL_GetDesktopDisplayMode(displayID);
 	dlg_event = SDL_RegisterEvents(1);
 
@@ -128,7 +131,7 @@ int Window_GetWindowState(void) {
 cc_result Window_EnterFullscreen(void) {
 	return SDL_SetWindowFullscreen(win_handle, true);
 }
-cc_result Window_ExitFullscreen(void) { 
+cc_result Window_ExitFullscreen(void) {
 	return SDL_SetWindowFullscreen(win_handle, false);
 }
 
@@ -138,7 +141,7 @@ int Window_IsObscured(void) {
 }
 
 void Window_Show(void) {
-	 SDL_ShowWindow(win_handle); 
+	 SDL_ShowWindow(win_handle);
 }
 
 void Window_SetSize(int width, int height) {
@@ -208,12 +211,12 @@ static int MapNativeKey(SDL_Keycode k) {
 		case SDLK_RSHIFT: return CCKEY_RSHIFT;
 		case SDLK_RALT: return CCKEY_RALT;
 		case SDLK_RGUI: return CCKEY_RWIN;
-		
+
 		case SDLK_MEDIA_NEXT_TRACK: return CCKEY_MEDIA_NEXT;
 		case SDLK_MEDIA_PREVIOUS_TRACK: return CCKEY_MEDIA_PREV;
 		case SDLK_MEDIA_PLAY: return CCKEY_MEDIA_PLAY;
 		case SDLK_MEDIA_STOP: return CCKEY_MEDIA_STOP;
-		
+
 		case SDLK_MUTE:  return CCKEY_VOLUME_MUTE;
 		case SDLK_VOLUMEDOWN: return CCKEY_VOLUME_DOWN;
 		case SDLK_VOLUMEUP:   return CCKEY_VOLUME_UP;
@@ -290,12 +293,12 @@ void Window_ProcessEvents(float delta) {
 			Gfx_LoseContext("SDL device reset event");
 			Gfx_RecreateContext();
 			break;
-			
-			
+
+
 		case SDL_EVENT_WINDOW_EXPOSED:
 			Event_RaiseVoid(&WindowEvents.RedrawNeeded);
 			break;
-		case SDL_EVENT_WINDOW_RESIZED: // TODO SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED 
+		case SDL_EVENT_WINDOW_RESIZED: // TODO SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED
 			RefreshWindowBounds();
 			Event_RaiseVoid(&WindowEvents.Resized);
 			break;
@@ -341,7 +344,7 @@ static void Cursor_DoSetVisible(cc_bool visible) {
 
 static void ShowDialogCore(const char* title, const char* msg) {
 	SDL_ShowSimpleMessageBox(0, title, msg, win_handle);
-}	
+}
 
 static FileDialogCallback dlgCallback;
 static SDL_DialogFileFilter* save_filters;
@@ -349,11 +352,11 @@ static SDL_DialogFileFilter* save_filters;
 static void ProcessDialogEvent(SDL_Event* e) {
 	char* result = e->user.data1;
 	int length   = e->user.code;
-	
+
 	cc_string path; char pathBuffer[1024];
 	String_InitArray(path, pathBuffer);
 	String_AppendUtf8(&path, result, length);
-	
+
 	dlgCallback(&path);
 	dlgCallback = NULL;
 	Mem_Free(result);
@@ -363,15 +366,15 @@ static void DialogCallback(void *userdata, const char* const* filelist, int filt
 	if (!filelist) return; /* Error occurred */
 	const char* result = filelist[0];
 	if (!result) return; /* No file provided */
-	
+
 	char* path    = Mem_Alloc(NATIVE_STR_LEN, 1, "Dialog path");
 	cc_string str = String_Init(path, 0, NATIVE_STR_LEN);
 	String_AppendUtf8(&str, result, String_Length(result));
-	
+
 	// May need to add file extension when saving, e.g. on Windows
 	if (save_filters && filter >= 0 && save_filters[filter].pattern)
 		String_Format1(&str, ".%c", save_filters[filter].pattern);
-	
+
 	// Dialog callback may not be called from the main thread
 	//  (E.g. on windows it is called from a background thread)
 	SDL_Event e = { 0 };
@@ -386,7 +389,7 @@ cc_result Window_OpenFileDialog(const struct OpenFileDialogArgs* args) {
 	char* pattern = Mem_Alloc(301, 1, "OpenDialog pattern");
 	SDL_DialogFileFilter* filters = Mem_Alloc(2, sizeof(SDL_DialogFileFilter), "OpenDialog filters");
 	int i;
-	
+
 	cc_string str = String_Init(pattern, 0, 300);
 	for (i = 0; ; i++)
 	{
@@ -394,11 +397,11 @@ cc_result Window_OpenFileDialog(const struct OpenFileDialogArgs* args) {
 		if (i) String_Append(&str, ';');
 		String_AppendConst(&str, args->filters[i] + 1);
 	}
-	
+
 	pattern[str.length] = '\0';
 	filters[0].name     = args->description;
 	filters[0].pattern  = pattern;
-	
+
 	dlgCallback  = args->Callback;
 	save_filters = NULL;
 	SDL_ShowOpenFileDialog(DialogCallback, NULL, win_handle, filters, 1, NULL, false);
@@ -412,17 +415,17 @@ cc_result Window_SaveFileDialog(const struct SaveFileDialogArgs* args) {
 	SDL_DialogFileFilter* filters = Mem_Alloc(MAX_SAVE_DIALOG_FILTERS + 1, sizeof(SDL_DialogFileFilter), "SaveDialog filters");
 	int i;
 	String_EncodeUtf8(defName, &args->defaultName);
-	
+
 	for (i = 0; i < MAX_SAVE_DIALOG_FILTERS; i++)
 	{
 		if (!args->filters[i]) break;
 		filters[i].name    = args->titles[i];
 		filters[i].pattern = args->filters[i] + 1; // skip .
 	}
-	
+
 	filters[i].name    = NULL;
 	filters[i].pattern = NULL;
-	
+
 	dlgCallback  = args->Callback;
 	save_filters = filters;
 	SDL_ShowSaveFileDialog(DialogCallback, NULL, win_handle, filters, i, defName);
@@ -506,7 +509,7 @@ void Gamepads_Init(void) {
 	int count = 0;
 	SDL_JoystickID* joysticks = SDL_GetGamepads(&count);
 
-    for (int i = 0; i < count && i < INPUT_MAX_GAMEPADS; i++) 
+    for (int i = 0; i < count && i < INPUT_MAX_GAMEPADS; i++)
 	{
 		controllers[i] = SDL_OpenGamepad(joysticks[i]);
     }
@@ -528,7 +531,7 @@ static void ProcessGamepadButtons(int port, SDL_Gamepad* gp) {
 	Gamepad_SetButton(port, CCPAD_START,  SDL_GetGamepadButton(gp, SDL_GAMEPAD_BUTTON_START));
 	Gamepad_SetButton(port, CCPAD_LSTICK, SDL_GetGamepadButton(gp, SDL_GAMEPAD_BUTTON_LEFT_STICK));
 	Gamepad_SetButton(port, CCPAD_RSTICK, SDL_GetGamepadButton(gp, SDL_GAMEPAD_BUTTON_RIGHT_STICK));
-	
+
 	Gamepad_SetButton(port, CCPAD_UP,    SDL_GetGamepadButton(gp, SDL_GAMEPAD_BUTTON_DPAD_UP));
 	Gamepad_SetButton(port, CCPAD_DOWN,  SDL_GetGamepadButton(gp, SDL_GAMEPAD_BUTTON_DPAD_DOWN));
 	Gamepad_SetButton(port, CCPAD_LEFT,  SDL_GetGamepadButton(gp, SDL_GAMEPAD_BUTTON_DPAD_LEFT));
@@ -543,7 +546,7 @@ static void ProcessJoystick(int port, SDL_Gamepad* gp, int axis, float delta) {
 	// May not be exactly 0 on actual hardware
 	if (Math_AbsI(x) <= 1024) x = 0;
 	if (Math_AbsI(y) <= 1024) y = 0;
-	
+
 	Gamepad_SetAxis(port, axis, x / PAD_AXIS_SCALE, -y / PAD_AXIS_SCALE, delta);
 }
 
@@ -611,5 +614,4 @@ void GLContext_SetVSync(cc_bool vsync) {
 	SDL_GL_SetSwapInterval(vsync);
 }
 void GLContext_GetApiInfo(cc_string* info) { }
-#endif
 #endif

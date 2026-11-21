@@ -1,9 +1,12 @@
+#if CC_GFX_BACKEND != CC_GFX_BACKEND_GL2 && !defined(_CLANGD)
+#error Do not compile what you're not going to use!
+#endif
+
 /* Silence deprecation warnings on modern macOS/iOS */
 #define GL_SILENCE_DEPRECATION
 #define GLES_SILENCE_DEPRECATION
 
 #include <Core.h>
-#if CC_GFX_BACKEND == CC_GFX_BACKEND_GL2
 #include "_GraphicsBase.h"
 #include "Errors.h"
 #include <Window.h>
@@ -738,4 +741,3 @@ void Gfx_DrawIndexedTris_T2fC4b(int verticesCount, int startVertex, DrawHints hi
 		glDrawElements(GL_TRIANGLES, ICOUNT(verticesCount), GL_UNSIGNED_SHORT, uint_to_ptr(startVertex * 3));
 	}
 }
-#endif

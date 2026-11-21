@@ -1,21 +1,23 @@
-#include <Core.h>
-#if CC_WIN_BACKEND == CC_WIN_BACKEND_BEOS
+#if CC_WIN_BACKEND != CC_WIN_BACKEND_BEOS && !defined(_CLANGD)
+#error Do not compile what you're not going to use!
+#endif
 
+#include <Core.h>
 extern "C" {
-#include "_WindowBase.h"
-#include <Graphics.h>
-#include "String_.h"
-#include "Funcs.h"
-#include "Bitmap.h"
-#include "Errors.h"
-#include "Utils.h"
+	#include "_WindowBase.h"
+	#include <Graphics.h>
+	#include "String_.h"
+	#include "Funcs.h"
+	#include "Bitmap.h"
+	#include "Errors.h"
+	#include "Utils.h"
 }
 // Other
 #include <errno.h>
 // AppKit
-#include <Application.h> 
-#include <Clipboard.h> 
-#include <Message.h> 
+#include <Application.h>
+#include <Clipboard.h>
+#include <Message.h>
 // GLKit
 #include <GL/gl.h>
 #include <GLView.h>
@@ -49,7 +51,7 @@ struct CCEvent {
 #define EVENTS_DEFAULT_MAX 30
 static void* events_mutex;
 static int events_count, events_capacity;
-static CCEvent* events_list, events_default[EVENTS_DEFAULT_MAX];
+static CCEvent *events_list, events_default[EVENTS_DEFAULT_MAX];
 
 static void Events_Init(void) {
 	events_mutex    = Mutex_Create("BeOS events");
@@ -748,5 +750,3 @@ void GLContext_SetVSync(cc_bool vsync) {
 }
 void GLContext_GetApiInfo(cc_string* info) { }
 #endif // CC_GFX_BACKEND_IS_GL() && !CC_BUILD_EGL
-
-#endif

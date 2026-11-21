@@ -261,7 +261,7 @@ static void FlushLightQueue(cc_bool isLamp, cc_bool refreshChunk) {
 	}
 }
 
-cc_uint8 GetBlockBrightness(BlockID curBlock, cc_bool isLamp) {
+static cc_uint8 GetBlockBrightness(BlockID curBlock, cc_bool isLamp) {
 	if (isLamp) return Blocks.Brightness[curBlock] >> FANCY_LIGHTING_LAMP_SHIFT;
 	return Blocks.Brightness[curBlock] & FANCY_LIGHTING_MAX_LEVEL;
 }

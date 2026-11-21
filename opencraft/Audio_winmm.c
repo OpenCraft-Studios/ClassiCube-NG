@@ -1,6 +1,8 @@
-#include <Core.h>
+#if CC_AUD_BACKEND != CC_AUD_BACKEND_WINMM && !defined(_CLANGD)
+#error Do not compile what you're not going to use!
+#endif
 
-#if CC_AUD_BACKEND == CC_AUD_BACKEND_WINMM
+#include <Core.h>
 #define WIN32_LEAN_AND_MEAN
 #define NOSERVICE
 #define NOMCX
@@ -205,5 +207,3 @@ cc_bool Audio_DescribeError(cc_result res, cc_string* dst) {
 	String_AppendConst(dst, buffer);
 	return true;
 }
-#endif
-

@@ -1,6 +1,8 @@
-#include <Core.h>
-#if defined CC_BUILD_MACCLASSIC
+#if !defined(CC_BUILD_MACCLASSIC) && !defined(_CLANGD)
+#error Do not compile what you're not going to use!
+#endif
 
+#include <Core.h>
 #include "_WindowBase.h"
 #include "String_.h"
 #include "Funcs.h"
@@ -45,7 +47,7 @@ static void Console_EraseLine(int y) {
 static void Console_Init(void) {
 	Rect r = qd.screenBits.bounds;
 	r.top += 40;
-	InsetRect(&r, 5, 5);  
+	InsetRect(&r, 5, 5);
 
 	con_win = NewWindow(NULL, &r, "\pConsole log", true, 0, (WindowPtr)-1, true, 0);
 	GrafPtr savedPort;
@@ -84,7 +86,7 @@ void Console_Write(const char* msg, int len) {
 	GetPort(&savedPort);
 	SetPort(con_win);
 
-	for (int i = 0; i < len; i++) 
+	for (int i = 0; i < len; i++)
 	{
 		DrawChar(msg[i]);
 		cursorX++;
@@ -186,13 +188,13 @@ static void DoCreateWindow(int width, int height) {
 	if (Window_Main.Exists) return;
 
 	Rect r = qd.screenBits.bounds;
-    r.top += 40;
-    InsetRect(&r, 100, 100);
+	r.top += 40;
+	InsetRect(&r, 100, 100);
 
 	if (hasColorQD) {
-    	win = NewCWindow(NULL, &r, "\pClassiCube", true, documentProc, (WindowPtr)-1, true, 0);
+		win = NewCWindow(NULL, &r, "\pClassiCube", true, documentProc, (WindowPtr)-1, true, 0);
 	} else {
-		win = NewWindow( NULL, &r, "\pClassiCube", true, documentProc, (WindowPtr)-1, true, 0);
+		win = NewWindow(NULL, &r, "\pClassiCube", true, documentProc, (WindowPtr)-1, true, 0);
 	}
 
 	if (hasColorQD) {
@@ -204,11 +206,11 @@ static void DoCreateWindow(int width, int height) {
 	useGWorld = hasColorQD;
 	SetPort(win);
 	r = win->portRect;
-	
+
 	Window_Main.Width    = r.right  - r.left;
 	Window_Main.Height   = r.bottom - r.top;
 	Window_Main.Focused  = true;
-	
+
 	Window_Main.Exists   = true;
 	Window_Main.UIScaleX = DEFAULT_UI_SCALE_X;
 	Window_Main.UIScaleY = DEFAULT_UI_SCALE_Y;
@@ -273,48 +275,52 @@ static void HandleMouseDown(EventRecord* event) {
 	MAC_WindowPartCode part;
 	WindowPtr window;
 	Point localPoint;
-	long res;        
+	long res;
 	int x, y;
 
 	part = FindWindow(event->where, &window);
-	switch (part)
-	{
-		 case inMenuBar:
-			HiliteMenu(0);
-			break;
-		case inSysWindow:
-			SystemClick(event, window);
-			break;
-		case inContent:
-			SetPt(&localPoint, event->where.h, event->where.v);
-			GlobalToLocal(&localPoint);
-			if (window != win) break;
+	switch (part) {
+	case inMenuBar:
+		HiliteMenu(0);
+		break;
 
-			x = localPoint.h;
-			y = localPoint.v;
-			Pointer_SetPosition(0, x, y);
-			Input_SetPressed(CCMOUSE_L);
-			break;
-		case inDrag:
-			DragWindow(window, event->where, &qd.screenBits.bounds);
-			break;
-		case inGoAway:
-			if (TrackGoAway(window, event->where)) {
- 				Window_RequestClose();
-				Window_Main.Exists = false;
-			}
-			break;
-		case inGrow:
-			res = GrowWindow(window, event->where, &qd.screenBits.bounds);
-			x   = res & 0xFFFF;
-			y   = res >> 16;
-			SizeWindow(window, x, y, false);
-			if (window != win) break;
+	case inSysWindow:
+		SystemClick(event, window);
+		break;
 
-			Window_Main.Width  = x;
-			Window_Main.Height = y;
-			Event_RaiseVoid(&WindowEvents.Resized);
-			break;
+	case inContent:
+		SetPt(&localPoint, event->where.h, event->where.v);
+		GlobalToLocal(&localPoint);
+		if (window != win) break;
+
+		x = localPoint.h;
+		y = localPoint.v;
+		Pointer_SetPosition(0, x, y);
+		Input_SetPressed(CCMOUSE_L);
+		break;
+
+	case inDrag:
+		DragWindow(window, event->where, &qd.screenBits.bounds);
+		break;
+
+	case inGoAway:
+		if (TrackGoAway(window, event->where)) {
+			Window_RequestClose();
+			Window_Main.Exists = false;
+		}
+		break;
+
+	case inGrow:
+		res = GrowWindow(window, event->where, &qd.screenBits.bounds);
+		x   = res & 0xFFFF;
+		y   = res >> 16;
+		SizeWindow(window, x, y, false);
+		if (window != win) break;
+
+		Window_Main.Width  = x;
+		Window_Main.Height = y;
+		Event_RaiseVoid(&WindowEvents.Resized);
+		break;
 	}
 }
 
@@ -400,7 +406,7 @@ static void Cursor_GetRawPos(int* x, int* y) {
 	*y = point.v;
 }
 
-void Cursor_SetPosition(int x, int y) { 
+void Cursor_SetPosition(int x, int y) {
 	// TODO
 	Point where;
 	where.h = x;
@@ -418,7 +424,7 @@ static void Cursor_DoSetVisible(cc_bool visible) {
 
 static void ShowDialogCore(const char* title, const char* msg) {
 	// TODO
-	for (int i = 0; i < 20; i++) 
+	for (int i = 0; i < 20; i++)
 	{
 		Platform_LogConst(title);
 		Platform_LogConst(msg);
@@ -448,7 +454,7 @@ void Window_AllocFramebuffer(struct Bitmap* bmp, int width, int height) {
 
 	QDErr err = NewGWorld(&fb_world, 32, &win->portRect, 0, 0, 0);
 	if (err != noErr) Process_Abort2(err, "Failed to allocate GWorld");
-	
+
 	fb_pixmap = GetGWorldPixMap(fb_world);
 	if (!fb_pixmap) Process_Abort("Failed to allocate pixmap");
 
@@ -475,10 +481,10 @@ static void DrawFramebufferBulk(Rect2D r, struct Bitmap* bmp) {
 }
 
 static void DrawFramebufferSlow(Rect2D r, struct Bitmap* bmp) {
-    for (int y = r.y; y < r.y + r.height; ++y) 
+    for (int y = r.y; y < r.y + r.height; ++y)
 	{
         BitmapCol* row = Bitmap_GetRow(bmp, y);
-        for (int x = r.x; x < r.x + r.width; ++x) 
+        for (int x = r.x; x < r.x + r.width; ++x)
 		{
             // TODO optimise
             BitmapCol	col = row[x];
@@ -529,7 +535,7 @@ void Window_UpdateRawMouse(void) {
 	DefaultUpdateRawMouse();
 }
 
-void Window_DisableRawMouse(void) { 
+void Window_DisableRawMouse(void) {
 	DefaultDisableRawMouse();
 }
 
@@ -561,5 +567,4 @@ void GLContext_SetVSync(cc_bool vsync) {
 	// TODO
 }
 void GLContext_GetApiInfo(cc_string* info) { }
-#endif
 #endif

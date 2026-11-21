@@ -1,8 +1,9 @@
+#if CC_AUD_BACKEND != CC_AUD_BACKEND_OPENAL && !defined(_CLANGD)
+#error Do not compile what you're not going to use!
+#endif
+
 #include <Core.h>
-
-#if CC_AUD_BACKEND == CC_AUD_BACKEND_OPENAL
 /* Simpler to just include subset of OpenAL actually use here instead of including */
-
 /* === BEGIN OPENAL HEADERS === */
 #if defined CC_BUILD_WIN
 	#define APIENTRY __cdecl
@@ -324,5 +325,3 @@ cc_bool Audio_DescribeError(cc_result res, cc_string* dst) {
 	if (err) String_AppendConst(dst, err);
 	return err != NULL;
 }
-#endif
-

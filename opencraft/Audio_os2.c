@@ -1,6 +1,8 @@
-#include <Core.h>
+#if CC_AUD_BACKEND != CC_AUD_BACKEND_OS2 && !defined(_CLANGD)
+#error Do not compile what you're not going to use!s
+#endif
 
-#if CC_AUD_BACKEND == CC_AUD_BACKEND_OS2
+#include <Core.h>
 #include <stdio.h>
 #include <string.h>
 #include <kai.h>
@@ -237,4 +239,3 @@ cc_bool Audio_DescribeError(cc_result res, cc_string* dst) {
 		*dst = String_FromReadonly("Unknown Error");
 	return true;
 }
-#endif
