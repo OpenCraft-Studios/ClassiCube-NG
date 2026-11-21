@@ -1,4 +1,4 @@
-name: Setup LLVM toolchain
+name: Setup LLVM toolchain (with ccache)
 description: Setup LLVM toolchain and development dependencies
 
 inputs:
@@ -7,7 +7,7 @@ inputs:
     required: false
     default: "x86_64"
   cflags:
-      description: Additional flags that clang should execute
+      description: Additional flags for clang
       required: true
       default: ""
 
@@ -31,7 +31,7 @@ runs:
       shell: bash
       run: |
         sudo apt-get install -y \
-          clang \
+          clang ccache \
           llvm \
           mold \
           gcc-multilib \
@@ -55,7 +55,7 @@ runs:
           libxi-dev:i386 \
           libglvnd-dev:i386
 
-    - name: Setup build environment
+    - name: Create compiler wrapper
       shell: bash
       run: |
         mkdir -p "$RUNNER_TEMP/bin"
@@ -65,11 +65,25 @@ runs:
         LD=$(command -v mold || command -v ld.gold || command -v lld)
 
         cat > "$CC" << EOF
-        #!/usr/bin/env bash
-        exec clang ${{ inputs.cflags }} "\$@"
+        #!/bin/sh
+        exec ccache clang ${{ inputs.cflags }} "\$@"
         EOF
 
         chmod +x "$CC"
         echo "CC=$CC" >> "$GITHUB_ENV"
         echo "LD=$LD" >> "$GITHUB_ENV"
 
+    - name: Configure ccache
+      shell: bash
+      run: |
+        mkdir -p ~/.cache/ccache
+        ccache --set-config cache_dir="~/.cache/ccache"
+        ccache --set-config max_size=5G
+
+    - name: Cache ccache
+      uses: actions/cache@v6.1.0
+      with:
+        path: ~/.cache/ccache
+        key: ccache-${{ runner.os }}-${{ runner.arch }}-${{ inputs.architecture }}
+        restore-keys: |
+          ccache-${{ runner.os }}-${{ runner.arch }}-${{ inputs.architecture }}
