@@ -253,5 +253,8 @@ void LTable_RowClick(struct LTable* w, int row);
 /* Works out the background color of the given row */
 BitmapCol LTable_RowColor(int row, cc_bool selected, cc_bool featured);
 
+void LWidget_DrawBorder(struct Context2D* ctx, BitmapCol color, int borderX, int borderY,
+								int x, int y, int width, int height);
+
 CC_END_HEADER
 #endif

@@ -1,5 +1,4 @@
-#ifndef CC_AUDIO_H
-#define CC_AUDIO_H
+#pragma once
 #include <Core.h>
 /* Manages playing sound and music.
    Copyright 2014-2025 ClassiCube | Licensed under BSD-3
@@ -7,7 +6,7 @@
 CC_BEGIN_HEADER
 
 struct IGameComponent;
-extern struct IGameComponent Audio_Component; 
+extern struct IGameComponent Audio_Component;
 struct AudioContext;
 
 #ifdef CC_BUILD_WEBAUDIO
@@ -117,8 +116,8 @@ cc_result SoundContext_PollBusy(struct AudioContext* ctx, cc_bool* isBusy);
 *---------------------------------------------------------Sounds---------------------------------------------------------*
 *#########################################################################################################################*/
 enum SoundType {
-	SOUND_NONE,  SOUND_WOOD,  SOUND_GRAVEL, SOUND_GRASS, 
-	SOUND_STONE, SOUND_METAL, SOUND_GLASS,  SOUND_CLOTH, 
+	SOUND_NONE,  SOUND_WOOD,  SOUND_GRAVEL, SOUND_GRASS,
+	SOUND_STONE, SOUND_METAL, SOUND_GLASS,  SOUND_CLOTH,
 	SOUND_SAND,  SOUND_SNOW,  SOUND_COUNT
 };
 extern const char* const Sound_Names[SOUND_COUNT];
@@ -138,4 +137,3 @@ extern struct Soundboard digBoard, stepBoard;
 void Sounds_LoadDefault(void);
 
 CC_END_HEADER
-#endif

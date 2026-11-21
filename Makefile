@@ -86,7 +86,7 @@ env:
 	@echo "# -s,--silent,--quiet:  Be silent, don't print recipes."
 	@echo "# -j,--jobs=$(shell nproc):          Harness full PC power."
 	@echo "# --no-print-directory: Don't print annoying messages if compiling recursively."
-	@echo 
+	@echo
 
 # ——— Clangd configuration ————————————————————————————————————————————————————
 
@@ -105,8 +105,10 @@ PHONY: .clangd
 
 override BUILD_DIRS   += $(oc.build)
 
+override WARNINGS     += -Wno-unsafe-buffer-usage -Werror=missing-prototypes
+
 override INCLUDES     += -I$(CURDIR)/include
-override COMMON_FLAGS += $(ARCH_FLAGS) $(INCLUDES) -pipe -DCC_BUILD_MANUAL
+override COMMON_FLAGS += $(ARCH_FLAGS) $(WARNINGS) $(INCLUDES) -pipe -DCC_BUILD_MANUAL
 override CFLAGS       += $(COMMON_FLAGS)
 override CXXFLAGS     += $(COMMON_FLAGS)
 override LDFLAGS      += -s

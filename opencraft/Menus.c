@@ -456,7 +456,8 @@ static const struct ScreenVTABLE ListScreen_VTABLE = {
 	Menu_PointerDown,   Screen_PointerUp,  Menu_PointerMove, Screen_TMouseScroll,
 	ListScreen_Layout,  ListScreen_ContextLost,  ListScreen_ContextRecreated
 };
-void ListScreen_Show(void) {
+
+static void ListScreen_Show(void) {
 	struct ListScreen* s = &ListScreen;
 	s->grabsInput = true;
 	s->closable   = true;
@@ -1024,7 +1025,8 @@ static const struct ScreenVTABLE EditHotkeyScreen_VTABLE = {
 	Menu_PointerDown,         Screen_PointerUp,  Menu_PointerMove,          Screen_TMouseScroll,
 	EditHotkeyScreen_Layout,  EditHotkeyScreen_ContextLost, EditHotkeyScreen_ContextRecreated
 };
-void EditHotkeyScreen_Show(struct HotkeyData original) {
+
+static void EditHotkeyScreen_Show(struct HotkeyData original) {
 	struct EditHotkeyScreen* s = &EditHotkeyScreen;
 	s->grabsInput = true;
 	s->closable   = true;
@@ -1938,7 +1940,8 @@ static const struct ScreenVTABLE BindsSourceScreen_VTABLE = {
 	BindsSourceScreen_Layout,  Screen_ContextLost, BindsSourceScreen_ContextRecreated,
 	Menu_PadAxis
 };
-void BindsSourceScreen_Show(void) {
+
+static void BindsSourceScreen_Show(void) {
 	struct BindsSourceScreen* s = &BindsSourceScreen;
 	s->grabsInput = true;
 	s->closable   = true;
