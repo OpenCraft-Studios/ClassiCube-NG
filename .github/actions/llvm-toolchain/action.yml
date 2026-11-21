@@ -76,14 +76,14 @@ runs:
     - name: Configure ccache
       shell: bash
       run: |
-        mkdir -p ~/.cache/ccache
-        ccache --set-config cache_dir="~/.cache/ccache"
+        mkdir -p $HOME/.cache/ccache
+        ccache --set-config cache_dir="$HOME/.cache/ccache"
         ccache --set-config max_size=5G
 
     - name: Cache ccache
       uses: actions/cache@v6.1.0
       with:
-        path: ~/.cache/ccache
+        path: $HOME/.cache/ccache
         key: ccache-${{ runner.os }}-${{ runner.arch }}-${{ inputs.architecture }}
         restore-keys: |
           ccache-${{ runner.os }}-${{ runner.arch }}-${{ inputs.architecture }}
