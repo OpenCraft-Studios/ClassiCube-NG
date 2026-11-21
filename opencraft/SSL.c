@@ -1,10 +1,9 @@
 #include "SSL.h"
 #include "Errors.h"
 
-#if CC_SSL_BACKEND == CC_SSL_BACKEND_BEARSSL
 #include "String_.h"
-#include "Certs.h"
-#include "../third_party/bearssl/bearssl.h"
+#include <Certs.h>
+#include "../bearssl/bearssl.h"
 #include "../misc/certs/certs.h"
 
 // https://github.com/unkaktus/bearssl/blob/master/samples/client_basic.c#L283
@@ -246,21 +245,3 @@ cc_result SSL_Free(void* ctx_) {
 	Mem_Free(ctx_);
 	return 0;
 }
-#else
-void SSLBackend_Init(cc_bool verifyCerts) { }
-cc_bool SSLBackend_DescribeError(cc_result res, cc_string* dst) { return false; }
-
-cc_result SSL_Init(cc_socket socket, const cc_string* host, void** ctx) {
-	return HTTP_ERR_NO_SSL;
-}
-
-cc_result SSL_Read(void* ctx, cc_uint8* data, cc_uint32 count, cc_uint32* read) { 
-	return ERR_NOT_SUPPORTED; 
-}
-
-cc_result SSL_Write(void* ctx, const cc_uint8* data, cc_uint32 count, cc_uint32* sent) {
-	return ERR_NOT_SUPPORTED; 
-}
-
-cc_result SSL_Free(void* ctx) { return 0; }
-#endif

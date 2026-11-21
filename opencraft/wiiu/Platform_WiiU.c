@@ -7,11 +7,11 @@
 #include "../ExtMath.h"
 #include "../SystemFonts.h"
 #include "../Funcs.h"
-#include "../Window.h"
+#include <Window.h>
 #include "../Utils.h"
 #include "../Errors.h"
 #include "../PackedCol.h"
-#include "../Audio.h"
+#include <Audio.h>
 
 #include <errno.h>
 #include <time.h>

@@ -1,5 +1,5 @@
 > [!IMPORTANT]
-**OpenCraft is not affiliated with (or supported by) Mojang AB, Minecraft, or Microsoft in any way.** <br><br>
+**OpenCraft is not affiliated with (or supported by) Mojang AB, Minecraft, or Microsoft in any way.** 
 
 # OpenCraft
 

@@ -2,7 +2,7 @@
 #include "../_GraphicsBase.h"
 #include "../Errors.h"
 #include "../Logger.h"
-#include "../Window.h"
+#include <Window.h>
 
 #include <malloc.h>
 #include <rsx/rsx.h>
@@ -273,6 +273,7 @@ void Gfx_Create(void) {
 	// TODO rethink all this
 	if (!Gfx.Created) InitGfxContext();
 	
+	Gfx_RestoreState();
 	gfx_format = -1;
 	Gfx.NonPowTwoTexturesSupport = GFX_NONPOW2_UPLOAD;
 }
@@ -719,24 +720,17 @@ void Gfx_SetFogMode(FogFunc func) {/* TODO */
 *#########################################################################################################################*/
 static struct Matrix _view, _proj;
 
-void gfxProjectionMatrix(const struct Matrix* matrix) {
-	_proj = *matrix;
-	Matrix_Mul(&mvp, &_view, &_proj);
-	VP_UpdateUniforms();
-}
+void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
+	struct Matrix* dst = type == MATRIX_PROJ ? &_proj : &_view;
+	*dst = *matrix;
 
-void gfxModelViewMatrix(const struct Matrix* matrix) {
-	_view = *matrix;
 	Matrix_Mul(&mvp, &_view, &_proj);
 	VP_UpdateUniforms();
 }
 
 void Gfx_LoadMVP(const struct Matrix* view, const struct Matrix* proj, struct Matrix* mvp) {
-	_proj = *proj;
-	_view = *view;
-	Matrix_Mul(&mvp, &_view, &_proj);
-	VP_UpdateUniforms();
-	
+	Gfx_LoadMatrix(MATRIX_VIEW, view);
+	Gfx_LoadMatrix(MATRIX_PROJ, proj);
 	Matrix_Mul(mvp, view, proj);
 }
 

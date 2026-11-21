@@ -2,7 +2,7 @@
 #include "../_GraphicsBase.h"
 #include "../Errors.h"
 #include "../Logger.h"
-#include "../Window.h"
+#include <Window.h>
 #include "../_BlockAlloc.h"
 
 #include <string.h>
@@ -149,7 +149,7 @@ void Gfx_Create(void) {
 	Gfx.Created      = true;
 	
 	Gfx.NonPowTwoTexturesSupport = GFX_NONPOW2_UPLOAD;
-	gfx_format = -1;
+	Gfx_RestoreState();
 }
 
 cc_bool Gfx_TryRestoreContext(void) {
@@ -841,16 +841,9 @@ static matrix_t CC_ALIGNED(32) mat_vp;
 static float textureOffsetX, textureOffsetY;
 static int textureOffset;
 
-void gfxProjectionMatrix(const struct Matrix* proj) {
-	memcpy(&_proj, proj, sizeof(struct Matrix));
-	
-	mat_load(&mat_vp);
-	mat_apply(&_proj);
-	mat_apply(&_view);
-}
-
-void gfxModelViewMatrix(const struct Matrix* view) {
-	memcpy(&_view, view, sizeof(struct Matrix));
+void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
+	if (type == MATRIX_PROJ) memcpy(&_proj, matrix, sizeof(struct Matrix));
+	if (type == MATRIX_VIEW) memcpy(&_view, matrix, sizeof(struct Matrix));
 
 	mat_load(&mat_vp);
 	mat_apply(&_proj);
@@ -858,13 +851,8 @@ void gfxModelViewMatrix(const struct Matrix* view) {
 }
 
 void Gfx_LoadMVP(const struct Matrix* view, const struct Matrix* proj, struct Matrix* mvp) {
-	memcpy(&_proj, proj, sizeof(struct Matrix));
-	memcpy(&_view, view, sizeof(struct Matrix));
-	
-	mat_load(&mat_vp);
-	mat_apply(&_proj);
-	mat_apply(&_view);
-
+	Gfx_LoadMatrix(MATRIX_VIEW, view);
+	Gfx_LoadMatrix(MATRIX_PROJ, proj);
 	Matrix_Mul(mvp, view, proj);
 	CalcNearFrustumPlane(mvp);
 }
@@ -903,7 +891,10 @@ static CC_NOINLINE void UnshiftTextureCoords(int count) {
 *-------------------------------------------------------State setup-------------------------------------------------------*
 *#########################################################################################################################*/
 static void Gfx_FreeState(void) { FreeDefaultResources(); }
-static void Gfx_RestoreState(void) { InitDefaultResources(); }
+static void Gfx_RestoreState(void) {
+	InitDefaultResources();
+	gfx_format = -1;
+}
 
 cc_bool Gfx_WarnIfNecessary(void) { return false; }
 cc_bool Gfx_GetUIOptions(struct MenuOptionsScreen* s) { return false; }

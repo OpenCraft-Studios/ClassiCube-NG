@@ -3,11 +3,11 @@
 #include "Constants.h"
 #include "Stream.h"
 #include "World.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Event.h"
 #include "Game.h"
 #include "Http.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Deflate.h"
 #include "Funcs.h"
 #include "ExtMath.h"
@@ -737,6 +737,7 @@ static void TerrainPngProcess(struct Stream* stream, const cc_string* name) {
 
 	if (res) {
 		Logger_SysWarn2(res, "decoding", name);
+		Mem_Free(bmp.scan0);
 	} else if (!Atlas_TryChange(&bmp)) {
 		Mem_Free(bmp.scan0);
 	}

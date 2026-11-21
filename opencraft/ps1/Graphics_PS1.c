@@ -2,7 +2,7 @@
 #define CC_DYNAMIC_VBS_ARE_STATIC
 #include "../_GraphicsBase.h"
 #include "../Errors.h"
-#include "../Window.h"
+#include <Window.h>
 
 #include <assert.h>
 #include <stddef.h>
@@ -179,6 +179,7 @@ void Gfx_Create(void) {
 	Gfx.Created      = true;
 	Gfx.Limitations  = GFX_LIMIT_MAX_VERTEX_SIZE;
 	
+	Gfx_RestoreState();
 	SetupContexts(Window_Main.Width, Window_Main.Height);
 	Gfx_ClearColor(PackedCol_Make(63, 0, 127, 255));
 
@@ -775,20 +776,17 @@ static void LoadTransformMatrix(struct Matrix* src) {
 	GTE_Load_RotMatrix(matrix);
 }
 
-void gfxProjectionMatrix(const struct Matrix* matrix) {
-	_proj = *matrix;
-	struct Matrix mvp;
-	Matrix_Mul(&mvp, &_view, &_proj);
-	LoadTransformMatrix(&mvp);
-}
+void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
+	if (type == MATRIX_VIEW) _view = *matrix;
+	if (type == MATRIX_PROJ) _proj = *matrix;
 
-void gfxModelViewMatrix(const struct Matrix* matrix) {
-	_view = *matrix;
+	struct Matrix mvp;
+	if (matrix == &Matrix_Identity && type == MATRIX_VIEW) {
+		mvp = _proj; // 2D mode uses identity view matrix
+	} else {
+		Matrix_Mul(&mvp, &_view, &_proj);
+	}
 	
-	struct Matrix mvp;
-	if (matrix == &Matrix_Identity) mvp = _proj; // 2D mode uses identity view matrix	
-	else Matrix_Mul(&mvp, &_view, &_proj);
-
 	LoadTransformMatrix(&mvp);
 }
 

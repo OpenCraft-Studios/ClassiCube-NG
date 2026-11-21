@@ -1,6 +1,6 @@
 #ifndef CC_BUILDER_H
 #define CC_BUILDER_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* 

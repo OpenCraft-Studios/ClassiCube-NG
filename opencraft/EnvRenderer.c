@@ -3,10 +3,10 @@
 #include "ExtMath.h"
 #include "World.h"
 #include "Funcs.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Physics.h"
 #include "Block.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Event.h"
 #include "Utils.h"
 #include "Game.h"
@@ -14,7 +14,7 @@
 #include "Block.h"
 #include "Event.h"
 #include "TexturePack.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Camera.h"
 #include "Particle.h"
 #include "Options.h"
@@ -53,9 +53,9 @@ static CC_INLINE void UpdateFogBlend(void) {
 	fog_color   = PackedCol_Lerp(Env.FogCol, Env.SkyCol, blend);
 }
 
-static cc_bool CameraInsideBlock(BlockID block, vec3i* coords) {
+static cc_bool CameraInsideBlock(BlockID block, IVec3* coords) {
 	struct AABB blockBB;
-	vec3 pos;
+	Vec3 pos;
 	IVec3_ToVec3(&pos, coords); /* pos = coords; */
 
 	Vec3_Add(&blockBB.Min, &pos, &Blocks.MinBB[block]);
@@ -64,7 +64,7 @@ static cc_bool CameraInsideBlock(BlockID block, vec3i* coords) {
 }
 
 static PackedCol CalcFog(float* density) {
-	vec3i coords;
+	IVec3 coords;
 	BlockID block;
 
 	IVec3_Floor(&coords, &Camera.CurrentPos); /* coords = floor(camera_pos); */
@@ -288,9 +288,9 @@ void EnvRenderer_RenderSky(void) {
 		m.row4.x += dy * m.row2.x; m.row4.y += dy * m.row2.y;
 		m.row4.z += dy * m.row2.z; m.row4.w += dy * m.row2.w;
 
-		gfxModelViewMatrix(&m);
+		Gfx_LoadMatrix(MATRIX_VIEW, &m);
 		Gfx_DrawVb_IndexedTris(sky_vertices);
-		gfxModelViewMatrix(&Gfx.View);
+		Gfx_LoadMatrix(MATRIX_VIEW, &Gfx.View);
 	}
 }
 
@@ -339,7 +339,7 @@ static CC_NOINLINE void BuildSkybox(void) {
 void EnvRenderer_RenderSkybox(void) {
 	struct Matrix m, rotX, rotY, view;
 	float rotTime;
-	vec3 pos;
+	Vec3 pos;
 
 	if (!skybox_vb) {
 		BuildSkybox();
@@ -363,11 +363,11 @@ void EnvRenderer_RenderSkybox(void) {
 	Matrix_MulBy(&m, &view);
 	Camera.CurrentPos = pos;
 
-	gfxModelViewMatrix(&m);
+	Gfx_LoadMatrix(MATRIX_VIEW, &m);
 	Gfx_BindVb(skybox_vb);
 	Gfx_DrawVb_IndexedTris(SKYBOX_COUNT);
 
-	gfxModelViewMatrix(&Gfx.View);
+	Gfx_LoadMatrix(MATRIX_VIEW, &Gfx.View);
 	Gfx_SetDepthWrite(true);
 }
 
@@ -377,7 +377,7 @@ void EnvRenderer_RenderSkybox(void) {
 cc_int16* Weather_Heightmap;
 static GfxResourceID rain_tex, snow_tex, weather_vb;
 static float weather_accumulator;
-static vec3i lastPos;
+static IVec3 lastPos;
 
 #define WEATHER_EXTENT 4
 #define WEATHER_VERTS  8 /* 2 quads per tile */
@@ -473,7 +473,7 @@ void EnvRenderer_RenderWeather(float delta) {
 	struct VertexTextured* v;
 	cc_bool moved, particles;
 	float speed, vOffsetBase, vOffset;
-	vec3i pos;
+	IVec3 pos;
 
 	PackedCol color;
 	int dist, dx, dz, x, z;

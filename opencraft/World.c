@@ -1,7 +1,7 @@
 #include "World.h"
 #include "Logger.h"
 #include "String_.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Event.h"
 #include "Block.h"
 #include "Entity.h"
@@ -9,7 +9,7 @@
 #include "Physics.h"
 #include "Game.h"
 #include "TexturePack.h"
-#include "Window.h"
+#include <Window.h>
 
 struct _WorldData World;
 static char nameBuffer[STRING_SIZE];
@@ -276,7 +276,7 @@ float Respawn_HighestSolidY(struct AABB* bb) {
 
 	BlockID block;
 	struct AABB blockBB;
-	vec3 v;
+	Vec3 v;
 	int x, y, z;	
 
 	for (y = minY; y <= maxY; y++) { v.y = (float)y;
@@ -300,8 +300,8 @@ float Respawn_HighestSolidY(struct AABB* bb) {
 	return highestY;
 }
 
-vec3 Respawn_FindSpawnPosition(float x, float z, vec3 modelSize) {
-	vec3 spawn;
+Vec3 Respawn_FindSpawnPosition(float x, float z, Vec3 modelSize) {
+	Vec3 spawn;
 	struct AABB bb;
 	float highestY;
 	int y;

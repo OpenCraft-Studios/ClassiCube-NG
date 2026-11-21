@@ -3,14 +3,14 @@
 
 extern "C" {
 #include "Errors.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Logger.h"
 #include "String_.h"
 #include "Stream.h"
 #include "ExtMath.h"
 #include "SystemFonts.h"
 #include "Funcs.h"
-#include "Window.h"
+#include <Window.h>
 #include "Utils.h"
 #include "Errors.h"
 #include "PackedCol.h"

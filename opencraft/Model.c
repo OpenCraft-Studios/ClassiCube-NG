@@ -2,7 +2,7 @@
 #include "ExtMath.h"
 #include "Funcs.h"
 #include "Game.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Entity.h"
 #include "Camera.h"
 #include "Event.h"
@@ -28,7 +28,7 @@ struct _ModelsData Models;
 /*########################################################################################################################*
 *------------------------------------------------------------Model--------------------------------------------------------*
 *#########################################################################################################################*/
-static void Model_GetTransform(struct Entity* e, vec3 pos, struct Matrix* m) {
+static void Model_GetTransform(struct Entity* e, Vec3 pos, struct Matrix* m) {
 	Entity_GetTransform(e, pos, e->ModelScale, m);
 }
 static void Model_NullFunc(struct Entity* e) { }
@@ -50,7 +50,7 @@ void Model_Init(struct Model* model) {
 }
 
 cc_bool Model_ShouldRender(struct Entity* e) {
-	vec3 pos = e->Position;
+	Vec3 pos = e->Position;
 	struct AABB bb;
 	float bbWidth, bbHeight, bbLength;
 	float maxYZ, maxXYZ;
@@ -74,9 +74,9 @@ static float Model_MinDist(float dist, float extent) {
 }
 
 float Model_RenderDistance(struct Entity* e) {
-	vec3 pos     = e->Position;
+	Vec3 pos     = e->Position;
 	struct AABB* bb = &e->ModelAABB;
-	vec3 camPos  = Camera.CurrentPos;
+	Vec3 camPos  = Camera.CurrentPos;
 	float dx, dy, dz;
 
 	/* X and Z are already at centre of model */
@@ -90,7 +90,7 @@ float Model_RenderDistance(struct Entity* e) {
 }
 
 void Model_GetEntityTransform(struct Model* model, struct Entity* e, struct Matrix* transform) {
-	vec3 pos = e->Position;
+	Vec3 pos = e->Position;
 
 	if (model->bobbing) pos.y += e->Anim.BobbingModel;
 	/* Original classic offsets models slightly into ground */
@@ -108,9 +108,9 @@ void Model_Render(struct Model* model, struct Entity* e) {
 	Model_GetEntityTransform(model, e, &transform);
 	Matrix_Mul(&m, &transform, &Gfx.View);
 
-	gfxModelViewMatrix(&m);
+	Gfx_LoadMatrix(MATRIX_VIEW, &m);
 	model->Draw(e);
-	gfxModelViewMatrix(&Gfx.View);
+	Gfx_LoadMatrix(MATRIX_VIEW, &Gfx.View);
 }
 
 void Model_SetupState(struct Model* model, struct Entity* e) {
@@ -286,7 +286,7 @@ void Model_DrawRotate(float angleX, float angleY, float angleZ, struct ModelPart
 
 void Model_RenderArm(struct Model* model, struct Entity* e) {
 	struct Matrix m, translate;
-	vec3 pos = e->Position;
+	Vec3 pos = e->Position;
 	if (model->bobbing) pos.y += e->Anim.BobbingModel;
 
 	Model_SetupState(model, e);
@@ -306,11 +306,11 @@ void Model_RenderArm(struct Model* model, struct Entity* e) {
 	Matrix_Mul(&m, &m,         &Gfx.View);
 	Matrix_Mul(&m, &translate, &m);
 
-	gfxModelViewMatrix(&m);
+	Gfx_LoadMatrix(MATRIX_VIEW, &m);
 	Models.Rotation = ROTATE_ORDER_YZX;
 	model->DrawArm(e);
 	Models.Rotation = ROTATE_ORDER_ZYX;
-	gfxModelViewMatrix(&Gfx.View);
+	Gfx_LoadMatrix(MATRIX_VIEW, &Gfx.View);
 }
 
 void Model_DrawArmPart(struct ModelPart* part) {
@@ -455,7 +455,7 @@ static struct Model* models_tail;
 static struct ModelTex* textures_head;
 static struct ModelTex* textures_tail;
 
-#define Model_RetSize(x,y,z) static vec3 P = { (x)/16.0f,(y)/16.0f,(z)/16.0f }; e->Size = P;
+#define Model_RetSize(x,y,z) static Vec3 P = { (x)/16.0f,(y)/16.0f,(z)/16.0f }; e->Size = P;
 #define Model_RetAABB(x1,y1,z1, x2,y2,z2) static struct AABB BB = { { (x1)/16.0f,(y1)/16.0f,(z1)/16.0f }, { (x2)/16.0f,(y2)/16.0f,(z2)/16.0f } }; e->ModelAABB = BB;
 
 static void MakeModel(struct Model* model) {
@@ -1280,7 +1280,7 @@ static void ChibiModel_Register(void) {
 *#########################################################################################################################*/
 #define SIT_OFFSET 10.0f
 
-static void SittingModel_GetTransform(struct Entity* e, vec3 pos, struct Matrix* m) {
+static void SittingModel_GetTransform(struct Entity* e, Vec3 pos, struct Matrix* m) {
 	pos.y -= (SIT_OFFSET / 16.0f) * e->ModelScale.y;
 	Entity_GetTransform(e, pos, e->ModelScale, m);
 }
@@ -1343,7 +1343,7 @@ static void CorpseModel_Register(void) {
 *#########################################################################################################################*/
 #define HEAD_MAX_VERTICES (2 * MODEL_BOX_VERTICES)
 
-static void HeadModel_GetTransform(struct Entity* e, vec3 pos, struct Matrix* m) {
+static void HeadModel_GetTransform(struct Entity* e, Vec3 pos, struct Matrix* m) {
 	pos.y -= (24.0f/16.0f) * e->ModelScale.y;
 	Entity_GetTransform(e, pos, e->ModelScale, m);
 }
@@ -2063,8 +2063,8 @@ static float BlockModel_GetEyeY(struct Entity* e) {
 }
 
 static void BlockModel_GetSize(struct Entity* e) {
-	static vec3 shrink = { 0.75f/16.0f, 0.75f/16.0f, 0.75f/16.0f };
-	vec3* size = &e->Size;
+	static Vec3 shrink = { 0.75f/16.0f, 0.75f/16.0f, 0.75f/16.0f };
+	Vec3* size = &e->Size;
 	BlockID block = e->ModelBlock;
 
 	Vec3_Sub(size, &Blocks.MaxBB[block], &Blocks.MinBB[block]);
@@ -2078,7 +2078,7 @@ static void BlockModel_GetSize(struct Entity* e) {
 }
 
 static void BlockModel_GetBounds(struct Entity* e) {
-	static vec3 offset = { -0.5f, 0.0f, -0.5f };
+	static Vec3 offset = { -0.5f, 0.0f, -0.5f };
 	BlockID block = e->ModelBlock;
 
 	Vec3_Add(&e->ModelAABB.Min, &Blocks.MinBB[block], &offset);
@@ -2153,7 +2153,7 @@ static void BlockModel_SpriteXQuad(cc_bool firstPart, cc_bool mirror) {
 
 static void BlockModel_BuildParts(struct Entity* e, cc_bool sprite) {
 	struct VertexTextured* ptr;
-	vec3 min, max;
+	Vec3 min, max;
 	TextureLoc loc;
 
 	Model_LockVB(e, sprite ? BLOCKMODEL_SPRITE_COUNT : BLOCKMODEL_CUBE_COUNT);
@@ -2326,7 +2326,7 @@ static void RecalcProperties(struct Entity* e) {
 
 static void DrawBlockTransform(struct Entity* e, float dispX, float dispY, float dispZ, float scale) {
 	struct Matrix m, temp;
-	vec3 pos;
+	Vec3 pos;
 
 	pos = e->Position;
 	pos.y += e->Anim.BobbingModel;
@@ -2339,7 +2339,7 @@ static void DrawBlockTransform(struct Entity* e, float dispX, float dispY, float
 	Matrix_Mul(&m, &temp, &m);
 
 	Model_SetupState(&block_model, e);
-	gfxModelViewMatrix(&m);
+	Gfx_LoadMatrix(MATRIX_VIEW, &m);
 	block_model.Draw(e);
 }
 

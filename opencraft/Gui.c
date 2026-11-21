@@ -1,8 +1,8 @@
 #include "Gui.h"
 #include "String_.h"
-#include "Window.h"
+#include <Window.h>
 #include "Game.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Event.h"
 #include "Drawer2D.h"
 #include "ExtMath.h"
@@ -10,7 +10,7 @@
 #include "Camera.h"
 #include "Input.h"
 #include "Logger.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Bitmap.h"
 #include "Options.h"
 #include "Menus.h"

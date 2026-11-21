@@ -2,7 +2,7 @@
 #include "../_GraphicsBase.h"
 #include "../Errors.h"
 #include "../Logger.h"
-#include "../Window.h"
+#include <Window.h>
 #include "../_BlockAlloc.h"
 
 #include <malloc.h>
@@ -113,7 +113,8 @@ void Gfx_Create(void) {
 	Gfx.NonPowTwoTexturesSupport = GFX_NONPOW2_UPLOAD;
 	Gfx.Created      = true;
 	gfx_vsync        = true;
-
+	
+	Gfx_RestoreState();
 	last_base = -1;
 	InitGuardband();
 }
@@ -817,28 +818,28 @@ static CC_NOINLINE void RecalcClipping(void) {
 	Clip_RescaleMVPtoGuardband();
 }
 
-void gfxProjectionMatrix(const struct Matrix* matrix) {
-	clipping_dirty = true;
-	GE_upload_proj_matrix((const float*) matrix);
-	Clip_LoadProj((const float*) matrix);
-	Clip_RecalcMVP();
+static void LoadMatrix(MatrixType type, const struct Matrix* matrix) {
+	const float* m = (const float*)matrix;
+
+	if (type == MATRIX_PROJ) {
+		GE_upload_proj_matrix(m);
+		Clip_LoadProj(m);
+	} else {
+		GE_upload_view_matrix(m);
+		Clip_LoadView(m);
+	}
 }
 
-void gfxModelViewMatrix(const struct Matrix* matrix) {
-	clipping_dirty = true;
-	GE_upload_view_matrix((const float*) matrix);
-	Clip_LoadView((const float*) matrix);
+void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
+	LoadMatrix(type, matrix);
 	Clip_RecalcMVP();
+	clipping_dirty = true;
 }
 
 void Gfx_LoadMVP(const struct Matrix* view, const struct Matrix* proj, struct Matrix* mvp) {
-	clipping_dirty = true;
-	
-	GE_upload_proj_matrix((const float*) proj);
-	Clip_LoadProj((const float*) proj);
-	GE_upload_view_matrix((const float*) view);
-	Clip_LoadView((const float*) view);
-	
+	LoadMatrix(MATRIX_VIEW, view);
+	LoadMatrix(MATRIX_PROJ, proj);
+
 	Clip_RecalcMVP();
 	Clip_StoreMVP((float*)mvp);
 	RecalcClipping();

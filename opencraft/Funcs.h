@@ -1,6 +1,6 @@
 #ifndef CC_FUNCS_H
 #define CC_FUNCS_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* 

@@ -1,5 +1,5 @@
-#include "../Window.h"
-#include "../Platform.h"
+#include <Window.h>
+#include <Platform.h>
 #include "../Input.h"
 #include "../Event.h"
 #include "../String_.h"
@@ -7,7 +7,7 @@
 #include "../Bitmap.h"
 #include "../Errors.h"
 #include "../ExtMath.h"
-#include "../Graphics.h"
+#include <Graphics.h>
 #include "../Launcher.h"
 #include "../LBackend.h"
 #include "../Options.h"
@@ -396,8 +396,8 @@ void Window_AllocFramebuffer(struct Bitmap* bmp, int width, int height) {
 }
 
 static void DrawLauncher(void) {
-	gfxModelViewMatrix(&Matrix_Identity);
-	gfxProjectionMatrix(&Matrix_Identity);
+	Gfx_LoadMatrix(MATRIX_VIEW, &Matrix_Identity);
+	Gfx_LoadMatrix(MATRIX_PROJ, &Matrix_Identity);
 	Gfx_SetDepthTest(false);
 
 	Gfx_SetVertexFormat(VERTEX_FORMAT_COLOURED);

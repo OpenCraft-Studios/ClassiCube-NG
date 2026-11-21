@@ -1,7 +1,7 @@
 #define CC_DYNAMIC_VBS_ARE_STATIC
 #include "../_GraphicsBase.h"
 #include "../Errors.h"
-#include "../Window.h"
+#include <Window.h>
 #include "../_BlockAlloc.h"
 
 #include <dma_tags.h>
@@ -272,6 +272,7 @@ void Gfx_Create(void) {
 	Gfx.Created      = true;
 	
 	Gfx.NonPowTwoTexturesSupport = GFX_NONPOW2_UPLOAD;
+	Gfx_RestoreState();
 }
 
 void Gfx_Free(void) { 
@@ -952,25 +953,20 @@ void Gfx_UnlockVb(GfxResourceID vb) {
 *#########################################################################################################################*/
 static struct Matrix _view, _proj;
 
-void gfxProjectionMatrix(const struct Matrix* proj) {
-	_proj = *proj;
+void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
+	if (type == MATRIX_VIEW) _view = *matrix;
+	if (type == MATRIX_PROJ) _proj = *matrix;
+
 	Matrix_Mul(&mvp, &_view, &_proj);
 	// TODO	
 	LoadMvpMatrix(&mvp);
 }
 
-void gfxModelViewMatrix(const struct Matrix* view) {
-	_view = *view;
-	Matrix_Mul(&mvp, &_view, &_proj);
-	// TODO	
-	LoadMvpMatrix(&mvp);
-}
+void Gfx_LoadMVP(const struct Matrix* view, const struct Matrix* proj, struct Matrix* mvp) {
+	Gfx_LoadMatrix(MATRIX_VIEW, view);
+	Gfx_LoadMatrix(MATRIX_PROJ, proj);
 
-void Gfx_LoadMVP(const struct Matrix* view, const struct Matrix* proj, struct Matrix* mvp_dest) {
-	_proj = *view;
-	_view = *proj;
-	Matrix_Mul(mvp_dest, view, proj);
-	LoadMvpMatrix(&mvp);
+	Matrix_Mul(mvp, view, proj);
 }
 
 void Gfx_EnableTextureOffset(float x, float y) {

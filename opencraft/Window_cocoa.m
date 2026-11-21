@@ -1,7 +1,7 @@
 // Silence deprecation warnings on modern macOS
 #define GL_SILENCE_DEPRECATION
 
-#include "Core.h"
+#include <Core.h>
 #if CC_WIN_BACKEND == CC_WIN_BACKEND_COCOA
 #include "_WindowBase.h"
 #include "ExtMath.h"

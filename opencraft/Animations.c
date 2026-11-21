@@ -2,7 +2,7 @@
 #include "String_.h"
 #include "Constants.h"
 #include "Stream.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Event.h"
 #include "Game.h"
 #include "Funcs.h"
@@ -362,7 +362,11 @@ static cc_bool Animations_Tick(struct ScheduledTask2* task) {
 *#########################################################################################################################*/
 static void AnimationsPngProcess(struct Stream* stream, const cc_string* name) {
 	cc_result res = Png_Decode(&anims_bmp, stream);
-	if (res) Logger_SysWarn2(res, "decoding", name);
+	if (!res) return;
+
+	Logger_SysWarn2(res, "decoding", name);
+	Mem_Free(anims_bmp.scan0);
+	anims_bmp.scan0 = NULL;
 }
 static struct TextureEntry animations_entry = { "animations.png", AnimationsPngProcess };
 static struct TextureEntry animations_txt   = { "animations.txt", Animations_ReadDescription };

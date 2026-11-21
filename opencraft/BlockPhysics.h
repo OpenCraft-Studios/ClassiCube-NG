@@ -1,6 +1,6 @@
 #ifndef CC_BLOCKPHYSICS_H
 #define CC_BLOCKPHYSICS_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* Implements simple block physics.

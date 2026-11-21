@@ -63,7 +63,7 @@ struct ScrollbarWidget {
 /* Resets state of the given scrollbar widget to default. */
 CC_NOINLINE void ScrollbarWidget_Create(struct ScrollbarWidget* w, int width);
 
-#define HOTBAR_CORE_VERTICES (INVENTORY_BLOCKS_PER_HOTBAR * ISOMETRICDRAWER_MAXVERTICES)
+#define HOTBAR_CORE_VERTICES (9 * ISOMETRICDRAWER_MAXVERTICES)
 /* A row of blocks with a background. */
 struct HotbarWidget {
 	Widget_Body
@@ -71,7 +71,6 @@ struct HotbarWidget {
 	float slotWidth, selWidth;
 	float slotXOffset, elemSize;
 	float scrollAcc, scale;
-	cc_bool altHandled;
 	struct Texture ellipsisTex;
 	int state[HOTBAR_CORE_VERTICES / 4];
 	int verticesCount;

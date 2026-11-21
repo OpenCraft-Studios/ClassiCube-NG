@@ -3,10 +3,10 @@
 #include "Widgets.h"
 #include "Game.h"
 #include "Event.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Inventory.h"
 #include "Drawer2D.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Funcs.h"
 #include "TexturePack.h"
 #include "Model.h"
@@ -14,7 +14,7 @@
 #include "Server.h"
 #include "Chat.h"
 #include "ExtMath.h"
-#include "Window.h"
+#include <Window.h>
 #include "Camera.h"
 #include "Http.h"
 #include "Block.h"
@@ -520,7 +520,7 @@ static struct Widget* touch_widgets[ONSCREEN_MAX_BTNS + TOUCH_EXTRA_BTNS + 2] = 
 
 static void TouchScreen_ChatClick(void* s,     void* w) { ChatScreen_OpenInput(&String_Empty); }
 static void TouchScreen_MoreClick(void* s,     void* w) { TouchMoreScreen_Show(); }
-static void TouchScreen_SwitchClick(void* s,   void* w) { Inventory_SwitchHotbar(); }
+static void TouchScreen_SwitchClick(void* s,   void* w) { }
 
 static void TouchScreen_TabClick(void* s, void* w) {
 	struct Screen* tablist = Gui_GetScreen(GUI_PRIORITY_TABLIST);

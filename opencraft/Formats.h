@@ -1,6 +1,6 @@
 #ifndef CC_MAPFORMATS_H
 #define CC_MAPFORMATS_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* Imports/exports a world and associated metadata from/to a particular map file format.

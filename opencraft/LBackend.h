@@ -1,6 +1,6 @@
 #ifndef CC_LBACKEND_H
 #define CC_LBACKEND_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* 

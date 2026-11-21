@@ -1,6 +1,6 @@
 #ifndef CC_SELOUTLINERENDERER_H
 #define CC_SELOUTLINERENDERER_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* Renders an outline around the block the player is looking at.

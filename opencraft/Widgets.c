@@ -1,13 +1,13 @@
 #include "Widgets.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Drawer2D.h"
 #include "ExtMath.h"
 #include "Funcs.h"
-#include "Window.h"
+#include <Window.h>
 #include "Utils.h"
 #include "Model.h"
 #include "Screens.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Server.h"
 #include "Event.h"
 #include "Chat.h"
@@ -445,7 +445,7 @@ static void HotbarWidget_BuildEntriesMesh(struct HotbarWidget* w, struct VertexT
 	IsometricDrawer_BeginBatch(*vertices, w->state);
 	scale = w->elemSize / 2.0f;
 
-	for (i = 0; i < INVENTORY_BLOCKS_PER_HOTBAR; i++) {
+	for (i = 0; i < 9; i++) {
 		x = HotbarWidget_TileX(w, i);
 		y = w->y + (w->height / 2);
 
@@ -516,14 +516,11 @@ void HotbarWidget_Update(struct HotbarWidget* w, float delta) {
 }
 
 static int HotbarWidget_ScrolledIndex(struct HotbarWidget* w, float delta, int index, int dir) {
-	int steps = Utils_AccumulateWheelDelta(&w->scrollAcc, delta);
-	index += (dir * steps) % INVENTORY_BLOCKS_PER_HOTBAR;
-
-	if (index < 0) index += INVENTORY_BLOCKS_PER_HOTBAR;
-	if (index >= INVENTORY_BLOCKS_PER_HOTBAR) {
-		index -= INVENTORY_BLOCKS_PER_HOTBAR;
-	}
-	return index;
+	const int steps = Utils_AccumulateWheelDelta(&w->scrollAcc, delta);
+	const int i = index + dir * steps;
+	if (i < 0) return HOTBAR_MAX_INDEX;
+	if (i >= 9) return 0;
+	return i;
 }
 
 static void HotbarWidget_Reposition(void* widget) {
@@ -553,56 +550,36 @@ static void HotbarWidget_Reposition(void* widget) {
 
 static int HotbarWidget_MapKey(int key, struct InputDevice* device) {
 	int i;
-	for (i = 0; i < INVENTORY_BLOCKS_PER_HOTBAR; i++)
-	{
+	for (i = 0; i < 9; i++) {
 		if (InputBind_Claims(BIND_HOTBAR_1 + i, key, device)) return i;
 	}
 	return -1;
 }
 
 static int HotbarWidget_CycleIndex(int dir) {
-	Inventory.SelectedIndex += dir;
-	if (Inventory.SelectedIndex < 0) 
-		Inventory.SelectedIndex += INVENTORY_BLOCKS_PER_HOTBAR;
-	if (Inventory.SelectedIndex >= INVENTORY_BLOCKS_PER_HOTBAR)
-		Inventory.SelectedIndex -= INVENTORY_BLOCKS_PER_HOTBAR;
-
+	Inventory.SelectedIndex = (Inventory.SelectedIndex + dir) % 9;
 	return true;
 }
 
 static int HotbarWidget_KeyDown(void* widget, int key, struct InputDevice* device) {
-	struct HotbarWidget* w = (struct HotbarWidget*)widget;
-	int index = HotbarWidget_MapKey(key, device);
-
-	if (index == -1) {
-		if (InputBind_Claims(BIND_HOTBAR_LEFT, key, device))
-			return HotbarWidget_CycleIndex(-1);
-		if (InputBind_Claims(BIND_HOTBAR_RIGHT, key, device))
-			return HotbarWidget_CycleIndex(+1);
-		return false;
-	}
-
-	if (Bind_IsTriggered[BIND_HOTBAR_SWITCH]) {
-		/* Pick from first to ninth row */
-		Inventory_SetHotbarIndex(index);
-		w->altHandled = true;
-	} else {
+	const int index = HotbarWidget_MapKey(key, device);
+	if (index != -1) {
 		Inventory_SetSelectedIndex(index);
+		return true;
 	}
-	return true;
+
+	if (InputBind_Claims(BIND_HOTBAR_LEFT, key, device))
+		return HotbarWidget_CycleIndex(-1);
+	else if (InputBind_Claims(BIND_HOTBAR_RIGHT, key, device))
+		return HotbarWidget_CycleIndex(+1);
+	
+	return false;
 }
 
 static void HotbarWidget_InputUp(void* widget, int key, struct InputDevice* device) {
-	struct HotbarWidget* w = (struct HotbarWidget*)widget;
-	/* Need to handle these cases:
-	     a) user presses alt then number
-	     b) user presses alt
-	   We only do case b) if case a) did not happen */
-	if (!InputBind_Claims(BIND_HOTBAR_SWITCH, key, device)) return;
-	if (w->altHandled) { w->altHandled = false; return; } /* handled already */
-
-	/* Don't switch hotbar when alt+tabbing to another window */
-	if (Window_Main.Focused) Inventory_SwitchHotbar();
+	(void)widget;
+	(void)key;
+	(void)device;
 }
 
 static int HotbarWidget_PointerDown(void* widget, int id, int x, int y) {
@@ -614,7 +591,7 @@ static int HotbarWidget_PointerDown(void* widget, int id, int x, int y) {
 	width  = (int)w->slotWidth;
 	height = w->height;
 
-	for (i = 0; i < INVENTORY_BLOCKS_PER_HOTBAR; i++) {
+	for (i = 0; i < 9; i++) {
 		cellX = (int)(w->x + width * i);
 		cellY = w->y;
 		if (!Gui_Contains(cellX, cellY, width, height, x, y)) continue;
@@ -666,18 +643,8 @@ static int HotbarWidget_PointerMove(void* widget, int id, int x, int y) {
 }
 
 static int HotbarWidget_MouseScroll(void* widget, float delta) {
-	struct HotbarWidget* w = (struct HotbarWidget*)widget;
-	int index;
-
-	if (Bind_IsTriggered[BIND_HOTBAR_SWITCH]) {
-		index = Inventory.Offset / INVENTORY_BLOCKS_PER_HOTBAR;
-		index = HotbarWidget_ScrolledIndex(w, delta, index, 1);
-		Inventory_SetHotbarIndex(index);
-		w->altHandled = true;
-	} else {
-		index = HotbarWidget_ScrolledIndex(w, delta, Inventory.SelectedIndex, -1);
-		Inventory_SetSelectedIndex(index);
-	}
+	const int index = HotbarWidget_ScrolledIndex(widget, delta, Inventory.SelectedIndex, -1);
+	Inventory_SetSelectedIndex(index);
 	return true;
 }
 
@@ -705,7 +672,7 @@ void HotbarWidget_Create(struct HotbarWidget* w) {
 #ifdef CC_BUILD_TOUCH
 	{
 		int i;
-		for (i = 0; i < INVENTORY_BLOCKS_PER_HOTBAR - 1; i++) {
+		for (i = 0; i < HOTBAR_MAX_INDEX; i++) {
 			w->touchId[i] = -1;
 		}
 	}

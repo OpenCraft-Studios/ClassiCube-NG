@@ -1,136 +1,100 @@
-###########################################################
-# If target platform isn't specified, default to current OS
-###########################################################
-ifndef $(PLAT)
-	ifeq ($(OS),Windows_NT)
-		PLAT = mingw
-	else
-		PLAT = $(shell uname -s | tr '[:upper:]' '[:lower:]')
-	endif
+### OpenCraft Build System, Powered by GNU Make
+### Copyleft 🄯 OpenCraft Studios (2026)
+
+.PHONY: clean full-clean env
+
+# ——— Project settings ————————————————————————————————————————————————————————
+
+PKGCONF     ?= pkg-config
+
+TARGET      := OpenCraft
+USE         := linux gl2 x11 openal openssl
+VERSION     := $(shell git describe --always --tags --dirty="*" --abbrev=1)
+
+oc.build     = /tmp/$(plat.USE)-opencraft
+oc.src      := $(CURDIR)/opencraft
+
+override SRCS := $(filter-out Graphics_% Audio% Platform_% Window_% $(oc.src)/SSL.c,$(wildcard $(oc.src)/*.c))
+override OBJS  = $(patsubst $(oc.src)/%.c,$(oc.build)/%.c.o,$(SRCS))
+
+# ——— Modules —————————————————————————————————————————————————————————————————
+
+include misc/logging.mk
+include $(oc.src)/platform.mk
+include $(oc.src)/certs.mk
+
+BEARSSL  ?= 1
+ifneq ($(BEARSSL), 0)
+include bearssl/module.mk
 endif
 
-
-default: $(PLAT)
-
-# Shortcuts for default platform
-sdl2:
-	$(MAKE) $(PLAT) BUILD_SDL2=1
-sdl3:
-	$(MAKE) $(PLAT) BUILD_SDL3=1
-terminal:
-	$(MAKE) $(PLAT) BUILD_TERMINAL=1
-release:
-	$(MAKE) $(PLAT) RELEASE=1
-
-# Build for the specified platform
-#   "$(filter-out $@, $(MAKECMDGOALS))" is used to get all goals except the current one
-# that way, e.g. "make freebsd clean" invokes freebsd makefile with 'clean' goal
-web:
-	$(MAKE) -f misc/makefiles/web.mk     $(filter-out $@, $(MAKECMDGOALS))
-linux:
-	$(MAKE) -f misc/makefiles/linux.mk   $(filter-out $@, $(MAKECMDGOALS))
-mingw:
-	$(MAKE) -f misc/makefiles/windows.mk $(filter-out $@, $(MAKECMDGOALS))
-sunos:
-	$(MAKE) -f misc/makefiles/solaris.mk $(filter-out $@, $(MAKECMDGOALS))
-hp-ux:
-	$(MAKE) -f misc/makefiles/hpux.mk    $(filter-out $@, $(MAKECMDGOALS))
-darwin:
-	$(MAKE) -f misc/makefiles/macos.mk   $(filter-out $@, $(MAKECMDGOALS))
-freebsd:
-	$(MAKE) -f misc/makefiles/freebsd.mk $(filter-out $@, $(MAKECMDGOALS))
-openbsd:
-	$(MAKE) -f misc/makefiles/openbsd.mk $(filter-out $@, $(MAKECMDGOALS))
-netbsd:
-	$(MAKE) -f misc/makefiles/netbsd.mk  $(filter-out $@, $(MAKECMDGOALS))
-dragonfly:
-	$(MAKE) -f misc/makefiles/flybsd.mk  $(filter-out $@, $(MAKECMDGOALS))
-haiku:
-	$(MAKE) -f misc/makefiles/haiku.mk   $(filter-out $@, $(MAKECMDGOALS))
-beos:
-	$(MAKE) -f misc/makefiles/beos.mk    $(filter-out $@, $(MAKECMDGOALS))
-serenityos:
-irix:
-	$(MAKE) -f misc/makefiles/irix.mk    $(filter-out $@, $(MAKECMDGOALS))
-
-# Mobile systems
-ios:
-	$(MAKE) -f misc/ios/Makefile $(filter-out $@, $(MAKECMDGOALS))
-android:
-	$(MAKE) -f misc/android/Makefile $(filter-out $@, $(MAKECMDGOALS))
-
-# Embedded systems
-wince:
-	$(MAKE) -f misc/makefiles/wince.mk $(filter-out $@, $(MAKECMDGOALS))
-rpi:
-	$(MAKE) -f misc/makefiles/rpi.mk $(filter-out $@, $(MAKECMDGOALS))
-
-# SEGA consoles
-32x:
-	$(MAKE) -f misc/32x/Makefile $(filter-out $@, $(MAKECMDGOALS))
-saturn:
-	$(MAKE) -f misc/saturn/Makefile $(filter-out $@, $(MAKECMDGOALS))
-dreamcast:
-	$(MAKE) -f misc/dreamcast/Makefile $(filter-out $@, $(MAKECMDGOALS))
-
-# Sony consoles
-psp:
-	$(MAKE) -f misc/psp/Makefile $(filter-out $@, $(MAKECMDGOALS))
-vita:
-	$(MAKE) -f misc/vita/Makefile $(filter-out $@, $(MAKECMDGOALS))
-ps1:
-	$(MAKE) -f misc/ps1/Makefile $(filter-out $@, $(MAKECMDGOALS))
-ps2:
-	$(MAKE) -f misc/ps2/Makefile $(filter-out $@, $(MAKECMDGOALS))
-ps3:
-	$(MAKE) -f misc/ps3/Makefile $(filter-out $@, $(MAKECMDGOALS))
-ps4:
-	$(MAKE) -f misc/ps4/Makefile $(filter-out $@, $(MAKECMDGOALS))
-
-# Microsoft consoles
-xbox:
-	$(MAKE) -f misc/xbox/Makefile $(filter-out $@, $(MAKECMDGOALS))
-xbox360:
-	$(MAKE) -f misc/xbox360/Makefile $(filter-out $@, $(MAKECMDGOALS))
-
-# Nintendo consoles
-n64:
-	$(MAKE) -f misc/n64/Makefile $(filter-out $@, $(MAKECMDGOALS))
-gba:
-	$(MAKE) -f misc/gba/Makefile $(filter-out $@, $(MAKECMDGOALS))
-ds:
-	$(MAKE) -f misc/nds/Makefile $(filter-out $@, $(MAKECMDGOALS))
-3ds:
-	$(MAKE) -f misc/3ds/Makefile $(filter-out $@, $(MAKECMDGOALS))
-gamecube:
-	$(MAKE) -f misc/gc/Makefile $(filter-out $@, $(MAKECMDGOALS))
-wii:
-	$(MAKE) -f misc/wii/Makefile $(filter-out $@, $(MAKECMDGOALS))
-wiiu:
-	$(MAKE) -f misc/wiiu/Makefile $(filter-out $@, $(MAKECMDGOALS))
-switch:
-	$(MAKE) -f misc/switch/Makefile $(filter-out $@, $(MAKECMDGOALS))
-
-# Other systems
-os/2:
-	$(MAKE) -f misc/os2/Makefile $(filter-out $@, $(MAKECMDGOALS))
-macclassic_68k:
-	$(MAKE) -f misc/macclassic/Makefile_68k.mk $(filter-out $@, $(MAKECMDGOALS))
-macclassic_ppc:
-	$(MAKE) -f misc/macclassic/Makefile_ppc.mk $(filter-out $@, $(MAKECMDGOALS))
-amiga_gcc:
-	$(MAKE) -f misc/amiga/Makefile_68k $(filter-out $@, $(MAKECMDGOALS))
-amiga:
-	$(MAKE) -f misc/amiga/Makefile $(filter-out $@, $(MAKECMDGOALS))
-atari_st:
-	$(MAKE) -f misc/atari_st/Makefile $(filter-out $@, $(MAKECMDGOALS))
-
-
-# Cleans up built files (except when clean goal is from e.g 'make freebsd clean')
-ifeq ($(MAKECMDGOALS),clean)
-clean:
-	$(MAKE) $(PLAT) clean
-else
-clean:
-	@echo "NOTE: Skipping 'clean' due to not being the only goal (all goals: $(MAKECMDGOALS))"
+AUDIO    ?= 1
+ifneq ($(AUDIO), 0)
+include $(oc.src)/audio.mk
 endif
+
+OPENGFX  ?= 1
+ifneq ($(OPENGFX), 0)
+include $(oc.src)/opengfx.mk
+endif
+
+WINDOW   ?= 1
+ifneq ($(WINDOW), 0)
+include $(oc.src)/window.mk
+endif
+
+# ——— Targets —————————————————————————————————————————————————————————————————
+
+.DEFAULT_GOAL := $(TARGET)
+
+$(TARGET): $(OBJS)
+	$(CC) -fuse-ld=$(LD) $(LDFLAGS) $^ $(LDLIBS) -o $@
+	$(call log_link,$@,$(words $(OBJS)))
+	chmod +x $@
+
+$(oc.build):
+	@mkdir -p $@
+
+# ——— Basic build rule ————————————————————————————————————————————————————————
+
+$(oc.build)/%.c.o: $(oc.src)/%.c | $(oc.build)
+	$(call log_compile,$(<F),opencraft,$(VERSION))
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# ——— Helpers —————————————————————————————————————————————————————————————————
+
+## Performs a basic clean of the build directories
+clean:
+	rm -rf $(BUILD_DIRS) $(TARGET)
+
+## Performs a basic clean and deletes files that git doesn't track
+## ! Use with precaution
+full-clean: clean
+	git clean -fd
+	git clean -fdX
+
+## Helps with git bisect run
+## * Execute [`git bisect run make bisect`] to find bugs easily
+bisect: $(TARGET) .WAIT full-clean
+
+## Detects the system toolchain
+## * Execute [`eval "$(make env)"`] to setup your environment
+env:
+	@echo export MAKEFLAGS=\"-sj$(shell nproc) --no-print-directory\"\;
+	@echo export LD=\"$(shell command -v ld.mold || command -v ld.lld || command -v ld.gold)\"\;
+	@echo export CC=\"$(shell command -v clang || command -v gcc || command -v cc)\"\;
+	@echo "# -s,--silent,--quiet:  Be silent, don't print recipes."
+	@echo "# -j,--jobs=$(shell nproc):          Harness full PC power."
+	@echo "# --no-print-directory: Don't print annoying messages if compiling recursively."
+	@echo 
+
+# ——— Global variables ————————————————————————————————————————————————————————
+
+override BUILD_DIRS   += $(oc.build)
+
+override INCLUDES     += -I"$(CURDIR)/include"
+override COMMON_FLAGS += $(ARCH_FLAGS) $(INCLUDES) -pipe -DCC_BUILD_MANUAL
+override CFLAGS       += $(COMMON_FLAGS)
+override CXXFLAGS     += $(COMMON_FLAGS)
+override LDFLAGS      += -s
+override LDLIBS       += -lm

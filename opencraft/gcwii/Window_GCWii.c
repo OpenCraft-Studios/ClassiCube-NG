@@ -1,5 +1,5 @@
-#include "../Window.h"
-#include "../Platform.h"
+#include <Window.h>
+#include <Platform.h>
 #include "../Input.h"
 #include "../InputHandler.h"
 #include "../Event.h"
@@ -8,7 +8,7 @@
 #include "../Bitmap.h"
 #include "../Errors.h"
 #include "../ExtMath.h"
-#include "../Graphics.h"
+#include <Graphics.h>
 #include "../Options.h"
 #include "../VirtualKeyboard.h"
 #include "../VirtualDialog.h"

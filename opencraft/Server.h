@@ -1,6 +1,6 @@
 #ifndef CC_SERVERCONNECTION_H
 #define CC_SERVERCONNECTION_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* 

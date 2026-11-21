@@ -6,13 +6,13 @@
 #include "ExtMath.h"
 #include "Funcs.h"
 #include "Game.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Model.h"
 #include "World.h"
 #include "Particle.h"
 #include "Drawer2D.h"
 #include "Server.h"
-#include "Platform.h"
+#include <Platform.h>
 
 /*########################################################################################################################*
 *------------------------------------------------------Entity Shadow------------------------------------------------------*
@@ -38,7 +38,7 @@ static cc_bool lequal(float a, float b) { return a < b || Math_AbsF(a - b) < 0.0
 static void EntityShadow_DrawCoords(struct VertexTextured** vertices, struct Entity* e, struct ShadowData* data, float x1, float z1, float x2, float z2) {
 	PackedCol col;
 	struct VertexTextured* v;
-	vec3 cen;
+	Vec3 cen;
 	float u1, v1, u2, v2;
 
 	if (lequal(x2, x1) || lequal(z2, z1)) return;
@@ -82,7 +82,7 @@ static void EntityShadow_DrawSquareShadow(struct VertexTextured** vertices, floa
 /* Shadow may extend down multiple blocks vertically */
 /* If so, shadow on a block must be 'chopped up' to avoid a shadow underneath block above this one */
 static void EntityShadow_DrawCircle(struct VertexTextured** vertices, struct Entity* e, struct ShadowData* data, float x, float z) {
-	vec3 min, max, nMin, nMax;
+	Vec3 min, max, nMin, nMax;
 	int i;
 	x = (float)Math_Floor(x); z = (float)Math_Floor(z);
 	min = Blocks.MinBB[data[0].block]; max = Blocks.MaxBB[data[0].block];
@@ -168,7 +168,7 @@ static void EntityShadow_Draw(struct Entity* e) {
 	struct VertexTextured vertices[128]; /* TODO this is less than maxVertes */
 	struct VertexTextured* ptr;
 	struct ShadowData data[4];
-	vec3 pos;
+	Vec3 pos;
 	float radius;
 	int y, count;
 	int x1, z1, x2, z2;
@@ -341,9 +341,9 @@ static void DrawName(struct Entity* e) {
 	struct VertexTextured* vertices;
 	struct Model* model;
 	struct Matrix mat, transform;
-	vec3 pos;
+	Vec3 pos;
 	float scale;
-	vec2 size;
+	Vec2 size;
 
 	if (!e->VTABLE->ShouldRenderName(e)) return;
 	if (e->NameTex.x == NAME_IS_EMPTY)   return;

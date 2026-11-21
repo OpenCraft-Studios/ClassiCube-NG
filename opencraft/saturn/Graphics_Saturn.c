@@ -2,7 +2,7 @@
 #define OVERRIDE_BEGEND2D_FUNCTIONS
 #include "../_GraphicsBase.h"
 #include "../Errors.h"
-#include "../Window.h"
+#include <Window.h>
 #include "../_BlockAlloc.h"
 
 #include <stdint.h>
@@ -407,20 +407,17 @@ static void LoadTransformMatrix(struct Matrix* src) {
 	mvp_.w.col3 = ToFixed(src->row3.w);
 }
 
-void gfxProjectionMatrix(const struct Matrix* matrix) {
-	_proj = *matrix;
+void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
+	if (type == MATRIX_VIEW) _view = *matrix;
+	if (type == MATRIX_PROJ) _proj = *matrix;
 
 	struct Matrix mvp;
-	Matrix_Mul(&mvp, &_view, &_proj);
-	LoadTransformMatrix(&mvp);
-}
-
-void gfxModelViewMatrix(const struct Matrix* matrix) {
-	_view = *matrix;
+	if (matrix == &Matrix_Identity && type == MATRIX_VIEW) {
+		mvp = _proj; // 2D mode uses identity view matrix
+	} else {
+		Matrix_Mul(&mvp, &_view, &_proj);
+	}
 	
-	struct Matrix mvp;
-	if (matrix == &Matrix_Identity) mvp = _proj; // 2D mode uses identity view matrix
-	else Matrix_Mul(&mvp, &_view, &_proj);
 	LoadTransformMatrix(&mvp);
 }
 

@@ -2,7 +2,7 @@
 #include "../_GraphicsBase.h"
 #include "../Errors.h"
 #include "../Logger.h"
-#include "../Window.h"
+#include <Window.h>
 
 #include <libdragon.h>
 #include <malloc.h>
@@ -46,6 +46,7 @@ void Gfx_Create(void) {
 	Gfx.MaxLowResTexSize = 2048;
 
 	Gfx.NonPowTwoTexturesSupport = GFX_NONPOW2_FULL;
+	Gfx_RestoreState();
 
 	Gfx_SetFaceCulling(false);
 	Gfx_SetViewport(0, 0, Game.Width, Game.Height);
@@ -569,17 +570,10 @@ void Gfx_DepthOnlyRendering(cc_bool depthOnly) {
 *#########################################################################################################################*/
 static struct Matrix _view, _proj;
 
-void gfxProjectionMatrix(const struct Matrix* matrix) {
-	_proj = *matrix;
+void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
+	if (type == MATRIX_VIEW) _view = *matrix;
+	if (type == MATRIX_PROJ) _proj = *matrix;
 
-	struct Matrix mvp CC_ALIGNED(64);	
-	Matrix_Mul(&mvp, &_view, &_proj);
-	gpuLoadMatrix((const float*)&mvp);
-}
-
-void gfxModelViewMatrix(const struct Matrix* matrix) {
-	_view = *matrix;
-	
 	struct Matrix mvp CC_ALIGNED(64);	
 	Matrix_Mul(&mvp, &_view, &_proj);
 	gpuLoadMatrix((const float*)&mvp);

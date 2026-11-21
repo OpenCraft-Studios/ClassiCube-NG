@@ -5,7 +5,7 @@
 #include "Funcs.h"
 #include "Options.h"
 #include "Logger.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Chat.h"
 #include "Utils.h"
 #include "Server.h"
@@ -16,7 +16,7 @@
 #include "Inventory.h"
 #include "World.h"
 #include "Event.h"
-#include "Window.h"
+#include <Window.h>
 #include "Entity.h"
 #include "Screens.h"
 #include "Block.h"
@@ -303,7 +303,7 @@ static cc_bool PushbackPlace(struct AABB* blockBB) {
 	Face closestFace;
 	cc_bool insideMap;
 
-	vec3 pos = p->Position;
+	Vec3 pos = p->Position;
 	struct AABB playerBB;
 	struct LocationUpdate update;
 
@@ -342,7 +342,7 @@ static cc_bool PushbackPlace(struct AABB* blockBB) {
 	return true;
 }
 
-static cc_bool IntersectsOthers(vec3 pos, BlockID block) {
+static cc_bool IntersectsOthers(Vec3 pos, BlockID block) {
 	struct AABB blockBB, entityBB;
 	struct Entity* e;
 	int id;
@@ -366,7 +366,7 @@ static cc_bool CheckIsFree(BlockID block) {
 	struct Entity* p        = &Entities.CurPlayer->Base;
 	struct HacksComp* hacks = &Entities.CurPlayer->Hacks;
 
-	vec3 pos, nextPos;
+	Vec3 pos, nextPos;
 	struct AABB blockBB, playerBB;
 	struct LocationUpdate update;
 
@@ -403,7 +403,7 @@ static cc_bool CheckIsFree(BlockID block) {
 }
 
 static void InputHandler_DeleteBlock(void) {
-	vec3i pos;
+	IVec3 pos;
 	BlockID old;
 	/* always play delete animations, even if we aren't deleting a block */
 	HeldBlockRenderer_ClickAnim(true);
@@ -419,7 +419,7 @@ static void InputHandler_DeleteBlock(void) {
 }
 
 static void InputHandler_PlaceBlock(void) {
-	vec3i pos;
+	IVec3 pos;
 	BlockID old, block;
 	pos = Game_SelectedPos.translatedPos;
 	if (!Game_SelectedPos.valid || !World_Contains(pos.x, pos.y, pos.z)) return;
@@ -442,7 +442,7 @@ static void InputHandler_PlaceBlock(void) {
 }
 
 static void InputHandler_PickBlock(void) {
-	vec3i pos;
+	IVec3 pos;
 	BlockID cur;
 	pos = Game_SelectedPos.pos;
 	if (!World_Contains(pos.x, pos.y, pos.z)) return;

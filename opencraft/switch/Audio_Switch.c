@@ -1,4 +1,4 @@
-#include "../Audio.h"
+#include <Audio.h>
 
 #include <switch.h>
 #include <stdio.h>

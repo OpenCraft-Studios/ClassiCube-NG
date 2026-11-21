@@ -1,6 +1,6 @@
 #ifndef CC_LOGGER_H
 #define CC_LOGGER_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* 

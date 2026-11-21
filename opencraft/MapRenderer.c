@@ -8,8 +8,8 @@
 #include "ExtMath.h"
 #include "Funcs.h"
 #include "Game.h"
-#include "Graphics.h"
-#include "Platform.h"
+#include <Graphics.h>
+#include <Platform.h>
 #include "TexturePack.h"
 #include "Utils.h"
 #include "World.h"
@@ -20,7 +20,7 @@ struct ChunkPartInfo* MapRenderer_PartsNormal;
 struct ChunkPartInfo* MapRenderer_PartsTranslucent;
 
 static cc_bool inTranslucent;
-static vec3i chunkPos;
+static IVec3 chunkPos;
 
 /* The number of non-empty Normal/Translucent ChunkPartInfos (across entire world) for each 1D atlas batch. */
 /* 1D atlas batches that do not have any ChunkPartInfos can be entirely skipped. */
@@ -91,7 +91,7 @@ CC_NOINLINE static int MapRenderer_UsedAtlases(void) {
 *-------------------------------------------------------Map rendering-----------------------------------------------------*
 *#########################################################################################################################*/
 static void CheckWeather(float delta) {
-	vec3i pos;
+	IVec3 pos;
 	BlockID block;
 	cc_bool outside;
 	IVec3_Floor(&pos, &Camera.CurrentPos);
@@ -222,6 +222,9 @@ void MapRenderer_RenderNormal(float delta) {
 
 	CheckWeather(delta);
 	Gfx_SetAlphaTest(false);
+#if DEBUG_OCCLUSION
+	DebugPickedPos();
+#endif
 }
 
 #define DrawTranslucentFaces(minFace, maxFace) \
@@ -336,6 +339,11 @@ static void DeleteChunk(struct ChunkInfo* chunk) {
 	chunk->allAir = false;
 	chunk->noData = true;
 	chunk->dirty  = true;
+
+#ifdef OCCLUSION
+	chunk.OcclusionFlags = 0;
+	chunk.OccludedFlags = 0;
+#endif
 
 	if (chunk->normalParts) {
 		ptr = chunk->normalParts;
@@ -528,7 +536,7 @@ static void RefreshBorderChunks(int maxHeight) {
 *#########################################################################################################################*/
 #define CHUNK_TARGET_TIME ((1.0f/30) + 0.01f)
 static int chunksTarget = 12;
-static vec3 lastCamPos;
+static Vec3 lastCamPos;
 static float lastYaw, lastPitch;
 /* Max distance from camera that chunks are rendered within */
 /* This may differ from the view distance configured by the user */
@@ -570,8 +578,6 @@ static int UpdateChunksAndVisibility(int* chunkUpdates) {
 			DeleteChunk(chunk);
 			BuildChunk(chunk, chunkUpdates);
 		}
-
-		if (chunk->dirty || chunk->noData) continue;
 
 		if (distSqr > renderDistSqr) {
 			chunk->visible  = false;
@@ -670,7 +676,7 @@ static void SortMapChunks(int left, int right) {
 
 static void UpdateSortOrder(void) {
 	struct ChunkInfo* info;
-	vec3i pos;
+	IVec3 pos;
 	int i, dx, dy, dz;
 
 	/* pos is centre coordinate of chunk camera is in */

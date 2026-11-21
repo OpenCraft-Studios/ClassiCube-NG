@@ -1,6 +1,6 @@
 #ifndef CC_HELDBLOCKRENDERER_H
 #define CC_HELDBLOCKRENDERER_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* 

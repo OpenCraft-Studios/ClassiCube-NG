@@ -80,7 +80,7 @@ struct Model {
 
 	/* Returns the transformation matrix applied to the model when rendering. */
 	/* NOTE: Most models just use Entity_GetTransform (except SittingModel) */
-	void (*GetTransform)(struct Entity* entity, vec3 pos, struct Matrix* m);
+	void (*GetTransform)(struct Entity* entity, Vec3 pos, struct Matrix* m);
 	void (*DrawArm)(struct Entity* entity);
 
 	float maxScale, shadowScale;
@@ -257,16 +257,16 @@ struct CustomModelAnim {
 };
 
 struct CustomModelPartDef {
-	vec3 min, max;
+	Vec3 min, max;
 	/* uv coords in order: top, bottom, front, back, left, right */
 	cc_uint16 u1[6], v1[6], u2[6], v2[6];
-	vec3 rotationOrigin;
+	Vec3 rotationOrigin;
 	cc_uint8 flags;
 };
 
 struct CustomModelPart {
 	struct ModelPart modelPart;
-	vec3 rotation; /* rotation angles */
+	Vec3 rotation; /* rotation angles */
 	struct CustomModelAnim anims[MAX_CUSTOM_MODEL_ANIMS];
 	cc_uint8 animType[MAX_CUSTOM_MODEL_ANIMS];
 	cc_uint8 animAxis[MAX_CUSTOM_MODEL_ANIMS];
@@ -282,7 +282,7 @@ struct CustomModel {
 
 	float nameY;
 	float eyeY;
-	vec3 collisionBounds;
+	Vec3 collisionBounds;
 	struct AABB pickingBoundsAABB;
 
 	cc_uint16 uScale;

@@ -1,6 +1,6 @@
 #ifndef CC_SYSTEMFONTS_H
 #define CC_SYSTEMFONTS_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /*  Manages loading and drawing platform specific system fonts

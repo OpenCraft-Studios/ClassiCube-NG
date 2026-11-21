@@ -1,8 +1,8 @@
 #include "Drawer2D.h"
 #include "String_.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Funcs.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "ExtMath.h"
 #include "Logger.h"
 #include "Game.h"
@@ -11,7 +11,7 @@
 #include "Stream.h"
 #include "Utils.h"
 #include "Errors.h"
-#include "Window.h"
+#include <Window.h>
 #include "Options.h"
 #include "TexturePack.h"
 #include "SystemFonts.h"
@@ -662,6 +662,7 @@ static void DefaultPngProcess(struct Stream* stream, const cc_string* name) {
 
 	if ((res = Png_Decode(&bmp, stream))) {
 		Logger_SysWarn2(res, "decoding", name);
+		Mem_Free(bmp.scan0);
 	} else if (Font_SetBitmapAtlas(&bmp)) {
 		Event_RaiseVoid(&ChatEvents.FontChanged);
 	} else {

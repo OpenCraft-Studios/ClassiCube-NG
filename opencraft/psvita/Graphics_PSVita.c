@@ -2,7 +2,7 @@
 #include "../_GraphicsBase.h"
 #include "../Errors.h"
 #include "../Logger.h"
-#include "../Window.h"
+#include <Window.h>
 
 #include <vitasdk.h>
 
@@ -577,7 +577,7 @@ void Gfx_Create(void) {
 	
 	Gfx_SetDepthTest(true);
 	Gfx_SetVertexFormat(VERTEX_FORMAT_COLOURED);
-
+	Gfx_RestoreState();
 	Gfx.NonPowTwoTexturesSupport = GFX_NONPOW2_UPLOAD;
 }
 
@@ -595,6 +595,7 @@ static void Gfx_RestoreState(void) {
 	BitmapCol pixels[1] = { BITMAPCOLOR_WHITE };
 	Bitmap_Init(bmp, 1, 1, pixels);
 	white_square = Gfx_CreateTexture(&bmp, 0, false);
+	// TODO
 }
 
 static void Gfx_FreeState(void) {
@@ -1080,7 +1081,10 @@ void Gfx_SetDepthTest(cc_bool enabled) {
 *#########################################################################################################################*/
 static struct Matrix _view, _proj;
 
-void _gfxReloadMatrices() {
+void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
+	if (type == MATRIX_VIEW) _view = *matrix;
+	if (type == MATRIX_PROJ) _proj = *matrix;
+
 	struct Matrix mvp CC_ALIGNED(64);
 	Matrix_Mul(&mvp, &_view, &_proj);
 	float* m = (float*)&mvp;
@@ -1098,20 +1102,9 @@ void _gfxReloadMatrices() {
 	VP_ReloadUniforms();
 }
 
-void gfxModelViewMatrix(const struct Matrix* view) {
-	_view = *view;
-	_gfxReloadMatrices();
-}
-
-void gfxProjectionMatrix(const struct Matrix* proj) {
-	_proj = *proj;
-	_gfxReloadMatrices();
-}
-
 void Gfx_LoadMVP(const struct Matrix* view, const struct Matrix* proj, struct Matrix* mvp) {
-	_view = *view;
-	_proj = *proj;
-	_gfxReloadMatrices();
+	Gfx_LoadMatrix(MATRIX_VIEW, view);
+	Gfx_LoadMatrix(MATRIX_PROJ, proj);
 	Matrix_Mul(mvp, view, proj);
 }
 
@@ -1183,8 +1176,8 @@ void Gfx_ClearBuffers(GfxBuffers buffers) {
 	Gfx_SetDepthTest(false);
 	
 	Gfx_SetVertexFormat(VERTEX_FORMAT_COLOURED);
-	gfxModelViewMatrix(&Matrix_Identity);
-	gfxProjectionMatrix(&Matrix_Identity);
+	Gfx_LoadMatrix(MATRIX_VIEW, &Matrix_Identity);
+	Gfx_LoadMatrix(MATRIX_PROJ, &Matrix_Identity);
 	Gfx_BindVb(clearVB);
 	Gfx_DrawVb_IndexedTris(4);
 	

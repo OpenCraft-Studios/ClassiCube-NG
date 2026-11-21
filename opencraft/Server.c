@@ -9,7 +9,7 @@
 #include "Http.h"
 #include "Funcs.h"
 #include "Entity.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Gui.h"
 #include "Screens.h"
 #include "Formats.h"
@@ -21,7 +21,7 @@
 #include "Logger.h"
 #include "Protocol.h"
 #include "Inventory.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Input.h"
 #include "Errors.h"
 #include "Options.h"

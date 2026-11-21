@@ -8,12 +8,12 @@
 #include "Lighting.h"
 #include "Options.h"
 #include "Generator.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Game.h"
 #include "Logger.h"
 #include "Vectors.h"
 #include "Chat.h"
-#include "Audio.h"
+#include <Audio.h>
 
 /* Data for a resizable queue, used for liquid physic tick entries. */
 struct TickQueue {
@@ -239,7 +239,7 @@ static cc_bool Physics_CheckItem(struct TickQueue* queue, int* posIndex) {
 
 
 static void Physics_HandleSapling(int index, BlockID block) {
-	vec3i coords[TREE_MAX_COUNT];
+	IVec3 coords[TREE_MAX_COUNT];
 	BlockRaw blocks[TREE_MAX_COUNT];
 	int i, count, height;
 

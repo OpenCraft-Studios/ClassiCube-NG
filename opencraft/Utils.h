@@ -1,6 +1,6 @@
 #ifndef CC_UTILS_H
 #define CC_UTILS_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* 

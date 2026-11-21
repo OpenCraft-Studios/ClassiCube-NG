@@ -2,12 +2,12 @@
 #include "BlockID.h"
 #include "ExtMath.h"
 #include "Funcs.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "World.h"
 #include "Utils.h"
 #include "Game.h"
 #include "Screens.h"
-#include "Window.h"
+#include <Window.h>
 
 static const struct MapGenerator* gen_active;
 BlockRaw* Gen_Blocks;
@@ -692,7 +692,7 @@ static void NotchyGen_PlantTrees(void) {
 	BlockRaw under;
 	int i, j, k, m;
 
-	vec3i coords[TREE_MAX_COUNT];
+	IVec3 coords[TREE_MAX_COUNT];
 	BlockRaw blocks[TREE_MAX_COUNT];
 
 	Tree_Blocks = Gen_Blocks;
@@ -813,7 +813,7 @@ cc_bool TreeGen_CanGrow(int treeX, int treeY, int treeZ, int treeHeight) {
 coords[count].x = (xVal); coords[count].y = (yVal); coords[count].z = (zVal);\
 blocks[count] = block; count++;
 
-int TreeGen_Grow(int treeX, int treeY, int treeZ, int height, vec3i* coords, BlockRaw* blocks) {
+int TreeGen_Grow(int treeX, int treeY, int treeZ, int height, IVec3* coords, BlockRaw* blocks) {
 	int topStart = treeY + (height - 2);
 	int count = 0;
 	int xx, zz, x, y, z;

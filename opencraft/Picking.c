@@ -8,7 +8,7 @@
 #include "Block.h"
 #include "Logger.h"
 #include "Camera.h"
-#include "Platform.h"
+#include <Platform.h>
 
 static float pickedPos_dist;
 static void TestAxis(struct RayTracer* t, float dAxis, Face fAxis) {
@@ -42,7 +42,7 @@ static void SetAsValid(struct RayTracer* t) {
 }
 
 void RayTracer_SetInvalid(struct RayTracer* t) {
-	static const vec3i pos = { -1, -1, -1 };
+	static const IVec3 pos = { -1, -1, -1 };
 	t->pos           = pos;
 	t->translatedPos = pos;
 
@@ -51,8 +51,8 @@ void RayTracer_SetInvalid(struct RayTracer* t) {
 	t->closest = FACE_COUNT;
 }
 
-void RayTracer_Init(struct RayTracer* t, const vec3* origin, const vec3* dir) {
-	vec3i cellBoundary;
+void RayTracer_Init(struct RayTracer* t, const Vec3* origin, const Vec3* dir) {
+	IVec3 cellBoundary;
 	t->origin = *origin; t->dir = *dir;
 
 	t->invDir.x = Math_SafeDiv(1.0f, dir->x);
@@ -120,7 +120,7 @@ static BlockID Picking_GetInside(int x, int y, int z) {
 	return Env.SidesBlock != BLOCK_AIR && y < floorY ? BORDER : BLOCK_AIR;
 }
 
-static BlockID Picking_GetOutside(int x, int y, int z, vec3i origin) {
+static BlockID Picking_GetOutside(int x, int y, int z, IVec3 origin) {
 	cc_bool sides = Env.SidesBlock != BLOCK_AIR;
 	if (World_ContainsXZ(x, z)) {
 		if (y >= World.Height) return BLOCK_AIR;
@@ -151,11 +151,11 @@ static BlockID Picking_GetOutside(int x, int y, int z, vec3i origin) {
 	return BLOCK_AIR;
 }
 
-static cc_bool RayTrace(struct RayTracer* t, const vec3* origin, const vec3* dir, float reach, IntersectTest intersect) {
-	vec3i pOrigin;
+static cc_bool RayTrace(struct RayTracer* t, const Vec3* origin, const Vec3* dir, float reach, IntersectTest intersect) {
+	IVec3 pOrigin;
 	cc_bool insideMap;
 	float reachSq;
-	vec3 v;
+	Vec3 v;
 
 	float dxMin, dxMax, dx;
 	float dyMin, dyMax, dy;
@@ -197,7 +197,7 @@ static cc_bool RayTrace(struct RayTracer* t, const vec3* origin, const vec3* dir
 }
 
 static cc_bool ClipBlock(struct RayTracer* t) {
-	vec3 scaledDir;
+	Vec3 scaledDir;
 	float lenSq, reach;
 	float t0, t1;
 
@@ -221,9 +221,9 @@ static cc_bool ClipBlock(struct RayTracer* t) {
 	return true;
 }
 
-static const vec3 picking_adjust = { 0.1f, 0.1f, 0.1f };
+static const Vec3 picking_adjust = { 0.1f, 0.1f, 0.1f };
 static cc_bool ClipCamera(struct RayTracer* t) {
-	vec3 intersect;
+	Vec3 intersect;
 	float t0, t1;
 
 	if (Blocks.Draw[t->block] == DRAW_GAS || Blocks.Collide[t->block] != COLLIDE_SOLID) return false;
@@ -240,13 +240,13 @@ static cc_bool ClipCamera(struct RayTracer* t) {
 	return true;
 }
 
-void Picking_CalcPickedBlock(const vec3* origin, const vec3* dir, float reach, struct RayTracer* t) {
+void Picking_CalcPickedBlock(const Vec3* origin, const Vec3* dir, float reach, struct RayTracer* t) {
 	if (!RayTrace(t, origin, dir, reach, ClipBlock)) {
 		RayTracer_SetInvalid(t);
 	}
 }
 
-void Picking_ClipCameraPos(const vec3* origin, const vec3* dir, float reach, struct RayTracer* t) {
+void Picking_ClipCameraPos(const Vec3* origin, const Vec3* dir, float reach, struct RayTracer* t) {
 	cc_bool noClip = (!Camera.Clipping || Entities.CurPlayer->Hacks.Noclip)
 						&& Entities.CurPlayer->Hacks.CanNoclip;
 	if (noClip || !World.Loaded || !RayTrace(t, origin, dir, reach, ClipCamera)) {

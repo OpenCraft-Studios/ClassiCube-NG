@@ -4,7 +4,7 @@
 #include "Deflate.h"
 #include "Block.h"
 #include "Entity.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "ExtMath.h"
 #include "Logger.h"
 #include "Game.h"
@@ -16,7 +16,7 @@
 #include "Chat.h"
 #include "TexturePack.h"
 #include "Utils.h"
-#include "Audio.h"
+#include <Audio.h>
 
 #ifdef CC_BUILD_FILESYSTEM
 static struct LocationUpdate* spawn_point;
@@ -1516,7 +1516,7 @@ static cc_result Cw_WriteBockDef(struct Stream* stream, int b) {
 	TextureLoc tex;
 	cc_uint8 fog;
 	PackedCol col;
-	vec3 minBB, maxBB;	
+	Vec3 minBB, maxBB;	
 
 	/* Hacky unique tag name for each by using hex of block */
 	String_InitArray_NT(name, nameBuffer);

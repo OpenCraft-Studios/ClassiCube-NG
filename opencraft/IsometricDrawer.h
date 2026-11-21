@@ -1,6 +1,6 @@
 #ifndef CC_ISOMETRICDRAWER_H
 #define CC_ISOMETRICDRAWER_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* Draws 2D isometric blocks for the hotbar and inventory UIs.

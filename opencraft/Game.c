@@ -3,13 +3,13 @@
 #include "World.h"
 #include "Lighting.h"
 #include "MapRenderer.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Camera.h"
 #include "Options.h"
 #include "Funcs.h"
 #include "ExtMath.h"
 #include "Gui.h"
-#include "Window.h"
+#include <Window.h>
 #include "Event.h"
 #include "Utils.h"
 #include "Logger.h"
@@ -32,7 +32,7 @@
 #include "HeldBlockRenderer.h"
 #include "SelOutlineRenderer.h"
 #include "Menus.h"
-#include "Audio.h"
+#include <Audio.h>
 #include "Stream.h"
 #include "Builder.h"
 #include "Protocol.h"
@@ -248,13 +248,13 @@ cc_bool Game_UpdateTexture(GfxResourceID* texId, struct Stream* src, const cc_st
 	cc_result res;
 	
 	res = Png_Decode(&bmp, src);
-	if (res) { Logger_SysWarn2(res, "decoding", file); return false; }
+	if (res) { Logger_SysWarn2(res, "decoding", file); }
 	
 	/* E.g. gui.png only need top half of the texture loaded */
 	if (heightDivisor && bmp.height >= *heightDivisor)
 		bmp.height /= *heightDivisor;
 
-	success = Game_ValidateBitmap(file, &bmp);
+	success = !res && Game_ValidateBitmap(file, &bmp);
 	if (success) {
 		if (skinType) { *skinType = Utils_CalcSkinType(&bmp); }
 		Gfx_RecreateTexture(texId, &bmp, TEXTURE_FLAG_MANAGED, false);
@@ -404,12 +404,12 @@ static void Game_Load(void) {
 	Event_Register_(&WindowEvents.Closing,         NULL, Game_PendingClose);
 	Event_Register_(&WindowEvents.InactiveChanged, NULL, HandleInactiveChanged);
 
-	Game_AddComponent(&Gfx_Component);
 	Game_AddComponent(&World_Component);
 	Game_AddComponent(&Textures_Component);
 	Game_AddComponent(&Input_Component);
 	Game_AddComponent(&InputHandler_Component);
 	Game_AddComponent(&Camera_Component);
+	Game_AddComponent(&Gfx_Component);
 	Game_AddComponent(&Blocks_Component);
 	Game_AddComponent(&Drawer2D_Component);
 	Game_AddComponent(&SystemFonts_Component);
@@ -489,11 +489,11 @@ void Game_SetMinFrameTime(float frameTimeMS) {
 
 static void Render3DFrame(float delta, float t) {
 	struct Matrix mvp;
-	vec3 pos;
+	Vec3 pos;
 
 	Camera.Active->GetView(&Gfx.View);
-	/*gfxProjectionMatrix(&Gfx.Projection);
-	gfxModelViewMatrix(&Gfx.View);
+	/*Gfx_LoadMatrix(MATRIX_PROJ, &Gfx.Projection);
+	Gfx_LoadMatrix(MATRIX_VIEW, &Gfx.View);
 	Frustum_CalcPlanes(&Gfx.Projection, &Gfx.View);*/
 	Gfx_LoadMVP(&Gfx.View, &Gfx.Projection, &mvp);
 	Frustum_CalcPlanes(&mvp);

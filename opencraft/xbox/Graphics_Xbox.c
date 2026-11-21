@@ -2,7 +2,7 @@
 #include "../_GraphicsBase.h"
 #include "../Errors.h"
 #include "../Logger.h"
-#include "../Window.h"
+#include <Window.h>
 
 #include <pbkit/pbkit.h>
 #include "nv2a_gpu.h"
@@ -491,7 +491,9 @@ static struct Matrix _view, _proj, _mvp;
 // TODO Upload constants too
 // if necessary, look at vs.inl output for 'c[5]' etc..
 
-void _gfxReloadMatrices() {
+void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
+	struct Matrix* dst = type == MATRIX_PROJ ? &_proj : &_view;
+	*dst = *matrix;
 	Matrix_Mul(&_mvp, &_view, &_proj);
 
 	struct Matrix final;
@@ -512,20 +514,9 @@ void _gfxReloadMatrices() {
 	pb_end(p);
 }
 
-void gfxModelViewMatrix(const struct Matrix* view) {
-	_view = *view;
-	_gfxReloadMatrices();
-}
-
-void gfxProjectionMatrix(const struct Matrix* proj) {
-	_proj = *proj;
-	_gfxReloadMatrices();
-}
-
 void Gfx_LoadMVP(const struct Matrix* view, const struct Matrix* proj, struct Matrix* mvp) {
-	_view = *view;
-	_proj = *proj;
-	_gfxReloadMatrices();
+	Gfx_LoadMatrix(MATRIX_VIEW, view);
+	Gfx_LoadMatrix(MATRIX_PROJ, proj);
 	Mem_Copy(mvp, &_mvp, sizeof(struct Matrix));
 }
 

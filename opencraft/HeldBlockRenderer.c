@@ -2,7 +2,7 @@
 #include "Block.h"
 #include "Game.h"
 #include "Inventory.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Camera.h"
 #include "ExtMath.h"
 #include "Event.h"
@@ -66,7 +66,7 @@ static void HeldBlockRenderer_RenderModel(void) {
 static void SetMatrix(void) {
 	struct Entity* p = &Entities.CurPlayer->Base;
 	struct Matrix lookAt;
-	vec3 eye = { 0,0,0 }; eye.y = Entity_GetEyeHeight(p);
+	Vec3 eye = { 0,0,0 }; eye.y = Entity_GetEyeHeight(p);
 
 	Matrix_Translate(&lookAt, -eye.x, -eye.y, -eye.z);
 	Matrix_Mul(&Gfx.View, &lookAt, &Camera.TiltM);
@@ -75,7 +75,7 @@ static void SetMatrix(void) {
 static void ResetHeldState(void) {
 	/* Based off details from http://pastebin.com/KFV0HkmD (Thanks goodlyay!) */
 	struct Entity* p = &Entities.CurPlayer->Base;
-	vec3 eye = { 0,0,0 }; eye.y = Entity_GetEyeHeight(p);
+	Vec3 eye = { 0,0,0 }; eye.y = Entity_GetEyeHeight(p);
 	held_entity.Position = eye;
 
 	held_entity.Position.x -= Camera.BobbingHor;
@@ -95,9 +95,9 @@ static void ResetHeldState(void) {
 
 static void SetBaseOffset(void) {
 	cc_bool sprite = Blocks.Draw[held_block] == DRAW_SPRITE;
-	vec3 normalOffset = { 0.56f, -0.72f, -0.72f };
-	vec3 spriteOffset = { 0.46f, -0.52f, -0.72f };
-	vec3 offset = sprite ? spriteOffset : normalOffset;
+	Vec3 normalOffset = { 0.56f, -0.72f, -0.72f };
+	Vec3 spriteOffset = { 0.46f, -0.52f, -0.72f };
+	Vec3 offset = sprite ? spriteOffset : normalOffset;
 
 	Vec3_AddBy(&held_entity.Position, &offset);
 	if (!sprite && Blocks.Draw[held_block] != DRAW_GAS) {
@@ -188,7 +188,7 @@ static void DoSwitchBlockAnim(void* obj) {
 	}
 }
 
-static void OnBlockChanged(void* obj, vec3i coords, BlockID old, BlockID now) {
+static void OnBlockChanged(void* obj, IVec3 coords, BlockID old, BlockID now) {
 	if (now == BLOCK_AIR) return;
 	HeldBlockRenderer_ClickAnim(false);
 }
@@ -229,7 +229,7 @@ void HeldBlockRenderer_Render(float delta) {
 	held_block  = Inventory_SelectedBlock;
 	view = Gfx.View;
 
-	gfxProjectionMatrix(&held_blockProj);
+	Gfx_LoadMatrix(MATRIX_PROJ, &held_blockProj);
 	SetMatrix();
 
 	ResetHeldState();
@@ -238,7 +238,7 @@ void HeldBlockRenderer_Render(float delta) {
 	if (!Camera.Active->isThirdPerson) HeldBlockRenderer_RenderModel();
 
 	Gfx.View = view;
-	gfxProjectionMatrix(&Gfx.Projection);
+	Gfx_LoadMatrix(MATRIX_PROJ, &Gfx.Projection);
 }
 
 

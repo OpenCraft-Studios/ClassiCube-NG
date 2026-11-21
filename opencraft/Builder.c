@@ -3,9 +3,9 @@
 #include "World.h"
 #include "Funcs.h"
 #include "Lighting.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "MapRenderer.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Drawer.h"
 #include "ExtMath.h"
 #include "Block.h"
@@ -154,6 +154,20 @@ static void PrepareChunk(int x1, int y1, int z1) {
 	int cIndex, index, tileIdx;
 	BlockID b;
 	int x, y, z, xx, yy, zz;
+
+#ifdef OCCLUSION
+	int flags = ComputeOcclusion();
+#endif
+#ifdef DEBUG_OCCLUSION
+	FastColour col = new FastColour(60, 60, 60, 255);
+	if (flags & 1) col.R = 255; /* x */
+	if (flags & 4) col.G = 255; /* y */
+	if (flags & 2) col.B = 255; /* z */
+	map.Sunlight = map.Shadowlight = col;
+	map.SunlightXSide = map.ShadowlightXSide = col;
+	map.SunlightZSide = map.ShadowlightZSide = col;
+	map.SunlightYBottom = map.ShadowlightYBottom = col;
+#endif
 	
 	for (y = y1, yy = 0; y < yMax; y++, yy++) {
 		for (z = z1, zz = 0; z < zMax; z++, zz++) {
@@ -403,6 +417,10 @@ cc_bool Builder_MakeChunk(struct ChunkInfo* info) {
 	if (!totalVerts) return true;
 	
 	OutputChunkPartsMeta(x1, y1, z1, info);
+#ifdef OCCLUSION
+	if (info.NormalParts != null || info.TranslucentParts != null)
+		info.occlusionFlags = (cc_uint8)ComputeOcclusion();
+#endif
 
 #if CC_GFX_BACKEND != CC_GFX_BACKEND_GL11
 	/* add an extra element to fix crashing on some GPUs */
@@ -642,7 +660,7 @@ static void NormalBuilder_RenderBlock(int index, int x, int y, int z) {
 	int count_ZMax, count_YMin, count_YMax;
 
 	/* block state */
-	vec3 min, max;
+	Vec3 min, max;
 	int baseOffset, lightFlags;
 	cc_bool fullBright;
 
@@ -762,7 +780,7 @@ static void NormalBuilder_SetActive(void) {
 *-------------------------------------------------Advanced mesh builder---------------------------------------------------*
 *#########################################################################################################################*/
 #ifdef CC_BUILD_ADVLIGHTING
-static vec3 adv_minBB, adv_maxBB;
+static Vec3 adv_minBB, adv_maxBB;
 static int adv_initBitFlags, adv_baseOffset;
 static int* adv_bitFlags;
 static float adv_x1, adv_y1, adv_z1, adv_x2, adv_y2, adv_z2;
@@ -1202,7 +1220,7 @@ static void Adv_DrawYMax(int count) {
 }
 
 static void Adv_RenderBlock(int index, int x, int y, int z) {
-	vec3 min, max;
+	Vec3 min, max;
 	int count_XMin, count_XMax, count_ZMin;
 	int count_ZMax, count_YMin, count_YMax;
 
@@ -1558,7 +1576,7 @@ static void Modern_DrawYMax(int count, int x, int y, int z) {
 }
 
 static void Modern_RenderBlock(int index, int x, int y, int z) {
-	vec3 min, max;
+	Vec3 min, max;
 	int count_XMin, count_XMax, count_ZMin;
 	int count_ZMax, count_YMin, count_YMax;
 

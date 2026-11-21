@@ -1,6 +1,6 @@
 #include "SelOutlineRenderer.h"
 #include "PackedCol.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Game.h"
 #include "Event.h"
 #include "Picking.h"
@@ -41,10 +41,10 @@ static void BuildMesh(struct RayTracer* selected) {
 	
 	struct VertexColoured* ptr;
 	int i;
-	vec3 delta;
+	Vec3 delta;
 	float dist, offset;
 	float size, scale;
-	vec3 coords[4];
+	Vec3 coords[4];
 
 	Vec3_Sub(&delta, &Camera.CurrentPos, &selected->Min);
 	dist = Vec3_LengthSquared(&delta);

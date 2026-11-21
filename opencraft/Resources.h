@@ -1,6 +1,6 @@
 #ifndef CC_RESOURCES_H
 #define CC_RESOURCES_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* Implements checking, fetching, and patching the default game assets.

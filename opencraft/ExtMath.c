@@ -1,5 +1,5 @@
 #include "ExtMath.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Utils.h"
 
 #define PI 3.141592653589793238462643383279502884197169399

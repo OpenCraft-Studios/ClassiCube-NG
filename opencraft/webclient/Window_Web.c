@@ -1,4 +1,4 @@
-#include "../Core.h"
+#include <Core.h>
 #include "../_WindowBase.h"
 #include "../Game.h"
 #include "../String_.h"
@@ -752,7 +752,7 @@ void Window_DisableRawMouse(void) {
 *------------------------------------------------Emscripten WebGL context-------------------------------------------------*
 *#########################################################################################################################*/
 #if CC_GFX_BACKEND_IS_GL()
-#include "../Graphics.h"
+#include <Graphics.h>
 static EMSCRIPTEN_WEBGL_CONTEXT_HANDLE ctx_handle;
 
 static EM_BOOL GLContext_OnLost(int eventType, const void *reserved, void *userData) {

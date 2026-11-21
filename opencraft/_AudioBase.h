@@ -1,9 +1,9 @@
-#include "Audio.h"
+#include <Audio.h>
 #include "String_.h"
 #include "Logger.h"
 #include "Errors.h"
 #include "Utils.h"
-#include "Platform.h"
+#include <Platform.h>
 
 void Audio_Warn(cc_result res, const char* action) {
 	Logger_Warn(res, action, Audio_DescribeError);

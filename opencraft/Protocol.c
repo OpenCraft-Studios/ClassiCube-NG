@@ -6,7 +6,7 @@
 #include "Server.h"
 #include "Stream.h"
 #include "Entity.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Screens.h"
 #include "World.h"
 #include "Event.h"
@@ -25,7 +25,7 @@
 #include "Gui.h"
 #include "Errors.h"
 #include "Camera.h"
-#include "Window.h"
+#include <Window.h>
 #include "Particle.h"
 #include "Picking.h"
 #include "Input.h"
@@ -34,7 +34,7 @@
 #include "HeldBlockRenderer.h"
 #include "Options.h"
 #include "Screens.h"
-#include "Audio.h"
+#include <Audio.h>
 
 struct _ProtocolData Protocol;
 
@@ -459,7 +459,7 @@ void Classic_BuildChat(const cc_string* text, cc_bool partial, struct ChatPacket
 	WriteString(pkt->msg, text);
 }
 
-static cc_uint8* Classic_WritePosition(cc_uint8* data, vec3 pos, float yaw, float pitch) {
+static cc_uint8* Classic_WritePosition(cc_uint8* data, Vec3 pos, float yaw, float pitch) {
 	BlockID payload;
 	int x, y, z;
 
@@ -1160,7 +1160,7 @@ static void CPE_ExtRemovePlayerName(cc_uint8* data) {
 }
 
 static void CPE_MakeSelection(cc_uint8* data) {
-	vec3i p1, p2;
+	IVec3 p1, p2;
 	PackedCol c;
 	/* data[0] is id, data[1..64] is label */
 
@@ -1465,7 +1465,7 @@ static void CPE_SetHotbar(cc_uint8* data) {
 	ReadBlock(data, block);
 	index = *data;
 
-	if (index >= INVENTORY_BLOCKS_PER_HOTBAR) return;
+	if (index >= 9) return;
 	Inventory_Set(index, block);
 }
 
@@ -1922,7 +1922,7 @@ static void BlockDefs_UndefineBlock(cc_uint8* data) {
 }
 
 static void BlockDefs_DefineBlockExt(cc_uint8* data) {
-	vec3 minBB, maxBB;
+	Vec3 minBB, maxBB;
 	BlockID block = BlockDefs_DefineBlockCommonStart(&data, 
 						blockDefsExt_Ext.serverVersion >= 2);
 

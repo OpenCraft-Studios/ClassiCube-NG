@@ -1,7 +1,7 @@
-#include "Core.h"
+#include <Core.h>
 #include "Constants.h"
 #include "Chat.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Queue.h"
 
 void Queue_Init(struct Queue* queue, cc_uint32 structSize) {

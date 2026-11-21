@@ -1,6 +1,6 @@
 #ifndef CC_INVENTORY_H
 #define CC_INVENTORY_H
-#include "Core.h"
+#include <Core.h>
 #include "BlockID.h"
 CC_BEGIN_HEADER
 
@@ -11,15 +11,12 @@ CC_BEGIN_HEADER
 struct IGameComponent;
 extern struct IGameComponent Inventory_Component;
 
-/* Number of blocks in each hotbar */
-#define INVENTORY_BLOCKS_PER_HOTBAR 9
 /* Number of hotbars that can be selected between */
-#define INVENTORY_HOTBARS 9
-#define HOTBAR_MAX_INDEX (INVENTORY_BLOCKS_PER_HOTBAR - 1)
+#define HOTBAR_MAX_INDEX 8
 
 CC_VAR extern struct _InventoryData {
 	/* Stores the currently bound blocks for all hotbars. */
-	BlockID Table[INVENTORY_HOTBARS * INVENTORY_BLOCKS_PER_HOTBAR];
+	BlockID Table[9];
 	/* Mapping of indices in inventory menu to block IDs. */
 	BlockID Map[BLOCK_COUNT];
 	/* Currently selected index within a hotbar. */
@@ -33,9 +30,9 @@ CC_VAR extern struct _InventoryData {
 } Inventory;
 
 /* Gets the block at the nth index in the current hotbar. */
-#define Inventory_Get(idx) (Inventory.Table[Inventory.Offset + (idx)])
+#define Inventory_Get(idx) (Inventory.Table[idx])
 /* Sets the block at the nth index in the current hotbar. */
-#define Inventory_Set(idx, block) Inventory.Table[Inventory.Offset + (idx)] = block
+#define Inventory_Set(idx, block) Inventory.Table[idx] = block
 /* Gets the currently selected block. */
 #define Inventory_SelectedBlock Inventory_Get(Inventory.SelectedIndex)
 
@@ -44,9 +41,6 @@ CC_VAR extern struct _InventoryData {
 cc_bool Inventory_CheckChangeSelected(void);
 /* Attempts to set the currently selected index in a hotbar. */
 void Inventory_SetSelectedIndex(int index);
-/* Attempts to set the currently active hotbar. */
-void Inventory_SetHotbarIndex(int index);
-void Inventory_SwitchHotbar(void);
 /* Attempts to set the block for the selected index in the current hotbar. */
 /* NOTE: If another slot is already this block, the selected index is instead changed. */
 void Inventory_SetSelectedBlock(BlockID block);

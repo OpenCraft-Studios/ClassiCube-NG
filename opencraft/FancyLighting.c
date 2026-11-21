@@ -2,7 +2,7 @@
 #include "Block.h"
 #include "Funcs.h"
 #include "MapRenderer.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "World.h"
 #include "Logger.h"
 #include "Event.h"
@@ -14,7 +14,7 @@
 #include "Queue.h"
 
 struct LightNode {
-	vec3i coords; /* 12 bytes */
+	IVec3 coords; /* 12 bytes */
 	cc_uint8 brightness; /* 1 byte */
 	/* char padding[3]; */
 };
@@ -399,7 +399,7 @@ static void CalcUnlight(int x, int y, int z, cc_uint8 brightness, cc_bool isLamp
 	int count = 0;
 	struct LightNode curNode, otherNode;
 	cc_uint8 neighborBrightness, neighborBlockBrightness;
-	vec3i neighborCoords;
+	IVec3 neighborCoords;
 	BlockID thisBlockTrue, thisBlock;
 
 	SetBrightness(0, x, y, z, isLamp, true);

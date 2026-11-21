@@ -2,17 +2,17 @@
 #include "Widgets.h"
 #include "Game.h"
 #include "Event.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Inventory.h"
 #include "Drawer2D.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Funcs.h"
 #include "Model.h"
 #include "Generator.h"
 #include "Server.h"
 #include "Chat.h"
 #include "ExtMath.h"
-#include "Window.h"
+#include <Window.h>
 #include "Camera.h"
 #include "Http.h"
 #include "Block.h"
@@ -21,7 +21,7 @@
 #include "BlockPhysics.h"
 #include "MapRenderer.h"
 #include "TexturePack.h"
-#include "Audio.h"
+#include <Audio.h>
 #include "Screens.h"
 #include "Gui.h"
 #include "Deflate.h"
@@ -2220,8 +2220,8 @@ void HacksBindingsScreen_Show(void) {
 *--------------------------------------------------OtherBindingsScreen----------------------------------------------------*
 *#########################################################################################################################*/
 void OtherBindingsScreen_Show(void) {
-	static const cc_uint8 binds[]     = { BIND_EXT_INPUT, BIND_HIDE_FPS, BIND_HIDE_GUI, BIND_HOTBAR_SWITCH, BIND_DROP_BLOCK,BIND_SCREENSHOT, BIND_FULLSCREEN, BIND_AXIS_LINES, BIND_AUTOROTATE, BIND_SMOOTH_CAMERA, BIND_IDOVERLAY, BIND_BREAK_LIQUIDS };
-	static const char* const descs[]  = { "Show ext input", "Hide FPS", "Hide gui", "Hotbar switching", "Drop block", "Screenshot", "Fullscreen", "Show axis lines", "Auto-rotate", "Smooth camera", "ID overlay", "Breakable liquids" };
+	static const cc_uint8 binds[]     = { BIND_EXT_INPUT, BIND_HIDE_FPS, BIND_HIDE_GUI, BIND_DROP_BLOCK,BIND_SCREENSHOT, BIND_FULLSCREEN, BIND_AXIS_LINES, BIND_AUTOROTATE, BIND_SMOOTH_CAMERA, BIND_IDOVERLAY, BIND_BREAK_LIQUIDS };
+	static const char* const descs[]  = { "Show ext input", "Hide FPS", "Hide gui", "Drop block", "Screenshot", "Fullscreen", "Show axis lines", "Auto-rotate", "Smooth camera", "ID overlay", "Breakable liquids" };
 	
 	KeyBindsScreen_Reset(Menu_SwitchBindsHacks, Menu_SwitchBindsMouse, 260);
 	KeyBindsScreen_SetLayout(-140, 10, 6);

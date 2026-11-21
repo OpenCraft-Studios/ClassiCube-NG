@@ -3,9 +3,9 @@
 #include "../Errors.h"
 #include "../Funcs.h"
 #include "../String_.h"
-#include "../Platform.h"
-#include "../Window.h"
-#include "../Platform.h"
+#include <Platform.h>
+#include <Window.h>
+#include <Platform.h>
 #include "interop_android.h"
 
 #include <errno.h>

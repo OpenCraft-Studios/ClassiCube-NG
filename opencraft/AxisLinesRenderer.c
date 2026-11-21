@@ -1,5 +1,5 @@
 #include "AxisLinesRenderer.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Game.h"
 #include "SelectionBox.h"
 #include "PackedCol.h"
@@ -27,7 +27,7 @@ void AxisLinesRenderer_Render(void) {
 	};
 
 	struct VertexColoured* v;
-	vec3 coords[5], pos, dirVector;
+	Vec3 coords[5], pos, dirVector;
 	int i, count;
 	float axisLengthScale, axisThicknessScale;
 	struct Entity* e;

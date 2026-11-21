@@ -1,6 +1,6 @@
 #ifndef CC_VORBIS_H
 #define CC_VORBIS_H
-#include "Core.h"
+#include <Core.h>
 CC_BEGIN_HEADER
 
 /* 

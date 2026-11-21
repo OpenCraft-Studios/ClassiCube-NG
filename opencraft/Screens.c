@@ -2,10 +2,10 @@
 #include "Widgets.h"
 #include "Game.h"
 #include "Event.h"
-#include "Platform.h"
+#include <Platform.h>
 #include "Inventory.h"
 #include "Drawer2D.h"
-#include "Graphics.h"
+#include <Graphics.h>
 #include "Funcs.h"
 #include "TexturePack.h"
 #include "Model.h"
@@ -13,7 +13,7 @@
 #include "Server.h"
 #include "Chat.h"
 #include "ExtMath.h"
-#include "Window.h"
+#include <Window.h>
 #include "Camera.h"
 #include "Http.h"
 #include "Block.h"
@@ -129,7 +129,7 @@ static void HUDScreen_BuildPosition(struct HUDScreen* s, struct VertexTextured* 
 	struct VertexTextured* cur = data;
 	struct TextAtlas* atlas = &s->posAtlas;
 	struct Texture tex;
-	vec3i pos;
+	IVec3 pos;
 
 	/* Make "Position: " prefix */
 	tex = atlas->tex; 
@@ -336,7 +336,7 @@ static void HUDScreen_UpdateFPS(struct HUDScreen* s, float delta) {
 
 static void HUDScreen_Update(void* screen, float delta) {
 	struct HUDScreen* s = (struct HUDScreen*)screen;
-	vec3i pos;
+	IVec3 pos;
 
 	HUDScreen_UpdateFPS(s,          delta);
 	HotbarWidget_Update(&s->hotbar, delta);
