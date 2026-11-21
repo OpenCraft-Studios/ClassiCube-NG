@@ -753,9 +753,6 @@ void Logger_DoAbort(cc_result result, const char* raw_msg, void* ctx) {
 
 	String_AppendConst(&msg, "ClassiCube crashed." _NL);
 	if (raw_msg) String_Format1(&msg, "Reason: %c" _NL, raw_msg);
-	#ifdef CC_COMMIT_SHA
-	String_AppendConst(&msg, "Commit SHA: " CC_COMMIT_SHA GFX_BACKEND _NL);
-	#endif
 
 	if (result) {
 		String_Format1(&msg, "%h" _NL, &result);
