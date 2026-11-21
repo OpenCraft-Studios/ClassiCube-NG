@@ -1,5 +1,8 @@
+#if CC_WIN_BACKEND == CC_WIN_BACKEND_SDL2 && !defined(_CLANGD)
+#error Do not compile what you're not going to use!
+#endif
+
 #include <Core.h>
-#if CC_WIN_BACKEND == CC_WIN_BACKEND_SDL2
 #undef CC_BUILD_EGL /* eglCreateWindowSurface can't use an SDL window */
 #include "_WindowBase.h"
 #include <Graphics.h>
@@ -84,7 +87,7 @@ static void ApplyIcon(void) {
 }
 
 static void DoCreateWindow(int width, int height, int flags) {
-	win_handle = SDL_CreateWindow(NULL, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, 
+	win_handle = SDL_CreateWindow(NULL, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height,
 					flags | SDL_WINDOW_RESIZABLE);
 	if (!win_handle) Window_SDLFail("creating window");
 
@@ -146,7 +149,7 @@ cc_result Window_EnterFullscreen(void) {
 	return SDL_SetWindowFullscreen(win_handle, SDL_WINDOW_FULLSCREEN_DESKTOP);
 }
 
-cc_result Window_ExitFullscreen(void) { 
+cc_result Window_ExitFullscreen(void) {
 	return SDL_SetWindowFullscreen(win_handle, 0);
 }
 
@@ -221,12 +224,12 @@ static int MapNativeKey(SDL_Keycode k) {
 		case SDLK_RSHIFT: return CCKEY_RSHIFT;
 		case SDLK_RALT: return CCKEY_RALT;
 		case SDLK_RGUI: return CCKEY_RWIN;
-		
+
 		case SDLK_AUDIONEXT: return CCKEY_MEDIA_NEXT;
 		case SDLK_AUDIOPREV: return CCKEY_MEDIA_PREV;
 		case SDLK_AUDIOPLAY: return CCKEY_MEDIA_PLAY;
 		case SDLK_AUDIOSTOP: return CCKEY_MEDIA_STOP;
-		
+
 		case SDLK_AUDIOMUTE:  return CCKEY_VOLUME_MUTE;
 		case SDLK_VOLUMEDOWN: return CCKEY_VOLUME_DOWN;
 		case SDLK_VOLUMEUP:   return CCKEY_VOLUME_UP;
@@ -366,10 +369,10 @@ cc_result Window_OpenFileDialog(const struct OpenFileDialogArgs* args) {
 	Mem_Copy(fileDialog.szFullFile, *args->filters, CCHMAXPATH);
 	hDialog = WinFileDlg(HWND_DESKTOP, 0, &fileDialog);
 	if (fileDialog.lReturn == DID_OK) {
-		cc_string temp = String_FromRaw(fileDialog.szFullFile, CCHMAXPATH); 
+		cc_string temp = String_FromRaw(fileDialog.szFullFile, CCHMAXPATH);
 		args->Callback(&temp);
 	}
-	
+
 	return 0;
 #else
 	return ERR_NOT_SUPPORTED;
@@ -394,7 +397,7 @@ cc_result Window_SaveFileDialog(const struct SaveFileDialogArgs* args) {
 		cc_string temp = String_FromRaw(fileDialog.szFullFile, CCHMAXPATH);
 		args->Callback(&temp);
 	}
-	
+
 	return 0;
 #else
 	return ERR_NOT_SUPPORTED;
@@ -476,7 +479,7 @@ static SDL_GameController* controllers[INPUT_MAX_GAMEPADS];
 void Gamepads_PreInit(void) { }
 
 void Gamepads_Init(void) {
-    for (int i = 0, j = 0; i < SDL_NumJoysticks() && j < INPUT_MAX_GAMEPADS; i++) 
+    for (int i = 0, j = 0; i < SDL_NumJoysticks() && j < INPUT_MAX_GAMEPADS; i++)
 	{
         if (!SDL_IsGameController(i)) continue;
 		controllers[j++] = SDL_GameControllerOpen(i);
@@ -498,7 +501,7 @@ static void ProcessGamepadButtons(int port, SDL_GameController* gp) {
 	Gamepad_SetButton(port, CCPAD_START,  SDL_GameControllerGetButton(gp, SDL_CONTROLLER_BUTTON_START));
 	Gamepad_SetButton(port, CCPAD_LSTICK, SDL_GameControllerGetButton(gp, SDL_CONTROLLER_BUTTON_LEFTSTICK));
 	Gamepad_SetButton(port, CCPAD_RSTICK, SDL_GameControllerGetButton(gp, SDL_CONTROLLER_BUTTON_RIGHTSTICK));
-	
+
 	Gamepad_SetButton(port, CCPAD_UP,    SDL_GameControllerGetButton(gp, SDL_CONTROLLER_BUTTON_DPAD_UP));
 	Gamepad_SetButton(port, CCPAD_DOWN,  SDL_GameControllerGetButton(gp, SDL_CONTROLLER_BUTTON_DPAD_DOWN));
 	Gamepad_SetButton(port, CCPAD_LEFT,  SDL_GameControllerGetButton(gp, SDL_CONTROLLER_BUTTON_DPAD_LEFT));
@@ -513,7 +516,7 @@ static void ProcessJoystick(int port, SDL_GameController* gp, int axis, float de
 	// May not be exactly 0 on actual hardware
 	if (Math_AbsI(x) <= 1024) x = 0;
 	if (Math_AbsI(y) <= 1024) y = 0;
-	
+
 	Gamepad_SetAxis(port, axis, x / PAD_AXIS_SCALE, -y / PAD_AXIS_SCALE, delta);
 }
 
@@ -582,5 +585,4 @@ void GLContext_SetVSync(cc_bool vsync) {
 }
 void GLContext_GetApiInfo(cc_string* info) { }
 
-#endif
 #endif

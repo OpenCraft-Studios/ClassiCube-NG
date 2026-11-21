@@ -1,5 +1,8 @@
+#if (!defined(CC_BUILD_OS2) || defined(CC_BUILD_SDL2)) && !defined(_CLANGD)
+#error Do not compile what you're not going to use!
+#endif
+
 #include <Core.h>
-#if defined CC_BUILD_OS2 && !defined CC_BUILD_SDL2
 #include "_WindowBase.h"
 #include "String_.h"
 #include "Funcs.h"
@@ -80,7 +83,7 @@ static void MapKeys(MPARAM mp1, MPARAM mp2) {
 		INPUT_NONE, INPUT_NONE, INPUT_NONE, INPUT_NONE,INPUT_NONE, INPUT_NONE, INPUT_NONE, INPUT_NONE,
 		INPUT_NONE, INPUT_NONE, INPUT_NONE, INPUT_NONE,INPUT_NONE,INPUT_NONE,CCKEY_LWIN, CCKEY_RWIN
 	};
-	
+
 	if ((ulFlags & KC_CHAR) != 0 && (ulFlags & KC_KEYUP) == 0) {
 		if (WinQueryCapture(HWND_DESKTOP) != hwndClient) { // Mouse isn't captured
 			char c;
@@ -119,13 +122,13 @@ static void RefreshWindowBounds() {
 
 // Window procedure
 MRESULT EXPENTRY ClientWndProc(HWND hwnd, ULONG message, MPARAM mp1, MPARAM mp2) {
-//printf("m %lu (%x)\n", message, message);
+	//printf("m %lu (%x)\n", message, message);
 	switch(message) {
-	   case WM_CLOSE:
-		   Event_RaiseVoid(&WindowEvents.Closing);
-		   if (Window_Main.Exists) WinDestroyWindow(hwndFrame);
-		   Window_Main.Exists = false;
-	   	break;
+		case WM_CLOSE:
+			Event_RaiseVoid(&WindowEvents.Closing);
+			if (Window_Main.Exists) WinDestroyWindow(hwndFrame);
+			Window_Main.Exists = false;
+		break;
 
 		case WM_QUIT:
 			Window_Destroy();
@@ -137,7 +140,7 @@ MRESULT EXPENTRY ClientWndProc(HWND hwnd, ULONG message, MPARAM mp1, MPARAM mp2)
 			Window_Main.Focused = SHORT1FROMMP(mp1) != 0;
 			Event_RaiseVoid(&WindowEvents.FocusChanged);
 			break;
-			
+
 		case WM_SIZE:
 			RefreshWindowBounds();
 			break;
@@ -148,17 +151,17 @@ MRESULT EXPENTRY ClientWndProc(HWND hwnd, ULONG message, MPARAM mp1, MPARAM mp2)
 
 		case WM_ERASEBACKGROUND:
 			return (MRESULT)TRUE;
-			
-		case WM_VRNDISABLED:
-      fVrnDisabled = TRUE;
-      return FALSE;
-      break;
 
-    case WM_VRNENABLED:
-    	{
-    		HPS hps;
-    		HRGN hrgn;
-    		RGNRECT  rgnCtl;
+		case WM_VRNDISABLED:
+		fVrnDisabled = TRUE;
+		return FALSE;
+		break;
+
+	case WM_VRNENABLED:
+		{
+			HPS hps;
+			HRGN hrgn;
+			RGNRECT  rgnCtl;
 
 				hps = WinGetPS(hwnd);
 				hrgn = GpiCreateRegion(hps, 0L, NULL);
@@ -173,9 +176,9 @@ MRESULT EXPENTRY ClientWndProc(HWND hwnd, ULONG message, MPARAM mp1, MPARAM mp2)
 
 					// Get the all visible rectangles
 					if(!GpiQueryRegionRects(hps, hrgn, NULL, &rgnCtl, rcls)) {
-						 DiveSetupBlitter (hDive, 0);
-						 GpiDestroyRegion (hps, hrgn);
-						 break;
+							DiveSetupBlitter (hDive, 0);
+							GpiDestroyRegion (hps, hrgn);
+							break;
 					}
 
 					ulNumRcls = rgnCtl.crcReturned;
@@ -189,7 +192,7 @@ MRESULT EXPENTRY ClientWndProc(HWND hwnd, ULONG message, MPARAM mp1, MPARAM mp2)
 				fVrnDisabled = FALSE;
 			}
 			return FALSE;
-      break;
+		break;
 
 		case WM_MOUSEMOVE:
 			{
@@ -198,7 +201,7 @@ MRESULT EXPENTRY ClientWndProc(HWND hwnd, ULONG message, MPARAM mp1, MPARAM mp2)
 				Pointer_SetPosition(0, x, y);
 			}
 			break;
-			
+
 		case WM_BUTTON1DOWN:
 			Input_SetPressed(CCMOUSE_L); break;
 		case WM_BUTTON3DOWN:
@@ -217,7 +220,7 @@ MRESULT EXPENTRY ClientWndProc(HWND hwnd, ULONG message, MPARAM mp1, MPARAM mp2)
 			MapKeys(mp1, mp2);
 			return (MRESULT)TRUE;
 	}
-//printf("default msg %lu (%x)\n", message, message);
+	//printf("default msg %lu (%x)\n", message, message);
 	return WinDefWindowProc(hwnd, message, mp1, mp2);
 }
 
@@ -272,24 +275,23 @@ void Window_Init(void) {
 
 	// Init Dive
 	caps.pFormatData = fccFormats; //TODO do something with it.
-  caps.ulFormatLength = 100;
-  caps.ulStructLen = sizeof(DIVE_CAPS);
-	if (rc = DiveQueryCaps(&caps, DIVE_BUFFER_SCREEN)) {
+	caps.ulFormatLength = 100;
+	caps.ulStructLen = sizeof(DIVE_CAPS);
+	if (rc = DiveQueryCaps(&caps, DIVE_BUFFER_SCREEN))
 		Process_Abort2(rc, "DIVE: Could not get capabilities.");
-	}
-  if (caps.ulDepth < 24) {
-  	Process_Abort2(rc, "DIVE: Too few colours");
-  }
+
+	if (caps.ulDepth < 24)
+		Process_Abort2(rc, "DIVE: Too few colours");
 
 	rc = DiveOpen(&hDive, FALSE, NULL);
-	if (rc != DIVE_SUCCESS) {
+	if (rc != DIVE_SUCCESS)
 		Process_Abort2(rc, "DIVE: Display engine instance open failed");
-	}
+
 	// Everything is fine, so we set infos.
 	hps = WinGetScreenPS(HWND_DESKTOP);
 	hdc = GpiQueryDevice(hps);
 	DevQueryCaps(hdc, CAPS_FAMILY, CAPS_DEVICE_POLYSET_POINTS, screencaps);
-  WinReleasePS(hps);
+	WinReleasePS(hps);
 	DisplayInfo.Width = screencaps[CAPS_WIDTH];
 	DisplayInfo.Height = screencaps[CAPS_HEIGHT];
 	DisplayInfo.Depth = screencaps[CAPS_COLOR_BITCOUNT];
@@ -303,21 +305,21 @@ void Window_Create(int width, int height) {
 	ULONG ulFlags = FCF_SHELLPOSITION | FCF_TASKLIST
 		| FCF_SIZEBORDER | FCF_ICON | FCF_MAXBUTTON |FCF_MINBUTTON
 		| FCF_MAXBUTTON | FCF_TITLEBAR | FCF_SYSMENU;
-	
-	if (!WinRegisterClass(habAnchor, CC_WIN_CLASSNAME, ClientWndProc, 0, 0)) {
+
+	if (!WinRegisterClass(habAnchor, CC_WIN_CLASSNAME, ClientWndProc, 0, 0))
 		Process_Abort2(LOUSHORT(WinGetLastError(habAnchor)), "Window class registration failed");
-	}
+
 	hwndFrame = WinCreateStdWindow(HWND_DESKTOP, WS_VISIBLE | WS_SYNCPAINT, &ulFlags,
 		CC_WIN_CLASSNAME, "ClassiCube", 0L, NULLHANDLE, 0, &hwndClient);
-	if (hwndFrame == NULLHANDLE) {
+	if (hwndFrame == NULLHANDLE)
 		Process_Abort2(LOUSHORT(WinGetLastError(habAnchor)), "Failed to create window");
-	}
+
 	Window_SetSize(width, height);
 	Window_Main.Exists = true;
 	Window_Main.Handle.ptr = &hwndFrame;
 	Window_Main.Focused = TRUE;
 
-  WinSetVisibleRegionNotify(hwndClient, TRUE);
+	WinSetVisibleRegionNotify(hwndClient, TRUE);
 	// Send an invlaidation message to the client.
 	WinPostMsg(hwndFrame, WM_VRNENABLED, 0L, 0L);
 }
@@ -344,7 +346,7 @@ void Window_ProcessEvents(float delta) {
 	QMSG msg;
 	HWND hwndFocused;
 	int roundtrips = 5;
-	
+
 	while (roundtrips && WinPeekMsg(habAnchor, &msg, NULLHANDLE, 0, 0, PM_NOREMOVE)) {
 		WinGetMsg(habAnchor, &msg, NULLHANDLE, 0, 0);
 		WinDispatchMsg(habAnchor, &msg);
@@ -535,7 +537,7 @@ MRESULT EXPENTRY myFileDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2) {
 cc_result Window_OpenFileDialog(const struct OpenFileDialogArgs* args) {
 
 	HWND hDialog;
-	
+
 	WinSetVisibleRegionNotify(hwndClient, FALSE);
 	memset(&fileDialog, 0, sizeof(FILEDLG));
 	fileDialog.cbSize = sizeof(FILEDLG);
@@ -635,5 +637,3 @@ static void Cursor_DoSetVisible(cc_bool visible) {
 
 
 void Window_ProcessGamepads(float delta) { }
-
-#endif

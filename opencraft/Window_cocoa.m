@@ -1,8 +1,11 @@
+#if CC_WIN_BACKEND != CC_WIN_BACKEND_COCOA && !defined(_CLANGD)
+#error Do not compile what you're not going to use!
+#endif
+
 // Silence deprecation warnings on modern macOS
 #define GL_SILENCE_DEPRECATION
 
 #include <Core.h>
-#if CC_WIN_BACKEND == CC_WIN_BACKEND_COCOA
 #include "_WindowBase.h"
 #include "ExtMath.h"
 #include "Funcs.h"
@@ -25,13 +28,13 @@ static cc_bool scroll_debugging;
 	#define WIN_MASK (NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskResizable | NSWindowStyleMaskMiniaturizable)
 	#define ANY_EVENT_MASK NSEventMaskAny
 	#define DIALOG_OK      NSModalResponseOK
-	
+
 	#define PASTEBOARD_STRING_TYPE NSPasteboardTypeString
 #else
 	#define WIN_MASK (NSTitledWindowMask | NSClosableWindowMask | NSResizableWindowMask | NSMiniaturizableWindowMask)
 	#define ANY_EVENT_MASK NSAnyEventMask
 	#define DIALOG_OK      NSOKButton
-	
+
 	#define PASTEBOARD_STRING_TYPE NSStringPboardType
 #endif
 
@@ -167,7 +170,7 @@ static void LogUnhandled(NSString* str) {
 	if (!str) return;
 	const char* src = [str UTF8String];
 	if (!src) return;
-	
+
 	cc_string msg = String_FromReadonly(src);
 	Platform_Log(msg.buffer, msg.length);
 	Logger_Log(&msg);
@@ -230,7 +233,7 @@ static void RefreshWindowBounds(void) {
 		windowX = (int)rect.origin.x; // usually 0
 		windowY = (int)rect.origin.y; // usually 0
 		// TODO is it correct to use display bounds and not just 0?
-		
+
 		Window_Main.Width  = (int)rect.size.width;
 		Window_Main.Height = (int)rect.size.height;
 		return;
@@ -335,7 +338,7 @@ static void ApplyIcon(void) {
 	NSImage* img;
 	const unsigned int* pixels = CCIcon_Data;
 	unsigned char** planes     = (unsigned char**)&pixels;
-    
+
 	NSBitmapImageRep* rep = [NSBitmapImageRep alloc];
 	rep = [rep initWithBitmapDataPlanes:planes
 						pixelsWide:CCIcon_Width pixelsHigh:CCIcon_Height
@@ -364,21 +367,21 @@ static void DoCreateWindow(int width, int height) {
 
 	// Technically the coordinates for the origin are at bottom left corner
 	// But since the window is in centre of the screen, don't need to care here
-	rect.origin.x    = Display_CentreX(width);  
+	rect.origin.x    = Display_CentreX(width);
 	rect.origin.y    = Display_CentreY(height);
-	rect.size.width  = width; 
+	rect.size.width  = width;
 	rect.size.height = height;
 
 	winHandle = [CCWindow alloc];
 	[winHandle initWithContentRect:rect styleMask:WIN_MASK backing:NSBackingStoreBuffered defer:false];
 	[winHandle setAcceptsMouseMovedEvents:YES];
-	
+
 
 	scroll_debugging = Options_GetBool("scroll-debug", false);
 	// for quit buttons in dock and menubar
 	AEInstallEventHandler(kCoreEventClass, kAEQuitApplication,
 		NewAEEventHandlerUPP(HandleQuitMessage), 0, false);
-	
+
 	Window_Main.Exists     = true;
 	Window_Main.Handle.ptr = winHandle;
 	Window_Main.UIScaleX   = DEFAULT_UI_SCALE_X;
@@ -428,13 +431,13 @@ int Window_GetWindowState(void) {
 int Window_IsObscured(void) {
     if (!canCheckOcclusion)
         return [winHandle isMiniaturized];
-    
+
     // covers both minimised and hidden behind another window
     int flags = [winHandle occlusionState];
     return !(flags & _NSWindowOcclusionStateVisible);
 }
 
-void Window_Show(void) { 
+void Window_Show(void) {
 	[winHandle makeKeyAndOrderFront:appHandle];
 	RefreshWindowBounds(); // TODO: even necessary?
 }
@@ -449,7 +452,7 @@ void Window_SetSize(int width, int height) {
 	[winHandle setFrame:rect display:YES];
 }
 
-void Window_RequestClose(void) { 
+void Window_RequestClose(void) {
 	[winHandle close];
 }
 
@@ -511,11 +514,11 @@ static void DebugScrollEvent(NSEvent* ev) {
 #ifdef kCGScrollWheelEventDeltaAxis1
 	float dy = [ev deltaY];
 	int steps = dy > 0.0f ? Math_Ceil(dy) : Math_Floor(dy);
-	
+
 	CGEventRef ref = [ev CGEvent];
 	if (!ref) return;
 	int raw = CGEventGetIntegerValueField(ref, kCGScrollWheelEventDeltaAxis1);
-	
+
 	Platform_Log3("SCROLL: %i.0 = (%i, %f3)", &steps, &raw, &dy);
 #endif
 }
@@ -524,8 +527,8 @@ void Window_ProcessEvents(float delta) {
 	NSEvent* ev;
 	int key, type, steps, x, y;
 	float dx, dy;
-	
-	// https://wiki.freepascal.org/Cocoa_Internals/Application 
+
+	// https://wiki.freepascal.org/Cocoa_Internals/Application
 	[pool release];
 	pool = [[NSAutoreleasePool alloc] init];
 
@@ -535,14 +538,14 @@ void Window_ProcessEvents(float delta) {
 		type = [ev type];
 
 		switch (type) {
-		case  1: // NSLeftMouseDown 
+		case  1: // NSLeftMouseDown
 		case  3: // NSRightMouseDown
 		case 25: // NSOtherMouseDown
 			key = MapNativeMouse([ev buttonNumber]);
 			if (GetMouseCoords(&x, &y) && key) Input_SetPressed(key);
 			break;
 
-		case  2: // NSLeftMouseUp 
+		case  2: // NSLeftMouseUp
 		case  4: // NSRightMouseUp
 		case 26: // NSOtherMouseUp
 			key = MapNativeMouse([ev buttonNumber]);
@@ -584,10 +587,10 @@ void Window_ProcessEvents(float delta) {
 			// All I know is that scrolling by '1 wheel notch' produces a delta of around 0.1, and that
 			//  sometimes I'll see it go all the way up to 5-6 with a larger wheel scroll.
 			// So mulitplying by 10 doesn't really seem a good idea, instead I just round outwards.
-			//  TODO: Figure out if there's a better way than this. */	
+			//  TODO: Figure out if there's a better way than this. */
 			steps = dx > 0.0f ? Math_Ceil(dx) : Math_Floor(dx);
 			Mouse_ScrollHWheel(steps);
-			
+
 			steps = dy > 0.0f ? Math_Ceil(dy) : Math_Floor(dy);
 			Mouse_ScrollVWheel(steps);
 			break;
@@ -619,17 +622,17 @@ void Gamepads_Process(float delta) { }
 void ShowDialogCore(const char* title, const char* msg) {
 	CFStringRef titleCF, msgCF;
 	NSAlert* alert;
-	
+
 	titleCF = CFStringCreateWithCString(NULL, title, kCFStringEncodingASCII);
 	msgCF   = CFStringCreateWithCString(NULL, msg,   kCFStringEncodingASCII);
-	
+
 	alert = [NSAlert alloc];
 	alert = [alert init];
-	
+
 	[alert setMessageText: titleCF];
 	[alert setInformativeText: msgCF];
 	[alert addButtonWithTitle: @"OK"];
-	
+
 	[alert runModal];
 	CFRelease(titleCF);
 	CFRelease(msgCF);
@@ -652,11 +655,11 @@ static void OpenSaveDoCallback(NSURL* url, FileDialogCallback callback) {
     NSString* str;
     const char* src;
     int len;
-    
+
     str = [url path];
     src = [str UTF8String];
     len = String_Length(src);
-    
+
     cc_string path; char pathBuffer[NATIVE_STR_LEN];
     String_InitArray(path, pathBuffer);
     String_AppendUtf8(&path, src, len);
@@ -665,21 +668,21 @@ static void OpenSaveDoCallback(NSURL* url, FileDialogCallback callback) {
 
 cc_result Window_SaveFileDialog(const struct SaveFileDialogArgs* args) {
 	NSSavePanel* dlg = [NSSavePanel savePanel];
-	
+
 	// TODO: Use args->defaultName, but only macOS 10.6
 
-    NSMutableArray* types = GetOpenSaveFilters(args->filters);
-    [dlg setAllowedFileTypes:types];
+	NSMutableArray* types = GetOpenSaveFilters(args->filters);
+	[dlg setAllowedFileTypes:types];
 	if ([dlg runModal] != DIALOG_OK) return 0;
 
 	NSURL* file = [dlg URL];
-    if (file) OpenSaveDoCallback(file, args->Callback);
- 	return 0;
+	if (file) OpenSaveDoCallback(file, args->Callback);
+	return 0;
 }
 
 cc_result Window_OpenFileDialog(const struct OpenFileDialogArgs* args) {
     NSOpenPanel* dlg = [NSOpenPanel openPanel];
-    
+
     NSMutableArray* types = GetOpenSaveFilters(args->filters);
     [dlg setCanChooseFiles: YES];
     if ([dlg runModalForTypes:types] != DIALOG_OK) return 0;
@@ -687,10 +690,10 @@ cc_result Window_OpenFileDialog(const struct OpenFileDialogArgs* args) {
     //   https://developer.apple.com/documentation/appkit/nssavepanel/1534419-allowedfiletypes
     // [dlg setAllowedFileTypes:types];
     // if ([dlg runModal] != DIALOG_OK) return 0;
-    
+
     NSArray* files = [dlg URLs];
     if ([files count] < 1) return 0;
-    
+
     NSURL* file = [files objectAtIndex:0];
     OpenSaveDoCallback(file, args->Callback);
     return 0;
@@ -747,11 +750,11 @@ static void DoDrawFramebuffer(NSRect dirty) {
 
 void Window_DrawFramebuffer(Rect2D r, struct Bitmap* bmp) {
 	NSRect rect;
-	rect.origin.x    = r.x; 
+	rect.origin.x    = r.x;
 	rect.origin.y    = Window_Main.Height - r.y - r.height;
 	rect.size.width  = r.width;
 	rect.size.height = r.height;
-	
+
 	[viewHandle setNeedsDisplayInRect:rect];
 	[viewHandle displayIfNeeded];
 }
@@ -785,7 +788,7 @@ static NSOpenGLPixelFormat* InitPixelFormat(cc_bool fullscreen) {
 	// TODO: Is there a penalty for fullscreen contexts in 10.7 and later?
 	// Need to test whether there is a performance penalty or not
 	if (SupportsModernFullscreen()) fullscreen = false;
-	
+
 	NSOpenGLPixelFormatAttribute attribs[] = {
 		NSOpenGLPFAColorSize,    DisplayInfo.Depth,
 		NSOpenGLPFADepthSize,    24,
@@ -825,7 +828,7 @@ void GLContext_Update(void) {
 }
 cc_bool GLContext_TryRestore(void) { return true; }
 
-void GLContext_Free(void) { 
+void GLContext_Free(void) {
 	[NSOpenGLContext clearCurrentContext];
 	[ctxHandle clearDrawable];
 	[ctxHandle release];
@@ -856,11 +859,11 @@ typedef int GLinteger;
 
 static const char* GetAccelerationMode(CGLContextObj ctx) {
 	GLinteger fGPU, vGPU;
-	
+
 	// NOTE: only macOS 10.4 or later
 	if (CGLGetParameter(ctx, kCGLCPGPUFragmentProcessing, &fGPU)) return NULL;
 	if (CGLGetParameter(ctx, kCGLCPGPUVertexProcessing,   &vGPU)) return NULL;
-	
+
 	if (fGPU && vGPU) return "Fully";
 	if (fGPU || vGPU) return "Partially";
 	return "Not";
@@ -870,22 +873,22 @@ void GLContext_GetApiInfo(cc_string* info) {
 	CGLContextObj ctx = [ctxHandle CGLContextObj];
 	GLinteger rendererID;
 	CGLGetParameter(ctx, kCGLCPCurrentRendererID, &rendererID);
-	
+
 	GLinteger nRenders = 0;
 	CGLRendererInfoObj rend;
 	CGLQueryRendererInfo(-1, &rend, &nRenders);
 	int i;
-	
+
 	for (i = 0; i < nRenders; i++)
 	{
 		GLinteger curID = -1;
 		CGLDescribeRenderer(rend, i, kCGLRPRendererID, &curID);
 		if (curID != rendererID) continue;
-		
+
 		GLinteger acc = 0;
 		CGLDescribeRenderer(rend, i, kCGLRPAccelerated, &acc);
 		const char* mode = GetAccelerationMode(ctx);
-		
+
 		GLinteger vram = 0;
 		if (!CGLDescribeRenderer(rend, i, kCGLRPVideoMemoryMegabytes, &vram)) {
 			// preferred path (macOS 10.7 or later)
@@ -894,7 +897,7 @@ void GLContext_GetApiInfo(cc_string* info) {
 		} else {
 			vram = -1; // TODO show a better error?
 		}
-		
+
 		if (mode && acc) {
 			String_Format2(info, "VRAM: %i MB, %c HW accelerated\n", &vram, mode);
 		} else {
@@ -928,14 +931,14 @@ cc_result Window_EnterFullscreen(void) {
 	//  that's still rendering thousands of frames per second
 	//[ctxHandle setFullScreen];
 	//return 0;
-	
-	// CGLSetFullScreenOnDisplay is the preferable API, because it  
+
+	// CGLSetFullScreenOnDisplay is the preferable API, because it
 	//  works properly on macOS 10.7 and all later versions
-	// However, because this API was only introduced in 10.7, it 
-	//  is essentially useless for us - because the superior 
+	// However, because this API was only introduced in 10.7, it
+	//  is essentially useless for us - because the superior
 	//  toggleFullScreen API is already used in macOS 10.7+
 	//cc_result res = CGLSetFullScreenOnDisplay([ctxHandle CGLContextObj], CGDisplayIDToOpenGLDisplayMask(CGMainDisplayID()));
-	
+
 	// CGLSetFullsScreen has existed since macOS 10.1, however
 	//  it was deprecated in 10.6 - and by deprecated, Apple
 	//  REALLY means deprecated. If the SDK ClassiCube is compiled
@@ -965,5 +968,4 @@ cc_result Window_ExitFullscreen(void) {
 	Event_RaiseVoid(&WindowEvents.Resized);
 	return 0;
 }
-#endif
 #endif

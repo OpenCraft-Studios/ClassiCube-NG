@@ -1,20 +1,23 @@
+#if CC_WIN_BACKEND != CC_WIN_BACKEND_X11  && !defined(_CLANGD)
+#error Do not compile what you're not going to use!
+#endif
+
 #include <Core.h>
-#if CC_WIN_BACKEND == CC_WIN_BACKEND_X11
 /*
    The Open Toolkit Library License
-  
+
    Copyright (c) 2006 - 2009 the Open Toolkit library.
-  
+
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
    in the Software without restriction, including without limitation the rights to
    use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
    the Software, and to permit persons to whom the Software is furnished to do
    so, subject to the following conditions:
-  
+
    The above copyright notice and this permission notice shall be included in all
    copies or substantial portions of the Software.
-  
+
    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
    OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -70,7 +73,7 @@ static XVisualInfo win_visual;
 static XIM win_xim;
 static XIC win_xic;
 #endif
- 
+
 static Atom wm_destroy, net_wm_state, net_wm_ping;
 static Atom net_wm_state_minimized;
 static Atom net_wm_state_fullscreen;
@@ -78,9 +81,9 @@ static Atom net_wm_state_fullscreen;
 static Atom xa_clipboard, xa_targets, xa_utf8_string, xa_data_sel;
 static Atom xa_atom = 4;
 static cc_bool grabCursor;
-static long win_eventMask = StructureNotifyMask | /* SubstructureNotifyMask | */ 
-	ExposureMask      | KeyReleaseMask  | KeyPressMask    | KeymapStateMask   | 
-	PointerMotionMask | FocusChangeMask | ButtonPressMask | ButtonReleaseMask | 
+static long win_eventMask = StructureNotifyMask | /* SubstructureNotifyMask | */
+	ExposureMask      | KeyReleaseMask  | KeyPressMask    | KeymapStateMask   |
+	PointerMotionMask | FocusChangeMask | ButtonPressMask | ButtonReleaseMask |
 	EnterWindowMask   | LeaveWindowMask | PropertyChangeMask;
 
 static int MapNativeKey(KeySym key, unsigned int state) {
@@ -105,22 +108,22 @@ static int MapNativeKey(KeySym key, unsigned int state) {
 		if (key == XK_KP_Down) return CCKEY_DOWN;
 		if (key == XK_KP_Page_Down) return CCKEY_PAGEDOWN;
 	}
-	
+
 	switch (key) {
 		case XF86XK_AudioLowerVolume: return CCKEY_VOLUME_DOWN;
 		case XF86XK_AudioMute:        return CCKEY_VOLUME_MUTE;
 		case XF86XK_AudioRaiseVolume: return CCKEY_VOLUME_UP;
-		
+
 		case XF86XK_AudioPlay: return CCKEY_MEDIA_PLAY;
 		case XF86XK_AudioStop: return CCKEY_MEDIA_STOP;
 		case XF86XK_AudioPrev: return CCKEY_MEDIA_PREV;
 		case XF86XK_AudioNext: return CCKEY_MEDIA_NEXT;
-		
+
 		case XF86XK_HomePage:   return CCKEY_BROWSER_HOME;
 		case XF86XK_Mail:       return CCKEY_LAUNCH_MAIL;
 		case XF86XK_Search:     return CCKEY_BROWSER_SEARCH;
 		case XF86XK_Calculator: return CCKEY_LAUNCH_CALC;
-		
+
 		case XF86XK_Back:       return CCKEY_BROWSER_PREV;
 		case XF86XK_Forward:    return CCKEY_BROWSER_NEXT;
 		case XF86XK_Stop:       return CCKEY_BROWSER_STOP;
@@ -220,7 +223,7 @@ static int MapNativeKey(KeySym key, unsigned int state) {
 		case XK_KP_Page_Up: return CCKEY_KP9;
 		case XK_KP_Delete:  return CCKEY_KP_DECIMAL;
 		case XK_KP_Enter:   return CCKEY_KP_ENTER;
-		
+
 		case XK_ISO_Level3_Shift: return CCKEY_RALT; /* AltGr mode switch on some European keyboard layouts */
 	}
 	return INPUT_NONE;
@@ -228,22 +231,22 @@ static int MapNativeKey(KeySym key, unsigned int state) {
 
 /* NOTE: This may not be entirely accurate, because user can configure keycode mappings */
 static const cc_uint8 keycodeMap[136] = {
-/* 00 */ 0, 0, 0, 0, 0, 0, 0, 0, 
+/* 00 */ 0, 0, 0, 0, 0, 0, 0, 0,
 /* 08 */ 0, CCKEY_ESCAPE, '1', '2', '3', '4', '5', '6',
-/* 10 */ '7', '8', '9', '0', CCKEY_MINUS, CCKEY_EQUALS, CCKEY_BACKSPACE, CCKEY_TAB, 
+/* 10 */ '7', '8', '9', '0', CCKEY_MINUS, CCKEY_EQUALS, CCKEY_BACKSPACE, CCKEY_TAB,
 /* 18 */ 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I',
-/* 20 */ 'O',  'P', CCKEY_LBRACKET, CCKEY_RBRACKET, CCKEY_ENTER, CCKEY_LCTRL, 'A', 'S', 
+/* 20 */ 'O',  'P', CCKEY_LBRACKET, CCKEY_RBRACKET, CCKEY_ENTER, CCKEY_LCTRL, 'A', 'S',
 /* 28 */ 'D', 'F', 'G', 'H',  'J', 'K', 'L', CCKEY_SEMICOLON,
-/* 30 */ CCKEY_QUOTE, CCKEY_TILDE, CCKEY_LSHIFT, CCKEY_BACKSLASH, 'Z', 'X', 'C', 'V', 
+/* 30 */ CCKEY_QUOTE, CCKEY_TILDE, CCKEY_LSHIFT, CCKEY_BACKSLASH, 'Z', 'X', 'C', 'V',
 /* 38 */ 'B', 'N', 'M', CCKEY_PERIOD, CCKEY_COMMA, CCKEY_SLASH, CCKEY_RSHIFT, CCKEY_KP_MULTIPLY,
-/* 40 */ CCKEY_LALT, CCKEY_SPACE, CCKEY_CAPSLOCK, CCKEY_F1, CCKEY_F2, CCKEY_F3, CCKEY_F4, CCKEY_F5, 
+/* 40 */ CCKEY_LALT, CCKEY_SPACE, CCKEY_CAPSLOCK, CCKEY_F1, CCKEY_F2, CCKEY_F3, CCKEY_F4, CCKEY_F5,
 /* 48 */ CCKEY_F6, CCKEY_F7, CCKEY_F8, CCKEY_F9, CCKEY_F10, CCKEY_NUMLOCK, CCKEY_SCROLLLOCK, CCKEY_KP7,
-/* 50 */ CCKEY_KP8, CCKEY_KP9, CCKEY_KP_MINUS, CCKEY_KP4, CCKEY_KP5, CCKEY_KP6, CCKEY_KP_PLUS, CCKEY_KP1, 
+/* 50 */ CCKEY_KP8, CCKEY_KP9, CCKEY_KP_MINUS, CCKEY_KP4, CCKEY_KP5, CCKEY_KP6, CCKEY_KP_PLUS, CCKEY_KP1,
 /* 58 */ CCKEY_KP2, CCKEY_KP3, CCKEY_KP0, CCKEY_KP_DECIMAL, 0, 0, 0, CCKEY_F11,
-/* 60 */ CCKEY_F12, 0, 0, 0, 0, 0, 0, 0, 
-/* 68 */ 0, 0, 0, 0, CCKEY_RALT, CCKEY_RCTRL, CCKEY_HOME, CCKEY_UP, 
-/* 70 */ CCKEY_PAGEUP, CCKEY_LEFT, CCKEY_RIGHT, CCKEY_END, CCKEY_DOWN, CCKEY_PAGEDOWN, CCKEY_INSERT, CCKEY_DELETE, 
-/* 78 */ 0, 0, 0, 0, 0, 0, 0, CCKEY_PAUSE, 
+/* 60 */ CCKEY_F12, 0, 0, 0, 0, 0, 0, 0,
+/* 68 */ 0, 0, 0, 0, CCKEY_RALT, CCKEY_RCTRL, CCKEY_HOME, CCKEY_UP,
+/* 70 */ CCKEY_PAGEUP, CCKEY_LEFT, CCKEY_RIGHT, CCKEY_END, CCKEY_DOWN, CCKEY_PAGEDOWN, CCKEY_INSERT, CCKEY_DELETE,
+/* 78 */ 0, 0, 0, 0, 0, 0, 0, CCKEY_PAUSE,
 /* 80 */ 0, 0, 0, 0, 0, CCKEY_LWIN, 0, CCKEY_RWIN
 };
 
@@ -309,7 +312,7 @@ static void HookXErrors(void) {
 *#########################################################################################################################*/
 static XVisualInfo GLContext_SelectVisual(void);
 
-void Window_PreInit(void) { 
+void Window_PreInit(void) {
 	DisplayInfo.CursorVisible = true;
 }
 
@@ -341,8 +344,8 @@ void Window_Free(void) { }
 static void ApplyIcon(Window win) {
 	Atom net_wm_icon = XInternAtom(win_display, "_NET_WM_ICON", false);
 	Atom xa_cardinal = XInternAtom(win_display, "CARDINAL", false);
-	
-	XChangeProperty(win_display, win, net_wm_icon, xa_cardinal, 32, PropModeReplace, 
+
+	XChangeProperty(win_display, win, net_wm_icon, xa_cardinal, 32, PropModeReplace,
 					(unsigned char*)CCIcon_Data, CCIcon_Size);
 }
 
@@ -423,7 +426,7 @@ static void DoCreateWindow(int width, int height, int _2d) {
 	Window_Main.UIScaleX   = DEFAULT_UI_SCALE_X;
 	Window_Main.UIScaleY   = DEFAULT_UI_SCALE_Y;
 	grabCursor = Options_GetBool(OPT_GRAB_CURSOR, false);
-	
+
 	/* So right name appears in e.g. Ubuntu Unity launchbar */
 	XClassHint hint = { 0 };
 	#ifdef CC_BUILD_FLATPAK
@@ -441,12 +444,12 @@ static void DoCreateWindow(int width, int height, int _2d) {
 	if (focus == win) Window_Main.Focused = true;
 }
 
-void Window_Create2D(int width, int height) { 
-	DoCreateWindow(width, height, true); 
+void Window_Create2D(int width, int height) {
+	DoCreateWindow(width, height, true);
 }
 
-void Window_Create3D(int width, int height) { 
-	DoCreateWindow(width, height, false); 
+void Window_Create3D(int width, int height) {
+	DoCreateWindow(width, height, false);
 }
 
 void Window_Destroy(void) {
@@ -513,7 +516,7 @@ int Window_GetWindowState(void) {
 
 	if (!data) return WINDOW_STATE_NORMAL;
 	list = (Atom*)data;
-		
+
 	for (i = 0; i < items; i++) {
 		Atom atom = list[i];
 
@@ -558,7 +561,7 @@ int Window_IsObscured(void) { return 0; }
 
 void Window_Show(void) {
 	Window win = Window_Main.Handle.val;
-	XMapWindow(win_display, win); 
+	XMapWindow(win_display, win);
 }
 
 void Window_SetSize(int width, int height) {
@@ -595,7 +598,7 @@ static int MapNativeMouse(int button) {
 
 static void HandleButtonPress(XEvent* e) {
 	int btn = MapNativeMouse(e->xbutton.button);
-	
+
 	if (btn) Input_SetPressed(btn);
 	else if (e->xbutton.button == 4) Mouse_ScrollVWheel( +1);
 	else if (e->xbutton.button == 5) Mouse_ScrollVWheel( -1);
@@ -632,14 +635,14 @@ static void HandleKeyPress(XEvent* e) {
 	cc_codepoint cp;
 	char* chars = data;
 	Status status_type;
-	
+
 	key = TryGetKey(&e->xkey);
 	if (key) Input_SetPressed(key);
-	
+
 #ifdef CC_BUILD_XIM
 	if (win_xic) {
 		status = Xutf8LookupString(win_xic, &e->xkey, data, Array_Elems(data), NULL, &status_type);
-		while (status > 0) 
+		while (status > 0)
 		{
 			i = Convert_Utf8ToCodepoint(&cp, (cc_uint8*)chars, status);
 			if (!i) break;
@@ -655,7 +658,7 @@ static void HandleKeyPress(XEvent* e) {
 	/* Treat the 8 bit characters as first 256 unicode codepoints */
 	/* This only really works for latin keys (e.g. so some finnish keys still work) */
 	status = XLookupString(&e->xkey, data, Array_Elems(data), NULL, NULL);
-	for (i = 0; i < status; i++) 
+	for (i = 0; i < status; i++)
 	{
 		/* E.g. pressing ctrl+space produces 0 in data */
 		if (data[i]) Event_RaiseInt(&InputEvents.Press, (cc_uint8)data[i]);
@@ -692,11 +695,11 @@ static void HandleSelectionNotify(XEvent* e) {
 	unsigned long items, after;
 	cc_uint8* data = NULL;
 	Window win = Window_Main.Handle.val;
-		
+
 	if (e->xselection.selection != xa_clipboard) return;
-	if (e->xselection.target != xa_utf8_string)  return; 
+	if (e->xselection.target != xa_utf8_string)  return;
 	if (e->xselection.property != xa_data_sel)   return;
-	
+
 	XGetWindowProperty(win_display, win, xa_data_sel, 0, 1024, false, 0,
 		&prop_type, &prop_format, &items, &after, &data);
 	XDeleteProperty(win_display, win, xa_data_sel);
@@ -762,7 +765,7 @@ static void HandleClientMessage(XEvent* e) {
 	}
 }
 
-static Bool FilterEvent(Display* d, XEvent* e, XPointer w) { 
+static Bool FilterEvent(Display* d, XEvent* e, XPointer w) {
 	return
 		e->xany.window == (Window)w ||
 		!e->xany.window || /* KeymapNotify events don't have a window */
@@ -966,7 +969,7 @@ static void X11Textbox_Draw(struct X11Textbox* t, struct X11MessageBox* m) {
 
 	for (; str.length; y += t->lineHeight) {
 		String_UNSAFE_SplitBy(&str, '\n', &line);
-		XDrawString(m->dpy, m->win, m->gc, t->x, y, line.buffer, line.length);		
+		XDrawString(m->dpy, m->win, m->gc, t->x, y, line.buffer, line.length);
 	}
 }
 
@@ -1129,7 +1132,7 @@ static void X11_MessageBox(const char* title, const char* text, struct X11Messag
 static void ShowDialogCore(const char* title, const char* msg) {
 	struct X11MessageBox m = { 0 };
 	m.dpy = win_display;
-	
+
 	/* Failing to create a display means can't display a message box. */
 	/* However the user might have launched the game through terminal, */
 	/* so fallback to console instead of just dying from a segfault */
@@ -1139,7 +1142,7 @@ static void ShowDialogCore(const char* title, const char* msg) {
 		Platform_LogConst(msg);
 		return;
 	}
-	
+
 	X11_MessageBox(title, msg, &m);
 	X11MessageBox_Free(&m);
 	XFlush(m.dpy); /* flush so window disappears immediately */
@@ -1330,7 +1333,7 @@ static void CheckMovementDelta(double dx, double dy) {
 	if (fails++ < 20) return;
 	/* Checked over 20 times now, but no relative coordinates,   */
 	/*  so give up trying to use XInput2 anymore.                */
-	Platform_LogConst("Buggy XInput2 detected, disabling it.."); 
+	Platform_LogConst("Buggy XInput2 detected, disabling it..");
 	rawMouseSupported = false;
 }
 
@@ -1591,5 +1594,4 @@ static XVisualInfo GLContext_SelectVisual(void) {
 	XFree(visual);
 	return info;
 }
-#endif
 #endif

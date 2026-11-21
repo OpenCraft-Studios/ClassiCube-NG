@@ -1,20 +1,23 @@
+#if CC_WIN_BACKEND != CC_WIN_BACKEND_WIN32CE && !defined(_CLANGD)
+#error Do not compile what you're not going to use!
+#endif
+
 #include <Core.h>
-#if CC_WIN_BACKEND == CC_WIN_BACKEND_WIN32CE
 /*
    The Open Toolkit Library License
-  
+
    Copyright (c) 2006 - 2009 the Open Toolkit library.
-  
+
    Permission is hereby granted, free of charge, to any person obtaining a copy
    of this software and associated documentation files (the "Software"), to deal
    in the Software without restriction, including without limitation the rights to
    use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
    the Software, and to permit persons to whom the Software is furnished to do
    so, subject to the following conditions:
-  
+
    The above copyright notice and this permission notice shall be included in all
    copies or substantial portions of the Software.
-  
+
    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
    OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -58,33 +61,33 @@ static cc_bool is_ansiWindow, grabCursor;
 static int windowX, windowY;
 
 static const cc_uint8 key_map[] = {
-/* 00 */ 0, 0, 0, 0, 0, 0, 0, 0, 
+/* 00 */ 0, 0, 0, 0, 0, 0, 0, 0,
 /* 08 */ CCKEY_BACKSPACE, CCKEY_TAB, 0, 0, CCKEY_F5, CCKEY_ENTER, 0, 0,
-/* 10 */ 0, 0, 0, CCKEY_PAUSE, CCKEY_CAPSLOCK, 0, 0, 0, 
+/* 10 */ 0, 0, 0, CCKEY_PAUSE, CCKEY_CAPSLOCK, 0, 0, 0,
 /* 18 */ 0, 0, 0, CCKEY_ESCAPE, 0, 0, 0, 0,
-/* 20 */ CCKEY_SPACE, CCKEY_PAGEUP, CCKEY_PAGEDOWN, CCKEY_END, CCKEY_HOME, CCKEY_LEFT, CCKEY_UP, CCKEY_RIGHT, 
+/* 20 */ CCKEY_SPACE, CCKEY_PAGEUP, CCKEY_PAGEDOWN, CCKEY_END, CCKEY_HOME, CCKEY_LEFT, CCKEY_UP, CCKEY_RIGHT,
 /* 28 */ CCKEY_DOWN, 0, CCKEY_PRINTSCREEN, 0, CCKEY_PRINTSCREEN, CCKEY_INSERT, CCKEY_DELETE, 0,
-/* 30 */ '0', '1', '2', '3', '4', '5', '6', '7', 
+/* 30 */ '0', '1', '2', '3', '4', '5', '6', '7',
 /* 38 */ '8', '9', 0, 0, 0, 0, 0, 0,
-/* 40 */ 0, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 
+/* 40 */ 0, 'A', 'B', 'C', 'D', 'E', 'F', 'G',
 /* 48 */ 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O',
-/* 50 */ 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 
+/* 50 */ 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
 /* 58 */ 'X', 'Y', 'Z', CCKEY_LWIN, CCKEY_RWIN, CCKEY_MENU, 0, CCKEY_SLEEP,
-/* 60 */ CCKEY_KP0, CCKEY_KP1, CCKEY_KP2, CCKEY_KP3, CCKEY_KP4, CCKEY_KP5, CCKEY_KP6, CCKEY_KP7, 
+/* 60 */ CCKEY_KP0, CCKEY_KP1, CCKEY_KP2, CCKEY_KP3, CCKEY_KP4, CCKEY_KP5, CCKEY_KP6, CCKEY_KP7,
 /* 68 */ CCKEY_KP8, CCKEY_KP9, CCKEY_KP_MULTIPLY, CCKEY_KP_PLUS, 0, CCKEY_KP_MINUS, CCKEY_KP_DECIMAL, CCKEY_KP_DIVIDE,
-/* 70 */ CCKEY_F1, CCKEY_F2, CCKEY_F3, CCKEY_F4, CCKEY_F5, CCKEY_F6, CCKEY_F7, CCKEY_F8, 
+/* 70 */ CCKEY_F1, CCKEY_F2, CCKEY_F3, CCKEY_F4, CCKEY_F5, CCKEY_F6, CCKEY_F7, CCKEY_F8,
 /* 78 */ CCKEY_F9, CCKEY_F10, CCKEY_F11, CCKEY_F12, CCKEY_F13, CCKEY_F14, CCKEY_F15, CCKEY_F16,
-/* 80 */ CCKEY_F17, CCKEY_F18, CCKEY_F19, CCKEY_F20, CCKEY_F21, CCKEY_F22, CCKEY_F23, CCKEY_F24, 
+/* 80 */ CCKEY_F17, CCKEY_F18, CCKEY_F19, CCKEY_F20, CCKEY_F21, CCKEY_F22, CCKEY_F23, CCKEY_F24,
 /* 88 */ 0, 0, 0, 0, 0, 0, 0, 0,
-/* 90 */ CCKEY_NUMLOCK, CCKEY_SCROLLLOCK, 0, 0, 0, 0, 0, 0, 
+/* 90 */ CCKEY_NUMLOCK, CCKEY_SCROLLLOCK, 0, 0, 0, 0, 0, 0,
 /* 98 */ 0, 0, 0, 0, 0, 0, 0, 0,
-/* A0 */ CCKEY_LSHIFT, CCKEY_RSHIFT, CCKEY_LCTRL, CCKEY_RCTRL, CCKEY_LALT, CCKEY_RALT, CCKEY_BROWSER_PREV, CCKEY_BROWSER_NEXT, 
+/* A0 */ CCKEY_LSHIFT, CCKEY_RSHIFT, CCKEY_LCTRL, CCKEY_RCTRL, CCKEY_LALT, CCKEY_RALT, CCKEY_BROWSER_PREV, CCKEY_BROWSER_NEXT,
 /* A8 */ CCKEY_BROWSER_REFRESH, CCKEY_BROWSER_STOP, CCKEY_BROWSER_SEARCH, CCKEY_BROWSER_FAVORITES, CCKEY_BROWSER_HOME, CCKEY_VOLUME_MUTE, CCKEY_VOLUME_DOWN, CCKEY_VOLUME_UP,
-/* B0 */ CCKEY_MEDIA_NEXT, CCKEY_MEDIA_PREV, CCKEY_MEDIA_STOP, CCKEY_MEDIA_PLAY, CCKEY_LAUNCH_MAIL, CCKEY_LAUNCH_MEDIA, CCKEY_LAUNCH_APP1, CCKEY_LAUNCH_CALC, 
+/* B0 */ CCKEY_MEDIA_NEXT, CCKEY_MEDIA_PREV, CCKEY_MEDIA_STOP, CCKEY_MEDIA_PLAY, CCKEY_LAUNCH_MAIL, CCKEY_LAUNCH_MEDIA, CCKEY_LAUNCH_APP1, CCKEY_LAUNCH_CALC,
 /* B8 */ 0, 0, CCKEY_SEMICOLON, CCKEY_EQUALS, CCKEY_COMMA, CCKEY_MINUS, CCKEY_PERIOD, CCKEY_SLASH,
-/* C0 */ CCKEY_TILDE, 0, 0, 0, 0, 0, 0, 0, 
+/* C0 */ CCKEY_TILDE, 0, 0, 0, 0, 0, 0, 0,
 /* C8 */ 0, 0, 0, 0, 0, 0, 0, 0,
-/* D0 */ 0, 0, 0, 0, 0, 0, 0, 0, 
+/* D0 */ 0, 0, 0, 0, 0, 0, 0, 0,
 /* D8 */ 0, 0, 0, CCKEY_LBRACKET, CCKEY_BACKSLASH, CCKEY_RBRACKET, CCKEY_QUOTE, 0,
 };
 
@@ -93,7 +96,7 @@ static int MapNativeKey(WPARAM vk_key, LPARAM meta) {
 	LPARAM scancode = (meta >> 16) & 0xFF;
 	int key;
 	if (ext) scancode |= 0xE000;
-	
+
 	switch (vk_key)
 	{
 	case VK_CONTROL:
@@ -103,7 +106,7 @@ static int MapNativeKey(WPARAM vk_key, LPARAM meta) {
 	case VK_RETURN:
 		return ext ? CCKEY_KP_ENTER : CCKEY_ENTER;
 	}
-	
+
 	key = vk_key < Array_Elems(key_map) ? key_map[vk_key] : 0;
 	if (!key) Platform_Log2("Unknown key: %x, %x", &vk_key, &scancode);
 	return key;
@@ -161,18 +164,18 @@ static LRESULT CALLBACK Window_Procedure(HWND handle, UINT message, WPARAM wPara
         PAINTSTRUCT ps;
         HWND hwnd = Window_Main.Handle.ptr;
         HDC hdc = BeginPaint(handle, &ps);
-        EndPaint(handle, &ps);   
+        EndPaint(handle, &ps);
 		Event_RaiseVoid(&WindowEvents.RedrawNeeded);
 		return 0;
     }
-    
+
 	case WM_SIZE:
 		sized = RefreshWindowDimensions();
 
 		if (sized && !suppress_resize) Event_RaiseVoid(&WindowEvents.Resized);
 		Event_RaiseVoid(&WindowEvents.StateChanged);
 		break;
-	
+
 	case WM_MOVE:
 		RefreshWindowPosition();
 		break;
@@ -214,7 +217,7 @@ static LRESULT CALLBACK Window_Procedure(HWND handle, UINT message, WPARAM wPara
 		Input_SetPressed(CCMOUSE_M); break;
 	case WM_RBUTTONDOWN:
 		Input_SetPressed(CCMOUSE_R); break;
-        
+
 #ifndef  CC_BUILD_TOUCH
 	case WM_LBUTTONUP:
 		Input_SetReleased(CCMOUSE_L); break;
@@ -289,7 +292,7 @@ static LRESULT CALLBACK Window_Procedure(HWND handle, UINT message, WPARAM wPara
 /*########################################################################################################################*
 *--------------------------------------------------Public implementation--------------------------------------------------*
 *#########################################################################################################################*/
-void Window_PreInit(void) { 
+void Window_PreInit(void) {
 	DisplayInfo.CursorVisible = true;
 }
 
@@ -336,7 +339,7 @@ static HWND CreateWindowHandle(ATOM atom, int width, int height) {
 	cc_result res;
 	HWND hwnd;
 	RECT r;
-	
+
 	/* Calculate final window rectangle after window decorations are added (titlebar, borders etc) */
 	r.left = Display_CentreX(width);  r.right  = r.left + width;
 	r.top  = Display_CentreY(height); r.bottom = r.top  + height;
@@ -355,7 +358,7 @@ static void DoCreateWindow(int width, int height) {
 	ATOM atom;
 	HWND hwnd;
 
-	width  = min(width,  240); 
+	width  = min(width,  240);
 	height = min(height, 160);
 
 	win_instance = GetModuleHandle(NULL);
@@ -375,7 +378,7 @@ static void DoCreateWindow(int width, int height) {
 	Window_Main.Handle.ptr = hwnd;
 	Window_Main.UIScaleX   = DEFAULT_UI_SCALE_X;
 	Window_Main.UIScaleY   = DEFAULT_UI_SCALE_Y;
-	
+
 	grabCursor = Options_GetBool(OPT_GRAB_CURSOR, false);
 }
 void Window_Create2D(int width, int height) { DoCreateWindow(width, height); }
@@ -482,7 +485,7 @@ static void ToggleFullscreen(HWND hwnd, cc_bool fullscreen, UINT finalShow) {
 		ShowWindow(hwnd, SW_RESTORE); /* reset maximised state */
 		SetWindowLong(hwnd, GWL_STYLE, style);
 		SetWindowPos(hwnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
-		ShowWindow(hwnd, finalShow); 
+		ShowWindow(hwnd, finalShow);
         InvalidateRect(hwnd, NULL, TRUE);
         UpdateWindow(hwnd);
 		Window_ProcessEvents(0.0);
@@ -526,7 +529,7 @@ void Window_SetSize(int width, int height) {
 	RECT rect   = { 0, 0, width, height };
 	AdjustWindowRectEx(&rect, CC_WIN_STYLE, false, 0);
 
-	SetWindowPos(hwnd, NULL, 0, 0, 
+	SetWindowPos(hwnd, NULL, 0, 0,
 				Rect_Width(rect), Rect_Height(rect), SWP_NOMOVE);
 }
 
@@ -557,12 +560,12 @@ void Gamepads_Init(void) { }
 void Gamepads_Process(float delta) { }
 
 static void Cursor_GetRawPos(int* x, int* y) {
-	POINT point; 
+	POINT point;
 	GetCursorPos(&point);
 	*x = point.x; *y = point.y;
 }
 
-void Cursor_SetPosition(int x, int y) { 
+void Cursor_SetPosition(int x, int y) {
 	SetCursorPos(x + windowX, y + windowY);
 }
 static void Cursor_DoSetVisible(cc_bool visible) {
@@ -655,13 +658,13 @@ void Window_AllocFramebuffer(struct Bitmap* bmp, int width, int height) {
 	bmp->width  = width;
 	bmp->height = height;
 	if (!draw_DC) draw_DC = CreateCompatibleDC(win_DC);
-	
+
 	/* sizeof(BITMAPINFO) does not work on Windows 9x */
 	hdr.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 	hdr.bmiHeader.biWidth    =  width;
 	hdr.bmiHeader.biHeight   = -height;
 	hdr.bmiHeader.biBitCount = 32;
-	hdr.bmiHeader.biPlanes   = 1; 
+	hdr.bmiHeader.biPlanes   = 1;
 
 	draw_DIB = CreateDIBSection(draw_DC, &hdr, DIB_RGB_COLORS, (void**)&bmp->scan0, NULL, 0);
 	if (draw_DIB) return;
@@ -692,5 +695,3 @@ void Window_UpdateRawMouse(void) { }
 void Window_DisableRawMouse(void) {
 	Input.RawMode = false;
 }
-
-#endif
