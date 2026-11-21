@@ -1,6 +1,8 @@
-#include <Core.h>
+#if CC_AUD_BACKEND != CC_AUD_BACKEND_OPENSLES && !defined(_CLANGD)
+#error Do not compile what you're not going to use!
+#endif
 
-#if CC_AUD_BACKEND == CC_AUD_BACKEND_OPENSLES
+#include <Core.h>
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
 #include "ExtMath.h"
@@ -298,5 +300,3 @@ cc_bool Audio_DescribeError(cc_result res, cc_string* dst) {
 	if (err) String_AppendConst(dst, err);
 	return err != NULL;
 }
-#endif
-

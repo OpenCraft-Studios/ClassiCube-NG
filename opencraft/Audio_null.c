@@ -1,6 +1,8 @@
-#include <Core.h>
+#if CC_AUD_BACKEND != CC_AUD_BACKEND_NULL && !defined(_CLANGD)
+#error Do not compile what you're not going to use!
+#endif
 
-#if CC_AUD_BACKEND == CC_AUD_BACKEND_NULL
+#include <Core.h>
 struct AudioContext { int count; };
 
 #define AUDIO_OVERRIDE_SOUNDS
@@ -74,5 +76,3 @@ void Audio_FreeChunks(struct AudioChunk* chunks, int numChunks) { }
 *----------------------------------------------------------Sounds---------------------------------------------------------*
 *#########################################################################################################################*/
 void AudioBackend_LoadSounds(void) { }
-#endif
-
