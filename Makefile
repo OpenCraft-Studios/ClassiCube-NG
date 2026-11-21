@@ -88,11 +88,23 @@ env:
 	@echo "# --no-print-directory: Don't print annoying messages if compiling recursively."
 	@echo 
 
+# ——— Clangd configuration ————————————————————————————————————————————————————
+
+.clangd:
+	$(file >$@,CompileFlags:)
+	$(file >>$@,  Compiler: $(CC))
+	$(file >>$@,  Add:)
+	$(foreach flag,$(CFLAGS),$(file >>$@,    - $(flag)))
+	$(file >>$@,    - -D_CLANGD=1)
+	$(file >>$@,  Remove:)
+	$(file >>$@,    - -pipe)
+	$(shell pkill clangd)
+
 # ——— Global variables ————————————————————————————————————————————————————————
 
 override BUILD_DIRS   += $(oc.build)
 
-override INCLUDES     += -I"$(CURDIR)/include"
+override INCLUDES     += -I$(CURDIR)/include
 override COMMON_FLAGS += $(ARCH_FLAGS) $(INCLUDES) -pipe -DCC_BUILD_MANUAL
 override CFLAGS       += $(COMMON_FLAGS)
 override CXXFLAGS     += $(COMMON_FLAGS)
