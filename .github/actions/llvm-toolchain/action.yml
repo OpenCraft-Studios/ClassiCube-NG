@@ -81,8 +81,6 @@ runs:
         ccache --set-config max_size=5G
         ccache --set-config compression=true
 
-        ccache -vs # Print debug info
-
     - name: Cache ccache
       uses: actions/cache@v6.1.0
       with:

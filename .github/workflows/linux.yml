@@ -34,9 +34,37 @@ jobs:
       - name: Compile
         run: |
           make TARGET="${{ matrix.output }}" \
-            COMMON_FLAGS="-Weverything -Wno-unsafe-buffer-usage -O2"
+            COMMON_FLAGS="-Weverything -Wno-unsafe-buffer-usage -O2" | tee build.log
 
-      - uses: actions/upload-artifact@v7
+      - name: 🔍 Compiler Diagnostics Report
+        if: always()
+        run: |
+          exec > "$GITHUB_STEP_SUMMARY"
+          printf '| Count | Percentage | Warning |\n'
+          printf '|------:|-----------:|:--------|\n'
+
+          grep -oE '\[-W[^]]+\]' build.log |
+              tr -d '[]' |
+              sort |
+              uniq -c |
+              sort -rn |
+              awk '
+              {
+                  count[NR] = $1
+                  warning[NR] = $2
+                  total += $1
+              }
+              END {
+                  for (i = 1; i <= NR; i++) {
+                      printf "| %d | %.2f%% | `%s` |\n",
+                          count[i],
+                          count[i] * 100 / total,
+                          warning[i]
+                  }
+              }'
+
+      - name: Upload binaries
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.output }}
           path: ${{ matrix.output }}
