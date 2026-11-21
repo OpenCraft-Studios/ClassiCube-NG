@@ -1,5 +1,8 @@
+#if CC_GFX_BACKEND != CC_GFX_BACKEND_SOFTGPU && !defined(_CLANGD)
+#error Do not compile what you're not going to use!
+#endif
+
 #include <Core.h>
-#if CC_GFX_BACKEND == CC_GFX_BACKEND_SOFTGPU
 #define CC_DYNAMIC_VBS_ARE_STATIC
 #include "_GraphicsBase.h"
 #include "Errors.h"
@@ -1078,4 +1081,3 @@ void Gfx_GetApiInfo(cc_string* info) {
 }
 
 cc_bool Gfx_TryRestoreContext(void) { return true; }
-#endif

@@ -1,5 +1,8 @@
+#if CC_GFX_BACKEND != CC_GFX_BACKEND_D3D11 && !defined(_CLANGD)
+#error Do not compile what you're not going to use!
+#endif
+
 #include <Core.h>
-#if CC_GFX_BACKEND == CC_GFX_BACKEND_D3D11
 #include "_GraphicsBase.h"
 #include "Errors.h"
 #include <Window.h>
@@ -1305,4 +1308,3 @@ static void FreePipeline(void) {
 	//  https://www.gamedev.net/forums/topic/659651-dxgi-leak-warnings/5172345/
 	ID3D11DeviceContext_Flush(context);
 }
-#endif

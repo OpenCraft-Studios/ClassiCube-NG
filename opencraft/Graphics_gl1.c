@@ -1,9 +1,12 @@
+#if CC_GFX_BACKEND != CC_GFX_BACKEND_GL1 && !defined(_CLANGD)
+#error Do not compile what you're not going to use!
+#endif
+
 /* Silence deprecation warnings on modern macOS/iOS */
 #define GL_SILENCE_DEPRECATION
 #define GLES_SILENCE_DEPRECATION
 
 #include <Core.h>
-#if CC_GFX_BACKEND == CC_GFX_BACKEND_GL1
 #include "_GraphicsBase.h"
 #include "Errors.h"
 #include <Window.h>
@@ -709,5 +712,3 @@ static void GLBackend_Init(void) {
 	}
 #endif
 }
-#endif
-

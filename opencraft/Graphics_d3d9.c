@@ -1,5 +1,8 @@
+#if CC_GFX_BACKEND != CC_GFX_BACKEND_D3D9 && !defined(_CLANGD)
+#error Do not compile what you're not going to use!
+#endif
+
 #include <Core.h>
-#if CC_GFX_BACKEND == CC_GFX_BACKEND_D3D9
 #include "_GraphicsBase.h"
 #include "Errors.h"
 #include <Window.h>
@@ -936,4 +939,3 @@ void Gfx_SetScissor(int x, int y, int w, int h) {
 	IDirect3DDevice9_SetRenderState(device, D3DRS_SCISSORTESTENABLE, enabled);
 	IDirect3DDevice9_SetScissorRect(device, &rect);
 }
-#endif

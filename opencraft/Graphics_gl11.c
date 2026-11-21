@@ -1,5 +1,8 @@
+#if CC_GFX_BACKEND != CC_GFX_BACKEND_GL11 && !defined(_CLANGD)
+#error Do not compile what you're not going to use!
+#endif
+
 #include <Core.h>
-#if CC_GFX_BACKEND == CC_GFX_BACKEND_GL11
 #include "_GraphicsBase.h"
 #include "Errors.h"
 #include <Window.h>
@@ -350,4 +353,3 @@ void Gfx_GetApiInfo(cc_string* info) {
 	String_Format1(info, "-- Using OpenGL (%i bit) --\n", &pointerSize);
 	GetGLApiInfo(info);
 }
-#endif
