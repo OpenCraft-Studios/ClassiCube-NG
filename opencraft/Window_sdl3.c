@@ -8,6 +8,7 @@
 #include "Bitmap.h"
 #include "Errors.h"
 #include <SDL3/SDL.h>
+#include <stdio.h>
 static SDL_Window* win_handle;
 static Uint32 dlg_event;
 
@@ -18,13 +19,10 @@ static void RefreshWindowBounds(void) {
 }
 
 static void Window_SDLFail(const char* place) {
-	char strBuffer[256];
-	cc_string str;
-	String_InitArray_NT(str, strBuffer);
-
-	String_Format2(&str, "Error when %c: %c", place, SDL_GetError());
-	str.buffer[str.length] = '\0';
-	Process_Abort(str.buffer);
+	const int size = snprintf(NULL, 0, "Error when %s: %s", place, SDL_GetError());
+	char msg[size];
+	snprintf(msg, size, "Error when %s: %s", place, SDL_GetError());
+	Process_Abort(msg);
 }
 
 void Window_PreInit(void) {
