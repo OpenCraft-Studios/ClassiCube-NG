@@ -5,6 +5,7 @@
 .vscode/*
 !.vscode/
 !.vscode/tasks.json
+!.vscode/settings.json
 *.suo
 *.user
 *.sln.docstates
