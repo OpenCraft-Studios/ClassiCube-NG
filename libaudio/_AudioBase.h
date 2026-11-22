@@ -1,8 +1,8 @@
 #include <Audio.h>
-#include "String_.h"
-#include "Logger.h"
-#include "Errors.h"
-#include "Utils.h"
+#include "../opencraft/String_.h"
+#include "../opencraft/Logger.h"
+#include "../opencraft/Errors.h"
+#include "../opencraft/Utils.h"
 #include <Platform.h>
 
 void Audio_Warn(cc_result res, const char* action) {

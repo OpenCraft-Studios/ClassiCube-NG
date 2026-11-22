@@ -67,7 +67,7 @@ struct AudioContext {
 
 #define AUDIO_COMMON_ALLOC
 #include "_AudioBase.h"
-#include "Funcs.h"
+#include "../opencraft/Funcs.h"
 
 static void* audio_device;
 static void* audio_context;

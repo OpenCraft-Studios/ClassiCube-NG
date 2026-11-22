@@ -16,7 +16,10 @@ else ifeq ($(aud.USE),winmm)
 aud.CFLAGS += -DCC_AUD_BACKEND=CC_AUD_BACKEND_WINMM
 endif
 
-$(oc.build)/Audio_%.c.o: $(oc.src)/Audio_%.c | $(oc.build)
+$(oc.build)/Audio_%.c.o: libaudio/Audio_%.c | $(oc.build)
+	$(CC) $(CFLAGS) $(aud.CFLAGS) -c $< -o $@
+
+$(oc.build)/Audio.c.o: libaudio/Audio.c | $(oc.build)
 	$(CC) $(CFLAGS) $(aud.CFLAGS) -c $< -o $@
 
 override OBJS   += $(aud.OBJS)

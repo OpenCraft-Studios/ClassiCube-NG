@@ -14,7 +14,7 @@ VERSION     := $(shell git describe --always --tags --dirty="*" --abbrev=1)
 oc.build     = /tmp/$(plat.USE)-opencraft
 oc.src      := $(CURDIR)/opencraft
 
-override SRCS := $(filter-out $(oc.src)/Graphics_% $(oc.src)/Audio% $(oc.src)/Platform_% $(oc.src)/Window_% $(oc.src)/SSL.c,$(wildcard $(oc.src)/*.c))
+override SRCS := $(filter-out $(oc.src)/Graphics_% $(oc.src)/Platform_% $(oc.src)/Window_% $(oc.src)/SSL.c,$(wildcard $(oc.src)/*.c))
 override OBJS  = $(patsubst $(oc.src)/%.c,$(oc.build)/%.c.o,$(SRCS))
 
 # ——— Modules —————————————————————————————————————————————————————————————————
@@ -30,7 +30,7 @@ endif
 
 AUDIO    ?= 1
 ifneq ($(AUDIO), 0)
-include $(oc.src)/audio.mk
+include libaudio/module.mk
 endif
 
 OPENGFX  ?= 1
