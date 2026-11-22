@@ -14,7 +14,7 @@ VERSION     := $(shell git describe --always --tags --dirty="*" --abbrev=1)
 oc.build     = /tmp/$(plat.USE)-opencraft
 oc.src      := $(CURDIR)/opencraft
 
-override SRCS := $(filter-out $(oc.src)/Platform_% $(oc.src)/Window_% $(oc.src)/SSL.c,$(wildcard $(oc.src)/*.c))
+override SRCS := $(filter-out $(oc.src)/Platform_% $(oc.src)/SSL.c,$(wildcard $(oc.src)/*.c))
 override OBJS  = $(patsubst $(oc.src)/%.c,$(oc.build)/%.c.o,$(SRCS))
 
 # ——— Modules —————————————————————————————————————————————————————————————————
@@ -40,7 +40,7 @@ endif
 
 WINDOW   ?= 1
 ifneq ($(WINDOW), 0)
-include $(oc.src)/window.mk
+include window/module.mk
 endif
 
 # ——— Targets —————————————————————————————————————————————————————————————————
