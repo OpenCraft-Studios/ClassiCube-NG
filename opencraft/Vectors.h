@@ -17,13 +17,8 @@ typedef struct Vec3_ { float x, y, z; } Vec3;
 /* 3 component vector (3D integer vector) */
 typedef struct IVec3_ { int x, y, z; } IVec3;
 /* 4 component vector */
-struct Vec4 { float x, y, z, w; };
-#if defined CC_BUILD_PSP || defined CC_BUILD_PS2 || defined CC_BUILD_PS3 || defined CC_BUILD_PSVITA || defined CC_BUILD_XBOX || defined CC_BUILD_WII || defined CC_BUILD_GAMECUBE
-struct Matrix { struct Vec4 row1, row2, row3, row4; } CC_ALIGNED(16);
-#else
-/* 4x4 matrix. (for vertex transformations) */
-struct Matrix { struct Vec4 row1, row2, row3, row4; };
-#endif
+typedef struct Vec4 { float x, y, z, w; } vec4;
+typedef struct CC_ALIGNED(16) Matrix { struct Vec4 row1, row2, row3, row4; } mat4;
 
 #define Matrix_IdentityValue \
 { \
