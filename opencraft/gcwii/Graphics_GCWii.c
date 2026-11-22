@@ -32,7 +32,7 @@ static void InitGX(void) {
 	memset(fifo_buffer, 0, FIFO_SIZE);
 
 	GX_Init(fifo_buffer, FIFO_SIZE);
-	Gfx_OnWindowResize();
+	Gfx_OnWindowResize(Game.Width, Game.Height);
 	
 	GX_SetDispCopyYScale((f32)mode->xfbHeight / (f32)mode->efbHeight);
 	GX_SetDispCopySrc(0, 0, mode->fbWidth, mode->efbHeight);
@@ -337,8 +337,8 @@ void Gfx_EndFrame(void) {
 	if (gfx_vsync) VIDEO_WaitVSync();
 }
 
-void Gfx_OnWindowResize(void) {
-	GXRModeObj* mode = cur_mode;
+void Gfx_OnWindowResize(int width, int height) {
+	GXRModeObj* mode = cur_mode; // TODO
 
 	Gfx_SetViewport(0, 0, mode->fbWidth, mode->efbHeight);
 	Gfx_SetScissor( 0, 0, mode->fbWidth, mode->efbHeight);
@@ -434,7 +434,7 @@ static void UpdateFog(void) {
 		beg  = near;
 		end  = 2.0f / gfx_fogDensity;
 	}
-    GX_SetFog(mode, beg, end, near, far, color);
+	GX_SetFog(mode, beg, end, near, far, color);
 }
 
 void Gfx_SetFog(cc_bool enabled) {

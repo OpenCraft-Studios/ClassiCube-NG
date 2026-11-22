@@ -436,7 +436,7 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 	if (!success) return NULL;
 	
 	ToMortonTexture(&tex->texture, 0, 0, bmp, rowWidth);
-    return tex;
+	return tex;
 }
 
 void Gfx_UpdateTexture(GfxResourceID texId, int x, int y, struct Bitmap* part, int rowWidth, cc_bool mipmaps) {
@@ -604,8 +604,8 @@ void Gfx_EndFrame(void) {
 	CmdBuf_Reset();
 }
 
-void Gfx_OnWindowResize(void) {
-	Gfx_SetViewport(0, 0, Game.Width, Game.Height);
+void Gfx_OnWindowResize(int width, int height) {
+	Gfx_SetViewport(0, 0, width, height);
 }
 
 void Gfx_SetViewport(int x, int y, int w, int h) {

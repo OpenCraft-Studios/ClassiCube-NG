@@ -40,29 +40,29 @@ static void WaitForGPUDone(void) {
 	{
 		GFX_VERTEX16 = 0;
 		swiDelay(0x400);
-    }
+	}
 }
 
 void ResetGPU(void) {
-    powerOn(POWER_3D_CORE | POWER_MATRIX); // Enable 3D core & geometry engine
+	powerOn(POWER_3D_CORE | POWER_MATRIX); // Enable 3D core & geometry engine
 	WaitForGPUDone();
 
-    // Clear the FIFO
-    GFX_STATUS |= (1 << 29);
+	// Clear the FIFO
+	GFX_STATUS |= (1 << 29);
 
-    // prime the vertex/polygon buffers
-    GFX_FLUSH = 0;
+	// prime the vertex/polygon buffers
+	GFX_FLUSH = 0;
 
 	GFX_ALPHA_TEST = 7; // Alpha threshold ranges from 0 to 15
 	
 	GFX_CONTROL = GL_ANTIALIAS | GL_TEXTURE_2D | GL_FOG | GL_BLEND;
 
 	GFX_CLEAR_DEPTH = GL_MAX_DEPTH;
-    GFX_TEX_FORMAT  = 0;
-    GFX_POLY_FORMAT = 0;
+	GFX_TEX_FORMAT  = 0;
+	GFX_POLY_FORMAT = 0;
 
 	// Reset texture matrix to identity
-    MATRIX_CONTROL  = DS_MAT_TEXTURE;
+	MATRIX_CONTROL  = DS_MAT_TEXTURE;
 	MATRIX_IDENTITY = 0;
 	MATRIX_CONTROL  = matrix_modes[lastMatrix];
 }
@@ -117,7 +117,7 @@ void Gfx_SetVSync(cc_bool vsync) {
 	gfx_vsync = vsync;
 }
 
-void Gfx_OnWindowResize(void) { 
+void Gfx_OnWindowResize(int width, int height) { 
 }
 
 void Gfx_SetViewport(int x, int y, int w, int h) {
@@ -381,7 +381,7 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 		offset = tex->palBase * PAL_BLOCK_SIZE;
 
 		vramSetBankE(VRAM_E_LCD);
-    	CopyHWords(palette, (u8*)VRAM_E + offset, pal_count);
+		CopyHWords(palette, (u8*)VRAM_E + offset, pal_count);
 		vramSetBankE(VRAM_E_TEX_PALETTE);
 
 		tex->palFormat = tex_fmt == GL_RGB4 ? (offset >> 3) : (offset >> 4);

@@ -222,7 +222,7 @@ void Window_AllocFramebuffer(struct Bitmap* bmp, int width, int height) {
 
 	Game.Width  = Window_Main.Width;
 	Game.Height = Window_Main.Height;
-	Gfx_OnWindowResize();
+	Gfx_OnWindowResize(Game.Width, Game.Height);
 }
 
 void Window_DrawFramebuffer(Rect2D r, struct Bitmap* bmp) {
@@ -295,34 +295,34 @@ struct CCApp : implements<CCApp, IFrameworkViewSource, IFrameworkView>
 
 	// IFrameworkView interface
 	void Initialize(CoreApplicationView const& view)
-    {
-    }
+	{
+	}
 
-    void Load(hstring const& entryPoint)
-    {
-    }
+	void Load(hstring const& entryPoint)
+	{
+	}
 
-    void Uninitialize()
-    {
-    }
+	void Uninitialize()
+	{
+	}
 
-    void Run()
-    {
-        CoreWindow& window = CoreWindow::GetForCurrentThread();
+	void Run()
+	{
+		CoreWindow& window = CoreWindow::GetForCurrentThread();
 		window.Activate();
 		Window_Main.Handle.ptr = get_abi(window);
 
 		extern int main(int argc, char** argv);
 		main(0, NULL);
-    }
+	}
 
-    void SetWindow(CoreWindow const& win)
-    {
-    }
+	void SetWindow(CoreWindow const& win)
+	{
+	}
 };
 
 int __stdcall wWinMain(void*, void*, wchar_t** argv, int argc)
 {
 	auto app = make<CCApp>();
-    CoreApplication::Run(app);
+	CoreApplication::Run(app);
 }

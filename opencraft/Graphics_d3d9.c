@@ -908,8 +908,8 @@ void Gfx_GetApiInfo(cc_string* info) {
 	String_Format1(info, "Depth buffer bits: %i", &depthBits);
 }
 
-void Gfx_OnWindowResize(void) {
-	if (Game.Width == cachedWidth && Game.Height == cachedHeight) return;
+void Gfx_OnWindowResize(int width, int height) {
+	if (width == cachedWidth && height == cachedHeight) return;
 	/* Only resize when necessary */
 	UpdateSwapchain(" (resizing window)");
 }

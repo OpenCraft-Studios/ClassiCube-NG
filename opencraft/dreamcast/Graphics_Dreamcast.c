@@ -35,26 +35,26 @@ struct CommandsList {
 #define ROUND_UP_256(v) (((v) + 0xFFu) & ~0xFFu)
 
 static CC_INLINE void* CommandsList_Reserve(struct CommandsList* list, cc_uint32 count) {
-    cc_uint32 cur_size = list->length * VERTEX_SIZE;
+	cc_uint32 cur_size = list->length * VERTEX_SIZE;
 
-    if (count < list->capacity) {
-        return list->data + cur_size;
-    }
-    /* We overallocate so that we don't make small allocations during push backs */
-    count = ROUND_UP_256(count);
+	if (count < list->capacity) {
+		return list->data + cur_size;
+	}
+	/* We overallocate so that we don't make small allocations during push backs */
+	count = ROUND_UP_256(count);
 
-    cc_uint32 new_size = count * VERTEX_SIZE;
-    cc_uint8* cur_data = list->data;
+	cc_uint32 new_size = count * VERTEX_SIZE;
+	cc_uint8* cur_data = list->data;
 
-    cc_uint8* data = (cc_uint8*)memalign(0x20, new_size);
-    if (!data) return NULL;
+	cc_uint8* data = (cc_uint8*)memalign(0x20, new_size);
+	if (!data) return NULL;
 
-    memcpy(data, cur_data, cur_size);
-    free(cur_data);
+	memcpy(data, cur_data, cur_size);
+	free(cur_data);
 
-    list->data     = data;
-    list->capacity = count;
-    return data + cur_size;
+	list->data     = data;
+	list->capacity = count;
+	return data + cur_size;
 }
 
 static void CommandsList_Append(struct CommandsList* list, const void* cmd) {
@@ -87,10 +87,10 @@ static cc_uint8 gfx_culling;
 static cc_uint8 gfx_scissor;
 
 static CC_INLINE struct CommandsList* ActivePolyList(void) {
-    if (gfx_alphaBlend) return &listTR;
-    if (gfx_alphaTest)  return &listPT;
+	if (gfx_alphaBlend) return &listTR;
+	if (gfx_alphaTest)  return &listPT;
 
-    return &listOP;
+	return &listOP;
 }
 
 static void no_vram_handler(uint32 code, void *data) { exceeded_vram = true; }
@@ -104,12 +104,12 @@ static void InitGPU(void) {
 		autosort ? 0 : 1,
 		3 // extra OPBs
 	};
-    pvr_init(&params);
+	pvr_init(&params);
 	pvr_set_pal_format(PVR_PAL_ARGB4444);
 
 	// This event will be raised when no room in VRAM for vertices anymore
-    asic_evt_set_handler(ASIC_EVT_PVR_PARAM_OUTOFMEM, no_vram_handler, NULL);
-    asic_evt_enable(ASIC_EVT_PVR_PARAM_OUTOFMEM,      ASIC_IRQ_DEFAULT);
+	asic_evt_set_handler(ASIC_EVT_PVR_PARAM_OUTOFMEM, no_vram_handler, NULL);
+	asic_evt_enable(ASIC_EVT_PVR_PARAM_OUTOFMEM,      ASIC_IRQ_DEFAULT);
 }
 
 static void InitGLState(void) {
@@ -165,8 +165,8 @@ void Gfx_Free(void) {
 *-----------------------------------------------------Texture memory------------------------------------------------------*
 *#########################################################################################################################*/
 struct GPUTexture {
-    uint32_t format;    // PVR texture format
-    uint16_t base;      // VRAM block number
+	uint32_t format;    // PVR texture format
+	uint16_t base;      // VRAM block number
 	uint16_t blocks;    // VRAM blocks used
 	uint32_t log2_w: 4; // log2(width)
 	uint32_t log2_h: 4; // log2(height)
@@ -200,11 +200,11 @@ static cc_uint32 texmem_blocks;
 static cc_uint8 tex_table[TEXMEM_MAX_BLOCKS / BLOCKS_PER_PAGE];
 
 static void InitTexMemory(void) {
-    size_t vram_free  = pvr_mem_available();
-    size_t tmem_avail = vram_free - TEXMEM_RESERVED;
+	size_t vram_free  = pvr_mem_available();
+	size_t tmem_avail = vram_free - TEXMEM_RESERVED;
 
-    void* base    = pvr_mem_malloc(tmem_avail);
-    texmem_base   = (void*)TEXMEM_BLOCK_ROUNDUP((cc_uintptr)base);
+	void* base    = pvr_mem_malloc(tmem_avail);
+	texmem_base   = (void*)TEXMEM_BLOCK_ROUNDUP((cc_uintptr)base);
 	texmem_blocks = tmem_avail / TEXMEM_BLOCK_SIZE;
 }
 
@@ -228,13 +228,13 @@ static int DefragTexMemory(void) {
 }
 
 static int AllocTexMemory(int blocks) {
-    int base   = blockalloc_alloc(tex_table, texmem_blocks, blocks);
-    if (base >= 0) return base;
+	int base   = blockalloc_alloc(tex_table, texmem_blocks, blocks);
+	if (base >= 0) return base;
 
 	Platform_LogConst("Out of VRAM! Defragmenting..");
 	while (DefragTexMemory()) { }
 
-    return blockalloc_alloc(tex_table, texmem_blocks, blocks);
+	return blockalloc_alloc(tex_table, texmem_blocks, blocks);
 }
 
 
@@ -439,12 +439,12 @@ static CC_INLINE void ConvertTexture_Palette(cc_uint16* dst, struct Bitmap* bmp,
 }
 
 static struct GPUTexture* FindFreeTexture(void) {
-    for (int i = 0; i < MAX_TEXTURE_COUNT; i++) 
+	for (int i = 0; i < MAX_TEXTURE_COUNT; i++) 
 	{
 		struct GPUTexture* tex = &tex_list[i];
 		if (!tex->size) return tex;
-    }
-    return NULL;
+	}
+	return NULL;
 }
 
 GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags, cc_bool mipmaps) {
@@ -536,7 +536,7 @@ void Gfx_BindTexture(GfxResourceID texId) {
 void Gfx_DeleteTexture(GfxResourceID* texId) {
 	struct GPUTexture* tex = (struct GPUTexture*)(*texId);
 	if (!tex) return;
-    blockalloc_dealloc(tex_table, tex->base, tex->blocks);
+	blockalloc_dealloc(tex_table, tex->base, tex->blocks);
 
 	if (tex->format != PVR_TXRFMT_ARGB4444) {
 		int index = (tex->format & PVR_TXRFMT_4BPP_PAL(63)) >> 21;
@@ -1102,8 +1102,8 @@ void Gfx_EndFrame(void) {
 	pvr_wait_ready();
 }
 
-void Gfx_OnWindowResize(void) {
-	Gfx_SetViewport(0, 0, Game.Width, Game.Height);
+void Gfx_OnWindowResize(int width, int height) {
+	Gfx_SetViewport(0, 0, width, height);
 }
 
 void Gfx_SetViewport(int x, int y, int w, int h) {

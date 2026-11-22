@@ -759,7 +759,7 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 	struct GPUTexture* tex = GPUTexture_Alloc(size);
 	cc_uint32* dst = tex->data;
 	UploadFullTexture(bmp, rowWidth, dst, dst_w, dst_h);
-            
+			
 	sceGxmTextureInitSwizzled(&tex->texture, dst,
 		SCE_GXM_TEXTURE_FORMAT_A8B8G8R8, dst_w, dst_h, 0);
 		
@@ -893,7 +893,7 @@ void Gfx_EndFrame(void) {
 	Gfx_NextFramebuffer();
 }
 
-void Gfx_OnWindowResize(void) { }
+void Gfx_OnWindowResize(int width, int height) { }
 
 void Gfx_SetViewport(int x, int y, int w, int h) { }
 void Gfx_SetScissor (int x, int y, int w, int h) { }

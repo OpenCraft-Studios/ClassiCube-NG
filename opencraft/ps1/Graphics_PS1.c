@@ -137,7 +137,7 @@ static void ResetOTableR(RenderBuffer* buf) {
 
 static void OnBufferUpdated(void) {
 	next_packet     = draw_buffer->buffer;
-    next_packet_end = next_packet + BUFFER_LENGTH;
+	next_packet_end = next_packet + BUFFER_LENGTH;
 
 	ResetOTableR(draw_buffer);
 }
@@ -731,17 +731,17 @@ void Gfx_DeleteVb(GfxResourceID* vb) {
 }
 
 void* Gfx_LockVb(GfxResourceID vb, VertexFormat fmt, int count) {
-    buf_fmt   = fmt;
-    buf_count = count;
+	buf_fmt   = fmt;
+	buf_count = count;
 	return vb;
 }
 
 void Gfx_UnlockVb(GfxResourceID vb) { 
-    if (buf_fmt == VERTEX_FORMAT_TEXTURED) {
-        PreprocessTexturedVertices(vb);
-    } else {
-        PreprocessColouredVertices(vb);
-    }
+	if (buf_fmt == VERTEX_FORMAT_TEXTURED) {
+		PreprocessTexturedVertices(vb);
+	} else {
+		PreprocessColouredVertices(vb);
+	}
 }
 
 
@@ -859,7 +859,7 @@ static void DrawColouredQuads2D(int verticesCount, int startVertex) {
 
 	for (int i = 0; i < verticesCount; i += 4, v += 4) 
 	{	
-        if ((cc_uint8*)poly > max) break;
+		if ((cc_uint8*)poly > max) break;
 
 		setlen(poly, POLY_LEN_F4);
 		poly->rgbc = v->rgbc | POLY_CMD_SEMITRNS;
@@ -891,7 +891,7 @@ static void DrawTexturedQuads2D(int verticesCount, int startVertex) {
 
 	for (int i = 0; i < verticesCount; i += 4, v += 4) 
 	{
-        if ((cc_uint8*)poly > max) break;
+		if ((cc_uint8*)poly > max) break;
 
 		setlen(poly, POLY_LEN_FT4);
 		poly->rgbc  = v->rgbc;
@@ -1115,7 +1115,7 @@ void Gfx_SetVSync(cc_bool vsync) {
 	gfx_vsync = vsync;
 }
 
-void Gfx_OnWindowResize(void) {
+void Gfx_OnWindowResize(int width, int height) {
 	// TODO
 }
 

@@ -49,13 +49,13 @@ static GX2FetchShader colour_FS, texture_FS;
 
 static void CompileFetchShader(GX2FetchShader* shader, const GX2AttribStream* attribs, int numAttribs) {
    uint32_t size = GX2CalcFetchShaderSizeEx(numAttribs,
-                                            GX2_FETCH_SHADER_TESSELLATION_NONE,
-                                            GX2_TESSELLATION_MODE_DISCRETE);
+											GX2_FETCH_SHADER_TESSELLATION_NONE,
+											GX2_TESSELLATION_MODE_DISCRETE);
    void* program = memalign(GX2_SHADER_PROGRAM_ALIGNMENT, size);
 
    GX2InitFetchShaderEx(shader, program, numAttribs, attribs,
-                        GX2_FETCH_SHADER_TESSELLATION_NONE,
-                        GX2_TESSELLATION_MODE_DISCRETE);
+						GX2_FETCH_SHADER_TESSELLATION_NONE,
+						GX2_TESSELLATION_MODE_DISCRETE);
 
    GX2Invalidate(GX2_INVALIDATE_MODE_CPU_SHADER, program, size);
 }
@@ -564,7 +564,7 @@ void Gfx_GetApiInfo(cc_string* info) {
 	PrintMaxTextureInfo(info);
 }
 
-void Gfx_OnWindowResize(void) {
+void Gfx_OnWindowResize(int width, int height) {
 
 }
 

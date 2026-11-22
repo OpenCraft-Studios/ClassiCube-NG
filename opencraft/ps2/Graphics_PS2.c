@@ -260,7 +260,7 @@ void Gfx_Create(void) {
 	formatDirty = true;
 	InitDrawingEnv();
 	InitGuardband();
-	Gfx_OnWindowResize();
+	Gfx_OnWindowResize(Game.Width, Game.Height);
 	
 // TODO maybe Min not actually needed?
 	Gfx.MinTexWidth  = 4;
@@ -882,10 +882,10 @@ static int buf_count;
 
 // Precalculate all the vertex data adjustment
 static void PreprocessTexturedVertices(void* vertices) {
-    struct VertexTextured* v = vertices;
+	struct VertexTextured* v = vertices;
 
-    for (int i = 0; i < buf_count; i++, v++)
-    {
+	for (int i = 0; i < buf_count; i++, v++)
+	{
 		// See 'Colour Functions' https://psi-rockin.github.io/ps2tek/#gstextures
 		// Essentially, colour blending is calculated as
 		//   finalR = (vertexR * textureR) >> 7
@@ -903,19 +903,19 @@ static void PreprocessTexturedVertices(void* vertices) {
 		//  so that alpha blending produces the expected results like normal GPUs
 		int A = PackedCol_A(v->Col) >> 1;
 		v->Col = (v->Col & ~PACKEDCOL_A_MASK) | (A << PACKEDCOL_A_SHIFT);
-    }
+	}
 }
 
 static void PreprocessColouredVertices(void* vertices) {
-    struct VertexColoured* v = vertices;
+	struct VertexColoured* v = vertices;
 
-    for (int i = 0; i < buf_count; i++, v++)
-    {
+	for (int i = 0; i < buf_count; i++, v++)
+	{
 		// Alpha blending divides by 128 instead of 256, so need to half alpha here
 		//  so that alpha blending produces the expected results like normal GPUs
 		int A = PackedCol_A(v->Col) >> 1;
 		v->Col = (v->Col & ~PACKEDCOL_A_MASK) | (A << PACKEDCOL_A_SHIFT);
-    }
+	}
 }
 
 static GfxResourceID Gfx_AllocStaticVb(VertexFormat fmt, int count) {
@@ -934,17 +934,17 @@ void Gfx_DeleteVb(GfxResourceID* vb) {
 }
 
 void* Gfx_LockVb(GfxResourceID vb, VertexFormat fmt, int count) {
-    buf_fmt   = fmt;
-    buf_count = count;
+	buf_fmt   = fmt;
+	buf_count = count;
 	return vb;
 }
 
 void Gfx_UnlockVb(GfxResourceID vb) { 
-    if (buf_fmt == VERTEX_FORMAT_TEXTURED) {
-        PreprocessTexturedVertices(vb);
-    } else {
-        PreprocessColouredVertices(vb);
-    }
+	if (buf_fmt == VERTEX_FORMAT_TEXTURED) {
+		PreprocessTexturedVertices(vb);
+	} else {
+		PreprocessColouredVertices(vb);
+	}
 }
 
 
@@ -1161,8 +1161,8 @@ void Gfx_EndFrame(void) {
 	// Double buffering
 	Q = GS_SetFrameBuffer(Q, fb_draw, 0);
 	graph_set_framebuffer_filtered(fb_display->address,
-                                   fb_display->width,
-                                   fb_display->psm, 0, 0);
+								   fb_display->width,
+								   fb_display->psm, 0, 0);
 	//Platform_LogConst("--- EF4 ---");
 }
 
@@ -1170,9 +1170,9 @@ void Gfx_SetVSync(cc_bool vsync) {
 	gfx_vsync = vsync;
 }
 
-void Gfx_OnWindowResize(void) {
-	Gfx_SetViewport(0, 0, Game.Width, Game.Height);
-	Gfx_SetScissor( 0, 0, Game.Width, Game.Height);
+void Gfx_OnWindowResize(int width, int height) {
+	Gfx_SetViewport(0, 0, width, height);
+	Gfx_SetScissor( 0, 0, width, height);
 }
 
 void Gfx_SetViewport(int x, int y, int w, int h) {

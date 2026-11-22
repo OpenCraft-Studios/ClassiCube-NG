@@ -706,7 +706,7 @@ static void DrawClipped(int mask, Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3
 	Vertex* a = &tmp[0];
 	Vertex* b = &tmp[1];
 
-    switch (mask) {
+	switch (mask) {
 	case V0_VIS:
 	{
 		//		   v0
@@ -724,7 +724,7 @@ static void DrawClipped(int mask, Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3
 
 		DrawTriangle3D(v0, a, b);
 	}
-    break;
+	break;
 	case V1_VIS:
 	{
 		//		   v1

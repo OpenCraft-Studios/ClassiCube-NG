@@ -1016,10 +1016,10 @@ static void OM_InitTargets(void) {
 	if (hr) Process_Abort2(hr, "Failed to create render target");
 
 	ID3D11Texture2D_GetDesc(pBackBuffer, &desc);
-    desc.Format    = DXGI_FORMAT_D24_UNORM_S8_UINT;
-    desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	desc.Format    = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
-    hr = ID3D11Device_CreateTexture2D(device, &desc, NULL, &depthbuffer);
+	hr = ID3D11Device_CreateTexture2D(device, &desc, NULL, &depthbuffer);
 	if (hr) Process_Abort2(hr, "Failed to create depthbuffer texture");
 
 	hr = ID3D11Device_CreateDepthStencilView(device, (ID3D11Resource*)depthbuffer,
@@ -1272,14 +1272,14 @@ release_device:
 	IDXGIDevice_Release(dxgi_device);
 }
 
-void Gfx_OnWindowResize(void) {
+void Gfx_OnWindowResize(int width, int height) {
 	// https://docs.microsoft.com/en-us/windows/win32/direct3ddxgi/d3d10-graphics-programming-guide-dxgi#handling-window-resizing
 	OM_FreeTargets();
 	HRESULT hr = IDXGISwapChain_ResizeBuffers(swapchain, 0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
 	if (hr) Process_Abort2(hr, "Failed to resize swapchain");
 
 	OM_InitTargets();
-	Gfx_SetViewport(0, 0, Game.Width, Game.Height);
+	Gfx_SetViewport(0, 0, width, height);
 }
 
 static void InitPipeline(void) {

@@ -47,7 +47,7 @@ static void CreateShaders(void) {
 	Xe_ShaderApplyVFetchPatches(xe, shdr_tex_vs, 0, &textured_vbf);
 	shdr_tex_ps = Xe_LoadShaderFromMemory(xe, (void*)ps_textured);
 	Xe_InstantiateShader(xe, shdr_tex_ps, 0);
-    	
+		
 	shdr_col_vs = Xe_LoadShaderFromMemory(xe, (void*)vs_coloured);
 	Xe_InstantiateShader(xe, shdr_col_vs, 0);	 
 	Xe_ShaderApplyVFetchPatches(xe, shdr_col_vs, 0, &coloured_vbf);
@@ -380,7 +380,7 @@ void Gfx_GetApiInfo(cc_string* info) {
 	PrintMaxTextureInfo(info);
 }
 
-void Gfx_OnWindowResize(void) {
+void Gfx_OnWindowResize(int width, int height) {
 
 }
 

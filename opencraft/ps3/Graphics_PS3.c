@@ -173,7 +173,7 @@ static void WaitRSXIdle(void) {
 }
 
 static void ConfigureVideo(void) {
-    WaitRSXIdle();
+	WaitRSXIdle();
 
 	videoState state;
 	videoGetState(0, 0, &state);
@@ -418,8 +418,8 @@ static void ResetFrameState(void) {
 	// TODO: Why is that
 	rsxSetAlphaFunc(context, GCM_GREATER, 0.5f);
 	rsxSetBlendFunc(context, GCM_SRC_ALPHA, GCM_ONE_MINUS_SRC_ALPHA, GCM_SRC_ALPHA, GCM_ONE_MINUS_SRC_ALPHA);
-        rsxSetBlendEquation(context, GCM_FUNC_ADD, GCM_FUNC_ADD);
-        
+		rsxSetBlendEquation(context, GCM_FUNC_ADD, GCM_FUNC_ADD);
+		
 	rsxSetColorMaskMrt(context, 0);
 	rsxSetClearColor(context, clearColor);
 	rsxSetClearDepthStencil(context, 0xFFFFFFFF);
@@ -434,7 +434,7 @@ static void ResetFrameState(void) {
 						GCM_USER_CLIP_PLANE_DISABLE,
 						GCM_USER_CLIP_PLANE_DISABLE,
 						GCM_USER_CLIP_PLANE_DISABLE);
-        
+		
 	// NOTE: Must be called each frame, otherwise renders upside down at 4x zoom
 	Gfx_SetViewport(0, 0, Game.Width, Game.Height);
 	Gfx_SetScissor (0, 0, Game.Width, Game.Height);
@@ -469,9 +469,9 @@ void Gfx_EndFrame(void) {
 	SetRenderTarget(cur_fb);
 }
 
-void Gfx_OnWindowResize(void) {
-	Gfx_SetViewport(0, 0, Game.Width, Game.Height);
-	Gfx_SetScissor (0, 0, Game.Width, Game.Height);
+void Gfx_OnWindowResize(int width, int height) {
+	Gfx_SetViewport(0, 0, width, height);
+	Gfx_SetScissor (0, 0, width, height);
 }
 
 void Gfx_SetViewport(int x, int y, int w, int h) {

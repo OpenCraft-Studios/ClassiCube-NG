@@ -18,7 +18,7 @@ static GfxResourceID white_square;
 void Gfx_Create(void) {
 	rspq_init();
 	//rspq_profile_start();
-    rdpq_init();
+	rdpq_init();
 	//rdpq_debug_start(); // TODO debug
 	//rdpq_debug_log(true);
 
@@ -27,14 +27,14 @@ void Gfx_Create(void) {
 	__rdpq_mode_change_som(SOM_ZMODE_MASK,    SOM_ZMODE_OPAQUE);
 	rdpq_mode_dithering(DITHER_SQUARE_SQUARE);
 
-    gpu_init();
+	gpu_init();
 
 	// Set alpha compare threshold
 	gpu_push_rdp(RDP_CMD_SYNC_PIPE, 0);
 	gpu_push_rdp(RDP_CMD_SET_BLEND_COLOR, (0 << 24) | (0 << 16) | (0 << 8) | 127);
 
-    zbuffer = surface_alloc(FMT_RGBA16, display_get_width(), display_get_height());
-    
+	zbuffer = surface_alloc(FMT_RGBA16, display_get_width(), display_get_height());
+	
 	Gfx.MaxTexWidth  = 256;
 	Gfx.MaxTexHeight = 256;
 	Gfx.Created      = true;
@@ -82,7 +82,7 @@ void Gfx_SetVSync(cc_bool vsync) {
 	gfx_vsync = vsync; // TODO update vsync
 }
 
-void Gfx_OnWindowResize(void) { }
+void Gfx_OnWindowResize(int width, int height) { }
 
 void Gfx_SetViewport(int x, int y, int w, int h) {
 	gpuViewport(x, y, w, h);
@@ -94,8 +94,8 @@ void Gfx_SetScissor(int x, int y, int w, int h) {
 
 void Gfx_BeginFrame(void) {
 	surface_t* disp = display_get();
-    rdpq_attach(disp, &zbuffer);
-    
+	rdpq_attach(disp, &zbuffer);
+	
 	//Platform_LogConst("== BEGIN frame");
 }
 
@@ -120,7 +120,7 @@ void Gfx_ClearColor(PackedCol color) {
 }
 
 void Gfx_EndFrame(void) {
-    rdpq_detach_show();
+	rdpq_detach_show();
 
 	//rspq_profile_dump();
 	//rspq_profile_next_frame();
@@ -277,9 +277,9 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 	
 	rdpq_texparms_t params =
 	{
-        .s.repeats = (flags & TEXTURE_FLAG_NONPOW2) ? 1 : REPEAT_INFINITE,
-        .t.repeats = (flags & TEXTURE_FLAG_NONPOW2) ? 1 : REPEAT_INFINITE,
-    };
+		.s.repeats = (flags & TEXTURE_FLAG_NONPOW2) ? 1 : REPEAT_INFINITE,
+		.t.repeats = (flags & TEXTURE_FLAG_NONPOW2) ? 1 : REPEAT_INFINITE,
+	};
 	UploadTexture(tex, pal_count, &params);
 	return tex;
 }

@@ -46,19 +46,19 @@ static vdp1_cmdt_t* cmdt_base;
 static void* texture_base;
 
 static void InitVRAM(void) {
-    vdp1_vram_t ptr = VDP1_VRAM(0);
+	vdp1_vram_t ptr = VDP1_VRAM(0);
 
-    cmdt_base = (vdp1_cmdt_t*)ptr;
-    ptr += CMDT_REGION_COUNT * sizeof(vdp1_cmdt_t);
+	cmdt_base = (vdp1_cmdt_t*)ptr;
+	ptr += CMDT_REGION_COUNT * sizeof(vdp1_cmdt_t);
 
-    texture_base = (void*)ptr;
-    ptr += TEXTURE_REGION_SIZE;
+	texture_base = (void*)ptr;
+	ptr += TEXTURE_REGION_SIZE;
 
-    gouraud_base = (vdp1_gouraud_table_t*)ptr;
-    ptr += GOURAUD_REGION_COUNT * sizeof(vdp1_gouraud_table_t);
+	gouraud_base = (vdp1_gouraud_table_t*)ptr;
+	ptr += GOURAUD_REGION_COUNT * sizeof(vdp1_gouraud_table_t);
 
-    clut_base = (vdp1_clut_t*)ptr;
-    ptr += CLUT_REGION_COUNT * sizeof(vdp1_clut_t);
+	clut_base = (vdp1_clut_t*)ptr;
+	ptr += CLUT_REGION_COUNT * sizeof(vdp1_clut_t);
 
 	int S = (int)(ptr - VDP1_VRAM(sizeof(vdp1_cmdt_t)));
 	int T = VDP1_VRAM_SIZE;
@@ -131,9 +131,9 @@ static void SetupHeaderCommands(void) {
 void Gfx_Create(void) {
 	if (!Gfx.Created) {
 		// TODO less ram for gouraud base
-        vdp2_scrn_back_color_set(VDP2_VRAM_ADDR(3, 0x01FFFE),
-            RGB1555(1, 0, 3, 15));
-        vdp2_sprite_priority_set(0, 6);
+		vdp2_scrn_back_color_set(VDP2_VRAM_ADDR(3, 0x01FFFE),
+			RGB1555(1, 0, 3, 15));
+		vdp2_sprite_priority_set(0, 6);
 
 		InitVRAM();
 		UpdateVDP1Env();
@@ -319,19 +319,19 @@ static void PreprocessTexturedVertices(void* vertices) {
 		dst->y = XYZFixed(src->y);
 		dst->z = XYZFixed(src->z);
 
-        int r = PackedCol_R(src->Col);
-        int g = PackedCol_G(src->Col);
-        int b = PackedCol_B(src->Col);
-        dst->Col = ((b >> 5) << 7) | ((g >> 4) << 3) | (r >> 5);
-    }
+		int r = PackedCol_R(src->Col);
+		int g = PackedCol_G(src->Col);
+		int b = PackedCol_B(src->Col);
+		dst->Col = ((b >> 5) << 7) | ((g >> 4) << 3) | (r >> 5);
+	}
 
 	dst = vertices;
 	src = vertices;
 	for (int i = 0; i < buf_count; i += 4, src += 4, dst += 4)
 	{
-        int flipped = src[0].V > src[2].V;
+		int flipped = src[0].V > src[2].V;
 		dst->flip   = flipped ? VDP1_CMDT_CHAR_FLIP_V : VDP1_CMDT_CHAR_FLIP_NONE;
-    }
+	}
 }
 
 static void PreprocessColouredVertices(void* vertices) {
@@ -344,11 +344,11 @@ static void PreprocessColouredVertices(void* vertices) {
 		dst->y = XYZFixed(src->y);
 		dst->z = XYZFixed(src->z);
 
-        int r = PackedCol_R(src->Col);
-        int g = PackedCol_G(src->Col);
-        int b = PackedCol_B(src->Col);
-        dst->Col = RGB1555(1, r >> 3, g >> 3, b >> 3).raw;
-    }
+		int r = PackedCol_R(src->Col);
+		int g = PackedCol_G(src->Col);
+		int b = PackedCol_B(src->Col);
+		dst->Col = RGB1555(1, r >> 3, g >> 3, b >> 3).raw;
+	}
 }
 
 
@@ -365,17 +365,17 @@ void Gfx_DeleteVb(GfxResourceID* vb) {
 }
 
 void* Gfx_LockVb(GfxResourceID vb, VertexFormat fmt, int count) {
-    buf_fmt   = fmt;
-    buf_count = count;
+	buf_fmt   = fmt;
+	buf_count = count;
 	return vb;
 }
 
 void Gfx_UnlockVb(GfxResourceID vb) { 
-    if (buf_fmt == VERTEX_FORMAT_TEXTURED) {
-        PreprocessTexturedVertices(vb);
-    } else {
-        PreprocessColouredVertices(vb);
-    }
+	if (buf_fmt == VERTEX_FORMAT_TEXTURED) {
+		PreprocessTexturedVertices(vb);
+	} else {
+		PreprocessColouredVertices(vb);
+	}
 }
 
 
@@ -482,9 +482,9 @@ void Gfx_DrawVb_Lines(int verticesCount) {
 
 // Calculates v->x * col1 + v->y * col2 + v->z * col3 + trans
 static inline int __attribute__((always_inline)) TransformVector(void* v, struct MatrixCol* col) {
-    int res;
+	int res;
 
-    __asm__("clrmac                   \n"
+	__asm__("clrmac                   \n"
 			"lds.l @%[col]+, MACL     \n"
 			"mac.l @%[col]+, @%[vec]+ \n"
 			"mac.l @%[col]+, @%[vec]+ \n"
@@ -493,7 +493,7 @@ static inline int __attribute__((always_inline)) TransformVector(void* v, struct
  			: [col] "+r" (col), [vec] "+r" (v), [res] "=r" (res)
  			: "m" (*v), "m" (*col)
  			: "mach", "macl", "memory");
-    return res;
+	return res;
 }
 
 #define Coloured2D_X(value) XYZInteger(value) - SCREEN_WIDTH  / 2
@@ -740,7 +740,7 @@ void Gfx_SetVSync(cc_bool vsync) {
 	gfx_vsync = vsync;
 }
 
-void Gfx_OnWindowResize(void) {
+void Gfx_OnWindowResize(int width, int height) {
 	// TODO
 }
 

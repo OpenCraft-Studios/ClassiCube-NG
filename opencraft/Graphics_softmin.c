@@ -534,7 +534,7 @@ static void DrawClipped(int mask, Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3
 	Vertex* a = &tmp[0];
 	Vertex* b = &tmp[1];
 
-    switch (mask) {
+	switch (mask) {
 	case V0_VIS:
 	{
 		//		   v0
@@ -552,7 +552,7 @@ static void DrawClipped(int mask, Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3
 
 		DrawTriangle3D(v0, a, b);
 	}
-    break;
+	break;
 	case V1_VIS:
 	{
 		//		   v1
@@ -861,19 +861,19 @@ void Gfx_SetVSync(cc_bool vsync) {
 	gfx_vsync = vsync;
 }
 
-void Gfx_OnWindowResize(void) {
+void Gfx_OnWindowResize(int width, int height) {
 	// TODO ??????
 	//Window_FreeFramebuffer(&fb_bmp);
 
-	fb_width   = Game.Width;
-	fb_height  = Game.Height;
+	fb_width   = width;
+	fb_height  = height;
 
-	Window_AllocFramebuffer(&fb_bmp, Game.Width, Game.Height);
+	Window_AllocFramebuffer(&fb_bmp, width, height);
 	colorBuffer = fb_bmp.scan0;
 	cb_stride   = fb_bmp.width;
 
-	Gfx_SetViewport(0, 0, Game.Width, Game.Height);
-	Gfx_SetScissor (0, 0, Game.Width, Game.Height);
+	Gfx_SetViewport(0, 0, width, height);
+	Gfx_SetScissor (0, 0, width, height);
 }
 
 void Gfx_SetViewport(int x, int y, int w, int h) {
