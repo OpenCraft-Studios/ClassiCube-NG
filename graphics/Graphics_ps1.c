@@ -1,7 +1,7 @@
 #define OVERRIDE_BEGEND2D_FUNCTIONS
 #define CC_DYNAMIC_VBS_ARE_STATIC
-#include "../_GraphicsBase.h"
-#include "../Errors.h"
+#include "_GraphicsBase.h"
+#include "../opencraft/Errors.h"
 #include <Window.h>
 
 #include <assert.h>
@@ -48,7 +48,7 @@ void Gfx_ResetGPU(void) {
 void Gfx_VSync(void) {
 	cc_uint32 counter = vblank_count;
 
-	for (int i = 0; i < 0x100000; i++) 
+	for (int i = 0; i < 0x100000; i++)
 	{
 		if (counter != vblank_count) return;
 	}
@@ -137,7 +137,7 @@ static void ResetOTableR(RenderBuffer* buf) {
 
 static void OnBufferUpdated(void) {
 	next_packet     = draw_buffer->buffer;
-    next_packet_end = next_packet + BUFFER_LENGTH;
+	next_packet_end = next_packet + BUFFER_LENGTH;
 
 	ResetOTableR(draw_buffer);
 }
@@ -160,7 +160,7 @@ static cc_bool cullingEnabled;
 
 static void Gfx_RestoreState(void) {
 	InitDefaultResources();
-	
+
 	// dummy texture (grey works better in menus than white)
 	struct Bitmap bmp;
 	BitmapCol pixels[4] = { BitmapColor_RGB(130, 130, 130), BitmapColor_RGB(130, 130, 130), BitmapColor_RGB(130, 130, 130), BitmapColor_RGB(130, 130, 130) };
@@ -169,7 +169,7 @@ static void Gfx_RestoreState(void) {
 }
 
 static void Gfx_FreeState(void) {
-	FreeDefaultResources(); 
+	FreeDefaultResources();
 	Gfx_DeleteTexture(&white_square);
 }
 
@@ -178,7 +178,7 @@ void Gfx_Create(void) {
 	Gfx.MaxTexHeight = 256;
 	Gfx.Created      = true;
 	Gfx.Limitations  = GFX_LIMIT_MAX_VERTEX_SIZE;
-	
+
 	Gfx_RestoreState();
 	SetupContexts(Window_Main.Width, Window_Main.Height);
 	Gfx_ClearColor(PackedCol_Make(63, 0, 127, 255));
@@ -215,7 +215,7 @@ void Gfx_Create(void) {
 	GTE_SetCtrlReg(C2CR_AVE_ZSF4, OT_LENGTH * 0x1000 / (4 * SZ_MAX));
 }
 
-void Gfx_Free(void) { 
+void Gfx_Free(void) {
 	Gfx_FreeState();
 }
 
@@ -297,7 +297,7 @@ static cc_uint8 vram_used[(MAX_TEX_LINES + MAX_TEX_LINES) / 8];
 #define VRAM_BoundingAxis(width, height) height > width ? width : height
 
 static cc_bool VRAM_IsRangeFree(int beg, int end) {
-	for (int i = beg; i < end; i++) 
+	for (int i = beg; i < end; i++)
 	{
 		if (VRAM_IsUsed(i)) return false;
 	}
@@ -307,12 +307,12 @@ static cc_bool VRAM_IsRangeFree(int beg, int end) {
 static int VRAM_FindFreeLines(int group, int lines) {
 	int beg = group * TEX_GROUP_LINES;
 	int end = beg + TEX_GROUP_LINES;
- 
+
 	// TODO kinda inefficient
-	for (int i = beg; i < end - lines; i++) 
+	for (int i = beg; i < end - lines; i++)
 	{
 		if (VRAM_IsUsed(i)) continue;
-		
+
 		if (VRAM_IsRangeFree(i, i + lines)) return i;
 	}
 	return -1;
@@ -337,7 +337,7 @@ static int VRAM_FindFreeBlock(int width, int height) {
 
 static void VRAM_AllocBlock(int line, int width, int height) {
 	int lines = VRAM_BoundingAxis(width, height);
-	for (int i = line; i < line + lines; i++) 
+	for (int i = line; i < line + lines; i++)
 	{
 		VRAM_SetUsed(i);
 	}
@@ -345,7 +345,7 @@ static void VRAM_AllocBlock(int line, int width, int height) {
 
 static void VRAM_FreeBlock(int line, int width, int height) {
 	int lines = VRAM_BoundingAxis(width, height);
-	for (int i = line; i < line + lines; i++) 
+	for (int i = line; i < line + lines; i++)
 	{
 		VRAM_UnUsed(i);
 	}
@@ -371,7 +371,7 @@ static int VRAM_CalcPage(int line) {
 #define MAX_PALETTE_ENTRIES 16
 
 static CC_INLINE int FindInPalette(BitmapCol* palette, int pal_count, BitmapCol color) {
-	for (int i = 0; i < pal_count; i++) 
+	for (int i = 0; i < pal_count; i++)
 	{
 		if (palette[i] == color) return i;
 	}
@@ -384,10 +384,10 @@ static CC_INLINE int CalcPalette(BitmapCol* palette, struct Bitmap* bmp, int row
 
 	BitmapCol* row = bmp->scan0;
 	int pal_count  = 0;
-	
+
 	for (int y = 0; y < height; y++, row += rowWidth)
 	{
-		for (int x = 0; x < width; x++) 
+		for (int x = 0; x < width; x++)
 		{
 			BitmapCol color = row[x];
 			int idx = FindInPalette(palette, pal_count, color);
@@ -419,8 +419,8 @@ static void CreateFullTexture(BitmapCol* tmp, struct Bitmap* bmp, int rowWidth) 
 	{
 		BitmapCol* src = bmp->scan0 + y * rowWidth;
 		BitmapCol* dst = tmp        + y * bmp->width;
-		
-		for (int x = 0; x < bmp->width; x++) 
+
+		for (int x = 0; x < bmp->width; x++)
 		{
 			dst[x] = src[x];
 		}
@@ -437,10 +437,10 @@ static void CreatePalettedTexture(BitmapCol* tmp, struct Bitmap* bmp, int rowWid
 
 	for (int y = 0; y < height; y++)
 	{
-		for (int x = 0; x < width; x++) 
+		for (int x = 0; x < width; x++)
 		{
 			int idx = FindInPalette(palette, pal_count, src[x]);
-			
+
 			if ((x & 1) == 0) {
 				dst[x >> 1] = idx;
 			} else {
@@ -461,7 +461,7 @@ static void* AllocTextureAt(int i, struct Bitmap* bmp, int rowWidth) {
 
 	cc_uint16* tmp;
 	int tmp_size;
-	
+
 	if (pal_count > 0) {
 		tmp_size = (bmp->width * bmp->height) >> 2; // each halfword has 4 4bpp pixels
 	} else {
@@ -473,11 +473,11 @@ static void* AllocTextureAt(int i, struct Bitmap* bmp, int rowWidth) {
 	GPUTexture* tex = &textures[i];
 	int line = VRAM_FindFreeBlock(bmp->width, bmp->height);
 	if (line == -1) { Mem_Free(tmp); return NULL; }
-	
+
 	tex->width  = bmp->width;  tex->u_shift = 8 - Math_ilog2(bmp->width);
 	tex->height = bmp->height; tex->v_shift = 8 - Math_ilog2(bmp->height);
 	tex->line   = line;
-	
+
 	int page   = VRAM_CalcPage(line);
 	int pageX  = (page % TPAGES_PER_HALF);
 	int pageY  = (page / TPAGES_PER_HALF);
@@ -493,7 +493,7 @@ static void* AllocTextureAt(int i, struct Bitmap* bmp, int rowWidth) {
 		tex->xOffset = 0;
 		tex->yOffset = line % TPAGE_HEIGHT;
 	}
-	
+
 	Platform_Log4("%i x %i  = %i (%i)", &bmp->width, &bmp->height, &line, &pal_count);
 	Platform_Log3("  at %i (%i, %i)", &page, &pageX, &pageY);
 
@@ -504,7 +504,7 @@ static void* AllocTextureAt(int i, struct Bitmap* bmp, int rowWidth) {
 		tex->clut = GP0_CMD_CLUT_XY(clutX, clutY);
 
 		// DMA cannot copy data from scratchpad memory, so copy palette onto stack
-		BitmapCol pal[16]; 
+		BitmapCol pal[16];
 		Mem_Copy(pal, palette, sizeof(pal));
 		Gfx_TransferToVRAM(clutX * 16, clutY, 16, 1, pal);
 
@@ -512,15 +512,15 @@ static void* AllocTextureAt(int i, struct Bitmap* bmp, int rowWidth) {
 	} else {
 		CreateFullTexture(tmp, bmp, rowWidth);
 	}
-		
+
 	int x = pageX * TPAGE_WIDTH  + tex->xOffset;
 	int y = pageY * TPAGE_HEIGHT + tex->yOffset;
 	int w = pal_count > 0 ? (bmp->width >> 2) : bmp->width;
 	int h = bmp->height;
 
 	Platform_Log4("  LOAD AT: %i, %i (%i x %i)", &x, &y, &w, &h);
-	Gfx_TransferToVRAM(x, y, w, h, tmp); 
-	
+	Gfx_TransferToVRAM(x, y, w, h, tmp);
+
 	Mem_Free(tmp);
 	return tex;
 }
@@ -540,7 +540,7 @@ void Gfx_BindTexture(GfxResourceID texId) {
 	if (!texId) texId = white_square;
 	curTex = (GPUTexture*)texId;
 }
-		
+
 void Gfx_DeleteTexture(GfxResourceID* texId) {
 	GfxResourceID data = *texId;
 	if (!data) return;
@@ -632,16 +632,16 @@ void Gfx_DeleteIb(GfxResourceID* ib) { }
 *#########################################################################################################################*/
 // Preprocess vertex buffers into optimised layout for PS1
 // XYZ is stored in optimised form for 3D rendering and 2D rendering
-struct PS1VertexColoured { 
+struct PS1VertexColoured {
 	short vx, vy, vz, pad;
 	short xx, yy;
 	unsigned rgbc;
 };
-struct PS1VertexTextured { 
+struct PS1VertexTextured {
 	short vx, vy, vz, pad;
 	short xx, yy;
 	unsigned rgbc;
-	short u, v; 
+	short u, v;
 };
 
 static VertexFormat buf_fmt;
@@ -678,7 +678,7 @@ static void PreprocessTexturedVertices(void* vertices) {
 		dst->vz = z;
 		dst->xx = x >> 8;
 		dst->yy = y >> 8;
-		
+
 		u = src->U * 0.999f;
 		v = src->V == 1.0f ? 0.999f : src->V;
 
@@ -731,17 +731,17 @@ void Gfx_DeleteVb(GfxResourceID* vb) {
 }
 
 void* Gfx_LockVb(GfxResourceID vb, VertexFormat fmt, int count) {
-    buf_fmt   = fmt;
-    buf_count = count;
+	buf_fmt   = fmt;
+	buf_count = count;
 	return vb;
 }
 
-void Gfx_UnlockVb(GfxResourceID vb) { 
-    if (buf_fmt == VERTEX_FORMAT_TEXTURED) {
-        PreprocessTexturedVertices(vb);
-    } else {
-        PreprocessColouredVertices(vb);
-    }
+void Gfx_UnlockVb(GfxResourceID vb) {
+	if (buf_fmt == VERTEX_FORMAT_TEXTURED) {
+		PreprocessTexturedVertices(vb);
+	} else {
+		PreprocessColouredVertices(vb);
+	}
 }
 
 
@@ -764,15 +764,15 @@ static void LoadTransformMatrix(struct Matrix* src) {
 	matrix[0][0] = ToFixed(src->row1.x);
 	matrix[0][1] = ToFixed(src->row2.x);
 	matrix[0][2] = ToFixed(src->row3.x);
-	
+
 	matrix[1][0] = ToFixed(-src->row1.y);
 	matrix[1][1] = ToFixed(-src->row2.y);
 	matrix[1][2] = ToFixed(-src->row3.y);
-	
+
 	matrix[2][0] = ToFixed(src->row1.w);
 	matrix[2][1] = ToFixed(src->row2.w);
 	matrix[2][2] = ToFixed(src->row3.w);
-	
+
 	GTE_Load_RotMatrix(matrix);
 }
 
@@ -786,7 +786,7 @@ void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
 	} else {
 		Matrix_Mul(&mvp, &_view, &_proj);
 	}
-	
+
 	LoadTransformMatrix(&mvp);
 }
 
@@ -857,9 +857,9 @@ static void DrawColouredQuads2D(int verticesCount, int startVertex) {
 	psx_poly_F4* poly = next_packet;
 	cc_uint8* max = next_packet_end - sizeof(*poly);
 
-	for (int i = 0; i < verticesCount; i += 4, v += 4) 
-	{	
-        if ((cc_uint8*)poly > max) break;
+	for (int i = 0; i < verticesCount; i += 4, v += 4)
+	{
+		if ((cc_uint8*)poly > max) break;
 
 		setlen(poly, POLY_LEN_F4);
 		poly->rgbc = v->rgbc | POLY_CMD_SEMITRNS;
@@ -869,7 +869,7 @@ static void DrawColouredQuads2D(int verticesCount, int startVertex) {
 		poly->x2 = v[2].xx; poly->y2 = v[2].yy;
 		poly->x3 = v[3].xx; poly->y3 = v[3].yy;
 
-		if (lastPoly) { 
+		if (lastPoly) {
 			addPrim(lastPoly, poly);
 		} else {
 			addPrim(&draw_buffer->ot[0], poly);
@@ -881,7 +881,7 @@ static void DrawColouredQuads2D(int verticesCount, int startVertex) {
 }
 
 static void DrawTexturedQuads2D(int verticesCount, int startVertex) {
-	struct PS1VertexTextured* v = (struct PS1VertexTextured*)gfx_vertices + startVertex;	
+	struct PS1VertexTextured* v = (struct PS1VertexTextured*)gfx_vertices + startVertex;
 	int uOffset = curTex->xOffset, vOffset = curTex->yOffset;
 	int uShift  = curTex->u_shift, vShift  = curTex->v_shift;
 	int tpage   = curTex->tpage,   clut    = curTex->clut;
@@ -889,9 +889,9 @@ static void DrawTexturedQuads2D(int verticesCount, int startVertex) {
 	psx_poly_FT4* poly = next_packet;
 	cc_uint8* max = next_packet_end - sizeof(*poly);
 
-	for (int i = 0; i < verticesCount; i += 4, v += 4) 
+	for (int i = 0; i < verticesCount; i += 4, v += 4)
 	{
-        if ((cc_uint8*)poly > max) break;
+		if ((cc_uint8*)poly > max) break;
 
 		setlen(poly, POLY_LEN_FT4);
 		poly->rgbc  = v->rgbc;
@@ -902,7 +902,7 @@ static void DrawTexturedQuads2D(int verticesCount, int startVertex) {
 		poly->x1 = v[0].xx; poly->y1 = v[0].yy;
 		poly->x2 = v[2].xx; poly->y2 = v[2].yy;
 		poly->x3 = v[3].xx; poly->y3 = v[3].yy;
-		
+
 		poly->u0 = (v[1].u >> uShift) + uOffset;
 		poly->v0 = (v[1].v >> vShift) + vOffset;
 		poly->u1 = (v[0].u >> uShift) + uOffset;
@@ -912,8 +912,8 @@ static void DrawTexturedQuads2D(int verticesCount, int startVertex) {
 		poly->u3 = (v[3].u >> uShift) + uOffset;
 		poly->v3 = (v[3].v >> vShift) + vOffset;
 
-		if (lastPoly) { 
-			setaddr(poly, getaddr(lastPoly)); setaddr(lastPoly, poly); 
+		if (lastPoly) {
+			setaddr(poly, getaddr(lastPoly)); setaddr(lastPoly, poly);
 		} else {
 			addPrim(&draw_buffer->ot[0], poly);
 		}
@@ -931,7 +931,7 @@ static void DrawColouredQuads3D(int verticesCount, int startVertex) {
 	psx_poly_F4* poly = next_packet;
 	cc_uint8* max = next_packet_end - sizeof(*poly);
 
-	for (int i = 0; i < verticesCount; i += 4, v += 4) 
+	for (int i = 0; i < verticesCount; i += 4, v += 4)
 	{
 		struct PS1VertexColoured* v0 = &v[0];
 		struct PS1VertexColoured* v1 = &v[1];
@@ -949,7 +949,7 @@ static void DrawColouredQuads3D(int verticesCount, int startVertex) {
 		GTE_Exec_RTPT(); // 23 cycles
 		setlen(poly, POLY_LEN_F4);
 		poly->rgbc = v0->rgbc;
-	
+
 		// Calculate Z depth
 		GTE_Exec_AVSZ3(); // 5 cycles
 		int p; GTE_GetDataReg(C2DR_OTZ, p);
@@ -965,7 +965,7 @@ static void DrawColouredQuads3D(int verticesCount, int startVertex) {
 		GTE_Exec_RTPS(); // 15 cycles
 		addPrim(&ot[p], poly);
 		GTE_SaveDataReg(C2DR_XY2, poly, offsetof(psx_poly_F4, x3));
-		
+
 		poly++;
 	}
 	next_packet = poly;
@@ -985,7 +985,7 @@ static void DrawTexturedQuads3D(int verticesCount, int startVertex) {
 	psx_poly_FT4* poly = next_packet;
 	cc_uint8* max = next_packet_end - sizeof(*poly);
 
-	for (int i = 0; i < verticesCount; i += 4, v += 4) 
+	for (int i = 0; i < verticesCount; i += 4, v += 4)
 	{
 		struct PS1VertexTextured* v0 = &v[0];
 		struct PS1VertexTextured* v1 = &v[1];
@@ -1011,7 +1011,7 @@ static void DrawTexturedQuads3D(int verticesCount, int startVertex) {
 		poly->clut  = clut;
 		int clip; GTE_GetDataReg(C2DR_MAC0, clip);
 		if (clip > 0) continue;
-	
+
 		// Calculate Z depth
 		GTE_Exec_AVSZ3(); // 5 cycles
 		int p; GTE_GetDataReg(C2DR_OTZ, p);
@@ -1027,7 +1027,7 @@ static void DrawTexturedQuads3D(int verticesCount, int startVertex) {
 		GTE_Exec_RTPS(); // 15 cycles
 		addPrim(&ot[p], poly);
 		GTE_SaveDataReg(C2DR_XY2, poly, offsetof(psx_poly_FT4, x3));
-	
+
 		poly->v0 = (v1->v >> vShift) + vOffset;
 		poly->u1 = (v0->u >> uShift) + uOffset;
 		poly->v1 = (v0->v >> vShift) + vOffset;
@@ -1035,7 +1035,7 @@ static void DrawTexturedQuads3D(int verticesCount, int startVertex) {
 		poly->v2 = (v2->v >> vShift) + vOffset;
 		poly->u3 = (v3->u >> uShift) + uOffset;
 		poly->v3 = (v3->v >> vShift) + vOffset;
-	
+
 		poly++;
 	}
 	next_packet = poly;

@@ -1,6 +1,6 @@
 #define CC_DYNAMIC_VBS_ARE_STATIC
-#include "../_GraphicsBase.h"
-#include "../Errors.h"
+#include "_GraphicsBase.h"
+#include "../opencraft/Errors.h"
 #include <Window.h>
 
 #include <gx2/clear.h>
@@ -31,31 +31,31 @@
 #define VERTEX_OFFSET_COORDS 16
 
 static const GX2AttribStream colour_attributes[] = {
-	{ 0, 0, VERTEX_OFFSET_POS,   GX2_ATTRIB_FORMAT_FLOAT_32_32_32, GX2_ATTRIB_INDEX_PER_VERTEX, 
+	{ 0, 0, VERTEX_OFFSET_POS,   GX2_ATTRIB_FORMAT_FLOAT_32_32_32, GX2_ATTRIB_INDEX_PER_VERTEX,
 		0, GX2_SEL_MASK(GX2_SQ_SEL_X, GX2_SQ_SEL_Y, GX2_SQ_SEL_Z, GX2_SQ_SEL_1), GX2_ENDIAN_SWAP_DEFAULT },
-	{ 1, 0, VERTEX_OFFSET_COLOR, GX2_ATTRIB_FORMAT_UNORM_8_8_8_8,  GX2_ATTRIB_INDEX_PER_VERTEX, 
+	{ 1, 0, VERTEX_OFFSET_COLOR, GX2_ATTRIB_FORMAT_UNORM_8_8_8_8,  GX2_ATTRIB_INDEX_PER_VERTEX,
 		0, GX2_SEL_MASK(GX2_SQ_SEL_X, GX2_SQ_SEL_Y, GX2_SQ_SEL_Z, GX2_SQ_SEL_W), GX2_ENDIAN_SWAP_DEFAULT }
 };
 
 static const GX2AttribStream texture_attributes[] = {
-	{ 0, 0, VERTEX_OFFSET_POS,    GX2_ATTRIB_FORMAT_FLOAT_32_32_32, GX2_ATTRIB_INDEX_PER_VERTEX, 
+	{ 0, 0, VERTEX_OFFSET_POS,    GX2_ATTRIB_FORMAT_FLOAT_32_32_32, GX2_ATTRIB_INDEX_PER_VERTEX,
 		0, GX2_SEL_MASK(GX2_SQ_SEL_X, GX2_SQ_SEL_Y, GX2_SQ_SEL_Z, GX2_SQ_SEL_1), GX2_ENDIAN_SWAP_DEFAULT },
-	{ 1, 0, VERTEX_OFFSET_COLOR,  GX2_ATTRIB_FORMAT_UNORM_8_8_8_8,  GX2_ATTRIB_INDEX_PER_VERTEX, 
+	{ 1, 0, VERTEX_OFFSET_COLOR,  GX2_ATTRIB_FORMAT_UNORM_8_8_8_8,  GX2_ATTRIB_INDEX_PER_VERTEX,
 		0, GX2_SEL_MASK(GX2_SQ_SEL_X, GX2_SQ_SEL_Y, GX2_SQ_SEL_Z, GX2_SQ_SEL_W), GX2_ENDIAN_SWAP_DEFAULT },
-	{ 2, 0, VERTEX_OFFSET_COORDS, GX2_ATTRIB_FORMAT_FLOAT_32_32,    GX2_ATTRIB_INDEX_PER_VERTEX, 
+	{ 2, 0, VERTEX_OFFSET_COORDS, GX2_ATTRIB_FORMAT_FLOAT_32_32,    GX2_ATTRIB_INDEX_PER_VERTEX,
 		0, GX2_SEL_MASK(GX2_SQ_SEL_X, GX2_SQ_SEL_Y, GX2_SQ_SEL_0, GX2_SQ_SEL_1), GX2_ENDIAN_SWAP_DEFAULT },
 };
 static GX2FetchShader colour_FS, texture_FS;
 
 static void CompileFetchShader(GX2FetchShader* shader, const GX2AttribStream* attribs, int numAttribs) {
    uint32_t size = GX2CalcFetchShaderSizeEx(numAttribs,
-                                            GX2_FETCH_SHADER_TESSELLATION_NONE,
-                                            GX2_TESSELLATION_MODE_DISCRETE);
+											GX2_FETCH_SHADER_TESSELLATION_NONE,
+											GX2_TESSELLATION_MODE_DISCRETE);
    void* program = memalign(GX2_SHADER_PROGRAM_ALIGNMENT, size);
 
    GX2InitFetchShaderEx(shader, program, numAttribs, attribs,
-                        GX2_FETCH_SHADER_TESSELLATION_NONE,
-                        GX2_TESSELLATION_MODE_DISCRETE);
+						GX2_FETCH_SHADER_TESSELLATION_NONE,
+						GX2_TESSELLATION_MODE_DISCRETE);
 
    GX2Invalidate(GX2_INVALIDATE_MODE_CPU_SHADER, program, size);
 }
@@ -107,7 +107,7 @@ static int fog_func;
 static void InitGfx(void) {
 	CompileFetchShaders();
    	GX2InitSampler(&sampler, GX2_TEX_CLAMP_MODE_WRAP, GX2_TEX_XY_FILTER_MODE_POINT);
-	
+
 	LoadProgram(&colour_PG, coloured_none_gsh);
 
 	LoadProgram(&texture_PG[0], textured_none_gsh);
@@ -150,7 +150,7 @@ static void UpdateProgram(void) {
 *#########################################################################################################################*/
 void Gfx_Create(void) {
 	if (!Gfx.Created) InitGfx();
-	
+
 	Gfx.Created      = true;
 	Gfx.MaxTexWidth  = 1024;
 	Gfx.MaxTexHeight = 1024;
@@ -164,7 +164,7 @@ void Gfx_Free(void) {
 	Gfx_FreeState();
 }
 
-static void Gfx_FreeState(void) { 
+static void Gfx_FreeState(void) {
 	FreeDefaultResources();
 	Gfx_DeleteTexture(&white_square);
 }
@@ -173,7 +173,7 @@ static void Gfx_RestoreState(void) {
 	Gfx_SetFaceCulling(false);
 	InitDefaultResources();
 	gfx_format = -1;
-	
+
 	// 1x1 dummy white texture
 	struct Bitmap bmp;
 	BitmapCol pixels[1] = { BITMAPCOLOR_WHITE };
@@ -206,8 +206,8 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 
 	tex->surface.image = MEMAllocFromDefaultHeapEx(tex->surface.imageSize, tex->surface.alignment);
 	if (!tex->surface.image) { Mem_Free(tex); return NULL; }
-  
-	CopyPixels(tex->surface.image, tex->surface.pitch << 2, 
+
+	CopyPixels(tex->surface.image, tex->surface.pitch << 2,
 			   bmp->scan0,         rowWidth * BITMAPCOLOR_SIZE,
 			   bmp->width,         bmp->height);
 	GX2Invalidate(GX2_INVALIDATE_MODE_CPU_TEXTURE, tex->surface.image, tex->surface.imageSize);
@@ -215,10 +215,10 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 }
 
 void Gfx_UpdateTexture(GfxResourceID texId, int x, int y, struct Bitmap* part, int rowWidth, cc_bool mipmaps) {
-	GX2Texture* tex = (GX2Texture*)texId;	
+	GX2Texture* tex = (GX2Texture*)texId;
 	uint32_t* dst   = (uint32_t*)tex->surface.image + (y * tex->surface.pitch) + x;
-	
-	CopyPixels(dst,         tex->surface.pitch << 2, 
+
+	CopyPixels(dst,         tex->surface.pitch << 2,
 			   part->scan0, rowWidth * BITMAPCOLOR_SIZE,
 			   part->width, part->height);
 	GX2Invalidate(GX2_INVALIDATE_MODE_CPU_TEXTURE, tex->surface.image, tex->surface.imageSize);
@@ -234,7 +234,7 @@ void Gfx_BindTexture(GfxResourceID texId) {
 
 static void BindPendingTexture(void) {
 	if (!pendingTex || cur_PG == &colour_PG) return;
-	
+
 	GX2SetPixelTexture(pendingTex, cur_PG->ps->samplerVars[0].location);
 	GX2SetPixelSampler(&sampler,   cur_PG->ps->samplerVars[0].location);
  	pendingTex = NULL;
@@ -340,14 +340,14 @@ static void SetColorWrite(cc_bool r, cc_bool g, cc_bool b, cc_bool a) {
 	if (g) mask |= GX2_CHANNEL_MASK_G;
 	if (b) mask |= GX2_CHANNEL_MASK_B;
 	if (a) mask |= GX2_CHANNEL_MASK_A;
-	
+
 	// TODO: use GX2SetColorControl to disable all writing ???
 	GX2SetTargetChannelMasks(mask, 0,0,0, 0,0,0,0);
 }
 
 void Gfx_DepthOnlyRendering(cc_bool depthOnly) {
 	cc_bool enabled = !depthOnly;
-	SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1], 
+	SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1],
 				  enabled & gfx_colorMask[2], enabled & gfx_colorMask[3]);
 }
 
@@ -372,15 +372,15 @@ void Gfx_DeleteIb(GfxResourceID* ib) {
 static GfxResourceID Gfx_AllocStaticVb(VertexFormat fmt, int count) {
 	GX2RBuffer* buf = Mem_TryAllocCleared(1, sizeof(GX2RBuffer));
 	if (!buf) return NULL;
-	
+
 	buf->flags = GX2R_RESOURCE_BIND_VERTEX_BUFFER | GX2R_RESOURCE_USAGE_CPU_READ | GX2R_RESOURCE_USAGE_CPU_WRITE | GX2R_RESOURCE_USAGE_GPU_READ;
 	buf->elemSize  = strideSizes[fmt];
 	buf->elemCount = count;
-	
+
 	// TODO calculate directly, avoid GX2R
 	uint32_t align = GX2RGetBufferAlignment(buf->flags);
 	uint32_t size  = GX2RGetBufferAllocationSize(buf);
-		
+
 	buf->buffer = MEMAllocFromDefaultHeapEx(size, align);
 	if (buf->buffer) return buf;
 	// Something went wrong ?? TODO
@@ -391,7 +391,7 @@ static GfxResourceID Gfx_AllocStaticVb(VertexFormat fmt, int count) {
 void Gfx_DeleteVb(GfxResourceID* vb) {
 	GX2RBuffer* buf = *vb;
 	if (!buf) return;
-	
+
 	MEMFreeToDefaultHeap(buf->buffer);
 	Mem_Free(buf);
 	*vb = NULL;
@@ -420,7 +420,7 @@ void Gfx_SetVertexFormat(VertexFormat fmt) {
 	if (fmt == gfx_format) return;
 	gfx_format = fmt;
 	gfx_stride = strideSizes[fmt];
-	
+
 	GX2SetFetchShader(fmt == VERTEX_FORMAT_TEXTURED ? &texture_FS : &colour_FS);
 	UpdateProgram();
 }
@@ -455,7 +455,7 @@ static struct Matrix _mvp CC_ALIGNED(64);
 void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
 	if (type == MATRIX_VIEW) _view = *matrix;
 	if (type == MATRIX_PROJ) _proj = *matrix;
-	
+
 	Matrix_Mul(&_mvp, &_view, &_proj);
 	GX2SetVertexUniformReg(VS_UNI_OFFSET_MVP, VS_UNI_COUNT_MVP, &_mvp);
 }
@@ -539,7 +539,7 @@ static void CreateDRCTest(void) {
 	struct VertexColoured* data = (struct VertexColoured*)Gfx_LockVb(drc_vb, VERTEX_FORMAT_COLOURED, 4);
 
 	data[0].x = -0.5f; data[0].y = -0.5f; data[0].z = 0.0f; data[0].Col = PACKEDCOL_WHITE;
-	data[1].x =  0.5f; data[1].y = -0.5f; data[1].z = 0.0f; data[1].Col = PACKEDCOL_WHITE; 
+	data[1].x =  0.5f; data[1].y = -0.5f; data[1].z = 0.0f; data[1].Col = PACKEDCOL_WHITE;
 	data[2].x =  0.5f; data[2].y =  0.5f; data[2].z = 0.0f; data[2].Col = PACKEDCOL_WHITE;
 	data[3].x = -0.5f; data[3].y =  0.5f; data[3].z = 0.0f; data[3].Col = PACKEDCOL_WHITE;
 
@@ -579,6 +579,6 @@ void Gfx_SetScissor(int x, int y, int w, int h) {
 void Gfx_3DS_SetRenderScreen1(enum Screen3DS screen) {
 	GX2ContextState* tv_state  = WHBGfxGetTVContextState();
 	GX2ContextState* drc_state = WHBGfxGetDRCContextState(); // TODO
-	
+
 	GX2SetContextState(screen == TOP_SCREEN ? tv_state : drc_state);
 }

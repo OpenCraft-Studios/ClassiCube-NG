@@ -1,7 +1,7 @@
 #define CC_DYNAMIC_VBS_ARE_STATIC
-#include "../_GraphicsBase.h"
-#include "../Errors.h"
-#include "../Logger.h"
+#include "_GraphicsBase.h"
+#include "../opencraft/Errors.h"
+#include "../opencraft/Logger.h"
 #include <Window.h>
 
 #include <malloc.h>
@@ -33,7 +33,7 @@ static void InitGX(void) {
 
 	GX_Init(fifo_buffer, FIFO_SIZE);
 	Gfx_OnWindowResize();
-	
+
 	GX_SetDispCopyYScale((f32)mode->xfbHeight / (f32)mode->efbHeight);
 	GX_SetDispCopySrc(0, 0, mode->fbWidth, mode->efbHeight);
 	GX_SetDispCopyDst(mode->fbWidth, mode->xfbHeight);
@@ -45,9 +45,9 @@ static void InitGX(void) {
 	GX_SetCullMode(GX_CULL_NONE);
 	GX_SetDispCopyGamma(GX_GM_1_0);
 	GX_InvVtxCache();
-	
+
 	GX_SetNumChans(1);
-	
+
 	xfbs[0] = Window_XFB;
 	xfbs[1] = MEM_K0_TO_K1(SYS_AllocateFramebuffer(mode));
 
@@ -57,26 +57,26 @@ static void InitGX(void) {
 
 void Gfx_Create(void) {
 	if (!Gfx.Created) InitGX();
-	
+
 	Gfx.MaxTexWidth  = 1024;
 	Gfx.MaxTexHeight = 1024;
 	Gfx.MaxTexSize   = 512 * 512;
 	Gfx.NonPowTwoTexturesSupport = GFX_NONPOW2_UPLOAD;
-	
+
 	Gfx.MinTexWidth  = 4;
 	Gfx.MinTexHeight = 4;
 	Gfx.Created      = true;
 	gfx_vsync        = true;
-	
+
 	Gfx_RestoreState();
 }
 
-void Gfx_Free(void) { 
+void Gfx_Free(void) {
 	Gfx_FreeState();
 }
 cc_bool Gfx_TryRestoreContext(void) { return true; }
 
-static void Gfx_RestoreState(void) { 
+static void Gfx_RestoreState(void) {
 	InitDefaultResources();
 	gfx_format = -1;
 
@@ -88,7 +88,7 @@ static void Gfx_RestoreState(void) {
 	white_square = Gfx_CreateTexture(&bmp, 0, false);
 }
 
-static void Gfx_FreeState(void) { 
+static void Gfx_FreeState(void) {
 	FreeDefaultResources();
 	Gfx_DeleteTexture(&white_square);
 }
@@ -113,7 +113,7 @@ typedef struct CCTexture_ {
 // http://hitmen.c02.at/files/yagcd/yagcd/chap15.html
 //  section 15.35  TPL (Texture Palette)
 // "RGBA8 (4x4 tiles in two cache lines - first is AR and second is GB"
-static CC_INLINE void TwiddleCalcFactors(unsigned w, unsigned h, 
+static CC_INLINE void TwiddleCalcFactors(unsigned w, unsigned h,
 										unsigned* maskX, unsigned* maskY) {
 	*maskX = 0b00011; // 2 linear X bits, 1 bit until next block
 	*maskY = 0b01100; // 2 linear Y bits, 1 bit until next block
@@ -134,7 +134,7 @@ static CC_INLINE void TwiddleCalcFactors(unsigned w, unsigned h,
 	}
 }
 
-static void ReorderPixels(CCTexture* tex, struct Bitmap* bmp, 
+static void ReorderPixels(CCTexture* tex, struct Bitmap* bmp,
 			int originX, int originY, int rowWidth) {
 	int src_w = bmp->width,  dst_w = GX_GetTexObjWidth(&tex->obj);
 	int src_h = bmp->height, dst_h = GX_GetTexObjHeight(&tex->obj);
@@ -160,7 +160,7 @@ static void ReorderPixels(CCTexture* tex, struct Bitmap* bmp,
 			BitmapCol c = src[x];
 			dst_AR[X | Y] = (BitmapCol_A(c) << 8) | BitmapCol_R(c);
 			dst_GB[X | Y] = (BitmapCol_G(c) << 8) | BitmapCol_B(c);
-			
+
 			X = (X - maskX) & maskX;
 		}
 		Y = (Y - maskY) & maskY;
@@ -175,11 +175,11 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 	int size = dst_w * dst_h * 4;
 	CCTexture* tex = (CCTexture*)memalign(32, 32 + size);
 	if (!tex) return NULL;
-	
+
 	GX_InitTexObj(&tex->obj, tex->pixels, dst_w, dst_h,
 			GX_TF_RGBA8, GX_REPEAT, GX_REPEAT, GX_FALSE);
 	GX_InitTexObjFilterMode(&tex->obj, GX_NEAR, GX_NEAR);
-			
+
 	ReorderPixels(tex, bmp, 0, 0, rowWidth);
 	CPU_FlushDataCache(tex->pixels, size);
 	return tex;
@@ -214,7 +214,7 @@ void Gfx_BindTexture(GfxResourceID texId) {
 *#########################################################################################################################*/
 static GXColor gfx_clearColor = { 0, 0, 0, 255 };
 
-void Gfx_SetFaceCulling(cc_bool enabled) { 
+void Gfx_SetFaceCulling(cc_bool enabled) {
 	// NOTE: seems like ClassiCube's triangle ordering is opposite of what GX considers front facing
 	GX_SetCullMode(enabled ? GX_CULL_FRONT : GX_CULL_NONE);
 }
@@ -227,14 +227,14 @@ static void SetAlphaBlend(cc_bool enabled) {
 	}
 }
 
-void Gfx_SetAlphaArgBlend(cc_bool enabled) { 
+void Gfx_SetAlphaArgBlend(cc_bool enabled) {
 }
 
 void Gfx_ClearColor(PackedCol color) {
 	gfx_clearColor.r = PackedCol_R(color);
 	gfx_clearColor.g = PackedCol_G(color);
 	gfx_clearColor.b = PackedCol_B(color);
-	
+
 	GX_SetCopyClear(gfx_clearColor, GX_MAX_Z24);
 }
 
@@ -273,12 +273,12 @@ static BitmapCol* GCWii_GetRow(struct Bitmap* bmp, int y, void* ctx) {
 	{
 		int tileY = y >> 2, tileX = x >> 2;
 		int locY  = y & 0x3, locX = x & 0x3;
-		int idx   = (tileY * blockYStride) + (tileX * blockXStride) + ((locY << 2) + locX) * 2; 
+		int idx   = (tileY * blockYStride) + (tileX * blockXStride) + ((locY << 2) + locX) * 2;
 
 		// All 16 pixels are stored with AR first, then GB
 		//a = buffer[idx     ];
 		r = buffer[idx +  1];
-		g = buffer[idx + 32]; 
+		g = buffer[idx + 32];
 		b = buffer[idx + 33];
 
 		bmp->scan0[x] = BitmapColor_RGB(r, g, b);
@@ -302,7 +302,7 @@ cc_result Gfx_TakeScreenshot(struct Stream* output) {
 
 	struct Bitmap bmp;
 	bmp.scan0  = tmp;
-	bmp.width  = width; 
+	bmp.width  = width;
 	bmp.height = height;
 
 	cc_result res = Png_Encode(&bmp, output, GCWii_GetRow, false, buffer);
@@ -330,10 +330,10 @@ void Gfx_EndFrame(void) {
 	curFB ^= 1; // swap "front" and "back" buffers
 	GX_CopyDisp(xfbs[curFB], GX_TRUE);
 	GX_DrawDone();
-	
+
 	VIDEO_SetNextFramebuffer(xfbs[curFB]);
 	VIDEO_Flush();
-	
+
 	if (gfx_vsync) VIDEO_WaitVSync();
 }
 
@@ -394,8 +394,8 @@ void* Gfx_LockVb(GfxResourceID vb, VertexFormat fmt, int count) {
 	return vb;
 }
 
-void Gfx_UnlockVb(GfxResourceID vb) { 
-	gfx_vertices = vb; 
+void Gfx_UnlockVb(GfxResourceID vb) {
+	gfx_vertices = vb;
 	CPU_FlushDataCache(vb, vb_size);
 }
 
@@ -472,9 +472,9 @@ static void SetAlphaTest(cc_bool enabled) {
 	} else {
 		GX_SetAlphaCompare(GX_ALWAYS,    0, GX_AOP_AND, GX_ALWAYS, 0);
 	}
-	
+
 	// See explanation from libGX headers
-	//   Normally, Z buffering should happen before texturing, as this enables better performance by not texturing pixels that are not visible; 
+	//   Normally, Z buffering should happen before texturing, as this enables better performance by not texturing pixels that are not visible;
 	//   however, when alpha compare is used, Z buffering must be done after texturing
 	// Parameter[0] = Enables Z-buffering before texturing when set to GX_TRUE; otherwise, Z-buffering takes place after texturing.
 	GX_SetZCompLoc(!enabled);
@@ -493,7 +493,7 @@ void Gfx_CalcOrthoMatrix(struct Matrix* matrix, float width, float height, float
 	// Transposed, source guOrtho https://github.com/devkitPro/libogc/blob/master/libogc/gu.c
 	//   The simplified calculation below uses: L = 0, R = width, T = 0, B = height
 	*matrix = Matrix_Identity;
-	
+
 	matrix->row1.x =  2.0f / width;
 	matrix->row2.y = -2.0f / height;
 	matrix->row3.z = -1.0f / (zFar - zNear);
@@ -507,7 +507,7 @@ static float Cotangent(float x) { return Math_CosF(x) / Math_SinF(x); }
 void Gfx_CalcPerspectiveMatrix(struct Matrix* matrix, float fov, float aspect, float zFar) {
 	float zNear = 0.1f;
 	float c = Cotangent(0.5f * fov);
-	
+
 	// Transposed, source guPersepctive https://github.com/devkitPro/libogc/blob/master/libogc/gu.c
 	*matrix = Matrix_Identity;
 	matrix->row1.x = c / aspect;
@@ -522,7 +522,7 @@ void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
 	const float* m = (const float*)matrix;
 	Mtx44 dst;
 	float* tmp = (float*)dst;
-	
+
 	// Transpose matrix
 	for (int i = 0; i < 4; i++)
 	{
@@ -531,7 +531,7 @@ void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
 		tmp[i * 4 + 2] = m[8  + i];
 		tmp[i * 4 + 3] = m[12 + i];
 	}
-		
+
 	if (type == MATRIX_PROJ) {
 		GX_LoadProjectionMtx(dst,
 			tmp[3*4+3] == 0.0f ? GX_PERSPECTIVE : GX_ORTHOGRAPHIC);
@@ -554,7 +554,7 @@ static void UpdateTexCoordGen(void) {
 		// https://registry.khronos.org/OpenGL-Refpages/gl2.1/xhtml/glTranslate.xml
 		mat.m[0][0] = 1; mat.m[0][3] = texOffsetX;
 		mat.m[1][1] = 1; mat.m[1][3] = texOffsetY;
-		
+
 		XF_SetMatrix_2x4(&mat, XF_TEX_MATRIX0);
 		GX_SetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_TEXMTX0);
 	} else {
@@ -617,10 +617,10 @@ void Gfx_DrawVb_Lines(int verticesCount) {
 static void Draw_ColouredTriangles(int verticesCount, int startVertex) {
 	GX_Begin(GX_QUADS, GX_VTXFMT0, verticesCount);
 	// TODO: Ditch indexed rendering and use GX_QUADS instead ??
-	for (int i = 0; i < verticesCount; i++) 
+	for (int i = 0; i < verticesCount; i++)
 	{
 		struct VertexColoured* v = (struct VertexColoured*)gfx_vertices + startVertex + i;
-		
+
 		FIFO_PUSH_F32x3(v->x, v->y, v->z);
 		FIFO_PUSH_U32(v->Col);
 	}
@@ -628,10 +628,10 @@ static void Draw_ColouredTriangles(int verticesCount, int startVertex) {
 
 static void Draw_TexturedTriangles(int verticesCount, int startVertex) {
 	GX_Begin(GX_QUADS, GX_VTXFMT0, verticesCount);
-	for (int i = 0; i < verticesCount; i++) 
+	for (int i = 0; i < verticesCount; i++)
 	{
 		struct VertexTextured* v = (struct VertexTextured*)gfx_vertices + startVertex + i;
-		
+
 		FIFO_PUSH_F32x3(v->x, v->y, v->z);
 		FIFO_PUSH_U32(v->Col);
 		FIFO_PUSH_F32x2(v->U, v->V);

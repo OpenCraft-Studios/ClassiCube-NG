@@ -1,9 +1,9 @@
 #define CC_DYNAMIC_VBS_ARE_STATIC
 #define OVERRIDE_BEGEND2D_FUNCTIONS
-#include "../_GraphicsBase.h"
-#include "../Errors.h"
+#include "_GraphicsBase.h"
 #include <Window.h>
-#include "../_BlockAlloc.h"
+#include "../opencraft/Errors.h"
+#include "../opencraft/_BlockAlloc.h"
 
 #include <stdint.h>
 #include <yaul.h>
@@ -46,19 +46,19 @@ static vdp1_cmdt_t* cmdt_base;
 static void* texture_base;
 
 static void InitVRAM(void) {
-    vdp1_vram_t ptr = VDP1_VRAM(0);
+	vdp1_vram_t ptr = VDP1_VRAM(0);
 
-    cmdt_base = (vdp1_cmdt_t*)ptr;
-    ptr += CMDT_REGION_COUNT * sizeof(vdp1_cmdt_t);
+	cmdt_base = (vdp1_cmdt_t*)ptr;
+	ptr += CMDT_REGION_COUNT * sizeof(vdp1_cmdt_t);
 
-    texture_base = (void*)ptr;
-    ptr += TEXTURE_REGION_SIZE;
+	texture_base = (void*)ptr;
+	ptr += TEXTURE_REGION_SIZE;
 
-    gouraud_base = (vdp1_gouraud_table_t*)ptr;
-    ptr += GOURAUD_REGION_COUNT * sizeof(vdp1_gouraud_table_t);
+	gouraud_base = (vdp1_gouraud_table_t*)ptr;
+	ptr += GOURAUD_REGION_COUNT * sizeof(vdp1_gouraud_table_t);
 
-    clut_base = (vdp1_clut_t*)ptr;
-    ptr += CLUT_REGION_COUNT * sizeof(vdp1_clut_t);
+	clut_base = (vdp1_clut_t*)ptr;
+	ptr += CLUT_REGION_COUNT * sizeof(vdp1_clut_t);
 
 	int S = (int)(ptr - VDP1_VRAM(sizeof(vdp1_cmdt_t)));
 	int T = VDP1_VRAM_SIZE;
@@ -88,7 +88,7 @@ static void CalcGouraudColours(void) {
 		int g_idx = (i & 0x078) >> 3, G = g_idx << (5 - 4);
 		int b_idx = (i & 0x380) >> 7, B = b_idx << (5 - 3);
 		rgb1555_t gouraud = RGB1555(1, R, G, B);
-		
+
 		vdp1_gouraud_table_t* cur = &gouraud_base[i];
 		cur->colors[0] = gouraud;
 		cur->colors[1] = gouraud;
@@ -100,7 +100,7 @@ static void CalcGouraudColours(void) {
 static GfxResourceID white_square;
 static void Gfx_RestoreState(void) {
 	InitDefaultResources();
-	
+
 	struct Bitmap bmp;
 	BitmapCol pixels[8 * 8];
 	Mem_Set(pixels, 0xFF, sizeof(pixels));
@@ -110,7 +110,7 @@ static void Gfx_RestoreState(void) {
 }
 
 static void Gfx_FreeState(void) {
-	FreeDefaultResources(); 
+	FreeDefaultResources();
 	Gfx_DeleteTexture(&white_square);
 }
 
@@ -131,9 +131,9 @@ static void SetupHeaderCommands(void) {
 void Gfx_Create(void) {
 	if (!Gfx.Created) {
 		// TODO less ram for gouraud base
-        vdp2_scrn_back_color_set(VDP2_VRAM_ADDR(3, 0x01FFFE),
-            RGB1555(1, 0, 3, 15));
-        vdp2_sprite_priority_set(0, 6);
+		vdp2_scrn_back_color_set(VDP2_VRAM_ADDR(3, 0x01FFFE),
+			RGB1555(1, 0, 3, 15));
+		vdp2_sprite_priority_set(0, 6);
 
 		InitVRAM();
 		UpdateVDP1Env();
@@ -149,7 +149,7 @@ void Gfx_Create(void) {
 	SetupHeaderCommands();
 }
 
-void Gfx_Free(void) { 
+void Gfx_Free(void) {
 	Gfx_FreeState();
 }
 
@@ -181,7 +181,7 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 	if (addr == -1) {
 		Platform_LogConst("OUT OF VRAM");
 		Mem_Free(tex);
-		return NULL; 
+		return NULL;
 	}
 
 	tex->width  = width;
@@ -279,7 +279,7 @@ static void SetColorWrite(cc_bool r, cc_bool g, cc_bool b, cc_bool a) {
 
 void Gfx_DepthOnlyRendering(cc_bool depthOnly) {
 	cc_bool enabled = !depthOnly;
-	SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1], 
+	SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1],
 				  enabled & gfx_colorMask[2], enabled & gfx_colorMask[3]);
 }
 
@@ -319,19 +319,19 @@ static void PreprocessTexturedVertices(void* vertices) {
 		dst->y = XYZFixed(src->y);
 		dst->z = XYZFixed(src->z);
 
-        int r = PackedCol_R(src->Col);
-        int g = PackedCol_G(src->Col);
-        int b = PackedCol_B(src->Col);
-        dst->Col = ((b >> 5) << 7) | ((g >> 4) << 3) | (r >> 5);
-    }
+		int r = PackedCol_R(src->Col);
+		int g = PackedCol_G(src->Col);
+		int b = PackedCol_B(src->Col);
+		dst->Col = ((b >> 5) << 7) | ((g >> 4) << 3) | (r >> 5);
+	}
 
 	dst = vertices;
 	src = vertices;
 	for (int i = 0; i < buf_count; i += 4, src += 4, dst += 4)
 	{
-        int flipped = src[0].V > src[2].V;
+		int flipped = src[0].V > src[2].V;
 		dst->flip   = flipped ? VDP1_CMDT_CHAR_FLIP_V : VDP1_CMDT_CHAR_FLIP_NONE;
-    }
+	}
 }
 
 static void PreprocessColouredVertices(void* vertices) {
@@ -344,11 +344,11 @@ static void PreprocessColouredVertices(void* vertices) {
 		dst->y = XYZFixed(src->y);
 		dst->z = XYZFixed(src->z);
 
-        int r = PackedCol_R(src->Col);
-        int g = PackedCol_G(src->Col);
-        int b = PackedCol_B(src->Col);
-        dst->Col = RGB1555(1, r >> 3, g >> 3, b >> 3).raw;
-    }
+		int r = PackedCol_R(src->Col);
+		int g = PackedCol_G(src->Col);
+		int b = PackedCol_B(src->Col);
+		dst->Col = RGB1555(1, r >> 3, g >> 3, b >> 3).raw;
+	}
 }
 
 
@@ -365,17 +365,17 @@ void Gfx_DeleteVb(GfxResourceID* vb) {
 }
 
 void* Gfx_LockVb(GfxResourceID vb, VertexFormat fmt, int count) {
-    buf_fmt   = fmt;
-    buf_count = count;
+	buf_fmt   = fmt;
+	buf_count = count;
 	return vb;
 }
 
-void Gfx_UnlockVb(GfxResourceID vb) { 
-    if (buf_fmt == VERTEX_FORMAT_TEXTURED) {
-        PreprocessTexturedVertices(vb);
-    } else {
-        PreprocessColouredVertices(vb);
-    }
+void Gfx_UnlockVb(GfxResourceID vb) {
+	if (buf_fmt == VERTEX_FORMAT_TEXTURED) {
+		PreprocessTexturedVertices(vb);
+	} else {
+		PreprocessColouredVertices(vb);
+	}
 }
 
 
@@ -393,15 +393,15 @@ static void LoadTransformMatrix(struct Matrix* src) {
 	mvp_.x.trans = XYZFixed(1) * ToFixed(src->row4.x);
 	mvp_.y.trans = XYZFixed(1) * ToFixed(src->row4.y);
 	mvp_.w.trans = XYZFixed(1) * ToFixed(src->row4.w);
-	
+
 	mvp_.x.col1 = ToFixed(src->row1.x);
 	mvp_.y.col1 = ToFixed(src->row1.y);
 	mvp_.w.col1 = ToFixed(src->row1.w);
-	
+
 	mvp_.x.col2 = ToFixed(src->row2.x);
 	mvp_.y.col2 = ToFixed(src->row2.y);
 	mvp_.w.col2 = ToFixed(src->row2.w);
-	
+
 	mvp_.x.col3 = ToFixed(src->row3.x);
 	mvp_.y.col3 = ToFixed(src->row3.y);
 	mvp_.w.col3 = ToFixed(src->row3.w);
@@ -417,7 +417,7 @@ void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
 	} else {
 		Matrix_Mul(&mvp, &_view, &_proj);
 	}
-	
+
 	LoadTransformMatrix(&mvp);
 }
 
@@ -482,9 +482,9 @@ void Gfx_DrawVb_Lines(int verticesCount) {
 
 // Calculates v->x * col1 + v->y * col2 + v->z * col3 + trans
 static inline int __attribute__((always_inline)) TransformVector(void* v, struct MatrixCol* col) {
-    int res;
+	int res;
 
-    __asm__("clrmac                   \n"
+	__asm__("clrmac                   \n"
 			"lds.l @%[col]+, MACL     \n"
 			"mac.l @%[col]+, @%[vec]+ \n"
 			"mac.l @%[col]+, @%[vec]+ \n"
@@ -493,7 +493,7 @@ static inline int __attribute__((always_inline)) TransformVector(void* v, struct
  			: [col] "+r" (col), [vec] "+r" (v), [res] "=r" (res)
  			: "m" (*v), "m" (*col)
  			: "mach", "macl", "memory");
-    return res;
+	return res;
 }
 
 #define Coloured2D_X(value) XYZInteger(value) - SCREEN_WIDTH  / 2
@@ -503,7 +503,7 @@ static void DrawColouredQuads2D(int verticesCount, int startVertex) {
 	struct SATVertexColoured* v = (struct SATVertexColoured*)gfx_vertices + startVertex;
 	return; // TODO menus invisible otherwise
 
-	for (int i = 0; i < verticesCount; i += 4, v += 4) 
+	for (int i = 0; i < verticesCount; i += 4, v += 4)
 	{
 		if (cmds_cur >= &cmds.extra) return;
 		vdp1_cmdt_t* cmd = cmds_cur++;
@@ -579,14 +579,14 @@ static int TransformColoured(struct SATVertexColoured* a, vdp1_cmdt_t* cmd) {
 static void DrawColouredQuads3D(int verticesCount, int startVertex) {
 	struct SATVertexColoured* v = (struct SATVertexColoured*)gfx_vertices + startVertex;
 
-	for (int i = 0; i < verticesCount; i += 4, v += 4) 
+	for (int i = 0; i < verticesCount; i += 4, v += 4)
 	{
 		vdp1_cmdt_t* cmd = cmds_cur;
 		if (cmd >= &cmds.extra) return;
 
 		int z = TransformColoured(v, cmd);
 		if (z < 0) continue;
-	
+
 		cmds_cur++;
 		*z_cur++ = UInt16_MaxValue - z;
 
@@ -632,14 +632,14 @@ static void DrawTexturedQuads3D(int verticesCount, int startVertex) {
 	uint16_t char_base = cur_char_base;
 	uint16_t gour_base = ((vdp1_vram_t)gouraud_base  >> 3);
 
-	for (int i = 0; i < verticesCount; i += 4, v += 4) 
+	for (int i = 0; i < verticesCount; i += 4, v += 4)
 	{
 		vdp1_cmdt_t* cmd = cmds_cur;
 		if (cmd >= &cmds.extra) return;
 
 		int z = TransformTextured(v, cmd);
 		if (z < 0) continue;
-	
+
 		cmds_cur++;
 		*z_cur++ = UInt16_MaxValue - z;
 

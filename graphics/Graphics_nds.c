@@ -1,5 +1,5 @@
 #define CC_DYNAMIC_VBS_ARE_STATIC
-#include "../_GraphicsBase.h"
+#include "_GraphicsBase.h"
 #include "../Errors.h"
 #include "../Logger.h"
 #include <Window.h>
@@ -54,7 +54,7 @@ void ResetGPU(void) {
     GFX_FLUSH = 0;
 
 	GFX_ALPHA_TEST = 7; // Alpha threshold ranges from 0 to 15
-	
+
 	GFX_CONTROL = GL_ANTIALIAS | GL_TEXTURE_2D | GL_FOG | GL_BLEND;
 
 	GFX_CLEAR_DEPTH = GL_MAX_DEPTH;
@@ -81,7 +81,7 @@ void Gfx_Create(void) {
 	ResetGPU();
 	Gfx_ClearColor(PackedCol_Make(0, 120, 80, 255));
 	Gfx_SetViewport(0, 0, 256, 192);
-	
+
 	Gfx_SetFaceCulling(false);
 	Gfx.NonPowTwoTexturesSupport = GFX_NONPOW2_UPLOAD;
 }
@@ -117,7 +117,7 @@ void Gfx_SetVSync(cc_bool vsync) {
 	gfx_vsync = vsync;
 }
 
-void Gfx_OnWindowResize(void) { 
+void Gfx_OnWindowResize(void) {
 }
 
 void Gfx_SetViewport(int x, int y, int w, int h) {
@@ -133,7 +133,7 @@ void Gfx_BeginFrame(void) {
 
 void Gfx_ClearBuffers(GfxBuffers buffers) {
 	// TODO
-} 
+}
 
 void Gfx_ClearColor(PackedCol color) {
 	int R = PackedCol_R(color) >> 3;
@@ -193,7 +193,7 @@ static int texOffsetX, texOffsetY;
 static void UpdateTextureMatrix(void) {
 	int width  = activeTex ? activeTex->width  : 0;
 	int height = activeTex ? activeTex->height : 0;
-	
+
 	// Scale uvm to fit into texture size
 	MATRIX_CONTROL  = DS_MAT_TEXTURE;
 	MATRIX_IDENTITY = 0;
@@ -228,8 +228,8 @@ void Gfx_DisableTextureOffset(void) {
 
 static CC_INLINE int FindInPalette(BitmapCol* pal, int pal_size, BitmapCol color) {
 	if ((color >> 15) == 0) return 0;
-	
-	for (int i = 1; i < pal_size; i++) 
+
+	for (int i = 1; i < pal_size; i++)
 	{
 		if (pal[i] == color) return i;
 	}
@@ -242,10 +242,10 @@ static CC_INLINE int CalcPalette(cc_uint16* palette, struct Bitmap* bmp, int row
 
 	int pal_count = 1;
 	palette[0]    = 0; // entry 0 is transparent colour
-	
+
 	for (int y = 0; y < height; y++, row += rowWidth)
 	{
-		for (int x = 0; x < width; x++) 
+		for (int x = 0; x < width; x++)
 		{
 			BitmapCol color = row[x];
 			int idx = FindInPalette(palette, pal_count, color);
@@ -315,10 +315,10 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 
 		for (int y = 0; y < src_h; y++, row += rowWidth)
 		{
-			for (int x = 0; x < src_w; x++) 
+			for (int x = 0; x < src_w; x++)
 			{
 				int idx = FindInPalette(palette, pal_count, row[x]);
-			
+
 				if ((x & 3) == 0) {
 					tmp[x >> 2] = idx;
 				} else {
@@ -332,10 +332,10 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 
 		for (int y = 0; y < src_h; y++, addr += stride, row += rowWidth)
 		{
-			for (int x = 0; x < src_w; x++) 
+			for (int x = 0; x < src_w; x++)
 			{
 				int idx = FindInPalette(palette, pal_count, row[x]);
-			
+
 				if ((x & 1) == 0) {
 					tmp[x >> 1] = idx;
 				} else {
@@ -349,7 +349,7 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 
 		for (int y = 0; y < src_h; y++, addr += stride, row += rowWidth)
 		{
-			for (int x = 0; x < src_w; x++) 
+			for (int x = 0; x < src_w; x++)
 			{
 				tmp[x] = FindInPalette(palette, pal_count, row[x]);
 			}
@@ -358,7 +358,7 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 	} else {
 		stride = dst_w;
 
-		for (int y = 0; y < src_h; y++, addr += stride, row += rowWidth) 
+		for (int y = 0; y < src_h; y++, addr += stride, row += rowWidth)
 		{
 			CopyHWords(row, addr, stride);
 		}
@@ -369,7 +369,7 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 	int sSize = (Math_ilog2(dst_w) - 3) << 20;
 	int tSize = (Math_ilog2(dst_h) - 3) << 23;
 
-	tex->texFormat = (offset >> 3) | sSize | tSize | (tex_fmt << 26) | 
+	tex->texFormat = (offset >> 3) | sSize | tSize | (tex_fmt << 26) |
 						GL_TEXTURE_WRAP_S | GL_TEXTURE_WRAP_T | TEXGEN_TEXCOORD | GL_TEXTURE_COLOR0_TRANSPARENT;
 
 	if (tex_fmt != GL_RGBA) {
@@ -392,23 +392,23 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 void Gfx_BindTexture(GfxResourceID texId) {
 	activeTex = (CCTexture*)texId;
 	GFX_TEX_FORMAT = activeTex ? activeTex->texFormat : 0;
-	GFX_PAL_FORMAT = activeTex ? activeTex->palFormat : 0;	
+	GFX_PAL_FORMAT = activeTex ? activeTex->palFormat : 0;
 
 	UpdateTextureMatrix();
 }
 
 void Gfx_UpdateTexture(GfxResourceID texId, int x, int y, struct Bitmap* part, int rowWidth, cc_bool mipmaps) {
 	CCTexture* tex = (CCTexture*)texId;
-	
+
 	return;
 	// TODO doesn't work without VRAM bank changing to LCD and back maybe??
 	// (see what glTeximage2D does ??)
-	
+
 	/*for (int yy = 0; yy < part->height; yy++)
 	{
 		cc_uint16* dst = vram_ptr + width * (y + yy) + x;
 		cc_uint16* src = part->scan0 + rowWidth * yy;
-		
+
 		for (int xx = 0; xx < part->width; xx++)
 		{
 			*dst++ = *src++;
@@ -454,7 +454,7 @@ void Gfx_CalcOrthoMatrix(struct Matrix* matrix, float width, float height, float
 	/* Transposed, source https://learn.microsoft.com/en-us/windows/win32/opengl/glortho */
 	/*   The simplified calculation below uses: L = 0, R = width, T = 0, B = height */
 	*matrix = Matrix_Identity;
-	width  /= 64.0f; 
+	width  /= 64.0f;
 	height /= 64.0f;
 
 	matrix->row1.x =  2.0f / width;
@@ -517,28 +517,28 @@ static void PreprocessTexturedVertices(void* vertices) {
 	for (int i = 0; i < buf_count; i++, src++, dst++)
 	{
 		struct VertexTextured v = *src;
-		
+
 		v16 x = floattov16(v.x / 64.0f);
 		v16 y = floattov16(v.y / 64.0f);
 		v16 z = floattov16(v.z / 64.0f);
-	
+
 		int uvX = ((int) (v.U * 256.0f));
 		int uvY = ((int) (v.V * 256.0f));
 
 		int r = PackedCol_R(v.Col);
 		int g = PackedCol_G(v.Col);
 		int b = PackedCol_B(v.Col);
-		
+
 		dst->command = FIFO_COMMAND_PACK(FIFO_COLOR, FIFO_TEX_COORD, FIFO_VERTEX16, FIFO_NOP);
-		
+
 		dst->rgb = ARGB16(1, r >> 3, g >> 3, b >> 3);
-		
+
 		dst->uv = TEXTURE_PACK(uvX, uvY);
-		
+
 		dst->xy = (y << 16) | (x & 0xFFFF);
 		dst->z  = z;
 	}
-	
+
 	CPU_FlushDataCache(vertices, buf_count * sizeof(struct DSTexturedVertex));
 }
 
@@ -549,7 +549,7 @@ static void PreprocessColouredVertices(void* vertices) {
 	for (int i = 0; i < buf_count; i++, src++, dst++)
 	{
 		struct VertexColoured v = *src;
-		
+
 		v16 x = floattov16(v.x / 64.0f);
 		v16 y = floattov16(v.y / 64.0f);
 		v16 z = floattov16(v.z / 64.0f);
@@ -557,15 +557,15 @@ static void PreprocessColouredVertices(void* vertices) {
 		int r = PackedCol_R(v.Col);
 		int g = PackedCol_G(v.Col);
 		int b = PackedCol_B(v.Col);
-		
+
 		dst->command = FIFO_COMMAND_PACK(FIFO_COLOR, FIFO_VERTEX16, FIFO_NOP, FIFO_NOP);
-		
+
 		dst->rgb = ARGB16(1, r >> 3, g >> 3, b >> 3);
-		
+
 		dst->xy = (y << 16) | (x & 0xFFFF);
 		dst->z  = z;
 	}
-	
+
 	CPU_FlushDataCache(vertices, buf_count * sizeof(struct DSColouredVertex));
 }
 
@@ -595,7 +595,7 @@ void* Gfx_LockVb(GfxResourceID vb, VertexFormat fmt, int count) {
 	return vb;
 }
 
-void Gfx_UnlockVb(GfxResourceID vb) { 
+void Gfx_UnlockVb(GfxResourceID vb) {
 	if (buf_fmt == VERTEX_FORMAT_TEXTURED) {
 		PreprocessTexturedVertices(vb);
 	} else {
@@ -618,10 +618,10 @@ static float fogDensityEnd;
 static void SetPolygonMode() {
 	int blend = !gfx_rendering2D && alphaBlend;
 	u32 fmt =
-		POLY_ALPHA(blend ? 14 : 31) | 
-		(backfaceCull ? POLY_CULL_BACK : POLY_CULL_NONE) | 
+		POLY_ALPHA(blend ? 14 : 31) |
+		(backfaceCull ? POLY_CULL_BACK : POLY_CULL_NONE) |
 		//(fogEnabled ? POLY_FOG : 0) | fog breaks UI
-		POLY_RENDER_FAR_POLYS | 
+		POLY_RENDER_FAR_POLYS |
 		POLY_RENDER_1DOT_POLYS;
 
 	GFX_POLY_FORMAT = fmt;
@@ -646,7 +646,7 @@ static void SetColorWrite(cc_bool r, cc_bool g, cc_bool b, cc_bool a) {
 static void RecalculateFog() {
 	if (fogMode == FOG_LINEAR) {
 		int fogEnd = floattof32(fogDensityEnd);
-		
+
 		// Find shift value so that our fog end is
 		//  inside maximum distance covered by fog table
 		int shift = 10;
@@ -655,19 +655,19 @@ static void RecalculateFog() {
 			if (32 * (0x400 >> shift) * 512 >= fogEnd) break;
 			shift--;
 		}
-		
+
 		glFogShift(shift);
 		GFX_FOG_OFFSET = 0;
-		
-		for (int i = 0; i < 32; i++) 
+
+		for (int i = 0; i < 32; i++)
 		{
 			int distance  = (i * 512 + 256) * (0x400 >> shift);
 			int intensity = distance * 127 / fogEnd;
 			if (intensity > 127) intensity = 127;
-			
+
 			GFX_FOG_TABLE[i] = intensity;
 		}
-		
+
 		GFX_FOG_TABLE[31] = 127;
 	} else {
 		// TODO?
@@ -720,11 +720,11 @@ void Gfx_DepthOnlyRendering(cc_bool depthOnly) {
 *---------------------------------------------------------Matrices--------------------------------------------------------*
 *#########################################################################################################################*/
 void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
-	if (type != lastMatrix) { 
-		lastMatrix	   = type; 
-		MATRIX_CONTROL = matrix_modes[type]; 
+	if (type != lastMatrix) {
+		lastMatrix	   = type;
+		MATRIX_CONTROL = matrix_modes[type];
 	}
-	
+
 	// loads 4x4 identity matrix
 	if (matrix == &Matrix_Identity) {
 		MATRIX_IDENTITY = 0;

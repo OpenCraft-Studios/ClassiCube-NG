@@ -4,7 +4,7 @@
 
 #include <Core.h>
 #include "_GraphicsBase.h"
-#include "Errors.h"
+#include "../opencraft/Errors.h"
 #include <Window.h>
 #include "../misc/windows/D3D11Shaders.h"
 

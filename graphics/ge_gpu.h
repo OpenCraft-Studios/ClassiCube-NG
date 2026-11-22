@@ -1,7 +1,7 @@
-#include "../Funcs.h"
+#include "../opencraft/Funcs.h"
 
 // https://github.com/pspdev/pspsdk/blob/c84807b8503fdf031d089cc0c6363d2d87715974/src/gu/doc/commands.txt
-// Hacky way to access GU's command buffer 
+// Hacky way to access GU's command buffer
 extern struct GuDisplayListInternal
 {
 	unsigned int* start;
@@ -16,22 +16,22 @@ enum GE_COMMANDS {
 	GE_DRAW_PRIMITIVES			= 0x04,
 	GE_JUMP_TO_ADDR				= 0x08,
 	GE_SET_ADDR_BASE            = 0x10,
-	GE_SET_VERTEX_FORMAT        = 0x12,	
+	GE_SET_VERTEX_FORMAT        = 0x12,
 
 	GE_SET_DRAW_REGION_TL       = 0x15,
-	GE_SET_DRAW_REGION_BR       = 0x16,		
+	GE_SET_DRAW_REGION_BR       = 0x16,
 
 	GE_SET_FACE_CULLING         = 0x1D,
 	GE_SET_TEXTURING            = 0x1E,
 	GE_SET_FOG_ACTIVE           = 0x1F,
 	GE_SET_ALPHA_BLENDING       = 0x21,
 	GE_SET_ALPHA_TESTING        = 0x22,
-	GE_SET_DEPTH_TESTING        = 0x23,	
+	GE_SET_DEPTH_TESTING        = 0x23,
 
 	GE_WORLDMATRIX_UPLOAD_INDEX = 0x3A,
-	GE_WORLDMATRIX_UPLOAD_DATA  = 0x3B,	
+	GE_WORLDMATRIX_UPLOAD_DATA  = 0x3B,
 	GE_VIEW_MATRIX_UPLOAD_INDEX = 0x3C,
-	GE_VIEW_MATRIX_UPLOAD_DATA  = 0x3D,	
+	GE_VIEW_MATRIX_UPLOAD_DATA  = 0x3D,
 	GE_PROJ_MATRIX_UPLOAD_INDEX = 0x3E,
 	GE_PROJ_MATRIX_UPLOAD_DATA  = 0x3F,
 
@@ -56,8 +56,8 @@ enum GE_COMMANDS {
 	GE_SET_FOG_BIAS				= 0xCD,
 	GE_SET_FOG_STEP				= 0xCE,
 	GE_SET_FOG_COLOR            = 0xCF,
-	
-	GE_SET_CLEARING_STATE		= 0xD3,	
+
+	GE_SET_CLEARING_STATE		= 0xD3,
 	GE_SET_SCISSOR_TL           = 0xD4,
 	GE_SET_SCISSOR_BR           = 0xD5,
 	GE_SET_Z_RANGE_MIN          = 0xD6,
@@ -65,7 +65,7 @@ enum GE_COMMANDS {
 
 	GE_SET_DEPTH_MASK           = 0xE7,
 	GE_SET_COLOR_MASK           = 0xE8,
-	GE_SET_ALPHA_MASK           = 0xE9, 	
+	GE_SET_ALPHA_MASK           = 0xE9,
 };
 
 // Packs lower 24 bits of value into all 24 bits of command arg
@@ -87,7 +87,7 @@ static CC_INLINE void GE_PushF(int cmd, float argument) {
 
 // Updates the stall address (end address that GE can process commands up to)
 static CC_INLINE void GE_UpdateStallAddr(void) {
-	sceGeListUpdateStallAddr(ge_list_executed[0], gu_list->current);			
+	sceGeListUpdateStallAddr(ge_list_executed[0], gu_list->current);
 }
 
 
@@ -160,13 +160,13 @@ static CC_INLINE void GE_set_texture_offset(float x, float y) {
 *----------------------------------------------------Viewport/Offset------------------------------------------------------*
 *#########################################################################################################################*/
 static CC_INLINE void GE_set_depth_range(unsigned short minZ, unsigned short maxZ) {
-    GE_PushI(GE_SET_Z_RANGE_MIN, minZ);
-    GE_PushI(GE_SET_Z_RANGE_MAX, maxZ);
+	GE_PushI(GE_SET_Z_RANGE_MIN, minZ);
+	GE_PushI(GE_SET_Z_RANGE_MAX, maxZ);
 }
 
 static CC_INLINE void GE_set_screen_offset(int x, int y) {
-    GE_PushI(GE_SET_SCREEN_OFFSET_X, x << 4);
-    GE_PushI(GE_SET_SCREEN_OFFSET_Y, y << 4);
+	GE_PushI(GE_SET_SCREEN_OFFSET_X, x << 4);
+	GE_PushI(GE_SET_SCREEN_OFFSET_Y, y << 4);
 }
 
 static CC_INLINE void GE_set_viewport_x(int origin, int scale) {
@@ -192,7 +192,7 @@ static CC_INLINE void GE_set_viewport_z(int n, int f) {
 static int last_base = -1;
 
 static CC_INLINE void GE_set_vertex_format(int format) {
-    GE_PushI(GE_SET_VERTEX_FORMAT, format);
+	GE_PushI(GE_SET_VERTEX_FORMAT, format);
 }
 
 // Don't redundantly set base address (by avoiding 2 calls to this per draw call, reduces frame GE commands by ~25%)
@@ -207,21 +207,21 @@ static CC_INLINE void GE_set_base_addr(cc_uintptr addr) {
 static CC_INLINE void GE_set_vertices(const void* vertices) {
 	cc_uintptr addr = (cc_uintptr)vertices;
 	GE_set_base_addr(addr);
-    GE_PushI(GE_SET_REL_VADDR, addr);
+	GE_PushI(GE_SET_REL_VADDR, addr);
 }
 
 static CC_INLINE void GE_set_indices(const void* indices) {
 	cc_uintptr addr = (cc_uintptr)indices;
 	GE_set_base_addr(addr);
-    GE_PushI(GE_SET_REL_IADDR, addr);
+	GE_PushI(GE_SET_REL_IADDR, addr);
 }
 
-static CC_INLINE void GE_draw_array(int prim, int count) { 
+static CC_INLINE void GE_draw_array(int prim, int count) {
 	GE_PushI(GE_DRAW_PRIMITIVES, (prim << 16) | count);
 	GE_UpdateStallAddr();
 }
 
-static CC_INLINE void GE_set_clearing_state(cc_bool clearing, int buffers) { 
+static CC_INLINE void GE_set_clearing_state(cc_bool clearing, int buffers) {
 	GE_PushI(GE_SET_CLEARING_STATE, (buffers << 8) | clearing);
 }
 

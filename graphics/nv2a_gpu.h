@@ -49,7 +49,7 @@ static CC_INLINE uint32_t* NV2A_reset_control0(uint32_t* p) {
 *-----------------------------------------------------Raster control------------------------------------------------------*
 *#########################################################################################################################*/
 static CC_INLINE uint32_t* NV2A_set_clip_rect(uint32_t* p, int x, int y, int w, int h) {
-	// NV097_SET_SURFACE_CLIP_HORIZONTAL, then NV097_SET_SURFACE_CLIP_VERTICAL 
+	// NV097_SET_SURFACE_CLIP_HORIZONTAL, then NV097_SET_SURFACE_CLIP_VERTICAL
 	return NV2A_push2(p, NV097_SET_SURFACE_CLIP_HORIZONTAL,
 					x | (w << 16), y | (h << 16));
 }
@@ -60,7 +60,7 @@ static CC_INLINE uint32_t* NV2A_set_color_write_mask(uint32_t* p, int r, int g, 
 	if (g) mask |= NV097_SET_COLOR_MASK_GREEN_WRITE_ENABLE;
 	if (b) mask |= NV097_SET_COLOR_MASK_BLUE_WRITE_ENABLE;
 	if (a) mask |= NV097_SET_COLOR_MASK_ALPHA_WRITE_ENABLE;
-	
+
 	return NV2A_push1(p, NV097_SET_COLOR_MASK, mask);
 }
 
@@ -69,7 +69,7 @@ static CC_INLINE uint32_t* NV2A_set_color_write_mask(uint32_t* p, int r, int g, 
 *-----------------------------------------------------State management----------------------------------------------------*
 *#########################################################################################################################*/
 static CC_INLINE uint32_t* NV2A_set_fog_colour(uint32_t* p, int R, int G, int B, int A) {
-	uint32_t mask = 
+	uint32_t mask =
 		NV2A_MASK(NV097_SET_FOG_COLOR_RED,   R) |
 		NV2A_MASK(NV097_SET_FOG_COLOR_GREEN, G) |
 		NV2A_MASK(NV097_SET_FOG_COLOR_BLUE,  B) |
@@ -148,10 +148,10 @@ static void NV2A_DrawArrays(int mode, unsigned start, unsigned count) {
 	while (count > 0)
 	{
 		int batch_count = min(count, DA_BATCH_SIZE);
-	
-		*p++ = NV2A_MASK(NV097_DRAW_ARRAYS_COUNT, batch_count-1) | 
+
+		*p++ = NV2A_MASK(NV097_DRAW_ARRAYS_COUNT, batch_count-1) |
 			   NV2A_MASK(NV097_DRAW_ARRAYS_START_INDEX, start);
-		
+
 		start += batch_count;
 		count -= batch_count;
 	}
@@ -185,7 +185,7 @@ static CC_INLINE uint32_t* NV2A_set_program_upload_offset(uint32_t* p, int offse
 
 static CC_INLINE uint32_t* NV2A_upload_program(uint32_t* p, uint32_t* program, int size) {
 	// Copy program instructions (16 bytes each)
-	for (int i = 0; i < size / 16; i++, program += 4) 
+	for (int i = 0; i < size / 16; i++, program += 4)
 	{
 		*p++ = NV2A_3D_COMMAND(NV097_SET_TRANSFORM_PROGRAM, 4);
 		Mem_Copy(p, program, 16); p += 4;
@@ -217,7 +217,7 @@ static CC_INLINE uint32_t* NV2A_set_execution_mode_shaders(uint32_t* p) {
 static uint32_t* NV2A_reset_all_vertex_attribs(uint32_t* p) {
 	*p++ = NV2A_3D_COMMAND(NV097_SET_VERTEX_DATA_ARRAY_FORMAT, NV2A_MAX_INPUT_ATTRIBS);
 
-	for (int i = 0; i < NV2A_MAX_INPUT_ATTRIBS; i++) 
+	for (int i = 0; i < NV2A_MAX_INPUT_ATTRIBS; i++)
 	{
 		*p++ = NV097_SET_VERTEX_DATA_ARRAY_FORMAT_TYPE_F;
 	}
@@ -246,7 +246,7 @@ static CC_INLINE uint32_t* NV2A_set_clear_rect(uint32_t* p, int x, int y, int w,
 	// Sets NV097_SET_CLEAR_RECT_HORIZONTAL then NV097_SET_CLEAR_RECT_VERTICAL
 	return NV2A_push2(p, NV097_SET_CLEAR_RECT_HORIZONTAL,
 					((x + w - 1) << 16) | x,
-					((y + h - 1) << 16) | y);		
+					((y + h - 1) << 16) | y);
 }
 
 static CC_INLINE uint32_t* NV2A_set_clear_colour(uint32_t* p, uint32_t colour) {
@@ -257,7 +257,7 @@ static CC_INLINE uint32_t* NV2A_set_clear_colour(uint32_t* p, uint32_t colour) {
 }
 
 static CC_INLINE uint32_t* NV2A_clear_buffers(uint32_t* p, int color, int depth) {
-    uint32_t mask = 0;
+	uint32_t mask = 0;
 	if (color) mask |= NV097_CLEAR_SURFACE_COLOR;
 	if (depth) mask |= NV097_CLEAR_SURFACE_Z;
 	if (depth) mask |= NV097_CLEAR_SURFACE_STENCIL;
@@ -272,7 +272,7 @@ static CC_INLINE uint32_t* NV2A_clear_buffers(uint32_t* p, int color, int depth)
 // NOTE: API is hardcoded for one texture only, even though hardware supports multiple textures
 
 static CC_INLINE uint32_t* NV2A_set_texture0_control0(uint32_t* p, int texkill) {
-	return NV2A_push1(p, NV097_SET_TEXTURE_CONTROL0, 
+	return NV2A_push1(p, NV097_SET_TEXTURE_CONTROL0,
 					NV097_SET_TEXTURE_CONTROL0_ENABLE |
 					(texkill ? _NV_ALPHAKILL_EN : 0) |
 					NV2A_MASK(NV097_SET_TEXTURE_CONTROL0_MIN_LOD_CLAMP, 0) |
@@ -297,7 +297,7 @@ static uint32_t* NV2A_set_texture0_format(uint32_t* p, unsigned log_u, unsigned 
 }
 
 static uint32_t* NV2A_set_texture0_wrapmode(uint32_t* p) {
-	return NV2A_push1(p, NV097_SET_TEXTURE_ADDRESS, 
+	return NV2A_push1(p, NV097_SET_TEXTURE_ADDRESS,
 					0x00010101); // modes (0x0W0V0U wrapping: 1=wrap 2=mirror 3=clamp 4=border 5=clamp to edge)
 }
 

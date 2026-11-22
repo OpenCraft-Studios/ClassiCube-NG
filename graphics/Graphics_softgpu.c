@@ -5,7 +5,6 @@
 #include <Core.h>
 #define CC_DYNAMIC_VBS_ARE_STATIC
 #include "_GraphicsBase.h"
-#include "Errors.h"
 #include <Window.h>
 
 static cc_bool faceCulling;
@@ -709,7 +708,7 @@ static void DrawClipped(int mask, Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3
 	Vertex* a = &tmp[0];
 	Vertex* b = &tmp[1];
 
-    switch (mask) {
+	switch (mask) {
 	case V0_VIS:
 	{
 		//		   v0
@@ -727,7 +726,7 @@ static void DrawClipped(int mask, Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3
 
 		DrawTriangle3D(v0, a, b);
 	}
-    break;
+	break;
 	case V1_VIS:
 	{
 		//		   v1
@@ -945,7 +944,7 @@ static void DrawClipped(int mask, Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3
 	}
 }
 
-void DrawQuads(int startVertex, int verticesCount, DrawHints hints) {
+static void DrawQuads(int startVertex, int verticesCount, DrawHints hints) {
 	Vertex vertices[4];
 	int i, j = startVertex;
 

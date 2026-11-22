@@ -22,4 +22,3 @@ static void GSP_wait_for_full_vblank(void) {
 		if (vblanks_0 != init0 && vblanks_1 != init1) return;
 	}
 }
-

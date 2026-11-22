@@ -32,7 +32,7 @@ gfx.LDLIBS += $(shell $(PKGCONF) --libs gl) -ldl
 gfx.CFLAGS += $(shell $(PKGCONF) --cflags gl)
 endif
 
-$(oc.build)/Graphics_%.c.o: $(oc.src)/Graphics_%.c | $(oc.build)
+$(oc.build)/Graphics_%.c.o: graphics/Graphics_%.c | $(oc.build)
 	$(CC) $(CFLAGS) $(gfx.CFLAGS) -c $< -o $@
 
 override OBJS   += $(gfx.OBJS)

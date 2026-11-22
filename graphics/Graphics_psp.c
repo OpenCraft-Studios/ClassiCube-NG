@@ -1,9 +1,9 @@
 #define CC_DYNAMIC_VBS_ARE_STATIC
-#include "../_GraphicsBase.h"
-#include "../Errors.h"
-#include "../Logger.h"
+#include "_GraphicsBase.h"
 #include <Window.h>
-#include "../_BlockAlloc.h"
+#include "../opencraft/Errors.h"
+#include "../opencraft/Logger.h"
+#include "../opencraft/_BlockAlloc.h"
 
 #include <malloc.h>
 #include <pspkernel.h>
@@ -46,17 +46,17 @@ static void guInit(void) {
 	void* framebuffer0 = (void*)0;
 	void* framebuffer1 = (void*)FB_SIZE;
 	void* depthbuffer  = (void*)(FB_SIZE + FB_SIZE);
-	
+
 	sceGuInit();
 	sceGuStart(GU_DIRECT, list);
 	sceGuDrawBuffer(GU_PSM_8888, framebuffer0, BUFFER_WIDTH);
 	sceGuDispBuffer(SCREEN_WIDTH, SCREEN_HEIGHT, framebuffer1, BUFFER_WIDTH);
 	sceGuDepthBuffer(depthbuffer, BUFFER_WIDTH);
-	
+
 	sceGuFrontFace(GU_CCW);
 	sceGuShadeModel(GU_SMOOTH);
 	GE_set_texturing(false);
-	
+
 	sceGuAlphaFunc(GU_GREATER, 0x7f, 0xff);
 	sceGuBlendFunc(GU_ADD, GU_SRC_ALPHA, GU_ONE_MINUS_SRC_ALPHA, 0, 0);
 	sceGuDepthFunc(GU_LEQUAL); // sceGuDepthFunc(GU_GEQUAL);
@@ -64,13 +64,13 @@ static void guInit(void) {
 
 	GE_set_depth_range(0, 65535);
 	GE_upload_world_matrix((const float*)&Matrix_Identity);
-	
+
 	sceGuEnable(GU_CLIP_PLANES); // TODO: swap near/far instead of this?
 	sceGuTexFunc(GU_TFX_MODULATE, GU_TCC_RGBA);
 
 	Gfx_OnWindowResize();
 	sceGuClutMode(GU_PSM_8888, 0, 0xFF, 0); // 32 bit CLUT entries
-	
+
 	sceGuFinish();
 	sceGeDrawSync(GU_SYNC_WAIT); // waits until FINISH command is reached
 	sceDisplayWaitVblankStart();
@@ -90,7 +90,7 @@ static void InitGuardband(void) {
 	//  left and right guardband planes.
 	// So to simplify calculation, just set viewport = screen size for clipping:
 	// - 0 < (X/W) * SCR_HWIDTH + (GB_HALF) < GB_RANGE
-	// - -GB_HALF < (X/W) * SCR_HWIDTH < GB_HALF 
+	// - -GB_HALF < (X/W) * SCR_HWIDTH < GB_HALF
 	// - -GB_HALF/SCR_HWIDTH < (X/W) < GB_HALF/SCR_HWIDTH
 	// - W * -GB_HALF/SCR_HWIDTH < X < W * GB_HALF/SCR_HWIDTH
 	// - -W < X / (GB_HALF/SCR_HWIDTH) < W
@@ -105,7 +105,7 @@ static void InitGuardband(void) {
 static GfxResourceID white_square;
 void Gfx_Create(void) {
 	if (!Gfx.Created) guInit();
-	
+
 	Gfx.MinTexWidth  = 2;
 	Gfx.MinTexHeight = 2;
 	Gfx.MaxTexWidth  = 512;
@@ -113,13 +113,13 @@ void Gfx_Create(void) {
 	Gfx.NonPowTwoTexturesSupport = GFX_NONPOW2_UPLOAD;
 	Gfx.Created      = true;
 	gfx_vsync        = true;
-	
+
 	Gfx_RestoreState();
 	last_base = -1;
 	InitGuardband();
 }
 
-void Gfx_Free(void) { 
+void Gfx_Free(void) {
 	Gfx_FreeState();
 }
 
@@ -127,7 +127,7 @@ cc_bool Gfx_TryRestoreContext(void) { return true; }
 
 static void Gfx_RestoreState(void) {
 	InitDefaultResources();
-	
+
 	// 4x4 dummy white texture
 	struct Bitmap bmp;
 	BitmapCol pixels[4 * 4];
@@ -137,7 +137,7 @@ static void Gfx_RestoreState(void) {
 }
 
 static void Gfx_FreeState(void) {
-	FreeDefaultResources(); 
+	FreeDefaultResources();
 	Gfx_DeleteTexture(&white_square);
 }
 
@@ -201,7 +201,7 @@ static int CLIPPED, MACLIPPED, UNCLIPPED;
 #define MAX_PAL_4BPP_ENTRIES 16
 
 static CC_INLINE int FindInPalette(BitmapCol* palette, int pal_count, BitmapCol color) {
-	for (int i = 0; i < pal_count; i++) 
+	for (int i = 0; i < pal_count; i++)
 	{
 		if (palette[i] == color) return i;
 	}
@@ -213,10 +213,10 @@ static int CalcPalette(BitmapCol* palette, struct Bitmap* bmp, int rowWidth) {
 
 	BitmapCol* row = bmp->scan0;
 	int pal_count  = 0;
-	
+
 	for (int y = 0; y < height; y++, row += rowWidth)
 	{
-		for (int x = 0; x < width; x++) 
+		for (int x = 0; x < width; x++)
 		{
 			BitmapCol color = row[x];
 			int idx = FindInPalette(palette, pal_count, color);
@@ -236,7 +236,7 @@ static int CalcPalette(BitmapCol* palette, struct Bitmap* bmp, int rowWidth) {
 /*########################################################################################################################*
 *---------------------------------------------------------Swizzling-------------------------------------------------------*
 *#########################################################################################################################*/
-// PSP swizzled textures are 16 bytes X 8 rows 
+// PSP swizzled textures are 16 bytes X 8 rows
 //  = 4 '32 bit' pixels X 8 rows
 //  = 16 '8 bit' pixels X 8 rows
 //  = 32 '4 bit' pixels X 8 rows
@@ -282,18 +282,18 @@ static CC_INLINE void TwiddleCalcFactors_Paletted(unsigned w, unsigned h, unsign
 	}
 }
 
-static CC_INLINE void UploadFullTexture(struct Bitmap* bmp, int rowWidth, 
+static CC_INLINE void UploadFullTexture(struct Bitmap* bmp, int rowWidth,
 										cc_uint32* dst, int dst_w, int dst_h) {
 	int src_w = bmp->width, src_h = bmp->height;
 	unsigned maskX, maskY;
 	unsigned X = 0, Y = 0;
 	TwiddleCalcFactors(dst_w, dst_h, &maskX, &maskY);
-	
+
 	for (int y = 0; y < src_h; y++)
 	{
 		cc_uint32* src = bmp->scan0 + y * rowWidth;
 		X = 0;
-		
+
 		for (int x = 0; x < src_w; x++, src++)
 		{
 			dst[X | Y] = *src;
@@ -309,12 +309,12 @@ static CC_INLINE void UploadPalettedTexture(struct Bitmap* bmp, int rowWidth, Bi
 	unsigned maskX, maskY;
 	unsigned X = 0, Y = 0;
 	TwiddleCalcFactors_Paletted(dst_w >> 1, dst_h, &maskX, &maskY);
-	
+
 	for (int y = 0; y < src_h; y++)
 	{
 		cc_uint32* src = bmp->scan0 + y * rowWidth;
 		X = 0;
-		
+
 		for (int x = 0; x < src_w; x += 2, src += 2)
 		{
 			int pal0 = FindInPalette(palette, pal_count, src[0]);
@@ -338,12 +338,12 @@ static CC_INLINE void UploadPartialTexture(struct Bitmap* part, int rowWidth, cc
 	for (int x = 0; x < originX; x++) { X = (X - maskX) & maskX; }
 	for (int y = 0; y < originY; y++) { Y = (Y - maskY) & maskY; }
 	unsigned startX = X;
-	
+
 	for (int y = 0; y < src_h; y++)
 	{
 		cc_uint32* src = part->scan0 + y * rowWidth;
 		X = startX;
-		
+
 		for (int x = 0; x < src_w; x++, src++)
 		{
 			dst[X | Y] = *src;
@@ -404,12 +404,12 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 		if (!tex) return 0;
 	} else {
 		tex = (CCTexture*)Mem_TryAlloc(1, sizeof(CCTexture));
-		if (!tex) { 
+		if (!tex) {
 			blockalloc_dealloc(tex_table, base, blocks);
 			return 0;
 		}
 	}
-	
+
 	tex->width  = dst_w;
 	tex->height = dst_h;
 	tex->base   = base;
@@ -444,7 +444,7 @@ void Gfx_UpdateTexture(GfxResourceID texId, int x, int y, struct Bitmap* part, i
 void Gfx_DeleteTexture(GfxResourceID* texId) {
 	CCTexture* tex = (CCTexture*)(*texId);
 	if (tex) {
-    	blockalloc_dealloc(tex_table, tex->base, tex->blocks);
+		blockalloc_dealloc(tex_table, tex->base, tex->blocks);
 		Mem_Free(tex);
 	}
 
@@ -456,8 +456,8 @@ void Gfx_DisableMipmaps(void) { }
 
 void Gfx_BindTexture(GfxResourceID texId) {
 	CCTexture* tex = (CCTexture*)texId;
-	if (!tex) tex  = white_square; 
-	
+	if (!tex) tex  = white_square;
+
 	if (tex->paletted) {
 		GE_set_clut_buffer(tex->palette);
 		GE_load_clut_entries(MAX_PAL_4BPP_ENTRIES);
@@ -481,8 +481,8 @@ void Gfx_SetFaceCulling(cc_bool enabled) {
 	GE_set_face_culling(enabled);
 }
 
-static void SetAlphaBlend(cc_bool enabled) { 
-	GE_set_alpha_blending(enabled); 
+static void SetAlphaBlend(cc_bool enabled) {
+	GE_set_alpha_blending(enabled);
 }
 
 void Gfx_ClearColor(PackedCol color) {
@@ -496,7 +496,7 @@ static void SetColorWrite(cc_bool r, cc_bool g, cc_bool b, cc_bool a) {
 	if (g) mask &= 0xffff00ff;
 	if (b) mask &= 0xff00ffff;
 	if (a) mask &= 0x00ffffff;
-	
+
 	sceGuPixelMask(mask);
 }
 
@@ -504,8 +504,8 @@ void Gfx_SetDepthWrite(cc_bool enabled) {
 	sceGuDepthMask(enabled ? 0 : 0xffffffff);
 }
 
-void Gfx_SetDepthTest(cc_bool enabled) { 
-	GE_set_depth_testing(enabled); 
+void Gfx_SetDepthTest(cc_bool enabled) {
+	GE_set_depth_testing(enabled);
 }
 
 /*########################################################################################################################*
@@ -565,7 +565,7 @@ cc_result Gfx_TakeScreenshot(struct Stream* output) {
 
 	struct Bitmap bmp;
 	bmp.scan0  = NULL;
-	bmp.width  = SCREEN_WIDTH; 
+	bmp.width  = SCREEN_WIDTH;
 	bmp.height = SCREEN_HEIGHT;
 
 	return Png_Encode(&bmp, output, PSP_GetRow, false, fb);
@@ -573,9 +573,9 @@ cc_result Gfx_TakeScreenshot(struct Stream* output) {
 
 void Gfx_GetApiInfo(cc_string* info) {
 	int freeMem, usedMem;
-	blockalloc_calc_usage(tex_table, TEXMEM_MAX_BLOCKS, TEXMEM_BLOCK_SIZE, 
+	blockalloc_calc_usage(tex_table, TEXMEM_MAX_BLOCKS, TEXMEM_BLOCK_SIZE,
 							&freeMem, &usedMem);
-	
+
 	float freeMemMB = freeMem / (1024.0f * 1024.0f);
 	float usedMemMB = usedMem / (1024.0f * 1024.0f);
 
@@ -589,7 +589,7 @@ void Gfx_SetVSync(cc_bool vsync) {
 }
 
 void Gfx_BeginFrame(void) {
-	sceGuStart(GU_DIRECT, list); 
+	sceGuStart(GU_DIRECT, list);
 	// TODO should be called in EndFrame, GPU commands outside EndFrame/BegFrame are missed otherwise
 	last_base = -1;
 }
@@ -638,7 +638,7 @@ void Gfx_SetScissor(int x, int y, int w, int h) {
 *---------------------------------------------------------Clearing--------------------------------------------------------*
 *#########################################################################################################################*/
 // See https://www.ppsspp.org/docs/psp-hardware/gpu/ge-overview/
-// "Memory performance has a few quirks. For example, it's profitable to draw 2D images in 64- or 32- pixel wide vertical strips, 
+// "Memory performance has a few quirks. For example, it's profitable to draw 2D images in 64- or 32- pixel wide vertical strips,
 //  depending on color depth and texture format. This is why screen clears are usually performed as a series of vertical strips."
 #define CLEAR_DEPTH 65535
 #define STRIP_WIDTH    32
@@ -654,7 +654,7 @@ void Gfx_ClearBuffers(GfxBuffers buffers) {
 	int targets = 0;
 	if (buffers & GFX_BUFFER_COLOR) targets |= GU_COLOR_BUFFER_BIT;
 	if (buffers & GFX_BUFFER_DEPTH) targets |= GU_DEPTH_BUFFER_BIT;
-	
+
 	PackedCol color = gfx_clearColor & 0xFFFFFF;
 	const int strips = (SCREEN_WIDTH + STRIP_WIDTH - 1) / STRIP_WIDTH;
 	const int count  = strips * 2;
@@ -679,8 +679,8 @@ void Gfx_ClearBuffers(GfxBuffers buffers) {
 
 	GE_set_clearing_state(true, targets);
 	{
-    	GE_set_vertex_format(GU_COLOR_8888 | GU_VERTEX_16BIT | GU_TRANSFORM_2D);
-    	GE_set_vertices(vertices);
+		GE_set_vertex_format(GU_COLOR_8888 | GU_VERTEX_16BIT | GU_TRANSFORM_2D);
+		GE_set_vertices(vertices);
 		GE_draw_array(GU_SPRITES, count);
 	}
 	GE_set_clearing_state(false, 0);
@@ -699,7 +699,7 @@ GfxResourceID Gfx_CreateIb2(int count, Gfx_FillIBFunc fillFunc, void* obj) {
 	return gfx_indices;
 }
 
-void Gfx_BindIb(GfxResourceID ib) { 
+void Gfx_BindIb(GfxResourceID ib) {
 	// TODO doesn't work properly
 	//GE_set_index_buffer(ib);
 }
@@ -779,13 +779,13 @@ void Gfx_SetFogMode(FogFunc func) {
 	UpdateFog();
 }
 
-static void SetAlphaTest(cc_bool enabled) { 
+static void SetAlphaTest(cc_bool enabled) {
 	GE_set_alpha_testing(enabled);
 }
 
 void Gfx_DepthOnlyRendering(cc_bool depthOnly) {
 	cc_bool enabled = !depthOnly;
-	SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1], 
+	SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1],
 				  enabled & gfx_colorMask[2], enabled & gfx_colorMask[3]);
 }
 
@@ -852,7 +852,7 @@ void Gfx_EnableTextureOffset(float x, float y) {
 	GE_set_texture_offset(x, y);
 }
 
-void Gfx_DisableTextureOffset(void) { 
+void Gfx_DisableTextureOffset(void) {
 	GE_set_texture_offset(0.0f, 0.0f);
 }
 
@@ -890,7 +890,7 @@ struct ClipVertex {
 } CC_ALIGNED(16);
 
 extern int QuadNeedsClipping(float* xyz_first, int stride);
-extern cc_uintptr Clip_PolyToPlanes(struct ClipVertex* buf1, struct ClipVertex* buf2, 
+extern cc_uintptr Clip_PolyToPlanes(struct ClipVertex* buf1, struct ClipVertex* buf2,
 											int planes_count, struct Plane* plane);
 #define CLIPRESULT_COUNT(res)   (int)((res) & 0x0F);
 #define CLIPRESULT_BUFFER(res)  (struct ClipVertex*)((res) & ~0x0F);
@@ -956,7 +956,7 @@ static void DrawClippableTexturedVertices(struct VertexTextured* v, int vertices
 	cc_uintptr res;
 	void* ptr;
 	int cnt;
-	
+
 	for (int i = 0; i < verticesCount; i += 4, v += 4)
 	{
 		if (QuadNeedsClipping(&v->x, SIZEOF_VERTEX_TEXTURED)) {
@@ -989,7 +989,7 @@ static void DrawClippableColouredVertices(struct VertexColoured* v, int vertices
 	cc_uintptr res;
 	void* ptr;
 	int cnt;
-	
+
 	for (int i = 0; i < verticesCount; i += 4, v += 4)
 	{
 		if (QuadNeedsClipping(&v->x, SIZEOF_VERTEX_COLOURED)) {

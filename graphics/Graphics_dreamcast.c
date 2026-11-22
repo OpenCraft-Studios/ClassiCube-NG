@@ -1,9 +1,9 @@
 #define CC_DYNAMIC_VBS_ARE_STATIC
-#include "../_GraphicsBase.h"
-#include "../Errors.h"
-#include "../Logger.h"
+#include "_GraphicsBase.h"
+#include "../opencraft/Errors.h"
+#include "../opencraft/Logger.h"
 #include <Window.h>
-#include "../_BlockAlloc.h"
+#include "../opencraft/_BlockAlloc.h"
 
 #include <string.h>
 #include <kos.h>
@@ -35,32 +35,32 @@ struct CommandsList {
 #define ROUND_UP_256(v) (((v) + 0xFFu) & ~0xFFu)
 
 static CC_INLINE void* CommandsList_Reserve(struct CommandsList* list, cc_uint32 count) {
-    cc_uint32 cur_size = list->length * VERTEX_SIZE;
+	cc_uint32 cur_size = list->length * VERTEX_SIZE;
 
-    if (count < list->capacity) {
-        return list->data + cur_size;
-    }
-    /* We overallocate so that we don't make small allocations during push backs */
-    count = ROUND_UP_256(count);
+	if (count < list->capacity) {
+		return list->data + cur_size;
+	}
+	/* We overallocate so that we don't make small allocations during push backs */
+	count = ROUND_UP_256(count);
 
-    cc_uint32 new_size = count * VERTEX_SIZE;
-    cc_uint8* cur_data = list->data;
+	cc_uint32 new_size = count * VERTEX_SIZE;
+	cc_uint8* cur_data = list->data;
 
-    cc_uint8* data = (cc_uint8*)memalign(0x20, new_size);
-    if (!data) return NULL;
+	cc_uint8* data = (cc_uint8*)memalign(0x20, new_size);
+	if (!data) return NULL;
 
-    memcpy(data, cur_data, cur_size);
-    free(cur_data);
+	memcpy(data, cur_data, cur_size);
+	free(cur_data);
 
-    list->data     = data;
-    list->capacity = count;
-    return data + cur_size;
+	list->data     = data;
+	list->capacity = count;
+	return data + cur_size;
 }
 
 static void CommandsList_Append(struct CommandsList* list, const void* cmd) {
 	void* dst = CommandsList_Reserve(list, list->length + 1);
 	if (!dst) Process_Abort("Out of memory");
-	
+
 	memcpy(dst, cmd, VERTEX_SIZE);
 	list->length++;
 }
@@ -87,10 +87,10 @@ static cc_uint8 gfx_culling;
 static cc_uint8 gfx_scissor;
 
 static CC_INLINE struct CommandsList* ActivePolyList(void) {
-    if (gfx_alphaBlend) return &listTR;
-    if (gfx_alphaTest)  return &listPT;
+	if (gfx_alphaBlend) return &listTR;
+	if (gfx_alphaTest)  return &listPT;
 
-    return &listOP;
+	return &listOP;
 }
 
 static void no_vram_handler(uint32 code, void *data) { exceeded_vram = true; }
@@ -104,17 +104,17 @@ static void InitGPU(void) {
 		autosort ? 0 : 1,
 		3 // extra OPBs
 	};
-    pvr_init(&params);
+	pvr_init(&params);
 	pvr_set_pal_format(PVR_PAL_ARGB4444);
 
 	// This event will be raised when no room in VRAM for vertices anymore
-    asic_evt_set_handler(ASIC_EVT_PVR_PARAM_OUTOFMEM, no_vram_handler, NULL);
-    asic_evt_enable(ASIC_EVT_PVR_PARAM_OUTOFMEM,      ASIC_IRQ_DEFAULT);
+	asic_evt_set_handler(ASIC_EVT_PVR_PARAM_OUTOFMEM, no_vram_handler, NULL);
+	asic_evt_enable(ASIC_EVT_PVR_PARAM_OUTOFMEM,      ASIC_IRQ_DEFAULT);
 }
 
 static void InitGLState(void) {
 	pvr_set_zclip(0.0f);
-	PVR_SET(PT_ALPHA_REF, 127); // define missing from KOS    
+	PVR_SET(PT_ALPHA_REF, 127); // define missing from KOS
 	//PVR_SET(PVR_SPANSORT_CFG, 0x0);
 
 	gfx_alphaTest  = false;
@@ -123,7 +123,7 @@ static void InitGLState(void) {
 	gfx_depthTest  = false;
 	gfx_depthWrite = true;
 	gfx_fogEnabled = false;
-	
+
 	stateDirty       = true;
 	listOP.list_type = PVR_LIST_OP_POLY;
 	listPT.list_type = PVR_LIST_PT_POLY;
@@ -140,14 +140,14 @@ void Gfx_Create(void) {
 	if (!Gfx.Created) InitTexMemory();
 
 	InitGLState();
-	
+
 	Gfx.MinTexWidth  = 8;
 	Gfx.MinTexHeight = 8;
 	Gfx.MaxTexWidth  = 1024;
 	Gfx.MaxTexHeight = 1024;
 	Gfx.MaxTexSize   = 512 * 512; // reasonable cap as Dreamcast only has 8MB VRAM
 	Gfx.Created      = true;
-	
+
 	Gfx.NonPowTwoTexturesSupport = GFX_NONPOW2_UPLOAD;
 	Gfx_RestoreState();
 }
@@ -165,8 +165,8 @@ void Gfx_Free(void) {
 *-----------------------------------------------------Texture memory------------------------------------------------------*
 *#########################################################################################################################*/
 struct GPUTexture {
-    uint32_t format;    // PVR texture format
-    uint16_t base;      // VRAM block number
+	uint32_t format;    // PVR texture format
+	uint16_t base;      // VRAM block number
 	uint16_t blocks;    // VRAM blocks used
 	uint32_t log2_w: 4; // log2(width)
 	uint32_t log2_h: 4; // log2(height)
@@ -200,11 +200,11 @@ static cc_uint32 texmem_blocks;
 static cc_uint8 tex_table[TEXMEM_MAX_BLOCKS / BLOCKS_PER_PAGE];
 
 static void InitTexMemory(void) {
-    size_t vram_free  = pvr_mem_available();
-    size_t tmem_avail = vram_free - TEXMEM_RESERVED;
+	size_t vram_free  = pvr_mem_available();
+	size_t tmem_avail = vram_free - TEXMEM_RESERVED;
 
-    void* base    = pvr_mem_malloc(tmem_avail);
-    texmem_base   = (void*)TEXMEM_BLOCK_ROUNDUP((cc_uintptr)base);
+	void* base    = pvr_mem_malloc(tmem_avail);
+	texmem_base   = (void*)TEXMEM_BLOCK_ROUNDUP((cc_uintptr)base);
 	texmem_blocks = tmem_avail / TEXMEM_BLOCK_SIZE;
 }
 
@@ -228,13 +228,13 @@ static int DefragTexMemory(void) {
 }
 
 static int AllocTexMemory(int blocks) {
-    int base   = blockalloc_alloc(tex_table, texmem_blocks, blocks);
-    if (base >= 0) return base;
+	int base   = blockalloc_alloc(tex_table, texmem_blocks, blocks);
+	if (base >= 0) return base;
 
 	Platform_LogConst("Out of VRAM! Defragmenting..");
 	while (DefragTexMemory()) { }
 
-    return blockalloc_alloc(tex_table, texmem_blocks, blocks);
+	return blockalloc_alloc(tex_table, texmem_blocks, blocks);
 }
 
 
@@ -250,7 +250,7 @@ static int AllocTexMemory(int blocks) {
 static cc_uint8 pal_table[PAL_TOTAL_BLOCKS / BLOCKS_PER_PAGE];
 
 static CC_INLINE int FindInPalette(BitmapCol* palette, int pal_count, BitmapCol color) {
-	for (int i = 0; i < pal_count; i++) 
+	for (int i = 0; i < pal_count; i++)
 	{
 		if (palette[i] == color) return i;
 	}
@@ -262,10 +262,10 @@ static int CalcPalette(BitmapCol* palette, struct Bitmap* bmp, int rowWidth) {
 
 	BitmapCol* row = bmp->scan0;
 	int pal_count  = 0;
-	
+
 	for (int y = 0; y < height; y++, row += rowWidth)
 	{
-		for (int x = 0; x < width; x++) 
+		for (int x = 0; x < width; x++)
 		{
 			BitmapCol color = row[x];
 			int idx = FindInPalette(palette, pal_count, color);
@@ -282,7 +282,7 @@ static int CalcPalette(BitmapCol* palette, struct Bitmap* bmp, int rowWidth) {
 }
 
 static void ApplyPalette(BitmapCol* palette, int pal_count, int pal_index) {
-	for (int i = 0; i < pal_count; i++) 
+	for (int i = 0; i < pal_count; i++)
 	{
 		int R = BitmapCol_R(palette[i]) >> 4;
 		int G = BitmapCol_G(palette[i]) >> 4;
@@ -308,12 +308,12 @@ void Gfx_DisableMipmaps(void) { }
 // And can therefore be broken down into two components:
 //  1) X and Y interleaved lower bits
 //  2) X or Y linear higher bits
-	
+
 // For example, in the case of W=4 and H=8
 //  the bit pattern is Y_yx_yx_yx
 //  - lower 3 Y bits are interleaved
 //  - upper 1 Y bit is linear
-	
+
 // By calculating appropriate values, can increment X/Y
 //   in "interleaved one" and then a "linear one" at the end
 // For example, consider XX XY XY
@@ -347,14 +347,14 @@ void Gfx_DisableMipmaps(void) { }
 //				& 11 10 10 > 10 00 00
 //
 // As a further optimisation, note the bit patterns
-//   oneX = 00 01 10    oneY = -- 10 11 
+//   oneX = 00 01 10    oneY = -- 10 11
 //  maskX = 11 10 10   maskY = -- 01 01
 //  oneX = ~maskX + 1   oneY = ~maskY + 1
 // And then using the following bitwise equivalence:
-//    x - y    =   x + (~y + 1) 
+//    x - y    =   x + (~y + 1)
 //  idx - mask = idx + (~mask + 1)
 //  idx - mask = idx + one
-static CC_INLINE void TwiddleCalcFactors(unsigned w, unsigned h, 
+static CC_INLINE void TwiddleCalcFactors(unsigned w, unsigned h,
 										unsigned* maskX, unsigned* maskY) {
 	w = Math_NextPowOf2(w);
 	h = Math_NextPowOf2(h);
@@ -373,19 +373,19 @@ static CC_INLINE void TwiddleCalcFactors(unsigned w, unsigned h,
 		} else if (w > 1) {
 			// Add a linear X bit
 			*maskX += 0x01 << shift;
-			shift  += 1;		
+			shift  += 1;
 		} else if (h > 1) {
 			// Add a linear Y bit
 			*maskY += 0x01 << shift;
-			shift  += 1;		
+			shift  += 1;
 		}
 	}
 }
 
-	
+
 // B8 G8 R8 A8 > B4 G4 R4 A4
 #define BGRA8_to_BGRA4(src) \
-	((src[0] & 0xF0) >> 4) | (src[1] & 0xF0) | ((src[2] & 0xF0) << 4) | ((src[3] & 0xF0) << 8);	
+	((src[0] & 0xF0) >> 4) | (src[1] & 0xF0) | ((src[2] & 0xF0) << 4) | ((src[3] & 0xF0) << 8);
 
 static CC_INLINE void ConvertTexture_4444(cc_uint16* dst, struct Bitmap* bmp, int rowWidth) {
 	int width  = bmp->width;
@@ -394,12 +394,12 @@ static CC_INLINE void ConvertTexture_4444(cc_uint16* dst, struct Bitmap* bmp, in
 	unsigned maskX, maskY;
 	unsigned X = 0, Y = 0;
 	TwiddleCalcFactors(width, height, &maskX, &maskY);
-	
+
 	for (int y = 0; y < height; y++)
 	{
 		cc_uint8* src = (cc_uint8*)(bmp->scan0 + y * rowWidth);
 		X = 0;
-		
+
 		for (int x = 0; x < width; x++, src += 4)
 		{
 			dst[X | Y] = BGRA8_to_BGRA4(src);
@@ -416,13 +416,13 @@ static CC_INLINE void ConvertTexture_Palette(cc_uint16* dst, struct Bitmap* bmp,
 	unsigned maskX, maskY;
 	unsigned X = 0, Y = 0;
 	TwiddleCalcFactors(width, height, &maskX, &maskY);
-	
+
 	for (int y = 0; y < height; y++)
 	{
 		BitmapCol* src  = bmp->scan0 + (y * 2) * rowWidth;
 		BitmapCol* next = src + rowWidth;
 		X = 0;
-		
+
 		for (int x = 0; x < width; x++, src += 2, next += 2)
 		{
 			int pal_00 = FindInPalette(palette, pal_count,  src[0]);
@@ -439,12 +439,12 @@ static CC_INLINE void ConvertTexture_Palette(cc_uint16* dst, struct Bitmap* bmp,
 }
 
 static struct GPUTexture* FindFreeTexture(void) {
-    for (int i = 0; i < MAX_TEXTURE_COUNT; i++) 
+	for (int i = 0; i < MAX_TEXTURE_COUNT; i++)
 	{
 		struct GPUTexture* tex = &tex_list[i];
 		if (!tex->size) return tex;
-    }
-    return NULL;
+	}
+	return NULL;
 }
 
 GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags, cc_bool mipmaps) {
@@ -481,7 +481,7 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 		// 16 bpp   = 1 pixel in 2 bytes
 		tex->size   = dst_w * dst_h * 2;
 	}
-	
+
 	int blocks = SIZE_TO_BLOCKS(tex->size, TEXMEM_BLOCK_SIZE);
 	int base   = AllocTexMemory(blocks);
 	if (base < 0) { Platform_LogConst("Out of PVR VRAM!"); return NULL; }
@@ -500,7 +500,7 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 
 void Gfx_UpdateTexture(GfxResourceID texId, int originX, int originY, struct Bitmap* part, int rowWidth, cc_bool mipmaps) {
 	struct GPUTexture* tex = (struct GPUTexture*)texId;
-	
+
 	int width = part->width, height = part->height;
 	unsigned maskX, maskY;
 	unsigned X = 0, Y = 0;
@@ -512,12 +512,12 @@ void Gfx_UpdateTexture(GfxResourceID texId, int originX, int originY, struct Bit
 
 	unsigned startX = X;
 	cc_uint16* dst  = BLOCK_TO_TEXMEM(tex->base);
-	
+
 	for (int y = 0; y < height; y++)
 	{
 		cc_uint8* src = (cc_uint8*)(part->scan0 + rowWidth * y);
 		X = startX;
-		
+
 		for (int x = 0; x < width; x++, src += 4)
 		{
 			dst[X | Y] = BGRA8_to_BGRA4(src);
@@ -536,7 +536,7 @@ void Gfx_BindTexture(GfxResourceID texId) {
 void Gfx_DeleteTexture(GfxResourceID* texId) {
 	struct GPUTexture* tex = (struct GPUTexture*)(*texId);
 	if (!tex) return;
-    blockalloc_dealloc(tex_table, tex->base, tex->blocks);
+	blockalloc_dealloc(tex_table, tex->base, tex->blocks);
 
 	if (tex->format != PVR_TXRFMT_ARGB4444) {
 		int index = (tex->format & PVR_TXRFMT_4BPP_PAL(63)) >> 21;
@@ -633,7 +633,7 @@ static CC_NOINLINE void BuildPolyContext(pvr_poly_hdr_t* dst, int list_type) {
 *#########################################################################################################################*/
 static PackedCol gfx_clearColor;
 
-void Gfx_SetFaceCulling(cc_bool enabled) { 
+void Gfx_SetFaceCulling(cc_bool enabled) {
 	gfx_culling = enabled;
 	stateDirty  = true;
 }
@@ -646,7 +646,7 @@ void Gfx_SetAlphaArgBlend(cc_bool enabled) { }
 void Gfx_ClearColor(PackedCol color) {
 	if (color == gfx_clearColor) return;
 	gfx_clearColor = color;
-	
+
 	float r = PackedCol_R(color) / 255.0f;
 	float g = PackedCol_G(color) / 255.0f;
 	float b = PackedCol_B(color) / 255.0f;
@@ -657,16 +657,16 @@ static void SetColorWrite(cc_bool r, cc_bool g, cc_bool b, cc_bool a) {
 	// TODO: Doesn't work
 }
 
-void Gfx_SetDepthWrite(cc_bool enabled) { 
+void Gfx_SetDepthWrite(cc_bool enabled) {
 	if (gfx_depthWrite == enabled) return;
-	
+
 	gfx_depthWrite = enabled;
 	stateDirty     = true;
 }
 
-void Gfx_SetDepthTest(cc_bool enabled) { 
+void Gfx_SetDepthTest(cc_bool enabled) {
 	if (gfx_depthTest == enabled) return;
-	
+
 	gfx_depthTest = enabled;
 	stateDirty    = true;
 }
@@ -760,7 +760,7 @@ static FogFunc gfx_fogMode = -1;
 
 void Gfx_SetFog(cc_bool enabled) {
 	if (gfx_fogEnabled == enabled) return;
-	
+
 	gfx_fogEnabled = enabled;
 	stateDirty     = true;
 }
@@ -769,9 +769,9 @@ void Gfx_SetFogCol(PackedCol color) {
 	if (color == gfx_fogColor) return;
 	gfx_fogColor = color;
 
-	float r = PackedCol_R(color) / 255.0f; 
+	float r = PackedCol_R(color) / 255.0f;
 	float g = PackedCol_G(color) / 255.0f;
-	float b = PackedCol_B(color) / 255.0f; 
+	float b = PackedCol_B(color) / 255.0f;
 	float a = PackedCol_A(color) / 255.0f;
 
 	pvr_fog_table_color(a, r, g, b);
@@ -869,7 +869,7 @@ void Gfx_DisableTextureOffset(void) {
 }
 
 static CC_NOINLINE void ShiftTextureCoords(int count) {
-	for (int i = 0; i < count; i++) 
+	for (int i = 0; i < count; i++)
 	{
 		struct VertexTextured* v = (struct VertexTextured*)gfx_vertices + i;
 		v->U += textureOffsetX;
@@ -878,7 +878,7 @@ static CC_NOINLINE void ShiftTextureCoords(int count) {
 }
 
 static CC_NOINLINE void UnshiftTextureCoords(int count) {
-	for (int i = 0; i < count; i++) 
+	for (int i = 0; i < count; i++)
 	{
 		struct VertexTextured* v = (struct VertexTextured*)gfx_vertices + i;
 		v->U -= textureOffsetX;
@@ -956,10 +956,10 @@ static void DrawQuads(int count, void* src, DrawHints hints) {
 			return;
 		}
 
-		end = noclip ? DrawTexturedQuads_Fast(src, beg, count >> 2) 
+		end = noclip ? DrawTexturedQuads_Fast(src, beg, count >> 2)
 					 : DrawTexturedQuads_Clip(src, beg, count >> 2);
 	} else {
-		end = noclip ? DrawColouredQuads_Fast(src, beg, count >> 2) 
+		end = noclip ? DrawColouredQuads_Fast(src, beg, count >> 2)
 					 : DrawColouredQuads_Clip(src, beg, count >> 2);
 	}
 
@@ -1001,7 +1001,7 @@ void Gfx_DrawVb_IndexedTris(int verticesCount) {
 
 void Gfx_DrawIndexedTris_T2fC4b(int verticesCount, int startVertex, DrawHints hints) {
 	if (renderingDisabled) return;
-	
+
 	void* src = gfx_vertices + startVertex * SIZEOF_VERTEX_TEXTURED;
 	DrawQuads(verticesCount, src, hints);
 }
@@ -1033,7 +1033,7 @@ cc_result Gfx_TakeScreenshot(struct Stream* output) {
 	int height = vid_mode->height;
 
 	struct Bitmap bmp;
-	bmp.width  = width; 
+	bmp.width  = width;
 	bmp.height = height;
 
 	return Png_Encode(&bmp, output, DC_GetRow, false, tmp);
@@ -1041,12 +1041,12 @@ cc_result Gfx_TakeScreenshot(struct Stream* output) {
 
 void Gfx_GetApiInfo(cc_string* info) {
 	int freeMem, usedMem;
-	blockalloc_calc_usage(tex_table, texmem_blocks, TEXMEM_BLOCK_SIZE, 
+	blockalloc_calc_usage(tex_table, texmem_blocks, TEXMEM_BLOCK_SIZE,
 							&freeMem, &usedMem);
-	
+
 	float freeMemMB = freeMem / (1024.0f * 1024.0f);
 	float usedMemMB = usedMem / (1024.0f * 1024.0f);
-	
+
 	String_AppendConst(info, "-- Using Dreamcast --\n");
 	String_AppendConst(info, "GPU: PowerVR2 CLX2 100mHz\n");
 	String_Format2(info,     "Texture memory: %f2 MB used, %f2 MB free\n", &usedMemMB, &freeMemMB);

@@ -6,7 +6,6 @@
 #define CC_DYNAMIC_VBS_ARE_STATIC
 #define OVERRIDE_BEGEND2D_FUNCTIONS
 #include "_GraphicsBase.h"
-#include "Errors.h"
 #include <Window.h>
 
 static cc_bool faceCulling;
@@ -494,7 +493,7 @@ static void DrawTriangle3D(Vertex* V0, Vertex* V1, Vertex* V2) {
 			colorBuffer[index] = color;
 
 		color = BitmapCol_Make(R, G, B, 0xFF);
-		#include "Graphics_SoftMin.tri.i"
+		#include "Graphics_softmin.tri.i"
 		#undef PIXEL_PLOT_FUNC
 	} else {
 		// Hardcode for alpha of 128
@@ -505,7 +504,7 @@ static void DrawTriangle3D(Vertex* V0, Vertex* V1, Vertex* V2) {
 			int finB = (B + BitmapCol_B(dst)) >> 1; \
 			colorBuffer[index] = BitmapCol_Make(finR, finG, finB, 0xFF);
 
-		#include "Graphics_SoftMin.tri.i"
+		#include "Graphics_softmin.tri.i"
 		#undef PIXEL_PLOT_FUNC
 	}
 }
@@ -537,7 +536,7 @@ static void DrawClipped(int mask, Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3
 	Vertex* a = &tmp[0];
 	Vertex* b = &tmp[1];
 
-    switch (mask) {
+	switch (mask) {
 	case V0_VIS:
 	{
 		//		   v0
@@ -555,7 +554,7 @@ static void DrawClipped(int mask, Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3
 
 		DrawTriangle3D(v0, a, b);
 	}
-    break;
+	break;
 	case V1_VIS:
 	{
 		//		   v1
@@ -773,7 +772,7 @@ static void DrawClipped(int mask, Vertex* v0, Vertex* v1, Vertex* v2, Vertex* v3
 	}
 }
 
-void DrawQuads(int startVertex, int verticesCount, DrawHints hints) {
+static void DrawQuads(int startVertex, int verticesCount, DrawHints hints) {
 	Vertex vertices[4];
 	int i, j = startVertex;
 

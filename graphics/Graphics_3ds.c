@@ -1,12 +1,12 @@
 #define CC_DYNAMIC_VBS_ARE_STATIC
-#include "../_GraphicsBase.h"
-#include "../Errors.h"
-#include "../Logger.h"
+#include "_GraphicsBase.h"
+#include "../opencraft/Errors.h"
+#include "../opencraft/Logger.h"
 #include <Window.h>
 
 #include <3ds.h>
 #define BUFFER_BASE_PADDR OS_VRAM_PADDR // VRAM physical address
-#include "../../third_party/citro3d.c"
+#include "../third_party/citro3d.c"
 
 #include "gsp_gpu.h"
 #include "pica_gpu.h"
@@ -25,7 +25,7 @@ extern const u32 textured_shbin_size;
 
 extern const u8  offset_shbin[];
 extern const u32 offset_shbin_size;
-	
+
 static void GPUBuffers_DeleteUnreferenced(void);
 static void GPUTextures_DeleteUnreferenced(void);
 
@@ -37,8 +37,8 @@ static cc_bool rendering3D;
 	(GX_TRANSFER_FLIP_VERT(0) | GX_TRANSFER_OUT_TILED(0) | GX_TRANSFER_RAW_COPY(0) | \
 	GX_TRANSFER_IN_FORMAT(GX_TRANSFER_FMT_RGBA8) | GX_TRANSFER_OUT_FORMAT(GX_TRANSFER_FMT_RGB8) | \
 	GX_TRANSFER_SCALING(GX_TRANSFER_SCALE_NO))
-	
-	
+
+
 /*########################################################################################################################*
 *------------------------------------------------------Vertex shaders-----------------------------------------------------*
 *#########################################################################################################################*/
@@ -146,7 +146,7 @@ static void SetInitialStates(void) {
 	pica_set_vsh_input_mapping(0x210, 0);
 }
 
-static void InitCitro3D(void) {	
+static void InitCitro3D(void) {
 	CmdBuf_Alloc(DEFAULT_MAX_CMDS * 4);
 	C3D_Init();
 	aptHook(&hookCookie, AptEventHook, NULL);
@@ -158,13 +158,13 @@ static void InitCitro3D(void) {
 
 	// Even though the bottom screen is 320 pixels wide, we use 400 here so that the same ortho matrix
 	// can be used for both screens. The output is clipped to the actual screen width, anyway.
-	// TODO avoid this	
+	// TODO avoid this
 	C3D_RenderTargetInit(&bottomTarget, 240, 400);
 	C3D_RenderTargetColor(&bottomTarget, GPU_RB_RGBA8);
 	C3D_RenderTargetSetOutput(&bottomTarget, GFX_BOTTOM, GFX_LEFT, DISPLAY_TRANSFER_FLAGS);
 
 	// Allocate right framebuffer (for stereoscopic 3D) in advance even when it doesn't actually used
-	//  Although this means a bit less VRAM available for textures, this ensures that if the user later 
+	//  Although this means a bit less VRAM available for textures, this ensures that if the user later
 	//  turns on stereoscopic 3D, don't have to try handling the case when insufficient VRAM for it
 	C3D_RenderTargetInit(&topTargetRight,  240, 400);
 	C3D_RenderTargetColor(&topTargetRight, GPU_RB_RGBA8);
@@ -182,16 +182,16 @@ static GfxResourceID white_square;
 void Gfx_Create(void) {
 	if (!Gfx.Created) InitCitro3D();
 	else C3Di_RenderQueueInit();
-	
+
 	Gfx.MaxTexWidth  = 1024;
 	Gfx.MaxTexHeight = 1024;
 	Gfx.MaxTexSize   = 512 * 512;
-	
+
 	Gfx.MinTexWidth  = 8;
 	Gfx.MinTexHeight = 8;
 	Gfx.Created      = true;
 	gfx_vsync        = true;
-	
+
 	Gfx.NonPowTwoTexturesSupport = GFX_NONPOW2_UPLOAD;
 	Gfx_RestoreState();
 }
@@ -213,7 +213,7 @@ cc_bool Gfx_TryRestoreContext(void) { return true; }
 
 static void Gfx_RestoreState(void) {
 	InitDefaultResources();
- 	
+
 	// 8x8 dummy white texture
 	//  (textures must be at least 8x8, see C3D_TexInitWithParams source)
 	struct Bitmap bmp;
@@ -224,7 +224,7 @@ static void Gfx_RestoreState(void) {
 }
 
 static void Gfx_FreeState(void) {
-	FreeDefaultResources(); 
+	FreeDefaultResources();
 	Gfx_DeleteTexture(&white_square);
 }
 
@@ -297,7 +297,7 @@ static void GPUTexture_Unref(GfxResourceID* resource) {
 	struct GPUTexture* tex = (struct GPUTexture*)(*resource);
 	if (!tex) return;
 	*resource = NULL;
-	
+
 	LinkedList_Append(tex, del_textures_head, del_textures_tail);
 }
 
@@ -314,29 +314,29 @@ static void GPUTexture_Free(struct GPUTexture* tex) {
 
 static void GPUTextures_DeleteUnreferenced(void) {
 	if (!del_textures_head) return;
-	
+
 	struct GPUTexture* tex;
 	struct GPUTexture* next;
 	struct GPUTexture* prev = NULL;
-	
+
 	for (tex = del_textures_head; tex != NULL; tex = next)
 	{
 		next = tex->next;
-		
+
 		if (tex->lastFrame + 4 > frameCounter1) {
 			// texture was used within last 4 fames
 			prev = tex;
 		} else {
 			// advance the head of the linked list
-			if (del_textures_head == tex) 
+			if (del_textures_head == tex)
 				del_textures_head = next;
 			// update end of linked list if necessary
 			if (del_textures_tail == tex)
 				del_textures_tail = prev;
-			
+
 			// unlink this texture from the linked list
 			if (prev) prev->next = next;
-			
+
 			GPUTexture_Free(tex);
 		}
 	}
@@ -374,7 +374,7 @@ static bool CreateNativeTexture(C3D_Tex* tex, u32 width, u32 height, int vram) {
 // They are arranged into 8x8 tiles, where each 8x8 tile is composed of
 //  four 4x4 subtiles, which are in turn composed of four 2x2 subtiles
 // http://problemkaputt.de/gbatek-3ds-video-texture-swizzling.htm
-static CC_INLINE void TwiddleCalcFactors(unsigned w, unsigned h, 
+static CC_INLINE void TwiddleCalcFactors(unsigned w, unsigned h,
 										unsigned* maskX, unsigned* maskY) {
 	*maskX = 0b010101; // 3 interleaved X bits
 	*maskY = 0b101010; // 3 interleaved Y bits
@@ -395,7 +395,7 @@ static CC_INLINE void TwiddleCalcFactors(unsigned w, unsigned h,
 	}
 }
 
-static void ToMortonTexture(C3D_Tex* tex, int originX, int originY, 
+static void ToMortonTexture(C3D_Tex* tex, int originX, int originY,
 							struct Bitmap* bmp, int rowWidth) {
 	int src_w = bmp->width,  dst_w = tex->width;
 	int src_h = bmp->height, dst_h = tex->height;
@@ -434,9 +434,9 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 	int can_vram = !(flags & TEXTURE_FLAG_DYNAMIC);
 	bool success = CreateNativeTexture(&tex->texture, bmp->width, bmp->height, can_vram);
 	if (!success) return NULL;
-	
+
 	ToMortonTexture(&tex->texture, 0, 0, bmp, rowWidth);
-    return tex;
+	return tex;
 }
 
 void Gfx_UpdateTexture(GfxResourceID texId, int x, int y, struct Bitmap* part, int rowWidth, cc_bool mipmaps) {
@@ -452,9 +452,9 @@ void Gfx_EnableMipmaps(void) { }
 void Gfx_DisableMipmaps(void) { }
 
 void Gfx_BindTexture(GfxResourceID texId) {
-	if (!texId) texId = white_square; 
+	if (!texId) texId = white_square;
  	struct GPUTexture* tex = (struct GPUTexture*)texId;
-	
+
 	tex->lastFrame = frameCounter1;
 	C3D_TexBind(0, &tex->texture);
 }
@@ -463,13 +463,13 @@ void Gfx_BindTexture(GfxResourceID texId) {
 /*########################################################################################################################*
 *-----------------------------------------------------State management----------------------------------------------------*
 *#########################################################################################################################*/
-void Gfx_SetFaceCulling(cc_bool enabled) { 
+void Gfx_SetFaceCulling(cc_bool enabled) {
 	C3D_CullFace(enabled ? GPU_CULL_BACK_CCW : GPU_CULL_NONE);
 }
 
 void Gfx_SetAlphaArgBlend(cc_bool enabled) { }
 
-static void SetAlphaBlend(cc_bool enabled) { 
+static void SetAlphaBlend(cc_bool enabled) {
 	if (enabled) {
 		C3D_AlphaBlend(GPU_BLEND_ADD, GPU_BLEND_ADD, GPU_SRC_ALPHA, GPU_ONE_MINUS_SRC_ALPHA, GPU_SRC_ALPHA, GPU_ONE_MINUS_SRC_ALPHA);
 	} else {
@@ -483,7 +483,7 @@ static void SetAlphaTest(cc_bool enabled) {
 
 void Gfx_DepthOnlyRendering(cc_bool depthOnly) {
 	cc_bool enabled = !depthOnly;
-	SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1], 
+	SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1],
 				  enabled & gfx_colorMask[2], enabled & gfx_colorMask[3]);
 }
 
@@ -508,7 +508,7 @@ void Gfx_SetDepthWrite(cc_bool enabled) {
 	UpdateWriteState();
 }
 
-void Gfx_SetDepthTest(cc_bool enabled) { 
+void Gfx_SetDepthTest(cc_bool enabled) {
 	depthTest = enabled;
 	UpdateWriteState();
 }
@@ -519,7 +519,7 @@ static void SetColorWrite(cc_bool r, cc_bool g, cc_bool b, cc_bool a) {
 	if (g) mask |= GPU_WRITE_GREEN;
 	if (b) mask |= GPU_WRITE_BLUE;
 	if (a) mask |= GPU_WRITE_ALPHA;
-	
+
 	colorWriteMask = mask;
 	UpdateWriteState();
 }
@@ -530,7 +530,7 @@ static void SetColorWrite(cc_bool r, cc_bool g, cc_bool b, cc_bool a) {
 *#########################################################################################################################*/
 static BitmapCol* _3DS_GetRow(struct Bitmap* bmp, int y, void* ctx) {
 	u8* fb    = (u8*)ctx;
-	// Framebuffer is rotated 90 degrees	
+	// Framebuffer is rotated 90 degrees
 	int width = bmp->width, height = bmp->height;
 
 	for (int x = 0; x < width; x++)
@@ -552,7 +552,7 @@ cc_result Gfx_TakeScreenshot(struct Stream* output) {
 	// Framebuffer is rotated 90 degrees
 	struct Bitmap bmp;
 	bmp.scan0  = tmp;
-	bmp.width  = height; 
+	bmp.width  = height;
 	bmp.height = width;
 
 	return Png_Encode(&bmp, output, _3DS_GetRow, false, fb);
@@ -583,7 +583,7 @@ void Gfx_ClearBuffers(GfxBuffers buffers) {
 	int targets = 0;
 	if (buffers & GFX_BUFFER_COLOR) targets |= C3D_CLEAR_COLOR;
 	if (buffers & GFX_BUFFER_DEPTH) targets |= C3D_CLEAR_DEPTH;
-	
+
 	C3D_RenderTargetClear(&topTargetLeft, targets, clear_color, 0);
 }
 
@@ -592,7 +592,7 @@ void Gfx_EndFrame(void) {
 	C3D_FrameFinish(0);
 	//gfxFlushBuffers();
 	//gfxSwapBuffers();
-		
+
 	GPUBuffers_DeleteUnreferenced();
 	GPUTextures_DeleteUnreferenced();
 	frameCounter1++;
@@ -613,7 +613,7 @@ void Gfx_SetViewport(int x, int y, int w, int h) {
 	x = Game.Width  - w - x;
 	y = Game.Height - h - y;
 
-	C3D_SetViewport(y, x, h, w); 
+	C3D_SetViewport(y, x, h, w);
 }
 void Gfx_SetScissor (int x, int y, int w, int h) { }
 
@@ -640,7 +640,7 @@ static void GPUBuffer_Unref(GfxResourceID* resource) {
 	struct GPUBuffer* buf = (struct GPUBuffer*)(*resource);
 	if (!buf) return;
 	*resource = NULL;
-	
+
 	LinkedList_Append(buf, del_buffers_head, del_buffers_tail);
 }
 
@@ -650,29 +650,29 @@ static void GPUBuffer_Free(struct GPUBuffer* buf) {
 
 static void GPUBuffers_DeleteUnreferenced(void) {
 	if (!del_buffers_head) return;
-	
+
 	struct GPUBuffer* buf;
 	struct GPUBuffer* next;
 	struct GPUBuffer* prev = NULL;
-	
+
 	for (buf = del_buffers_head; buf != NULL; buf = next)
 	{
 		next = buf->next;
-		
+
 		if (buf->lastFrame + 4 > frameCounter1) {
 			// texture was used within last 4 fames
 			prev = buf;
 		} else {
 			// advance the head of the linked list
-			if (del_buffers_head == buf) 
+			if (del_buffers_head == buf)
 				del_buffers_head = next;
 			// update end of linked list if necessary
 			if (del_buffers_tail == buf)
 				del_buffers_tail = prev;
-			
+
 			// unlink this texture from the linked list
 			if (prev) prev->next = next;
-			
+
 			GPUBuffer_Free(buf);
 		}
 	}
@@ -812,12 +812,12 @@ void Gfx_CalcOrthoMatrix(struct Matrix* matrix, float width, float height, float
 	// (it's mostly just a standard orthograph matrix rotated by 90 degrees)
 	// Note: The rows/columns are "flipped" over the diagonal axis compared to original basis
 	Mem_Set(matrix, 0, sizeof(struct Matrix));
-	
+
 	matrix->row2.x = -2.0f / height;
 	matrix->row4.x =  1.0f;
 	matrix->row1.y = -2.0f / width;
 	matrix->row4.y =  1.0f;
-	
+
 	matrix->row3.z = 1.0f / (zNear - zFar);
 	matrix->row4.z = 0.5f * (zNear + zFar) / (zNear - zFar) - 0.5f;
 	matrix->row4.w = 1.0f;
@@ -825,10 +825,10 @@ void Gfx_CalcOrthoMatrix(struct Matrix* matrix, float width, float height, float
 
 void Gfx_CalcPerspectiveMatrix(struct Matrix* matrix, float fov, float aspect, float zFar) {
 	// See Mtx_PerspTilt in Citro3D for the original basis
-	// (it's mostly just a standard perspective matrix rotated by 90 degrees) 
+	// (it's mostly just a standard perspective matrix rotated by 90 degrees)
 	// Note: The rows/columns are "flipped" over the diagonal axis compared to original basis
 	float zNear = 0.1f;
-	fov = tanf(fov / 2.0f);	 
+	fov = tanf(fov / 2.0f);
 	Mem_Set(matrix, 0, sizeof(struct Matrix));
 
 	matrix->row2.x =  1.0f / fov;
@@ -841,7 +841,7 @@ void Gfx_CalcPerspectiveMatrix(struct Matrix* matrix, float fov, float aspect, f
 void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
 	C3D_Mtx* dst = type == MATRIX_VIEW ? &_view : &_proj;
 	float* src   = (float*)matrix;
-	
+
 	// Transpose
 	for (int i = 0; i < 4; i++)
 	{
@@ -858,10 +858,10 @@ void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
 
 /*void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
 	if (type == MATRIX_VIEW) _view = *matrix;
-	
+
 	// Provided projection matrix assumes landscape display, but 3DS framebuffer
 	//  is a rotated portrait display, so need to swap pixel X/Y values to correct that
-	// 
+	//
 	// This can be done by rotating the projection matrix 90 degrees around Z axis
 	// https://open.gl/transformations
 	if (type == MATRIX_PROJ) {
@@ -888,7 +888,7 @@ void Gfx_EnableTextureOffset(float x, float y) {
 	texOffset    = true;
 	tex_offset.x = x;
 	tex_offset.y = y;
-	
+
 	SwitchProgram();
 	pica_upload_vec4_constant(CONST_TEX, &tex_offset);
 }
@@ -909,7 +909,7 @@ cc_bool Gfx_GetUIOptions(struct MenuOptionsScreen* s) { return false; }
 static void UpdateAttribFormat(void) {
 	C3D_AttrInfo* attrInfo = C3D_GetAttrInfo();
 	AttrInfo_Init(attrInfo);
-	
+
 	AttrInfo_AddLoader(attrInfo, 0, GPU_FLOAT, 3);         // in_pos
 	AttrInfo_AddLoader(attrInfo, 1, GPU_UNSIGNED_BYTE, 4); // in_col
 	if (gfx_format == VERTEX_FORMAT_TEXTURED) {
@@ -930,11 +930,11 @@ static void UpdateAttribConfig(void) {
 
 static void UpdateTexEnv(VertexFormat fmt) {
 	int func, source;
-	
+
 	if (fmt == VERTEX_FORMAT_TEXTURED) {
 		// Configure the first fragment shading substage to blend the texture color with
   		// the vertex color (calculated by the vertex shader using a lighting algorithm)
-  		// See https://www.opengl.org/sdk/docs/man2/xhtml/glTexEnv.xml for more insight	
+  		// See https://www.opengl.org/sdk/docs/man2/xhtml/glTexEnv.xml for more insight
   		source = GPU_TEVSOURCES(GPU_TEXTURE0, GPU_PRIMARY_COLOR, 0);
  		func   = GPU_MODULATE;
  	} else {
@@ -952,7 +952,7 @@ void Gfx_SetVertexFormat(VertexFormat fmt) {
 	if (fmt == gfx_format) return;
 	gfx_format = fmt;
 	gfx_stride = strideSizes[fmt];
-	
+
 	SwitchProgram();
 	//UpdateAttribFormat();
 	UpdateAttribConfig();

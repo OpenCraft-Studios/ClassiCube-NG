@@ -1,7 +1,7 @@
 #define CC_DYNAMIC_VBS_ARE_STATIC
-#include "../_GraphicsBase.h"
-#include "../Errors.h"
-#include "../Logger.h"
+#include "_GraphicsBase.h"
+#include "../opencraft/Errors.h"
+#include "../opencraft/Logger.h"
 #include <Window.h>
 
 #include <malloc.h>
@@ -41,7 +41,7 @@ static void VP_Load(VertexProgram* vp, const u8* source) {
 	vp->prog = (rsxVertexProgram*)source;
 	u32 size = 0;
 	rsxVertexProgramGetUCode(vp->prog, &vp->ucode, &size);
-	
+
 	vp->mvp       = rsxVertexProgramGetConst(vp->prog, "mvp");
 	vp->uv_offset = rsxVertexProgramGetConst(vp->prog, "uv_offset");
 }
@@ -55,11 +55,11 @@ static void LoadVertexPrograms(void) {
 static void VP_SwitchActive(void) {
 	int index = gfx_format == VERTEX_FORMAT_TEXTURED ? 1 : 0;
 	if (textureOffseting) index = 2;
-	
+
 	VertexProgram* VP = &VP_list[index];
 	if (VP == VP_active) return;
 	VP_active = VP;
-	
+
 	rsxLoadVertexProgram(context, VP->prog, VP->ucode);
 }
 
@@ -70,7 +70,7 @@ static void VP_UpdateUniforms() {
 		VertexProgram* vp = &VP_list[i];
 		rsxSetVertexProgramParameter(context, vp->prog, vp->mvp, (float*)&mvp);
 	}
-	
+
 	if (VP_active == &VP_list[2]) {
 		VertexProgram* vp = &VP_list[2];
 		rsxSetVertexProgramParameter(context, vp->prog, vp->uv_offset, textureOffset);
@@ -99,7 +99,7 @@ static void FP_Load(FragmentProgram* fp, const u8* source) {
 	fp->prog = (rsxFragmentProgram*)source;
 	u32 size = 0;
 	rsxFragmentProgramGetUCode(fp->prog, &fp->ucode, &size);
-	
+
 	fp->buffer = (u32*)rsxMemalign(128, size);
 	Mem_Copy(fp->buffer, fp->ucode, size);
 	gcmAddressToOffset(fp->buffer, &fp->offset);
@@ -116,7 +116,7 @@ static void FP_SwitchActive(void) {
 	FragmentProgram* FP = &FP_list[index];
 	if (FP == FP_active) return;
 	FP_active = FP;
-	
+
 	rsxLoadFragmentProgramLocation(context, FP->prog, FP->offset, GCM_LOCATION_RSX);
 }
 
@@ -173,7 +173,7 @@ static void WaitRSXIdle(void) {
 }
 
 static void ConfigureVideo(void) {
-    WaitRSXIdle();
+	WaitRSXIdle();
 
 	videoState state;
 	videoGetState(0, 0, &state);
@@ -182,7 +182,7 @@ static void ConfigureVideo(void) {
 	vconfig.resolution = state.displayMode.resolution;
 	vconfig.format     = VIDEO_BUFFER_FORMAT_XRGB;
 	vconfig.pitch      = DisplayInfo.Width * sizeof(u32);
-	
+
 	videoConfigure(0, &vconfig, NULL, 0);
 }
 
@@ -194,7 +194,7 @@ static void SetupBlendingState(void) {
 static void AllocColorSurface(u32 i) {
 	color_pitch     = DisplayInfo.Width * 4;
 	color_buffer[i] = (u32*)rsxMemalign(64, DisplayInfo.Height * color_pitch);
-	
+
 	gcmAddressToOffset(color_buffer[i], &color_offset[i]);
 	gcmSetDisplayBuffer(i, color_offset[i], color_pitch,
 		DisplayInfo.Width, DisplayInfo.Height);
@@ -203,7 +203,7 @@ static void AllocColorSurface(u32 i) {
 static void AllocDepthSurface(void) {
 	depth_pitch  = DisplayInfo.Width * 4;
 	depth_buffer = (u32*)rsxMemalign(64, DisplayInfo.Height * depth_pitch);
-	
+
 	gcmAddressToOffset(depth_buffer, &depth_offset);
 }
 
@@ -250,20 +250,20 @@ static void InitGfxContext(void) {
 	Gfx.MaxTexWidth  = 1024;
 	Gfx.MaxTexHeight = 1024;
 	Gfx.Created      = true;
-	
+
 	// https://github.com/ps3dev/PSL1GHT/blob/master/ppu/include/rsx/rsx.h#L30
 	CreateContext();
 	ConfigureVideo();
 	gcmSetFlipMode(GCM_FLIP_VSYNC);
-	
+
 	AllocColorSurface(0);
 	AllocColorSurface(1);
 	AllocDepthSurface();
 	gcmResetFlipStatus();
-	
+
 	SetupBlendingState();
 	SetRenderTarget(cur_fb);
-	
+
 	LoadVertexPrograms();
 	LoadFragmentPrograms();
 }
@@ -272,7 +272,7 @@ static GfxResourceID white_square;
 void Gfx_Create(void) {
 	// TODO rethink all this
 	if (!Gfx.Created) InitGfxContext();
-	
+
 	Gfx_RestoreState();
 	gfx_format = -1;
 	Gfx.NonPowTwoTexturesSupport = GFX_NONPOW2_UPLOAD;
@@ -287,7 +287,7 @@ cc_bool Gfx_GetUIOptions(struct MenuOptionsScreen* s) { return false; }
 
 static void Gfx_RestoreState(void) {
 	InitDefaultResources();
-	
+
 	// 1x1 dummy white texture
 	struct Bitmap bmp;
 	BitmapCol pixels[1] = { BITMAPCOLOR_WHITE };
@@ -296,7 +296,7 @@ static void Gfx_RestoreState(void) {
 }
 
 static void Gfx_FreeState(void) {
-	FreeDefaultResources(); 
+	FreeDefaultResources();
 	Gfx_DeleteTexture(&white_square);
 }
 
@@ -310,7 +310,7 @@ u32* Gfx_AllocImage(u32* offset, s32 w, s32 h) {
 void Gfx_TransferImage(u32 offset, s32 w, s32 h) {
 	rsxSetTransferImage(context, GCM_TRANSFER_LOCAL_TO_LOCAL,
 		color_offset[cur_fb], color_pitch, 0, 0,
-		offset,               w * 4,       0, 0, 
+		offset,               w * 4,       0, 0,
 		w, h, 4);
 }
 
@@ -355,7 +355,7 @@ static void SetColorWrite(cc_bool r, cc_bool g, cc_bool b, cc_bool a) {
 
 void Gfx_DepthOnlyRendering(cc_bool depthOnly) {
 	cc_bool enabled = !depthOnly;
-	SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1], 
+	SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1],
 				  enabled & gfx_colorMask[2], enabled & gfx_colorMask[3]);
 }
 
@@ -418,23 +418,23 @@ static void ResetFrameState(void) {
 	// TODO: Why is that
 	rsxSetAlphaFunc(context, GCM_GREATER, 0.5f);
 	rsxSetBlendFunc(context, GCM_SRC_ALPHA, GCM_ONE_MINUS_SRC_ALPHA, GCM_SRC_ALPHA, GCM_ONE_MINUS_SRC_ALPHA);
-        rsxSetBlendEquation(context, GCM_FUNC_ADD, GCM_FUNC_ADD);
-        
+		rsxSetBlendEquation(context, GCM_FUNC_ADD, GCM_FUNC_ADD);
+
 	rsxSetColorMaskMrt(context, 0);
 	rsxSetClearColor(context, clearColor);
 	rsxSetClearDepthStencil(context, 0xFFFFFFFF);
 
-	RSX_set_depth_func(context, GCM_LEQUAL);	
+	RSX_set_depth_func(context, GCM_LEQUAL);
 	RSX_set_depth_write(context, true);
 	RSX_set_depth_test(context,  true);
-	
+
 	rsxSetUserClipPlaneControl(context, GCM_USER_CLIP_PLANE_DISABLE,
 						GCM_USER_CLIP_PLANE_DISABLE,
 						GCM_USER_CLIP_PLANE_DISABLE,
 						GCM_USER_CLIP_PLANE_DISABLE,
 						GCM_USER_CLIP_PLANE_DISABLE,
 						GCM_USER_CLIP_PLANE_DISABLE);
-        
+
 	// NOTE: Must be called each frame, otherwise renders upside down at 4x zoom
 	Gfx_SetViewport(0, 0, Game.Width, Game.Height);
 	Gfx_SetScissor (0, 0, Game.Width, Game.Height);
@@ -446,7 +446,7 @@ void Gfx_WaitFlip(void) {
 	if (everFlipped) {
 		while (gcmGetFlipStatus() != 0) sysUsleep(200);
 	}
-	
+
 	everFlipped = true;
 	gcmResetFlipStatus();
 }
@@ -478,7 +478,7 @@ void Gfx_SetViewport(int x, int y, int w, int h) {
 	f32 scale[4], offset[4];
 	f32 zmin = 0.0f;
 	f32 zmax = 1.0f;
-	
+
 	scale[0]  = w *  0.5f;
 	scale[1]  = h * -0.5f;
 	scale[2]  = (zmax - zmin) * 0.5f;
@@ -516,21 +516,21 @@ static GfxResourceID Gfx_AllocStaticVb(VertexFormat fmt, int count) {
 	return rsxMemalign(128, count * strideSizes[fmt]);
 }
 
-void Gfx_BindVb(GfxResourceID vb) { 
+void Gfx_BindVb(GfxResourceID vb) {
 	u32 offset;
 	gcmAddressToOffset(vb, &offset);
-	
+
 	if (gfx_format == VERTEX_FORMAT_TEXTURED) {
-		rsxBindVertexArrayAttrib(context, GCM_VERTEX_ATTRIB_POS,    0, offset, 
+		rsxBindVertexArrayAttrib(context, GCM_VERTEX_ATTRIB_POS,    0, offset,
 			SIZEOF_VERTEX_TEXTURED, 3, GCM_VERTEX_DATA_TYPE_F32, GCM_LOCATION_RSX);
-		rsxBindVertexArrayAttrib(context, GCM_VERTEX_ATTRIB_COLOR0, 0, offset + 12, 
+		rsxBindVertexArrayAttrib(context, GCM_VERTEX_ATTRIB_COLOR0, 0, offset + 12,
 			SIZEOF_VERTEX_TEXTURED, 4, GCM_VERTEX_DATA_TYPE_U8,  GCM_LOCATION_RSX);
 		rsxBindVertexArrayAttrib(context, GCM_VERTEX_ATTRIB_TEX0,   0, offset + 16,
 			SIZEOF_VERTEX_TEXTURED, 2, GCM_VERTEX_DATA_TYPE_F32, GCM_LOCATION_RSX);
 	} else {
-		rsxBindVertexArrayAttrib(context, GCM_VERTEX_ATTRIB_POS,    0, offset, 
+		rsxBindVertexArrayAttrib(context, GCM_VERTEX_ATTRIB_POS,    0, offset,
 			SIZEOF_VERTEX_COLOURED, 3, GCM_VERTEX_DATA_TYPE_F32, GCM_LOCATION_RSX);
-		rsxBindVertexArrayAttrib(context, GCM_VERTEX_ATTRIB_COLOR0, 0, offset + 12, 
+		rsxBindVertexArrayAttrib(context, GCM_VERTEX_ATTRIB_COLOR0, 0, offset + 12,
 			SIZEOF_VERTEX_COLOURED, 4, GCM_VERTEX_DATA_TYPE_U8,  GCM_LOCATION_RSX);
 	}
 }
@@ -562,7 +562,7 @@ typedef struct CCTexture_ {
 
 // See Graphics_Dreamcast.c for twiddling explanation
 // (only difference is dreamcast is XY while xbox is YX)
-static CC_INLINE void TwiddleCalcFactors(unsigned w, unsigned h, 
+static CC_INLINE void TwiddleCalcFactors(unsigned w, unsigned h,
 										unsigned* maskX, unsigned* maskY) {
 	*maskX = 0;
 	*maskY = 0;
@@ -578,11 +578,11 @@ static CC_INLINE void TwiddleCalcFactors(unsigned w, unsigned h,
 		} else if (w > 1) {
 			// Add a linear X bit
 			*maskX += 0x01 << shift;
-			shift  += 1;		
+			shift  += 1;
 		} else if (h > 1) {
 			// Add a linear Y bit
 			*maskY += 0x01 << shift;
-			shift  += 1;		
+			shift  += 1;
 		}
 	}
 }
@@ -593,7 +593,7 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 	int size  = dst_w * dst_h * 4;
 
 	CCTexture* tex = (CCTexture*)rsxMemalign(128, 128 + size);
-	
+
 	tex->width  = dst_w;
 	tex->height = dst_h;
 	cc_uint32* dst = tex->pixels;
@@ -602,12 +602,12 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 	unsigned maskX, maskY;
 	unsigned X = 0, Y = 0;
 	TwiddleCalcFactors(dst_w, dst_h, &maskX, &maskY);
-	
+
 	for (int y = 0; y < src_h; y++)
 	{
 		cc_uint32* src = bmp->scan0 + y * rowWidth;
 		X = 0;
-		
+
 		for (int x = 0; x < src_w; x++, src++)
 		{
 			dst[X | Y] = *src;
@@ -620,9 +620,9 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 
 void Gfx_BindTexture(GfxResourceID texId) {
 	CCTexture* tex = (CCTexture*)texId;
-	if (!tex) tex  = white_square; 
+	if (!tex) tex  = white_square;
 	/* TODO */
-	
+
 	u32 offset;
 	gcmAddressToOffset(tex->pixels, &offset);
 	gcmTexture texture;
@@ -645,13 +645,13 @@ void Gfx_BindTexture(GfxResourceID texId) {
 	texture.location	= GCM_LOCATION_RSX;
 	texture.pitch		= tex->width * 4;
 	texture.offset		= offset;
-	
+
 	rsxInvalidateTextureCache(context, GCM_INVALIDATE_TEXTURE); // TODO needed
-	
+
 	rsxLoadTexture(context,    0, &texture);
 	rsxTextureControl(context, 0, GCM_TRUE, 0<<8, 12<<8, GCM_TEXTURE_MAX_ANISO_1);
 	rsxTextureFilter(context, 0, 0, GCM_TEXTURE_NEAREST, GCM_TEXTURE_NEAREST,
-		GCM_TEXTURE_CONVOLUTION_QUINCUNX);			
+		GCM_TEXTURE_CONVOLUTION_QUINCUNX);
 	rsxTextureWrapMode(context, 0, GCM_TEXTURE_REPEAT, GCM_TEXTURE_REPEAT, GCM_TEXTURE_REPEAT, 0, GCM_TEXTURE_ZFUNC_LESS, 0);
 }
 
@@ -662,9 +662,9 @@ void Gfx_DeleteTexture(GfxResourceID* texId) {
 }
 
 void Gfx_UpdateTexture(GfxResourceID texId, int originX, int originY, struct Bitmap* part, int rowWidth, cc_bool mipmaps) {
-	CCTexture* tex = (CCTexture*)texId;	
+	CCTexture* tex = (CCTexture*)texId;
 	cc_uint32* dst = tex->pixels;
-	
+
 	int width = part->width, height = part->height;
 	unsigned maskX, maskY;
 	unsigned X = 0, Y = 0;
@@ -674,12 +674,12 @@ void Gfx_UpdateTexture(GfxResourceID texId, int originX, int originY, struct Bit
 	for (int x = 0; x < originX; x++) { X = (X - maskX) & maskX; }
 	for (int y = 0; y < originY; y++) { Y = (Y - maskY) & maskY; }
 	unsigned startX = X;
-	
+
 	for (int y = 0; y < height; y++)
 	{
 		cc_uint32* src = part->scan0 + rowWidth * y;
 		X = startX;
-		
+
 		for (int x = 0; x < width; x++, src++)
 		{
 			dst[X | Y] = *src;
@@ -687,7 +687,7 @@ void Gfx_UpdateTexture(GfxResourceID texId, int originX, int originY, struct Bit
 		}
 		Y = (Y - maskY) & maskY;
 	}
-	
+
 	rsxInvalidateTextureCache(context, GCM_INVALIDATE_TEXTURE);
 	/* TODO */
 }
@@ -738,7 +738,7 @@ void Gfx_EnableTextureOffset(float x, float y) {
 	textureOffseting = true;
 	textureOffset[0] = x;
 	textureOffset[1] = y;
-	
+
 	VP_SwitchActive();
 	VP_UpdateUniforms();
 }
@@ -756,7 +756,7 @@ void Gfx_SetVertexFormat(VertexFormat fmt) {
 	if (fmt == gfx_format) return;
 	gfx_format = fmt;
 	gfx_stride = strideSizes[fmt];
-	
+
 	VP_SwitchActive();
 	FP_SwitchActive();
 }

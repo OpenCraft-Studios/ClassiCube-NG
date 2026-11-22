@@ -63,7 +63,7 @@ enum {
 
 #define GX_NOP() \
 	FIFO_PUSH_U8(CP_CMD_NOP);
-	
+
 #define GX_LOAD_XF_REGISTERS(start_reg, num_regs) \
 	FIFO_PUSH_U8(CP_CMD_LOAD_XF_REGS); \
 	FIFO_PUSH_U32( ((((num_regs) - 1) & 0xFFFF) << 16) | (start_reg) ); \
@@ -91,10 +91,10 @@ typedef enum {
 	XF_BASE_MATRIX12, XF_BASE_MATRIX13, XF_BASE_MATRIX14,
 	XF_BASE_MATRIX15, XF_BASE_MATRIX16, XF_BASE_MATRIX17,
 	XF_BASE_MATRIX18, XF_BASE_MATRIX19, XF_BASE_MATRIX20,
-	
+
 	// Default mapping, allocate first 10 matrices for positions
-	// (that way can use the same index as a corresponding normal matrix) 
-	XF_POS_MATRIX0 = XF_BASE_MATRIX00, 
+	// (that way can use the same index as a corresponding normal matrix)
+	XF_POS_MATRIX0 = XF_BASE_MATRIX00,
 	XF_POS_MATRIX1 = XF_BASE_MATRIX01,
 	XF_POS_MATRIX2 = XF_BASE_MATRIX02,
 	XF_POS_MATRIX3 = XF_BASE_MATRIX03,
@@ -107,7 +107,7 @@ typedef enum {
 
 	// Default mapping, allocate rest of matrices for textures
 	// (avoids overlapping with position matrices)
-	XF_TEX_MATRIX0 = XF_BASE_MATRIX10, 
+	XF_TEX_MATRIX0 = XF_BASE_MATRIX10,
 	XF_TEX_MATRIX1 = XF_BASE_MATRIX11,
 	XF_TEX_MATRIX2 = XF_BASE_MATRIX12,
 	XF_TEX_MATRIX3 = XF_BASE_MATRIX13,

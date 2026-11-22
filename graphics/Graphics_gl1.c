@@ -8,7 +8,7 @@
 
 #include <Core.h>
 #include "_GraphicsBase.h"
-#include "Errors.h"
+#include "../opencraft/Errors.h"
 #include <Window.h>
 
 #if defined CC_BUILD_WIN

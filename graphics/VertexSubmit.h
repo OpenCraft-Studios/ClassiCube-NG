@@ -1,10 +1,10 @@
 typedef struct {
-    // Same layout as a PVR vertex
-    uint32_t flags;
-    float x, y, w;
-    uint32_t u, v; // really floats, but stored as uint for better load/store codegen
-    uint32_t bgra;
-    float z; // actually oargb, but repurposed since unused
+	// Same layout as a PVR vertex
+	uint32_t flags;
+	float x, y, w;
+	uint32_t u, v; // really floats, but stored as uint for better load/store codegen
+	uint32_t bgra;
+	float z; // actually oargb, but repurposed since unused
 } __attribute__ ((aligned (32))) Vertex;
 
 void CC_NOINLINE SubmitCommands(Vertex* v3, int n);
@@ -61,10 +61,10 @@ extern void ProcessVertexList(Vertex* v3, int n, void* sq_addr);
 
 void SubmitCommands(Vertex* v3, int n) {
 	volatile Vertex* dst = (volatile Vertex*)MEM_AREA_SQ_BASE;
-    Vertex* vEnd = v3 + n;
+	Vertex* vEnd = v3 + n;
 	asm volatile ("fschg"); // swap to 64 bit loads/stores
 
-	for (; v3 < vEnd; v3++) 
+	for (; v3 < vEnd; v3++)
 	{
 		// Preload next vertex into memory
 		__builtin_prefetch(v3 + 1);

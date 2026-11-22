@@ -1,7 +1,7 @@
 #define CC_DYNAMIC_VBS_ARE_STATIC
-#include "../_GraphicsBase.h"
-#include "../Errors.h"
-#include "../Logger.h"
+#include "_GraphicsBase.h"
+#include "../opencraft/Errors.h"
+#include "../opencraft/Logger.h"
 #include <Window.h>
 
 #include <vitasdk.h>
@@ -101,34 +101,34 @@ void* AllocGPUMemory(int size, int type, int gpu_access, SceUID* ret_uid, const 
 	char buffer[128];
 	cc_string str;
 	void* addr;
-	
+
 	if (type == SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RW) {
 		size = CC_ALIGNUP(size, 256 * 1024);
 	} else {
 		size = CC_ALIGNUP(size, 4 * 1024);
 	}
 	String_InitArray_NT(str, buffer);
-	
+
 	// https://wiki.henkaku.xyz/vita/SceSysmem
 	SceUID uid = sceKernelAllocMemBlock(memType, type, size, NULL);
 	if (uid < 0) {
 		String_Format2(&str, "Failed to allocate GPU memory block for %c (%i bytes)%N", memType, &size);
 		Process_Abort2(uid, buffer);
 	}
-		
+
 	int res1 = sceKernelGetMemBlockBase(uid, &addr);
 	if (res1 < 0) {
 		String_Format1(&str, "Failed to get base of GPU memory block for %c%N", memType);
 		Process_Abort2(res1, buffer);
 	}
-		
+
 	int res2 = sceGxmMapMemory(addr, size, gpu_access);
 	if (res2 < 0) {
 		String_Format2(&str, "Failed to map memory for GPU usage for %c (%i bytes)%N", memType, &size);
 		Process_Abort2(res2, buffer);
 	}
 	// https://wiki.henkaku.xyz/vita/GPU
-	
+
 	*ret_uid = uid;
 	return addr;
 }
@@ -200,7 +200,7 @@ static VertexProgram* VP_Active;
 static float transposed_mvp[4*4] CC_ALIGNED(64);
 
 static void VP_DirtyUniform(int uniform) {
-	for (int i = 0; i < Array_Elems(VP_list); i++) 
+	for (int i = 0; i < Array_Elems(VP_list); i++)
 	{
 		VP_list[i].dirtyUniforms |= uniform;
 	}
@@ -215,23 +215,23 @@ static void VP_ReloadUniforms(void) {
 
 	if (VP->dirtyUniforms & VP_UNI_MATRIX) {
 		void *uniform_buffer = NULL;
-		
+
 		ret = sceGxmReserveVertexDefaultUniformBuffer(gxm_context, &uniform_buffer);
 		if (ret) Process_Abort2(ret, "Reserving uniform buffer");
 		ret = sceGxmSetUniformDataF(uniform_buffer, VP->param_uni_mvp, 0, 4 * 4, transposed_mvp);
 		if (ret) Process_Abort2(ret, "Updating uniform buffer");
-			
+
 		VP->dirtyUniforms &= ~VP_UNI_MATRIX;
 	}
 }
 
 static void VP_SwitchActive(void) {
 	int index = gfx_format == VERTEX_FORMAT_TEXTURED ? 1 : 0;
-	
+
 	VertexProgram* VP = &VP_list[index];
 	if (VP == VP_Active) return;
 	VP_Active = VP;
-	
+
 	VP->dirtyUniforms |= VP_UNI_MATRIX; // Need to update uniforms after switching program
 	sceGxmSetVertexProgram(gxm_context, VP->programPatched);
 	VP_ReloadUniforms();
@@ -246,20 +246,20 @@ static FragmentProgram* FP_Active;
 
 static void FP_SwitchActive(void) {
 	int index = gfx_format == VERTEX_FORMAT_TEXTURED ? 3 : 0;
-	
+
 	// [normal rendering, blend rendering, no rendering]
 	if (gfx_depthOnly) {
 		index += 2;
 	} else if (gfx_alphaBlend) {
 		index += 1;
 	}
-	
+
 	if (gfx_alphaTest) index += 2 * 3;
-	
+
 	FragmentProgram* FP = &FP_list[index];
 	if (FP == FP_Active) return;
 	FP_Active = FP;
-	
+
 	sceGxmSetFragmentProgram(gxm_context, FP->programPatched);
 }
 
@@ -286,7 +286,7 @@ static const SceGxmBlendInfo* blend_modes[] = { &no_blending, &yes_blending, &no
 
 static void CreateFragmentPrograms(int index, const SceGxmProgram* fragProgram, const SceGxmProgram* vertexProgram) {
 	SceGxmShaderPatcherId programID;
-	
+
 	for (int i = 0; i < Array_Elems(blend_modes); i++)
 	{
 		FragmentProgram* FP = &FP_list[index + i];
@@ -308,14 +308,14 @@ void (*DQ_OnNextFrame)(void* fb);
 
 static void DQ_OnNextFrame3D(void* fb) {
 	if (gfx_vsync) sceDisplayWaitVblankStart();
-	
+
 	GPUBuffers_DeleteUnreferenced();
 	GPUTextures_DeleteUnreferenced();
 	frameCounter++;
 }
 
 static void DQCallback(const void *callback_data) {
-	SceDisplayFrameBuf fb = { 0 }; 
+	SceDisplayFrameBuf fb = { 0 };
 
 	fb.size   = sizeof(SceDisplayFrameBuf);
 	fb.base   = ((struct DQCallbackData*)callback_data)->addr;
@@ -330,12 +330,12 @@ static void DQCallback(const void *callback_data) {
 
 void Gfx_InitGXM(void) { // called from Window_Init
 	SceGxmInitializeParams params = { 0 };
-	
+
 	params.displayQueueMaxPendingCount  = MAX_PENDING_SWAPS;
 	params.displayQueueCallback         = DQCallback;
 	params.displayQueueCallbackDataSize = sizeof(struct DQCallbackData);
 	params.parameterBufferSize = SCE_GXM_DEFAULT_PARAMETER_BUFFER_SIZE;
-	
+
 	sceGxmInitialize(&params);
 }
 
@@ -358,19 +358,19 @@ static void AllocRingBuffers(void) {
 
 static void AllocGXMContext(void) {
 	SceGxmContextParams params = { 0 };
-	
+
 	params.hostMem     = Mem_Alloc(1, SCE_GXM_MINIMUM_CONTEXT_HOST_MEM_SIZE, "Host memory");
 	params.hostMemSize = SCE_GXM_MINIMUM_CONTEXT_HOST_MEM_SIZE;
-	
+
 	params.vdmRingBufferMem     = vdm_ring_buffer_addr;
 	params.vdmRingBufferMemSize = SCE_GXM_DEFAULT_VDM_RING_BUFFER_SIZE;
-	
+
 	params.vertexRingBufferMem     = vertex_ring_buffer_addr;
 	params.vertexRingBufferMemSize = SCE_GXM_DEFAULT_VERTEX_RING_BUFFER_SIZE;
-	
+
 	params.fragmentRingBufferMem     = fragment_ring_buffer_addr;
 	params.fragmentRingBufferMemSize = SCE_GXM_DEFAULT_FRAGMENT_RING_BUFFER_SIZE;
-	
+
 	params.fragmentUsseRingBufferMem     = fragment_usse_ring_buffer_addr;
 	params.fragmentUsseRingBufferMemSize = SCE_GXM_DEFAULT_FRAGMENT_USSE_RING_BUFFER_SIZE;
 	params.fragmentUsseRingBufferOffset  = fragment_usse_offset;
@@ -380,7 +380,7 @@ static void AllocGXMContext(void) {
 
 static void AllocRenderTarget(void) {
 	SceGxmRenderTargetParams params = { 0 };
-	
+
 	params.width  = DISPLAY_WIDTH;
 	params.height = DISPLAY_HEIGHT;
 	params.scenesPerFrame = 1;
@@ -391,7 +391,7 @@ static void AllocRenderTarget(void) {
 
 static void AllocColorBuffer(int i) {
 	int size = CC_ALIGNUP(4 * DISPLAY_STRIDE * DISPLAY_HEIGHT, 1 * 1024 * 1024);
-	
+
 	gxm_color_surfaces_addr[i] = AllocGPUMemory(size, SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RW,
 									SCE_GXM_MEMORY_ATTRIB_RW, &gxm_color_surfaces_uid[i], "color buffer");
 
@@ -421,7 +421,7 @@ static void AllocDepthBuffer(void) {
 }
 
 static void AllocShaderPatcherMemory(void) {
-	gxm_shader_patcher_buffer_addr = AllocGPUMemory(shader_patcher_buffer_size, 
+	gxm_shader_patcher_buffer_addr = AllocGPUMemory(shader_patcher_buffer_size,
 		SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RW, SCE_GXM_MEMORY_ATTRIB_READ,
 		&gxm_shader_patcher_buffer_uid, "shader patcher");
 
@@ -438,14 +438,14 @@ static void AllocShaderPatcher(void) {
 	SceGxmShaderPatcherParams params = { 0 };
 	params.hostAllocCallback = AllocShaderPatcherMem;
 	params.hostFreeCallback  = FreeShaderPatcherMem;
-	
+
 	params.bufferMem     = gxm_shader_patcher_buffer_addr;
 	params.bufferMemSize = shader_patcher_buffer_size;
-	
+
 	params.vertexUsseMem     = gxm_shader_patcher_vertex_usse_addr;
 	params.vertexUsseMemSize = shader_patcher_vertex_usse_size;
 	params.vertexUsseOffset  = shader_patcher_vertex_usse_offset;
-	
+
 	params.fragmentUsseMem     = gxm_shader_patcher_fragment_usse_addr;
 	params.fragmentUsseMemSize = shader_patcher_fragment_usse_size;
 	params.fragmentUsseOffset  = shader_patcher_fragment_usse_offset;
@@ -466,19 +466,19 @@ static void AllocColouredVertexProgram(int index) {
 
 	SceGxmVertexAttribute attribs[2];
 	SceGxmVertexStream vertex_stream;
-	
+
 	attribs[0].streamIndex    = 0;
 	attribs[0].offset         = 0;
 	attribs[0].format         = SCE_GXM_ATTRIBUTE_FORMAT_F32;
 	attribs[0].componentCount = 3;
 	attribs[0].regIndex       = sceGxmProgramParameterGetResourceIndex(VP->param_in_position);
-		
+
 	attribs[1].streamIndex    = 0;
 	attribs[1].offset         = 3 * sizeof(float);
 	attribs[1].format         = SCE_GXM_ATTRIBUTE_FORMAT_U8N;
 	attribs[1].componentCount = 4;
 	attribs[1].regIndex       = sceGxmProgramParameterGetResourceIndex(VP->param_in_color);
-		
+
 	vertex_stream.stride      = SIZEOF_VERTEX_COLOURED;
 	vertex_stream.indexSource = SCE_GXM_INDEX_SOURCE_INDEX_16BIT;
 
@@ -501,25 +501,25 @@ static void AllocTexturedVertexProgram(int index) {
 
 	SceGxmVertexAttribute attribs[3];
 	SceGxmVertexStream vertex_stream;
-	
+
 	attribs[0].streamIndex    = 0;
 	attribs[0].offset         = 0;
 	attribs[0].format         = SCE_GXM_ATTRIBUTE_FORMAT_F32;
 	attribs[0].componentCount = 3;
 	attribs[0].regIndex       = sceGxmProgramParameterGetResourceIndex(VP->param_in_position);
-		
+
 	attribs[1].streamIndex    = 0;
 	attribs[1].offset         = 3 * sizeof(float);
 	attribs[1].format         = SCE_GXM_ATTRIBUTE_FORMAT_U8N;
 	attribs[1].componentCount = 4;
 	attribs[1].regIndex       = sceGxmProgramParameterGetResourceIndex(VP->param_in_color);
-		
+
 	attribs[2].streamIndex    = 0;
 	attribs[2].offset         = 3 * sizeof(float) + 4 * sizeof(char);
 	attribs[2].format         = SCE_GXM_ATTRIBUTE_FORMAT_F32;
 	attribs[2].componentCount = 2;
 	attribs[2].regIndex       = sceGxmProgramParameterGetResourceIndex(VP->param_in_texcoord);
-		
+
 	vertex_stream.stride      = SIZEOF_VERTEX_TEXTURED;
 	vertex_stream.indexSource = SCE_GXM_INDEX_SOURCE_INDEX_16BIT;
 
@@ -538,12 +538,12 @@ static void SetDefaultStates(void) {
 }
 
 void Gfx_AllocFramebuffers(void) { // called from Window_Init
-	for (int i = 0; i < NUM_DISPLAY_BUFFERS; i++) 
+	for (int i = 0; i < NUM_DISPLAY_BUFFERS; i++)
 	{
 		AllocColorBuffer(i);
 	}
 	AllocDepthBuffer();
-	
+
 	frontBufferIndex = NUM_DISPLAY_BUFFERS - 1;
 	backBufferIndex  = 0;
 }
@@ -551,11 +551,11 @@ void Gfx_AllocFramebuffers(void) { // called from Window_Init
 static void InitGPU(void) {
 	AllocRingBuffers();
 	AllocGXMContext();
-	
+
 	AllocRenderTarget();
 	AllocShaderPatcherMemory();
 	AllocShaderPatcher();
-	
+
 	AllocColouredVertexProgram(0);
 	CreateFragmentPrograms(0, gxm_colored_FP,        gxm_colored_VP);
 	CreateFragmentPrograms(6, gxm_colored_alpha_FP,  gxm_colored_VP);
@@ -568,20 +568,20 @@ void Gfx_Create(void) {
 	DQ_OnNextFrame = DQ_OnNextFrame3D;
 	if (!Gfx.Created) InitGPU();
 	in_scene = false;
-	
+
 	Gfx.MaxTexWidth  = 1024;
 	Gfx.MaxTexHeight = 1024;
 	Gfx.MaxTexSize   = 512 * 512;
 	Gfx.Created      = true;
 	gfx_vsync        = true;
-	
+
 	Gfx_SetDepthTest(true);
 	Gfx_SetVertexFormat(VERTEX_FORMAT_COLOURED);
 	Gfx_RestoreState();
 	Gfx.NonPowTwoTexturesSupport = GFX_NONPOW2_UPLOAD;
 }
 
-void Gfx_Free(void) { 
+void Gfx_Free(void) {
 	Gfx_FreeState();
 }
 
@@ -589,7 +589,7 @@ cc_bool Gfx_TryRestoreContext(void) { return true; }
 
 static void Gfx_RestoreState(void) {
 	InitDefaultResources();
-	
+
 	// 1x1 dummy white texture
 	struct Bitmap bmp;
 	BitmapCol pixels[1] = { BITMAPCOLOR_WHITE };
@@ -599,7 +599,7 @@ static void Gfx_RestoreState(void) {
 }
 
 static void Gfx_FreeState(void) {
-	FreeDefaultResources(); 
+	FreeDefaultResources();
 	Gfx_DeleteTexture(&white_square);
 }
 
@@ -620,8 +620,8 @@ static struct GPUTexture* del_textures_tail;
 
 struct GPUTexture* GPUTexture_Alloc(int size) {
 	struct GPUTexture* tex = Mem_AllocCleared(1, sizeof(struct GPUTexture), "GPU texture");
-	
-	tex->data = AllocGPUMemory(size, 
+
+	tex->data = AllocGPUMemory(size,
 		SCE_KERNEL_MEMBLOCK_TYPE_USER_CDRAM_RW, SCE_GXM_MEMORY_ATTRIB_READ,
 		&tex->uid, "texture");
 	return tex;
@@ -643,30 +643,30 @@ static void GPUTexture_Free(struct GPUTexture* tex) {
 
 static void GPUTextures_DeleteUnreferenced(void) {
 	if (!del_textures_head) return;
-	
+
 	struct GPUTexture* tex;
 	struct GPUTexture* next;
 	struct GPUTexture* prev = NULL;
-	
+
 	for (tex = del_textures_head; tex != NULL; tex = next)
 	{
 		next = tex->next;
-		
+
 		if (tex->lastFrame + 4 > frameCounter) {
 			// texture was used within last 4 fames
 			prev = tex;
 		} else {
 			// advance the head of the linked list
-			if (del_textures_head == tex) 
+			if (del_textures_head == tex)
 				del_textures_head = next;
 
 			// update end of linked list if necessary
 			if (del_textures_tail == tex)
 				del_textures_tail = prev;
-			
+
 			// unlink this texture from the linked list
 			if (prev) prev->next = next;
-			
+
 			GPUTexture_Free(tex);
 		}
 	}
@@ -692,11 +692,11 @@ static CC_INLINE void TwiddleCalcFactors(unsigned w, unsigned h, unsigned* maskX
 		} else if (w > 1) {
 			// Add a linear X bit
 			*maskX += 0x01 << shift;
-			shift  += 1;		
+			shift  += 1;
 		} else if (h > 1) {
 			// Add a linear Y bit
 			*maskY += 0x01 << shift;
-			shift  += 1;		
+			shift  += 1;
 		}
 	}
 }
@@ -706,12 +706,12 @@ static CC_INLINE void UploadFullTexture(struct Bitmap* bmp, int rowWidth, cc_uin
 	unsigned maskX, maskY;
 	unsigned X = 0, Y = 0;
 	TwiddleCalcFactors(dst_w, dst_h, &maskX, &maskY);
-	
+
 	for (int y = 0; y < src_h; y++)
 	{
 		cc_uint32* src = bmp->scan0 + y * rowWidth;
 		X = 0;
-		
+
 		for (int x = 0; x < src_w; x++, src++)
 		{
 			dst[X | Y] = *src;
@@ -732,12 +732,12 @@ static CC_INLINE void UploadPartialTexture(struct Bitmap* part, int rowWidth, cc
 	for (int x = 0; x < originX; x++) { X = (X - maskX) & maskX; }
 	for (int y = 0; y < originY; y++) { Y = (Y - maskY) & maskY; }
 	unsigned startX = X;
-	
+
 	for (int y = 0; y < src_h; y++)
 	{
 		cc_uint32* src = part->scan0 + y * rowWidth;
 		X = startX;
-		
+
 		for (int x = 0; x < src_w; x++, src++)
 		{
 			dst[X | Y] = *src;
@@ -759,10 +759,10 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 	struct GPUTexture* tex = GPUTexture_Alloc(size);
 	cc_uint32* dst = tex->data;
 	UploadFullTexture(bmp, rowWidth, dst, dst_w, dst_h);
-            
+
 	sceGxmTextureInitSwizzled(&tex->texture, dst,
 		SCE_GXM_TEXTURE_FORMAT_A8B8G8R8, dst_w, dst_h, 0);
-		
+
 	sceGxmTextureSetUAddrMode(&tex->texture, SCE_GXM_TEXTURE_ADDR_REPEAT);
 	sceGxmTextureSetVAddrMode(&tex->texture, SCE_GXM_TEXTURE_ADDR_REPEAT);
 	return tex;
@@ -789,7 +789,7 @@ void Gfx_DisableMipmaps(void) { }
 
 void Gfx_BindTexture(GfxResourceID texId) {
 	if (!texId) texId = white_square;
- 
+
  	struct GPUTexture* tex = (struct GPUTexture*)texId;
  	tex->lastFrame = frameCounter;
 	sceGxmSetFragmentTexture(gxm_context, 0, &tex->texture);
@@ -870,7 +870,7 @@ void Gfx_UpdateCommonDialogBuffers(void) {
 	param.renderTarget.colorSurfaceData = gxm_color_surfaces_addr[backBufferIndex];
 	param.renderTarget.depthSurfaceData = gxm_depth_stencil_surface.depthData;
 	param.displaySyncObject = gxm_sync_objects[backBufferIndex];
-	
+
 	sceCommonDialogUpdate(&param);
 }
 
@@ -914,8 +914,8 @@ static struct GPUBuffer* del_buffers_tail;
 
 struct GPUBuffer* GPUBuffer_Alloc(int size) {
 	struct GPUBuffer* buffer = Mem_AllocCleared(1, sizeof(struct GPUBuffer), "GPU buffer");
-	
-	buffer->data = AllocGPUMemory(size, 
+
+	buffer->data = AllocGPUMemory(size,
 		SCE_KERNEL_MEMBLOCK_TYPE_USER_RW_UNCACHE, SCE_GXM_MEMORY_ATTRIB_READ,
 		&buffer->uid, "buffer");
 	return buffer;
@@ -927,7 +927,7 @@ static void GPUBuffer_Unref(GfxResourceID* resource) {
 	struct GPUBuffer* buf = (struct GPUBuffer*)(*resource);
 	if (!buf) return;
 	*resource = NULL;
-	
+
 	LinkedList_Append(buf, del_buffers_head, del_buffers_tail);
 }
 
@@ -938,30 +938,30 @@ static void GPUBuffer_Free(struct GPUBuffer* buf) {
 
 static void GPUBuffers_DeleteUnreferenced(void) {
 	if (!del_buffers_head) return;
-	
+
 	struct GPUBuffer* buf;
 	struct GPUBuffer* next;
 	struct GPUBuffer* prev = NULL;
-	
+
 	for (buf = del_buffers_head; buf != NULL; buf = next)
 	{
 		next = buf->next;
-		
+
 		if (buf->lastFrame + 4 > frameCounter) {
 			// texture was used within last 4 fames
 			prev = buf;
 		} else {
 			// advance the head of the linked list
-			if (del_buffers_head == buf) 
+			if (del_buffers_head == buf)
 				del_buffers_head = next;
 
 			// update end of linked list if necessary
 			if (del_buffers_tail == buf)
 				del_buffers_tail = prev;
-			
+
 			// unlink this texture from the linked list
 			if (prev) prev->next = next;
-			
+
 			GPUBuffer_Free(buf);
 		}
 	}
@@ -994,7 +994,7 @@ static GfxResourceID Gfx_AllocStaticVb(VertexFormat fmt, int count) {
 	return GPUBuffer_Alloc(count * strideSizes[fmt]);
 }
 
-void Gfx_BindVb(GfxResourceID vb) { 
+void Gfx_BindVb(GfxResourceID vb) {
 	struct GPUBuffer* buffer = (struct GPUBuffer*)vb;
 	buffer->lastFrame = frameCounter;
 	sceGxmSetVertexStream(gxm_context, 0, buffer->data);
@@ -1036,7 +1036,7 @@ void Gfx_SetFogMode(FogFunc func) {
 static void SetAlphaTest(cc_bool enabled) {
 	FP_SwitchActive();
 }
- 
+
 static void SetAlphaBlend(cc_bool enabled) {
 	FP_SwitchActive();
 }
@@ -1047,7 +1047,7 @@ void Gfx_DepthOnlyRendering(cc_bool depthOnly) {
 	FP_SwitchActive();
 }
 
-void Gfx_SetFaceCulling(cc_bool enabled) { 
+void Gfx_SetFaceCulling(cc_bool enabled) {
 	sceGxmSetCullMode(gxm_context, enabled ? SCE_GXM_CULL_CW : SCE_GXM_CULL_NONE);
 }
 
@@ -1088,7 +1088,7 @@ void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
 	struct Matrix mvp CC_ALIGNED(64);
 	Matrix_Mul(&mvp, &_view, &_proj);
 	float* m = (float*)&mvp;
-	
+
 	// Transpose matrix
 	for (int i = 0; i < 4; i++)
 	{
@@ -1097,7 +1097,7 @@ void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
 		transposed_mvp[i * 4 + 2] = m[8  + i];
 		transposed_mvp[i * 4 + 3] = m[12 + i];
 	}
-	
+
 	VP_DirtyUniform(VP_UNI_MATRIX);
 	VP_ReloadUniforms();
 }
@@ -1112,7 +1112,7 @@ void Gfx_EnableTextureOffset(float x, float y) {
  // TODO
 }
 
-void Gfx_DisableTextureOffset(void) { 
+void Gfx_DisableTextureOffset(void) {
  // TODO
 }
 
@@ -1128,7 +1128,7 @@ void Gfx_SetVertexFormat(VertexFormat fmt) {
 	if (fmt == gfx_format) return;
 	gfx_format = fmt;
 	gfx_stride = strideSizes[fmt];
-	
+
 	VP_SwitchActive();
 	FP_SwitchActive();
 }
@@ -1165,22 +1165,22 @@ void Gfx_ClearBuffers(GfxBuffers buffers) {
 	if (!clearVB) {
 		clearVB = GPUBuffer_Alloc(4 * sizeof(struct VertexColoured));
 	}
-	
+
 	struct VertexColoured* clear_vertices = clearVB->data;
 	clear_vertices[0] = (struct VertexColoured){-1.0f, -1.0f, 1.0f, clear_color };
 	clear_vertices[1] = (struct VertexColoured){ 1.0f, -1.0f, 1.0f, clear_color };
 	clear_vertices[2] = (struct VertexColoured){ 1.0f,  1.0f, 1.0f, clear_color };
 	clear_vertices[3] = (struct VertexColoured){-1.0f,  1.0f, 1.0f, clear_color };
-	
+
 	Gfx_SetAlphaTest(false);
 	Gfx_SetDepthTest(false);
-	
+
 	Gfx_SetVertexFormat(VERTEX_FORMAT_COLOURED);
 	Gfx_LoadMatrix(MATRIX_VIEW, &Matrix_Identity);
 	Gfx_LoadMatrix(MATRIX_PROJ, &Matrix_Identity);
 	Gfx_BindVb(clearVB);
 	Gfx_DrawVb_IndexedTris(4);
-	
+
 	Gfx_SetDepthTest(true);
 }
 

@@ -4,7 +4,7 @@
 #include "../opencraft/PackedCol.h"
 CC_BEGIN_HEADER
 
-/* 
+/*
 SUMMARY:
 - Provides a low level abstraction over a 3D graphics rendering API.
 - Because of the numerous possible graphics backends, only a small number of
@@ -18,7 +18,7 @@ IMPLEMENTATION NOTES:
   * explicitly defining CC_GFX_BACKEND in the compilation flags (recommended)
   * altering DEFAULT_GFX_BACKEND for the platform in Core.h
 - graphics backends are implemented in Graphics_GL1.c, Graphics_D3D9.c etc
-   
+
 Copyright 2014-2025 ClassiCube | Licensed under BSD-3
 */
 struct Bitmap;
@@ -497,10 +497,10 @@ void Gfx_Draw2DTexture(const struct Texture* tex, PackedCol color);
 void Gfx_Make2DQuad(const struct Texture* tex, PackedCol color, struct VertexTextured** vertices);
 
 /* Builds 4 vertices for a 2D flat coloured rectangle */
-struct VertexColoured* Gfx_Build2DFlat(int x, int y, int width, int height, 
+struct VertexColoured* Gfx_Build2DFlat(int x, int y, int width, int height,
 										PackedCol color, struct VertexColoured* v);
 /* Builds 4 vertices for a 2D flat vertical gradient rectangle */
-struct VertexColoured* Gfx_Build2DGradient(int x, int y, int width, int height, 
+struct VertexColoured* Gfx_Build2DGradient(int x, int y, int width, int height,
 											PackedCol top, PackedCol bottom, struct VertexColoured* v);
 
 /* Switches state to be suitable for drawing 2D graphics */

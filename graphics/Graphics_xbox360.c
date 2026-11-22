@@ -1,15 +1,15 @@
 #define CC_DYNAMIC_VBS_ARE_STATIC
-#include "../_GraphicsBase.h"
-#include "../Errors.h"
+#include "_GraphicsBase.h"
+#include "../opencraft/Errors.h"
 #include <Window.h>
 
 #include <xenos/xe.h>
 #include <xenos/edram.h>
 
-#include "../../misc/xbox360/ps_coloured.h"
-#include "../../misc/xbox360/vs_coloured.h"
-#include "../../misc/xbox360/ps_textured.h"
-#include "../../misc/xbox360/vs_textured.h"
+#include "../misc/xbox360/ps_coloured.h"
+#include "../misc/xbox360/vs_coloured.h"
+#include "../misc/xbox360/ps_textured.h"
+#include "../misc/xbox360/vs_textured.h"
 
 static struct XenosShader* shdr_tex_vs;
 static struct XenosShader* shdr_tex_ps;
@@ -36,20 +36,20 @@ static void CreateState(void) {
 	xe = &device;
 	Xe_Init(xe);
 	edram_init(xe);
-	
+
 	struct XenosSurface* fb = Xe_GetFramebufferSurface(xe);
 	Xe_SetRenderTarget(xe, fb);
 }
 
 static void CreateShaders(void) {
 	shdr_tex_vs = Xe_LoadShaderFromMemory(xe, (void*)vs_textured);
-	Xe_InstantiateShader(xe, shdr_tex_vs, 0);	 
+	Xe_InstantiateShader(xe, shdr_tex_vs, 0);
 	Xe_ShaderApplyVFetchPatches(xe, shdr_tex_vs, 0, &textured_vbf);
 	shdr_tex_ps = Xe_LoadShaderFromMemory(xe, (void*)ps_textured);
 	Xe_InstantiateShader(xe, shdr_tex_ps, 0);
-    	
+
 	shdr_col_vs = Xe_LoadShaderFromMemory(xe, (void*)vs_coloured);
-	Xe_InstantiateShader(xe, shdr_col_vs, 0);	 
+	Xe_InstantiateShader(xe, shdr_col_vs, 0);
 	Xe_ShaderApplyVFetchPatches(xe, shdr_col_vs, 0, &coloured_vbf);
 	shdr_col_ps = Xe_LoadShaderFromMemory(xe, (void*)ps_coloured);
 	Xe_InstantiateShader(xe, shdr_col_ps, 0);
@@ -58,11 +58,11 @@ static void CreateShaders(void) {
 void Gfx_Create(void) {
 	if (!Gfx.Created) {
 		CreateState();
-		//CreateShaders(); TODO	
+		//CreateShaders(); TODO
 	}
 	Gfx.Created = true;
 	Gfx_SetVertexFormat(VERTEX_FORMAT_COLOURED);
-	
+
 	Gfx.MaxTexWidth  = 1024;
 	Gfx.MaxTexHeight = 1024;
 	Gfx.MaxTexSize   = 512 * 512;
@@ -76,7 +76,7 @@ void Gfx_Free(void) {
 	Gfx_FreeState();
 }
 
-static void Gfx_FreeState(void) { 
+static void Gfx_FreeState(void) {
 	FreeDefaultResources();
 }
 
@@ -100,7 +100,7 @@ static void SetTextureData(struct XenosSurface* xtex, int x, int y, const struct
 	CopyPixels(dst,        bmp->width * BITMAPCOLOR_SIZE,
 			   bmp->scan0, rowWidth   * BITMAPCOLOR_SIZE,
 			   bmp->width, bmp->height);
-	
+
 	Xe_Surface_Unlock(xe, xtex);
 }
 
@@ -196,7 +196,7 @@ static void SetColorWrite(cc_bool r, cc_bool g, cc_bool b, cc_bool a) {
 
 void Gfx_DepthOnlyRendering(cc_bool depthOnly) {
 	cc_bool enabled = !depthOnly;
-	SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1], 
+	SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1],
 				  enabled & gfx_colorMask[2], enabled & gfx_colorMask[3]);
 }
 
@@ -255,7 +255,7 @@ void Gfx_SetVertexFormat(VertexFormat fmt) {
 	Platform_LogConst("CHANGE FORMAT");
 	gfx_format = fmt;
 	gfx_stride = strideSizes[fmt];
-	
+
 	if (fmt == VERTEX_FORMAT_COLOURED) {
 		//Xe_SetTexture(xe, 0, NULL); TODO
 		//Xe_SetShader(xe,  SHADER_TYPE_PIXEL,  shdr_col_ps, 0); TODO
@@ -296,7 +296,7 @@ void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
 	struct Matrix* dst = type == MATRIX_PROJ ? &_proj : &_view;
 	*dst = *matrix;
 	Platform_LogConst("LOAD MATRIX");
-	
+
 	Matrix_Mul(&_mvp, &_view, &_proj);
 	// TODO: Is this a global uniform, or does it need to be reloaded on shader change?
 	//Xe_SetVertexShaderConstantF(xe, 0, (float*)&_mvp, 4); TODO
@@ -356,7 +356,7 @@ void Gfx_SetVSync(cc_bool vsync) {
 	gfx_vsync = vsync;
 }
 
-void Gfx_BeginFrame(void) { 
+void Gfx_BeginFrame(void) {
 	Platform_LogConst("BEGIN FRAME");
 }
 

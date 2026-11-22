@@ -1,8 +1,8 @@
 #define CC_DYNAMIC_VBS_ARE_STATIC
-#include "../_GraphicsBase.h"
-#include "../Errors.h"
+#include "_GraphicsBase.h"
 #include <Window.h>
-#include "../_BlockAlloc.h"
+#include "../opencraft/Errors.h"
+#include "../opencraft/_BlockAlloc.h"
 
 #include <dma_tags.h>
 #include <gif_tags.h>
@@ -54,7 +54,7 @@ static GfxResourceID white_square;
 
 static void Gfx_RestoreState(void) {
 	InitDefaultResources();
-	
+
 	// 4x4 dummy white texture
 	struct Bitmap bmp;
 	BitmapCol pixels[4 * 4];
@@ -73,7 +73,7 @@ static void UpdateContext(void) {
 	fb_draw    = &fb_colors[cur_context ^ 1];
 
 	cur_buf = dma_bufs[cur_context];
-	
+
 	dma_beg = cur_buf;
 	// increment past the dmatag itself
 	Q = dma_beg + 1;
@@ -174,7 +174,7 @@ static qword_t* GS_InitRegisters(qword_t* q, framebuffer_t* fb, zbuffer_t* zb) {
 								0x00,         ATEST_KEEP_ALL,
 								DRAW_DISABLE, 0,
 								DRAW_ENABLE,  ZTEST_METHOD_ALLPASS), GS_REG_TEST); q++;
-	
+
 		// https://psi-rockin.github.io/ps2tek/#gsalphablending
 		// Output = (((A - B) * C) >> 7) + D
 		//        = (((src - dst) * alpha) >> 7) + dst
@@ -183,18 +183,18 @@ static qword_t* GS_InitRegisters(qword_t* q, framebuffer_t* fb, zbuffer_t* zb) {
 		//        = ((src * alpha + dst * (128 - alpha)) / 128
 		PACK_GIFTAG(q, GS_SET_ALPHA(BLEND_COLOR_SOURCE, BLEND_COLOR_DEST, BLEND_ALPHA_SOURCE,
 									BLEND_COLOR_DEST, 0x80), GS_REG_ALPHA); q++; // TODO has no effect ??
-	
+
 		PACK_GIFTAG(q, GS_SET_DTHE(GS_DISABLE), GS_REG_DTHE); q++; // dithering off (no need to set matrix)
 		PACK_GIFTAG(q, GS_SET_COLCLAMP(GS_ENABLE), GS_REG_COLCLAMP); q++; // colour clamping on
 		PACK_GIFTAG(q, GS_SET_FBA(ALPHA_CORRECT_RGBA32), GS_REG_FBA); q++; // NOTE: change to RGBA16 for 16bpp framebuffer
 		PACK_GIFTAG(q, GS_SET_PABE(DRAW_DISABLE), GS_REG_PABE); q++; // per pixel alpha blending
-	
+
 		// Texture settings
 		PACK_GIFTAG(q, GS_SET_CLAMP(WRAP_REPEAT, WRAP_REPEAT, 0,0,0,0), GS_REG_CLAMP); q++;
 		PACK_GIFTAG(q, GS_SET_TEXA(0x80, ALPHA_EXPAND_NORMAL, 0x80), GS_REG_TEXA); q++;
 		// TODO: should mipmapselect (first 0 after MIN_NEAREST) be 1?
 		PACK_GIFTAG(q, GS_SET_TEX1(LOD_USE_K, 0, LOD_MAG_NEAREST, LOD_MIN_NEAREST, 0, 0, 0), GS_REG_TEX1); q++;
-	}	
+	}
 	return q;
 }
 
@@ -214,7 +214,7 @@ static void InitGuardband(void) {
 	//  left and right guardband planes.
 	// So to simplify calculation, just set viewport = screen size for clipping:
 	// - 0 < (X/W) * SCR_HWIDTH + (GB_HALF) < GB_RANGE
-	// - -GB_HALF < (X/W) * SCR_HWIDTH < GB_HALF 
+	// - -GB_HALF < (X/W) * SCR_HWIDTH < GB_HALF
 	// - -GB_HALF/SCR_HWIDTH < (X/W) < GB_HALF/SCR_HWIDTH
 	// - W * -GB_HALF/SCR_HWIDTH < X < W * GB_HALF/SCR_HWIDTH
 	// - -W < X / (GB_HALF/SCR_HWIDTH) < W
@@ -255,27 +255,27 @@ void Gfx_Create(void) {
 
 	cur_context = 0;
 	UpdateContext();
-	
+
 	stateDirty  = true;
 	formatDirty = true;
 	InitDrawingEnv();
 	InitGuardband();
 	Gfx_OnWindowResize();
-	
+
 // TODO maybe Min not actually needed?
 	Gfx.MinTexWidth  = 4;
-	Gfx.MinTexHeight = 4;	
+	Gfx.MinTexHeight = 4;
 	Gfx.MaxTexWidth  = 1024;
 	Gfx.MaxTexHeight = 1024;
 	Gfx.MaxTexSize   = 256 * 256;
 	Gfx.MaxLowResTexSize = 512 * 512; // TODO better fix, needed for onscreen keyboard
 	Gfx.Created      = true;
-	
+
 	Gfx.NonPowTwoTexturesSupport = GFX_NONPOW2_UPLOAD;
 	Gfx_RestoreState();
 }
 
-void Gfx_Free(void) { 
+void Gfx_Free(void) {
 	Gfx_FreeState();
 }
 
@@ -316,7 +316,7 @@ static int VRAM_Size(int width, int height, int psm) {
 		case GS_PSM_4HL:
 		case GS_PSM_4HH:
 		case GS_PSMZ_24:
-		case GS_PSMZ_32:	
+		case GS_PSMZ_32:
 			return width * height;
 	}
 	return 0;
@@ -366,7 +366,7 @@ static int CalcTransferBytes(int width, int height, int psm) {
 	return 0;
 }
 
-static qword_t* PrepareTransfer(qword_t* q, u8* src, int width, int height, int psm, 
+static qword_t* PrepareTransfer(qword_t* q, u8* src, int width, int height, int psm,
 								int dst_base, int dst_width)
 {
 	int  bytes = CalcTransferBytes(width, height, psm);
@@ -415,7 +415,7 @@ static qword_t* PrepareTransfer(qword_t* q, u8* src, int width, int height, int 
 	return q;
 }
 
-void Gfx_TransferPixels(void* src, int width, int height, 
+void Gfx_TransferPixels(void* src, int width, int height,
 						int format, unsigned dst_base, unsigned dst_stride) {
 	qword_t buf[200] CACHELINE_ALIGNED;
 	qword_t* q = buf;
@@ -482,7 +482,7 @@ static qword_t* UploadPalette(qword_t* q, BitmapCol* palette) {
 }
 
 static CC_INLINE int FindInPalette(BitmapCol* palette, int pal_count, BitmapCol color) {
-	for (int i = 0; i < pal_count; i++) 
+	for (int i = 0; i < pal_count; i++)
 	{
 		if (palette[i] == color) return i;
 	}
@@ -494,10 +494,10 @@ static int CalcPalette(BitmapCol* palette, struct Bitmap* bmp, int rowWidth) {
 
 	BitmapCol* row = bmp->scan0;
 	int pal_count  = 0;
-	
+
 	for (int y = 0; y < height; y++, row += rowWidth)
 	{
-		for (int x = 0; x < width; x++) 
+		for (int x = 0; x < width; x++)
 		{
 			BitmapCol color = row[x];
 			int idx = FindInPalette(palette, pal_count, color);
@@ -561,18 +561,18 @@ static void UploadToVRAM(struct GPUTexture* tex, int dst_addr) {
 	if (tex->format != GS_PSM_32 && (src_w & 1)) src_w++;
 
 	int dst_stride = GS_TEXTURE_STRIDE(tex);
-	Gfx_TransferPixels(tex->pixels, src_w, src_h, 
+	Gfx_TransferPixels(tex->pixels, src_w, src_h,
 						tex->format, dst_addr, dst_stride);
 }
 
 static void ConvertTexture_Palette(cc_uint8* dst, struct Bitmap* bmp, int rowWidth, BitmapCol* palette, int pal_count) {
 	int width  = (bmp->width + 1) >> 1;
 	int height = bmp->height;
-	
+
 	for (int y = 0; y < height; y++)
 	{
 		BitmapCol* src = bmp->scan0 + y * rowWidth;
-		
+
 		for (int x = 0; x < width; x++, src += 2)
 		{
 			int pal_0 = FindInPalette(palette, pal_count, src[0]);
@@ -600,7 +600,7 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 		pal_count = CalcPalette(palette, bmp, rowWidth);
 	}
 	//Platform_Log4("%i, c%i (%i x %i)", &pal_index, &pal_count, &bmp->width, &bmp->height);
-	
+
 	if (pal_count > 0) {
 		struct GPUTexture* tex = memalign(16, sizeof(struct GPUTexture) + bmp->width * bmp->height);
 		if (!tex) return 0;
@@ -611,7 +611,7 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 		tex->format = GS_PSM_4;
 		ConvertTexture_Palette((cc_uint8*)tex->pixels, bmp, rowWidth, palette, pal_count);
 
-		int size    = VRAM_Size(tex->width, CC_ALIGNUP(tex->height, 32), GS_PSM_4HH);		
+		int size    = VRAM_Size(tex->width, CC_ALIGNUP(tex->height, 32), GS_PSM_4HH);
 		// TODO fix properly. alignup instead
 		int blocks  = SIZE_TO_BLOCKS(size, TEXMEM_BLOCK_SIZE);
 		tex->blocks = blocks;
@@ -644,11 +644,11 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 		GPUTexture_Init(tex, bmp);
 
 		tex->format = GS_PSM_32;
-		CopyPixels(tex->pixels, bmp->width * BITMAPCOLOR_SIZE, 
+		CopyPixels(tex->pixels, bmp->width * BITMAPCOLOR_SIZE,
 				   bmp->scan0,  rowWidth * BITMAPCOLOR_SIZE,
 				   bmp->width,  bmp->height);
 
-		//int size    = VRAM_Size(1 << tex->log2_w, max(32, 1 << tex->log2_h), GS_PSM_4HH);		
+		//int size    = VRAM_Size(1 << tex->log2_w, max(32, 1 << tex->log2_h), GS_PSM_4HH);
 		// TODO fix properly. alignup instead
 		//int blocks  = SIZE_TO_BLOCKS(size, TEXMEM_BLOCK_SIZE); size = blocks / (2048 / 64);
 		//Platform_Log4("32BPP: b %i / p %i (%i X %i)", &size, &blocks, &bmp->width, &bmp->height);
@@ -678,9 +678,9 @@ static qword_t* UpdateTextureBuffer(qword_t* q, struct GPUTexture* tex, unsigned
 void Gfx_BindTexture(GfxResourceID texId) {
 	if (!texId) texId = white_square;
 	struct GPUTexture* tex = (struct GPUTexture*)texId;
-	
+
 	int dst_addr = tex_offset;
-	
+
 	if (tex->format == GS_PSM_4HH || tex->format == GS_PSM_4HL) {
 		// No need to upload whole texture to vram
 		dst_addr = TEXMEM_4BPP_TO_VRAM(tex->base);
@@ -691,7 +691,7 @@ void Gfx_BindTexture(GfxResourceID texId) {
 	}
 	Q = UpdateTextureBuffer(Q, tex, dst_addr);
 }
-		
+
 void Gfx_DeleteTexture(GfxResourceID* texId) {
 	struct GPUTexture* tex = (struct GPUTexture*)(*texId);
 	if (!tex) return;
@@ -711,7 +711,7 @@ void Gfx_UpdateTexture(GfxResourceID texId, int x, int y, struct Bitmap* part, i
 	struct GPUTexture* tex = (struct GPUTexture*)texId;
 	BitmapCol* dst = (tex->pixels + x) + y * tex->width;
 
-	CopyPixels(dst,        tex->width * BITMAPCOLOR_SIZE, 
+	CopyPixels(dst,        tex->width * BITMAPCOLOR_SIZE,
 			  part->scan0, rowWidth   * BITMAPCOLOR_SIZE,
 			  part->width, part->height);
 }
@@ -736,7 +736,7 @@ static qword_t* UpdateState(qword_t* q) {
 	// TODO: toggle Enable instead of method ?
 	int aMethod = gfx_alphaTest ? ATEST_METHOD_GREATER_EQUAL : ATEST_METHOD_ALLPASS;
 	int zMethod = gfx_depthTest ? ZTEST_METHOD_GREATER_EQUAL : ZTEST_METHOD_ALLPASS;
-	
+
 	PACK_SIMPLE_HDR(q, 1, true)
 	{
 		// NOTE: Reference value is 0x40 instead of 0x80, since alpha values are halved compared to normal
@@ -750,7 +750,7 @@ static qword_t* UpdateState(qword_t* q) {
 
 static qword_t* UpdateFormat(qword_t* q) {
 	cc_bool texturing = gfx_format == VERTEX_FORMAT_TEXTURED;
-	
+
 	PACK_SIMPLE_HDR(q, 1, true)
 	{
 		PACK_GIFTAG(q, GS_SET_PRMODE(PRIM_SHADE_GOURAUD, texturing, DRAW_DISABLE,
@@ -787,7 +787,7 @@ static qword_t* ClearBuffers(qword_t *q, framebuffer_t* fb, zbuffer_t* zb) {
 		PACK_GIFTAG(q, PRIM_SPRITE, GS_REG_PRIM); q++;
 
 		PACK_GIFTAG(q, GS_SET_ZBUF(zb->address >> 11, zb->zsm, 0), GS_REG_ZBUF     + DRAWCTX_1); q++;
-		PACK_GIFTAG(q, GS_SET_FRAME(fb->address >> 11, fb->width >> 6, fb->psm, 0), 
+		PACK_GIFTAG(q, GS_SET_FRAME(fb->address >> 11, fb->width >> 6, fb->psm, 0),
 																   GS_REG_FRAME    + DRAWCTX_1); q++;
 		PACK_GIFTAG(q, GS_SET_SCISSOR(0, w-1, 0,h-1),              GS_REG_SCISSOR  + DRAWCTX_1); q++;
 		PACK_GIFTAG(q, GS_SET_XYOFFSET(0, 0),                      GS_REG_XYOFFSET + DRAWCTX_1); q++;
@@ -803,13 +803,13 @@ static qword_t* ClearBuffers(qword_t *q, framebuffer_t* fb, zbuffer_t* zb) {
 
 	int x  = 0;
 	int y0 = 0;
-	int y1 = ftoi4(h); 
+	int y1 = ftoi4(h);
 
 	// Write one horizontal GS page strip at a time
 	#define STRIP_WIDTH  64
 	#define STRIP_EXTENT ftoi4(63.75f)
 
-	int strips = (w + STRIP_WIDTH - 1) / STRIP_WIDTH;	
+	int strips = (w + STRIP_WIDTH - 1) / STRIP_WIDTH;
 	PACK_REGLIST_HDR(q, strips, true, 2, REGLIST_XYZ_XYZ)
 
 	for (int i = 0; i < strips; i++, x += ftoi4(STRIP_WIDTH))
@@ -857,7 +857,7 @@ static void SetColorWrite(cc_bool r, cc_bool g, cc_bool b, cc_bool a) {
 
 void Gfx_DepthOnlyRendering(cc_bool depthOnly) {
 	cc_bool enabled = !depthOnly;
-	SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1], 
+	SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1],
 				  enabled & gfx_colorMask[2], enabled & gfx_colorMask[3]);
 }
 
@@ -882,10 +882,10 @@ static int buf_count;
 
 // Precalculate all the vertex data adjustment
 static void PreprocessTexturedVertices(void* vertices) {
-    struct VertexTextured* v = vertices;
+	struct VertexTextured* v = vertices;
 
-    for (int i = 0; i < buf_count; i++, v++)
-    {
+	for (int i = 0; i < buf_count; i++, v++)
+	{
 		// See 'Colour Functions' https://psi-rockin.github.io/ps2tek/#gstextures
 		// Essentially, colour blending is calculated as
 		//   finalR = (vertexR * textureR) >> 7
@@ -903,19 +903,19 @@ static void PreprocessTexturedVertices(void* vertices) {
 		//  so that alpha blending produces the expected results like normal GPUs
 		int A = PackedCol_A(v->Col) >> 1;
 		v->Col = (v->Col & ~PACKEDCOL_A_MASK) | (A << PACKEDCOL_A_SHIFT);
-    }
+	}
 }
 
 static void PreprocessColouredVertices(void* vertices) {
-    struct VertexColoured* v = vertices;
+	struct VertexColoured* v = vertices;
 
-    for (int i = 0; i < buf_count; i++, v++)
-    {
+	for (int i = 0; i < buf_count; i++, v++)
+	{
 		// Alpha blending divides by 128 instead of 256, so need to half alpha here
 		//  so that alpha blending produces the expected results like normal GPUs
 		int A = PackedCol_A(v->Col) >> 1;
 		v->Col = (v->Col & ~PACKEDCOL_A_MASK) | (A << PACKEDCOL_A_SHIFT);
-    }
+	}
 }
 
 static GfxResourceID Gfx_AllocStaticVb(VertexFormat fmt, int count) {
@@ -934,17 +934,17 @@ void Gfx_DeleteVb(GfxResourceID* vb) {
 }
 
 void* Gfx_LockVb(GfxResourceID vb, VertexFormat fmt, int count) {
-    buf_fmt   = fmt;
-    buf_count = count;
+	buf_fmt   = fmt;
+	buf_count = count;
 	return vb;
 }
 
-void Gfx_UnlockVb(GfxResourceID vb) { 
-    if (buf_fmt == VERTEX_FORMAT_TEXTURED) {
-        PreprocessTexturedVertices(vb);
-    } else {
-        PreprocessColouredVertices(vb);
-    }
+void Gfx_UnlockVb(GfxResourceID vb) {
+	if (buf_fmt == VERTEX_FORMAT_TEXTURED) {
+		PreprocessTexturedVertices(vb);
+	} else {
+		PreprocessColouredVertices(vb);
+	}
 }
 
 
@@ -958,7 +958,7 @@ void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
 	if (type == MATRIX_PROJ) _proj = *matrix;
 
 	Matrix_Mul(&mvp, &_view, &_proj);
-	// TODO	
+	// TODO
 	LoadMvpMatrix(&mvp);
 }
 
@@ -1140,29 +1140,29 @@ cc_result Gfx_TakeScreenshot(struct Stream* output) {
 cc_bool Gfx_WarnIfNecessary(void) { return false; }
 cc_bool Gfx_GetUIOptions(struct MenuOptionsScreen* s) { return false; }
 
-void Gfx_BeginFrame(void) { 
+void Gfx_BeginFrame(void) {
 	//Platform_LogConst("--- Frame ---");
 }
 
 void Gfx_EndFrame(void) {
 	//Platform_LogConst("--- EF1 ---");
 	Q = GS_DrawFinish(Q);
-	
+
 	FlushMainDMABuffer();
 	//Platform_LogConst("--- EF2 ---");
-		
+
 	GS_wait_draw_finish();
 	//Platform_LogConst("--- EF3 ---");
 	if (gfx_vsync) GS_wait_vsync();
-	
+
 	cur_context ^= 1;
 	UpdateContext();
 
 	// Double buffering
 	Q = GS_SetFrameBuffer(Q, fb_draw, 0);
 	graph_set_framebuffer_filtered(fb_display->address,
-                                   fb_display->width,
-                                   fb_display->psm, 0, 0);
+								   fb_display->width,
+								   fb_display->psm, 0, 0);
 	//Platform_LogConst("--- EF4 ---");
 }
 

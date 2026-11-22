@@ -1,15 +1,15 @@
 #include <Graphics.h>
-#include "String_.h"
 #include <Platform.h>
-#include "Funcs.h"
-#include "Game.h"
-#include "ExtMath.h"
-#include "Event.h"
-#include "Block.h"
-#include "Options.h"
-#include "Bitmap.h"
-#include "Chat.h"
-#include "Logger.h"
+#include "../opencraft/String_.h"
+#include "../opencraft/Funcs.h"
+#include "../opencraft/Game.h"
+#include "../opencraft/ExtMath.h"
+#include "../opencraft/Event.h"
+#include "../opencraft/Block.h"
+#include "../opencraft/Options.h"
+#include "../opencraft/Bitmap.h"
+#include "../opencraft/Chat.h"
+#include "../opencraft/Logger.h"
 
 struct _GfxData Gfx;
 static GfxResourceID Gfx_quadVb, Gfx_texVb;

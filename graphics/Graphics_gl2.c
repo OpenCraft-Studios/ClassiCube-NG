@@ -8,9 +8,9 @@
 
 #include <Core.h>
 #include "_GraphicsBase.h"
-#include "Errors.h"
+#include "../opencraft/Errors.h"
 #include <Window.h>
-#include "Menus.h"
+#include "../opencraft/Menus.h"
 
 /* OpenGL 2.0 backend (alternative modern-ish backend) */
 #include "../misc/opengl/GLCommon.h"

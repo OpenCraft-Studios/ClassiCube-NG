@@ -4,7 +4,7 @@
 // - 12 vertex attributes
 // which are mapped to
 // - 16 shader inputs
-// 
+//
 // Note that ClassiCube only uses 1 vertex array at present
 
 

@@ -1,7 +1,7 @@
 #define CC_DYNAMIC_VBS_ARE_STATIC
-#include "../_GraphicsBase.h"
-#include "../Errors.h"
-#include "../Logger.h"
+#include "_GraphicsBase.h"
+#include "../opencraft/Errors.h"
+#include "../opencraft/Logger.h"
 #include <Window.h>
 
 #include <pbkit/pbkit.h>
@@ -32,7 +32,7 @@ static void LoadVertexShader(int offset, uint32_t* program, int programSize) {
 }
 
 static uint32_t vs_coloured_program[] = {
-	#include "../../misc/xbox/vs_coloured.inl"
+	#include "../misc/xbox/vs_coloured.inl"
 };
 static uint32_t vs_textured_program[] = {
 	#include "../../misc/xbox/vs_textured.inl"
@@ -68,18 +68,18 @@ static void SetupShaders(void) {
 
 	pb_end(p);
 }
- 
+
 static void ResetState(void) {
 	uint32_t* p = pb_begin();
 
 	p = NV2A_set_alpha_test_func(p, 0x04); // GL_GREATER & 0x0F
 	p = NV2A_set_alpha_test_ref(p,  0x7F);
 	p = NV2A_set_depth_func(p,      0x03); // GL_LEQUAL & 0x0F
-	
+
 	p = NV2A_set_alpha_blend_src(p, NV097_SET_BLEND_FUNC_SFACTOR_V_SRC_ALPHA);
 	p = NV2A_set_alpha_blend_dst(p, NV097_SET_BLEND_FUNC_DFACTOR_V_ONE_MINUS_SRC_ALPHA);
 	p = NV2A_set_alpha_blend_eq( p, NV097_SET_BLEND_EQUATION_V_FUNC_ADD); // TODO not needed?
-	
+
 	p = NV2A_set_cull_face_mode(p, NV097_SET_CULL_FACE_V_FRONT);
 	// the order ClassiCube specifies quad vertices in are in the wrong order
 	//  compared to what the GPU expects for front and back facing quads
@@ -114,7 +114,7 @@ void Gfx_Create(void) {
 	LoadVertexShader(VS_COLOURED_OFFSET, vs_coloured_program, sizeof(vs_coloured_program));
 	LoadVertexShader(VS_TEXTURED_OFFSET, vs_textured_program, sizeof(vs_textured_program));
 	LoadVertexShader(VS_OFFSET_OFFSET,   vs_offset_program,   sizeof(vs_offset_program));
-		
+
 	// 1x1 dummy white texture
 	struct Bitmap bmp;
 	BitmapCol pixels[1] = { BITMAPCOLOR_WHITE };
@@ -122,7 +122,7 @@ void Gfx_Create(void) {
 	white_square = Gfx_CreateTexture(&bmp, 0, false);
 }
 
-void Gfx_Free(void) { 
+void Gfx_Free(void) {
 	FreeDefaultResources();
 }
 
@@ -141,7 +141,7 @@ typedef struct {
 
 // See Graphics_Dreamcast.c for twiddling explanation
 // (only difference is dreamcast is XY while xbox is YX)
-static CC_INLINE void TwiddleCalcFactors(unsigned w, unsigned h, 
+static CC_INLINE void TwiddleCalcFactors(unsigned w, unsigned h,
 										unsigned* maskX, unsigned* maskY) {
 	*maskX = 0;
 	*maskY = 0;
@@ -157,11 +157,11 @@ static CC_INLINE void TwiddleCalcFactors(unsigned w, unsigned h,
 		} else if (w > 1) {
 			// Add a linear X bit
 			*maskX += 0x01 << shift;
-			shift  += 1;		
+			shift  += 1;
 		} else if (h > 1) {
 			// Add a linear Y bit
 			*maskY += 0x01 << shift;
-			shift  += 1;		
+			shift  += 1;
 		}
 	}
 }
@@ -175,7 +175,7 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 
 	CCTexture* tex = Mem_Alloc(1, sizeof(CCTexture), "GPU texture");
 	tex->pixels    = MmAllocateContiguousMemoryEx(size, 0, MAX_RAM_ADDR, 0, PAGE_WRITECOMBINE | PAGE_READWRITE);
-	
+
 	tex->log2_w = Math_ilog2(dst_w);
 	tex->log2_h = Math_ilog2(dst_h);
 	cc_uint32* dst = tex->pixels;
@@ -184,12 +184,12 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 	unsigned maskX, maskY;
 	unsigned X = 0, Y = 0;
 	TwiddleCalcFactors(dst_w, dst_h, &maskX, &maskY);
-	
+
 	for (int y = 0; y < src_h; y++)
 	{
 		cc_uint32* src = bmp->scan0 + y * rowWidth;
 		X = 0;
-		
+
 		for (int x = 0; x < src_w; x++, src++)
 		{
 			dst[X | Y] = *src;
@@ -203,7 +203,7 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 void Gfx_UpdateTexture(GfxResourceID texId, int originX, int originY, struct Bitmap* part, int rowWidth, cc_bool mipmaps) {
 	CCTexture* tex = (CCTexture*)texId;
 	cc_uint32* dst = tex->pixels;
-	
+
 	int width = part->width, height = part->height;
 	unsigned maskX, maskY;
 	unsigned X = 0, Y = 0;
@@ -213,12 +213,12 @@ void Gfx_UpdateTexture(GfxResourceID texId, int originX, int originY, struct Bit
 	for (int x = 0; x < originX; x++) { X = (X - maskX) & maskX; }
 	for (int y = 0; y < originY; y++) { Y = (Y - maskY) & maskY; }
 	unsigned startX = X;
-	
+
 	for (int y = 0; y < height; y++)
 	{
 		cc_uint32* src = part->scan0 + rowWidth * y;
 		X = startX;
-		
+
 		for (int x = 0; x < width; x++, src++)
 		{
 			dst[X | Y] = *src;
@@ -243,7 +243,7 @@ void Gfx_DisableMipmaps(void) { }
 void Gfx_BindTexture(GfxResourceID texId) {
 	CCTexture* tex = (CCTexture*)texId;
 	if (!tex) tex  = white_square;
-	
+
 	unsigned log_u = tex->log2_w;
 	unsigned log_v = tex->log2_h;
 	uint32_t* p;
@@ -267,7 +267,7 @@ void Gfx_ClearColor(PackedCol color) {
 	pb_end(p);
 }
 
-void Gfx_SetFaceCulling(cc_bool enabled) { 
+void Gfx_SetFaceCulling(cc_bool enabled) {
 	uint32_t* p = pb_begin();
 	p = NV2A_set_cull_face(p, enabled);
 	pb_end(p);
@@ -275,7 +275,7 @@ void Gfx_SetFaceCulling(cc_bool enabled) {
 
 void Gfx_SetAlphaArgBlend(cc_bool enabled) { }
 
-static void SetAlphaBlend(cc_bool enabled) { 
+static void SetAlphaBlend(cc_bool enabled) {
 	uint32_t* p = pb_begin();
 	p = NV2A_set_alpha_blend(p, enabled);
 	pb_end(p);
@@ -294,7 +294,7 @@ void Gfx_SetDepthWrite(cc_bool enabled) {
 	pb_end(p);
 }
 
-void Gfx_SetDepthTest(cc_bool enabled) { 
+void Gfx_SetDepthTest(cc_bool enabled) {
 	uint32_t* p = pb_begin();
 	p = NV2A_set_depth_test(p, enabled);
 	pb_end(p);
@@ -309,7 +309,7 @@ static void SetColorWrite(cc_bool r, cc_bool g, cc_bool b, cc_bool a) {
 
 void Gfx_DepthOnlyRendering(cc_bool depthOnly) {
 	cc_bool enabled = !depthOnly;
-	SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1], 
+	SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1],
 				  enabled & gfx_colorMask[2], enabled & gfx_colorMask[3]);
 }
 
@@ -344,7 +344,7 @@ void Gfx_ClearBuffers(GfxBuffers buffers) {
 	uint32_t* p = pb_begin();
 	p = NV2A_clear_buffers(p, buffers & GFX_BUFFER_COLOR, buffers & GFX_BUFFER_DEPTH);
 	pb_end(p);
-	
+
 	//pb_erase_text_screen();
 	while (pb_busy()) { } // Wait for completion TODO: necessary??
 }
@@ -388,7 +388,7 @@ static GfxResourceID Gfx_AllocStaticVb(VertexFormat fmt, int count) {
 	return AllocBuffer(count, strideSizes[fmt]);
 }
 
-void Gfx_BindVb(GfxResourceID vb) { 
+void Gfx_BindVb(GfxResourceID vb) {
 	gfx_vertices = vb;
 	uint32_t* p  = pb_begin();
 
@@ -469,7 +469,7 @@ void Gfx_CalcPerspectiveMatrix(struct Matrix* matrix, float fov, float aspect, f
 	matrix->row4.w =  0.0f;
 	// TODO: The above matrix breaks the held block
 	// Below works but breaks map rendering
-	
+
 /*
 	matrix->row1.x =  c / aspect;
 	matrix->row2.y =  c;
@@ -523,9 +523,9 @@ void Gfx_LoadMVP(const struct Matrix* view, const struct Matrix* proj, struct Ma
 static int tex_offset;
 
 static int CalcProgramOffset(void) {
-	if (tex_offset) 
+	if (tex_offset)
 		return VS_OFFSET_OFFSET;
-	if (gfx_format == VERTEX_FORMAT_TEXTURED) 
+	if (gfx_format == VERTEX_FORMAT_TEXTURED)
 		return VS_TEXTURED_OFFSET;
 
 	return VS_COLOURED_OFFSET;
@@ -578,24 +578,24 @@ void Gfx_SetVertexFormat(VertexFormat fmt) {
 	uint32_t* p = pb_begin();
 
 	if (fmt == VERTEX_FORMAT_TEXTURED) {
-		p = NV2A_set_vertex_attrib_format(p, VERTEX_ATTR_INDEX,  
+		p = NV2A_set_vertex_attrib_format(p, VERTEX_ATTR_INDEX,
 					NV097_SET_VERTEX_DATA_ARRAY_FORMAT_TYPE_F,      3, SIZEOF_VERTEX_TEXTURED);
-		p = NV2A_set_vertex_attrib_format(p, COLOUR_ATTR_INDEX,  
+		p = NV2A_set_vertex_attrib_format(p, COLOUR_ATTR_INDEX,
 					NV097_SET_VERTEX_DATA_ARRAY_FORMAT_TYPE_UB_D3D, 4, SIZEOF_VERTEX_TEXTURED);
-		p = NV2A_set_vertex_attrib_format(p, TEXTURE_ATTR_INDEX, 
+		p = NV2A_set_vertex_attrib_format(p, TEXTURE_ATTR_INDEX,
 					NV097_SET_VERTEX_DATA_ARRAY_FORMAT_TYPE_F,      2, SIZEOF_VERTEX_TEXTURED);
 	} else {
-		p = NV2A_set_vertex_attrib_format(p, VERTEX_ATTR_INDEX, 
+		p = NV2A_set_vertex_attrib_format(p, VERTEX_ATTR_INDEX,
 					NV097_SET_VERTEX_DATA_ARRAY_FORMAT_TYPE_F,      3, SIZEOF_VERTEX_COLOURED);
-		p = NV2A_set_vertex_attrib_format(p, COLOUR_ATTR_INDEX, 
+		p = NV2A_set_vertex_attrib_format(p, COLOUR_ATTR_INDEX,
 					NV097_SET_VERTEX_DATA_ARRAY_FORMAT_TYPE_UB_D3D, 4, SIZEOF_VERTEX_COLOURED);
-		p = NV2A_set_vertex_attrib_format(p, TEXTURE_ATTR_INDEX, 
+		p = NV2A_set_vertex_attrib_format(p, TEXTURE_ATTR_INDEX,
 					NV097_SET_VERTEX_DATA_ARRAY_FORMAT_TYPE_F,      0, 0);
 	}
 
 	p = NV2A_set_program_run_offset(p, CalcProgramOffset());
 	pb_end(p);
-	
+
 	if (fmt == VERTEX_FORMAT_TEXTURED) {
 		LoadFragmentShader_Textured();
 	} else {

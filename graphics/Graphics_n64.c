@@ -1,7 +1,7 @@
 #define CC_DYNAMIC_VBS_ARE_STATIC
-#include "../_GraphicsBase.h"
-#include "../Errors.h"
-#include "../Logger.h"
+#include "_GraphicsBase.h"
+#include "../opencraft/Errors.h"
+#include "../opencraft/Logger.h"
 #include <Window.h>
 
 #include <libdragon.h>
@@ -34,14 +34,14 @@ void Gfx_Create(void) {
 	gpu_push_rdp(RDP_CMD_SET_BLEND_COLOR, (0 << 24) | (0 << 16) | (0 << 8) | 127);
 
     zbuffer = surface_alloc(FMT_RGBA16, display_get_width(), display_get_height());
-    
+
 	Gfx.MaxTexWidth  = 256;
 	Gfx.MaxTexHeight = 256;
 	Gfx.Created      = true;
-	
+
 	// TMEM only has 4 KB in it, which can be interpreted as
 	// - 1024 32bpp pixels
-	// - 2048 16bpp pixels 
+	// - 2048 16bpp pixels
 	Gfx.MaxTexSize       = 1024;
 	Gfx.MaxLowResTexSize = 2048;
 
@@ -95,7 +95,7 @@ void Gfx_SetScissor(int x, int y, int w, int h) {
 void Gfx_BeginFrame(void) {
 	surface_t* disp = display_get();
     rdpq_attach(disp, &zbuffer);
-    
+
 	//Platform_LogConst("== BEGIN frame");
 }
 
@@ -104,12 +104,12 @@ static color_t gfx_clearColor;
 
 void Gfx_ClearBuffers(GfxBuffers buffers) {
 	__rdpq_autosync_change(AUTOSYNC_PIPE);
-	
+
 	if (buffers & GFX_BUFFER_COLOR)
 		rdpq_clear(gfx_clearColor);
 	if (buffers & GFX_BUFFER_DEPTH)
 		rdpq_clear_z(0xFFFC);
-} 
+}
 
 void Gfx_ClearColor(PackedCol color) {
 	gfx_clearColor.r = PackedCol_R(color);
@@ -133,7 +133,7 @@ void Gfx_EndFrame(void) {
 #define MAX_PAL_4BPP_ENTRIES 16
 
 static CC_INLINE int FindInPalette(BitmapCol* palette, int pal_count, BitmapCol color) {
-	for (int i = 0; i < pal_count; i++) 
+	for (int i = 0; i < pal_count; i++)
 	{
 		if (palette[i] == color) return i;
 	}
@@ -145,10 +145,10 @@ static int CalcPalette(BitmapCol* palette, struct Bitmap* bmp, int rowWidth) {
 
 	BitmapCol* row = bmp->scan0;
 	int pal_count  = 0;
-	
+
 	for (int y = 0; y < height; y++, row += rowWidth)
 	{
-		for (int x = 0; x < width; x++) 
+		for (int x = 0; x < width; x++)
 		{
 			BitmapCol color = row[x];
 			int idx = FindInPalette(palette, pal_count, color);
@@ -214,7 +214,7 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 	// so even though width * height * pixel size may fit within 4096 bytes, after adjusting for 8 byte alignment, row pitch * height may exceed 4096 bytes
 	int pitch = bit16 ? CC_ALIGNUP(bmp->width * 2, 8) : CC_ALIGNUP(bmp->width * 4, 8);
 	if (pitch * bmp->height > 4096) return 0;
-	
+
 	CCTexture* tex = Mem_TryAlloc(1, sizeof(CCTexture));
 	if (!tex) return NULL;
 
@@ -230,26 +230,26 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 	cc_uint8*  dst = (cc_uint8*)fb->buffer;
 	int width  = bmp->width;
 	int height = bmp->height;
-		
+
 	if (bit16 && pal_count) {
 		for (int i = 0; i < pal_count; i++)
 		{
 			tex->palette[i] = To16BitPixel(palette[i]);
 		}
-		
+
 		// 16 bpp requires reducing A8R8G8B8 to A1R5G5B5
-		for (int y = 0; y < height; y++) 
-		{	
+		for (int y = 0; y < height; y++)
+		{
 			cc_uint32* src_row = src + y * rowWidth;
 			cc_uint8*  dst_row = dst + y * fb->stride;
-			
-			for (int x = 0; x < (width & ~0x01); x += 2) 
+
+			for (int x = 0; x < (width & ~0x01); x += 2)
 			{
 				int pal_0 = FindInPalette(palette, pal_count, *src_row++);
 				int pal_1 = FindInPalette(palette, pal_count, *src_row++);
 				*dst_row++ = (pal_0 << 4) | pal_1;
 			}
-			
+
 			// fixup for odd width textures
 			if (width & 0x01) {
 				int pal_0 = FindInPalette(palette, pal_count, *src_row++);
@@ -258,23 +258,23 @@ GfxResourceID Gfx_AllocTexture(struct Bitmap* bmp, int rowWidth, cc_uint8 flags,
 		}
 	} else if (bit16) {
 		// 16 bpp requires reducing A8R8G8B8 to A1R5G5B5
-		for (int y = 0; y < height; y++) 
-		{	
+		for (int y = 0; y < height; y++)
+		{
 			cc_uint32* src_row = src + y * rowWidth;
 			cc_uint16* dst_row = (cc_uint16*)(dst + y * fb->stride);
-			
-			for (int x = 0; x < width; x++) 
+
+			for (int x = 0; x < width; x++)
 			{
 				dst_row[x] = To16BitPixel(src_row[x]);
 			}
 		}
 	} else {
 		// 32 bpp can just be copied straight across
-		CopyPixels(dst, fb->stride, 
+		CopyPixels(dst, fb->stride,
 				   src, rowWidth * BITMAPCOLOR_SIZE,
 				   width, height);
 	}
-	
+
 	rdpq_texparms_t params =
 	{
         .s.repeats = (flags & TEXTURE_FLAG_NONPOW2) ? 1 : REPEAT_INFINITE,
@@ -291,7 +291,7 @@ void Gfx_UpdateTexture(GfxResourceID texId, int x, int y, struct Bitmap* part, i
 	cc_uint32* src = (cc_uint32*)part->scan0 + x;
 	cc_uint8*  dst = (cc_uint8*)fb->buffer  + (x * 4) + (y * fb->stride);
 
-	for (int srcY = 0; srcY < part->height; srcY++) 
+	for (int srcY = 0; srcY < part->height; srcY++)
 	{
 		Mem_Copy(dst + srcY * fb->stride,
 				 src + srcY * rowWidth,
@@ -302,7 +302,7 @@ void Gfx_UpdateTexture(GfxResourceID texId, int x, int y, struct Bitmap* part, i
 void Gfx_DeleteTexture(GfxResourceID* texId) {
 	CCTexture* tex = (CCTexture*)(*texId);
 	if (!tex) return;
-	
+
 	if (tex->upload_block) rdpq_call_deferred((void (*)(void*))rspq_block_free, tex->upload_block);
 	surface_free(&tex->surface);
 
@@ -335,11 +335,11 @@ void Gfx_DisableMipmaps(void) {
 /*########################################################################################################################*
 *-----------------------------------------------------State management----------------------------------------------------*
 *#########################################################################################################################*/
-void Gfx_SetFaceCulling(cc_bool enabled) { 
+void Gfx_SetFaceCulling(cc_bool enabled) {
 	gpuSetCullFace(enabled);
 }
 
-static void SetAlphaBlend(cc_bool enabled) { 
+static void SetAlphaBlend(cc_bool enabled) {
 	rdpq_mode_blender(enabled ? RDPQ_BLENDER_MULTIPLY : 0);
 	__rdpq_mode_change_som(SOM_ZMODE_MASK, enabled ? SOM_ZMODE_TRANSPARENT : SOM_ZMODE_OPAQUE);
 }
@@ -355,7 +355,7 @@ static void SetColorWrite(cc_bool r, cc_bool g, cc_bool b, cc_bool a) {
 }
 
 #define FLAG_Z_WRITE 0x02
-void Gfx_SetDepthWrite(cc_bool enabled) { 
+void Gfx_SetDepthWrite(cc_bool enabled) {
 	__rdpq_mode_change_som(SOM_Z_WRITE, enabled ? SOM_Z_WRITE : 0);
 
 	gpu_attr_z &= ~FLAG_Z_WRITE;
@@ -364,7 +364,7 @@ void Gfx_SetDepthWrite(cc_bool enabled) {
 }
 
 #define FLAG_Z_READ 0x01
-void Gfx_SetDepthTest(cc_bool enabled) { 
+void Gfx_SetDepthTest(cc_bool enabled) {
 	__rdpq_mode_change_som(SOM_Z_COMPARE, enabled ? SOM_Z_COMPARE : 0);
 
 	gpu_attr_z &= ~FLAG_Z_READ;
@@ -376,7 +376,7 @@ static void Gfx_FreeState(void) { FreeDefaultResources(); }
 static void Gfx_RestoreState(void) {
 	InitDefaultResources();
 	gfx_format = -1;
-	
+
 	// 1x1 dummy white texture
 	struct Bitmap bmp;
 	BitmapCol pixels[1] = { BITMAPCOLOR_WHITE };
@@ -500,8 +500,8 @@ static GfxResourceID Gfx_AllocStaticVb(VertexFormat fmt, int count) {
 	return vb;
 }
 
-void Gfx_BindVb(GfxResourceID vb) { 
-	gfx_vb = vb; 
+void Gfx_BindVb(GfxResourceID vb) {
+	gfx_vb = vb;
 }
 
 void Gfx_DeleteVb(GfxResourceID* vb) {
@@ -558,7 +558,7 @@ void Gfx_DepthOnlyRendering(cc_bool depthOnly) {
 	depthOnlyRendering = depthOnly; // TODO: Better approach? maybe using glBlendFunc instead?
 	cc_bool enabled    = !depthOnly;
 
-	//SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1], 
+	//SetColorWrite(enabled & gfx_colorMask[0], enabled & gfx_colorMask[1],
 	//			  enabled & gfx_colorMask[2], enabled & gfx_colorMask[3]);
 	gpu_attr_tex = enabled;
 	gpuUpdateFormat();
@@ -574,7 +574,7 @@ void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
 	if (type == MATRIX_VIEW) _view = *matrix;
 	if (type == MATRIX_PROJ) _proj = *matrix;
 
-	struct Matrix mvp CC_ALIGNED(64);	
+	struct Matrix mvp CC_ALIGNED(64);
 	Matrix_Mul(&mvp, &_view, &_proj);
 	gpuLoadMatrix((const float*)&mvp);
 }
