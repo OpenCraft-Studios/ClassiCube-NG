@@ -14,7 +14,7 @@ VERSION     := $(shell git describe --always --tags --dirty="*" --abbrev=1)
 oc.build     = /tmp/$(plat.USE)-opencraft
 oc.src      := $(CURDIR)/opencraft
 
-override SRCS := $(filter-out Graphics_% Audio% Platform_% Window_% $(oc.src)/SSL.c,$(wildcard $(oc.src)/*.c))
+override SRCS := $(filter-out $(oc.src)/Platform_% $(oc.src)/SSL.c,$(wildcard $(oc.src)/*.c))
 override OBJS  = $(patsubst $(oc.src)/%.c,$(oc.build)/%.c.o,$(SRCS))
 
 # ——— Modules —————————————————————————————————————————————————————————————————
@@ -30,17 +30,17 @@ endif
 
 AUDIO    ?= 1
 ifneq ($(AUDIO), 0)
-include $(oc.src)/audio.mk
+include libaudio/module.mk
 endif
 
 OPENGFX  ?= 1
 ifneq ($(OPENGFX), 0)
-include $(oc.src)/opengfx.mk
+include graphics/module.mk
 endif
 
 WINDOW   ?= 1
 ifneq ($(WINDOW), 0)
-include $(oc.src)/window.mk
+include window/module.mk
 endif
 
 # ——— Targets —————————————————————————————————————————————————————————————————
@@ -86,10 +86,11 @@ env:
 	@echo "# -s,--silent,--quiet:  Be silent, don't print recipes."
 	@echo "# -j,--jobs=$(shell nproc):          Harness full PC power."
 	@echo "# --no-print-directory: Don't print annoying messages if compiling recursively."
-	@echo 
+	@echo
 
 # ——— Clangd configuration ————————————————————————————————————————————————————
 
+PHONY: .clangd
 .clangd:
 	$(file >$@,CompileFlags:)
 	$(file >>$@,  Compiler: $(CC))
@@ -98,14 +99,15 @@ env:
 	$(file >>$@,    - -D_CLANGD=1)
 	$(file >>$@,  Remove:)
 	$(file >>$@,    - -pipe)
-	$(shell pkill clangd)
 
 # ——— Global variables ————————————————————————————————————————————————————————
 
 override BUILD_DIRS   += $(oc.build)
 
+override WARNINGS     += -Wno-unsafe-buffer-usage -Werror=missing-prototypes
+
 override INCLUDES     += -I$(CURDIR)/include
-override COMMON_FLAGS += $(ARCH_FLAGS) $(INCLUDES) -pipe -DCC_BUILD_MANUAL
+override COMMON_FLAGS += $(ARCH_FLAGS) $(WARNINGS) $(INCLUDES) -pipe -DCC_BUILD_MANUAL
 override CFLAGS       += $(COMMON_FLAGS)
 override CXXFLAGS     += $(COMMON_FLAGS)
 override LDFLAGS      += -s

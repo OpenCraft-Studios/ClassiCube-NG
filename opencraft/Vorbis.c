@@ -1069,7 +1069,7 @@ static cc_uint32 Vorbis_ReverseBits(cc_uint32 v) {
 	return v;
 }
 
-void imdct_init(struct imdct_state* state, int n) {
+static void imdct_init(struct imdct_state* state, int n) {
 	int k, k2, n4 = n >> 2, n8 = n >> 3, log2_n;
 	float *A = state->a, *B = state->b, *C = state->c;
 	cc_uint32* reversed;
@@ -1098,7 +1098,7 @@ void imdct_init(struct imdct_state* state, int n) {
 	}
 }
 
-void imdct_calc(float* in, float* out, struct imdct_state* state) {
+static void imdct_calc(float* in, float* out, struct imdct_state* state) {
 	int k, k2, k4, n = state->n;
 	int n2 = n >> 1, n4 = n >> 2, n8 = n >> 3, n3_4 = n - n4;
 	int l, log2_n;

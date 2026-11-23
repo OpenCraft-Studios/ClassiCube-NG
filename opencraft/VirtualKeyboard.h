@@ -7,6 +7,7 @@
 #include "Input.h"
 #include "Utils.h"
 #include "LBackend.h"
+#include "LWidgets.h"
 #include <Window.h>
 #include <Graphics.h>
 #include "Game.h"
@@ -97,10 +98,6 @@ static struct KBLayout numpad_layout = {
 	kb_numpad, kb_numpad, kb_numpad,
 	kb_numpad_behaviour
 };
-
-
-extern void LWidget_DrawBorder(struct Context2D* ctx, BitmapCol color, int borderX, int borderY,
-								int x, int y, int width, int height);
 
 static void VirtualKeyboard_Init(void) {
 	if (kb_inited) return;

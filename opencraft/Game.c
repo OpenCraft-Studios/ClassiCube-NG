@@ -31,7 +31,6 @@
 #include "EnvRenderer.h"
 #include "HeldBlockRenderer.h"
 #include "SelOutlineRenderer.h"
-#include "Menus.h"
 #include <Audio.h>
 #include "Stream.h"
 #include "Builder.h"
@@ -566,7 +565,7 @@ static void PerformScheduledTasks(float time) {
 	}
 }
 
-void Game_TakeScreenshot(void) {
+static void Game_TakeScreenshot(void) {
 	cc_string filename; char fileBuffer[STRING_SIZE];
 	cc_string path;     char pathBuffer[FILENAME_SIZE];
 	struct cc_datetime now;
@@ -610,7 +609,6 @@ void Game_TakeScreenshot(void) {
 #endif
 #endif
 }
-
 
 #ifdef CC_BUILD_WEB
 static void LimitFPS(void) {
