@@ -1,0 +1,12 @@
+RESET   = [0m
+BLACK   = [30m
+RED     = [31m
+GREEN   = [32m
+YELLOW  = [33m
+BLUE    = [34m
+MAGENTA = [35m
+CYAN    = [36m
+WHITE   = [37m
+BOLD    = [1m
+UNDER   = [4m
+DIM     = [2m
