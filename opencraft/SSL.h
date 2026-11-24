@@ -3,7 +3,7 @@
 
 #pragma once
 #include "Errors.h"
-#include "../bearssl/bearssl.h"
+#include <bearssl/bearssl.h>
 #include "../misc/certs/certs.h"
 
 #include "String_.h"
