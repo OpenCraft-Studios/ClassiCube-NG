@@ -34,7 +34,7 @@ jobs:
       - name: 🔨 Compile
         run: |
           set -o pipefail
-          make TARGET="${{ matrix.output }}" \
+          make -s TARGET="${{ matrix.output }}" \
             COMMON_FLAGS="-Weverything -Wno-unsafe-buffer-usage -O2" 2>&1 | tee build.log
 
       - name: 📊 Compiler Diagnostics Report
