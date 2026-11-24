@@ -238,4 +238,4 @@ build $builddir/bearssl.o: link $builddir/aes_big_cbcdec.c.o $
     $builddir/ssl_rec_gcm.c.o $
     $builddir/x509_minimal.c.o $
     $builddir/x509_minimal_full.c.o
-    ldflags = $ldflags -r
+    ldflags = -r
