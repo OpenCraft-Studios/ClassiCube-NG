@@ -18,8 +18,8 @@ struct StringsBuffer;
 #define HTTP_FLAG_NOCACHE  0x02
 
 extern struct IGameComponent Http_Component;
+#include "http_methods.h"
 
-enum HttpRequestType { REQUEST_TYPE_GET, REQUEST_TYPE_HEAD, REQUEST_TYPE_POST };
 enum HttpProgress {
 	HTTP_PROGRESS_NOT_WORKING_ON = -3,
 	HTTP_PROGRESS_MAKING_REQUEST = -2,
@@ -41,7 +41,7 @@ struct HttpRequest {
 
 	char lastModified[STRING_SIZE]; /* Time item cached at (if at all) */
 	char etag[STRING_SIZE];         /* ETag of cached item (if any) */
-	cc_uint8 requestType;           /* See the various REQUEST_TYPE_ */
+	enum http_method method;        /* See the various REQUEST_TYPE_ */
 	cc_bool success;                /* Whether Result is 0, status is 200, and data is not NULL */
 	struct StringsBuffer* cookies;  /* Cookie list sent in requests. May be modified by the response. */
 };
