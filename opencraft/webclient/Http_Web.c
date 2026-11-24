@@ -48,8 +48,8 @@ void Http_TryCancel(int reqID) {
 /*########################################################################################################################*
 *----------------------------------------------------Emscripten backend---------------------------------------------------*
 *#########################################################################################################################*/
-static cc_bool HttpBackend_DescribeError(cc_result res, cc_string* dst) { 
-	return false; 
+static cc_bool HttpBackend_DescribeError(cc_result res, cc_string* dst) {
+	return false;
 }
 
 static const cc_string url_rewrite_srcs[] = {
@@ -68,7 +68,7 @@ static void GetFinalUrl(struct HttpRequest* req, cc_string* dst) {
 	cc_string resource;
 	int i;
 
-	for (i = 0; i < Array_Elems(url_rewrite_srcs); i++) 
+	for (i = 0; i < Array_Elems(url_rewrite_srcs); i++)
 	{
 		if (!String_CaselessStarts(&url, &url_rewrite_srcs[i])) continue;
 
@@ -96,13 +96,13 @@ static void Http_StartNextDownload(void) {
 	Platform_Log1("Fetching %s", &url);
 
 	String_EncodeUtf8(urlStr, &url);
-	res = interop_DownloadAsync(urlStr, req->requestType, req->id);
+	res = interop_DownloadAsync(urlStr, req->method, req->id);
 
 	if (res) {
 		// interop error code -> ClassiCube error code
 		if (res == 1) res = ERR_INVALID_DATA_URL;
 		req->result = res;
-		
+
 		// Invalid URL so move onto next request
 		Http_FinishRequest(req);
 		RequestList_RemoveAt(&queuedReqs, 0);
@@ -126,7 +126,7 @@ EMSCRIPTEN_KEEPALIVE void Http_OnFinishedAsync(int reqID, void* data, int len, i
 
 	if (idx == -1) {
 		// Shouldn't ever happen, but log a warning anyways
-		Mem_Free(data); 
+		Mem_Free(data);
 		Platform_Log1("Ignoring invalid request (%i)", &reqID);
 	} else {
 		req = &workingReqs.entries[idx];
@@ -172,4 +172,3 @@ static void Http_Init(void) {
 	RequestList_Init(&workingReqs);
 	RequestList_Init(&processedReqs);
 }
-

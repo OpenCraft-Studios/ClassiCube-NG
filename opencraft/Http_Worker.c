@@ -170,8 +170,8 @@ static void HttpUrl_ExtractHostPort(const struct HttpUrl* url, cc_string* host, 
 	}
 }
 
-#define DEF_HTTP_PORT   80
-#define DEF_HTTPS_PORT 443
+static const cc_uint16 DEF_HTTP_PORT  = 80;
+static const cc_uint16 DEF_HTTPS_PORT = 443;
 
 
 /*########################################################################################################################*
@@ -179,16 +179,16 @@ static void HttpUrl_ExtractHostPort(const struct HttpUrl* url, cc_string* host, 
 *#########################################################################################################################*/
 struct HttpConnection {
 	cc_socket socket;
-	void* sslCtx;
 	cc_bool valid;
+	cc_bool ssl_active;
+	SSLContext sslCtx;
 };
 
 static void HttpConnection_Close(struct HttpConnection* conn) {
-	if (conn->sslCtx) {
-		SSL_Free(conn->sslCtx);
-		conn->sslCtx = NULL;
+	if (conn->ssl_active) {
+		SSL_Free(&conn->sslCtx);
+		conn->ssl_active = false;
 	}
-
 	if (conn->socket != -1) {
 		Socket_Close(conn->socket);
 		conn->socket = -1;
@@ -211,7 +211,7 @@ static cc_result HttpConnection_Open(struct HttpConnection* conn, const struct H
 	}
 
 	conn->socket = -1;
-	conn->sslCtx = NULL;
+	conn->ssl_active = false;
 
 	if ((res = Socket_ParseAddress(&host, portNum, addrs, &numValidAddrs))) return res;
 	res = ERR_INVALID_ARGUMENT; /* in case 0 valid addresses */
@@ -234,34 +234,41 @@ static cc_result HttpConnection_Open(struct HttpConnection* conn, const struct H
 
 	conn->valid = true;
 	if (!url->https) return 0;
-	return SSL_Init(conn->socket, &host, &conn->sslCtx);
+
+	conn->ssl_active = true;
+	res = SSL_Init(&conn->sslCtx, conn->socket, &host);
+	if (res) {
+		HttpConnection_Close(conn);
+		return res;
+	}
+
+	conn->ssl_active = true;
+	return 0;
 }
 
 static cc_result HttpConnection_Read(struct HttpConnection* conn, cc_uint8* data, cc_uint32 count, cc_uint32* read) {
-	if (conn->sslCtx)
-		return SSL_Read(conn->sslCtx, data, count, read);
+	if (conn->ssl_active)
+		return SSL_Read(&conn->sslCtx, data, count, read);
 
 	return Socket_Read(conn->socket,  data, count, read);
 }
 
 static cc_result HttpConnection_Write(struct HttpConnection* conn, const cc_uint8* data, cc_uint32 count, cc_uint32* sent) {
-	if (conn->sslCtx)
-		return SSL_Write(conn->sslCtx, data, count, sent);
+	if (conn->ssl_active)
+		return SSL_Write(&conn->sslCtx, data, count, sent);
 
 	return Socket_Write(conn->socket, data, count, sent);
 }
 
 static cc_result HttpConnection_WriteAll(struct HttpConnection* conn, const cc_uint8* data, cc_uint32 count) {
-	cc_uint32 sent;
 	cc_result res;
 
-	while (count)
-	{
-		if ((res = HttpConnection_Write(conn, data, count, &sent))) return res;
-		if (!sent) return ERR_END_OF_STREAM;
+	for (cc_uint32 sent = 0; count > 0; count -= sent) {
+		if ((res = HttpConnection_Write(conn, data, count, &sent)))
+			return res;
 
-		data  += sent;
-		count -= sent;
+		if (!sent) return ERR_END_OF_STREAM;
+		data += sent;
 	}
 	return 0;
 }
@@ -289,10 +296,7 @@ static cc_result ConnectionPool_Insert(int i, struct HttpConnection** conn, cons
 
 static cc_result ConnectionPool_Open(struct HttpConnection** conn, const struct HttpUrl* url) {
 	struct ConnectionPoolEntry* e;
-	int i;
-
-	for (i = 0; i < Array_Elems(connection_pool); i++)
-	{
+	for (int i = 0; i < Array_Elems(connection_pool); i++) {
 		e = &connection_pool[i];
 		if (e->conn.valid && e->https == url->https && String_Equals(&e->addr, &url->address)) {
 			*conn = &connection_pool[i].conn;
@@ -300,14 +304,13 @@ static cc_result ConnectionPool_Open(struct HttpConnection** conn, const struct 
 		}
 	}
 
-	for (i = 0; i < Array_Elems(connection_pool); i++)
-	{
+	for (int i = 0; i < Array_Elems(connection_pool); i++) {
 		e = &connection_pool[i];
 		if (!e->conn.valid) return ConnectionPool_Insert(i, conn, url);
 	}
 
 	/* TODO: Should we be consistent in which entry gets evicted? */
-	i = (cc_uint8)Stopwatch_Measure() % Array_Elems(connection_pool);
+	const int i = (cc_uint8) Stopwatch_Measure() % Array_Elems(connection_pool);
 	HttpConnection_Close(&connection_pool[i].conn);
 	return ConnectionPool_Insert(i, conn, url);
 }
@@ -376,13 +379,11 @@ static void HttpClientState_Init(struct HttpClientState* state, struct HttpReque
 
 
 static void HttpClient_Serialise(struct HttpClientState* state, cc_string* dst) {
-	static const char* verbs[] = { "GET", "HEAD", "POST" };
-
 	struct HttpRequest* req = state->req;
 	/* TODO move to other functions */
 	/* Write request message headers */
 	String_Format2(dst, "%c %s HTTP/1.1\r\n",
-					verbs[req->requestType], &state->url.resource);
+					HTTP_METHOD_NAMES[req->method], &state->url.resource);
 
 	Http_AddHeader(dst, "Host",       &state->url.address);
 	Http_AddHeader(dst, "User-Agent", Http_GetUserAgent_UNSAFE());
@@ -421,7 +422,7 @@ static void HttpClient_ParseHeader(struct HttpClientState* state, const cc_strin
 /* RFC 7230, section 3.3.3 - Message Body Length */
 static cc_bool HttpClient_HasBody(struct HttpRequest* req) {
 	/* HEAD responses never have a message body */
-	if (req->requestType == REQUEST_TYPE_HEAD) return false;
+	if (req->method == HTTP_HEAD) return false;
 	/* 1XX (Information) responses don't have message body */
 	if (req->statusCode >= 100 && req->statusCode <= 199) return false;
 	/* 204 (No Content) and 304 (Not Modified) also don't */
@@ -445,15 +446,13 @@ static int HttpClient_BeginBody(struct HttpRequest* req, struct HttpClientState*
 
 /* RFC 7230, section 4.1 - Chunked Transfer Coding */
 static int HttpClient_GetChunkLength(const cc_string* line) {
-	int length = 0, i, part;
-
-	for (i = 0; i < line->length; i++)
-	{
-		char c = line->buffer[i];
+	int length = 0;
+	for (int i = 0; i < line->length; i++) {
+		const char c = line->buffer[i];
 		/* RFC 7230, section 4.1.1 - Chunk Extensions */
 		if (c == ';') break;
 
-		part = PackedCol_DeHex(c);
+		const int part = PackedCol_DeHex(c);
 		if (part == -1) return -1;
 		length = (length << 4) | part;
 	}
@@ -596,17 +595,15 @@ static cc_result HttpClient_Process(struct HttpClientState* state, char* buffer,
 }
 
 static cc_result HttpClient_ParseResponse(struct HttpClientState* state) {
-	struct HttpRequest* req = state->req;
+	struct HttpRequest* const req = state->req;
 	cc_uint8 buffer[INPUT_BUFFER_LEN];
-	cc_uint8* dst;
 	cc_uint32 total;
-	cc_result res;
 
-	for (;;)
-	{
-		dst = state->dataLeft > INPUT_BUFFER_LEN ? (req->data + req->size) : buffer;
-		res = HttpConnection_Read(state->conn, dst, INPUT_BUFFER_LEN, &total);
-		if (res) return res;
+	for (;;) {
+		cc_result res;
+		cc_uint8* const dst = state->dataLeft > INPUT_BUFFER_LEN ? (req->data + req->size) : buffer;
+		if ((res = HttpConnection_Read(state->conn, dst, INPUT_BUFFER_LEN, &total)))
+			return res;
 
 		if (total == 0) {
 			Platform_Log1("Http read unexpectedly returned 0 in state %i", &state->state);
@@ -670,7 +667,6 @@ static cc_result HttpBackend_PerformRequest(struct HttpClientState* state) {
 
 	return res;
 }
-static const char* verbs[] = { "GET", "HEAD", "POST" };
 
 static cc_result HttpBackend_Do(struct HttpRequest* req) {
 	struct HttpClientState state;
@@ -679,7 +675,7 @@ static cc_result HttpBackend_Do(struct HttpRequest* req) {
 
 	for (;;) {
 		Platform_Log4("Fetching %c%s%s (%c)", state.url.https ? "https://" : "http://",
-					&state.url.address, &state.url.resource, verbs[req->requestType]);
+					&state.url.address, &state.url.resource, HTTP_METHOD_NAMES[req->method]);
 
 		res = HttpBackend_PerformRequest(&state);
 		/* TODO: Can we handle this while preserving the TCP connection */

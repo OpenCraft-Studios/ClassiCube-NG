@@ -14,7 +14,7 @@ VERSION     := $(shell git describe --always --tags --dirty="*" --abbrev=1)
 oc.build     = /tmp/$(plat.USE)-opencraft
 oc.src      := $(CURDIR)/opencraft
 
-override SRCS := $(filter-out $(oc.src)/Platform_% $(oc.src)/SSL.c,$(wildcard $(oc.src)/*.c))
+override SRCS := $(filter-out $(oc.src)/Platform_%,$(wildcard $(oc.src)/*.c))
 override OBJS  = $(patsubst $(oc.src)/%.c,$(oc.build)/%.c.o,$(SRCS))
 
 # ——— Modules —————————————————————————————————————————————————————————————————
@@ -23,10 +23,7 @@ include misc/logging.mk
 include $(oc.src)/platform.mk
 include $(oc.src)/certs.mk
 
-BEARSSL  ?= 1
-ifneq ($(BEARSSL), 0)
 include bearssl/module.mk
-endif
 
 AUDIO    ?= 1
 ifneq ($(AUDIO), 0)
