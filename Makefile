@@ -56,7 +56,7 @@ $(oc.build):
 .PHONY: config.ninja
 
 $(oc.build)/bearssl.o: config.ninja
-	$(NINJA) -Cbearssl
+	$(NINJA) -Cbearssl $@
 
 config.ninja:
 	$(file  >$@,cc = $(CC))
@@ -77,7 +77,7 @@ $(oc.build)/%.c.o: $(oc.src)/%.c | $(oc.build)
 
 ## Performs a basic clean of the build directories
 clean:
-	$(NINJA) -Cbearssl -t clean
+	$(NINJA) -Cbearssl -t clean 2>/dev/null || true
 	rm -rf $(BUILD_DIRS) $(TARGET) config.ninja
 
 ## Performs a basic clean and deletes files that git doesn't track
