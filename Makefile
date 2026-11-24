@@ -6,6 +6,7 @@
 # ——— Project settings ————————————————————————————————————————————————————————
 
 PKGCONF     ?= pkg-config
+NINJA       ?= ninja
 
 TARGET      := OpenCraft
 USE         := linux gl2 x11 openal openssl
@@ -22,8 +23,6 @@ override OBJS  = $(patsubst $(oc.src)/%.c,$(oc.build)/%.c.o,$(SRCS))
 include misc/logging.mk
 include $(oc.src)/platform.mk
 include $(oc.src)/certs.mk
-
-include bearssl/module.mk
 
 AUDIO    ?= 1
 ifneq ($(AUDIO), 0)
@@ -44,13 +43,29 @@ endif
 
 .DEFAULT_GOAL := $(TARGET)
 
-$(TARGET): $(OBJS)
+$(TARGET): $(OBJS) .WAIT $(oc.build)/bearssl.o
 	$(CC) -fuse-ld=$(LD) $(LDFLAGS) $^ $(LDLIBS) -o $@
 	$(call log_link,$@,$(words $(OBJS)))
 	chmod +x $@
 
 $(oc.build):
 	@mkdir -p $@
+
+# ——— New Ninja shiny stuff ———————————————————————————————————————————————————
+
+.PHONY: config.ninja
+
+$(oc.build)/bearssl.o: config.ninja
+	$(NINJA) -Cbearssl
+
+config.ninja:
+	$(file  >$@,cc = $(CC))
+	$(file >>$@,ld = $(LD))
+	$(file >>$@,builddir = $(oc.build))
+	$(file >>$@,version = $(VERSION))
+	$(file >>$@,cflags = $(CFLAGS))
+	$(file >>$@,ldflags = $(LDFLAGS))
+	$(file >>$@,ldlibs = $(LDLIBS))
 
 # ——— Basic build rule ————————————————————————————————————————————————————————
 
@@ -62,7 +77,8 @@ $(oc.build)/%.c.o: $(oc.src)/%.c | $(oc.build)
 
 ## Performs a basic clean of the build directories
 clean:
-	rm -rf $(BUILD_DIRS) $(TARGET)
+	$(NINJA) -Cbearssl -t clean
+	rm -rf $(BUILD_DIRS) $(TARGET) config.ninja
 
 ## Performs a basic clean and deletes files that git doesn't track
 ## ! Use with precaution

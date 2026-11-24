@@ -1,0 +1,241 @@
+include ../config.ninja
+include ../misc/rules.ninja
+
+build $builddir/aes_big_cbcdec.c.o: cc aes_big_cbcdec.c
+build $builddir/aes_big_cbcenc.c.o: cc aes_big_cbcenc.c
+build $builddir/aes_big_ctr.c.o: cc aes_big_ctr.c
+build $builddir/aes_big_ctrcbc.c.o: cc aes_big_ctrcbc.c
+build $builddir/aes_big_dec.c.o: cc aes_big_dec.c
+build $builddir/aes_big_enc.c.o: cc aes_big_enc.c
+build $builddir/aes_common.c.o: cc aes_common.c
+build $builddir/aes_x86ni.c.o: cc aes_x86ni.c
+build $builddir/aes_x86ni_cbcdec.c.o: cc aes_x86ni_cbcdec.c
+build $builddir/aes_x86ni_cbcenc.c.o: cc aes_x86ni_cbcenc.c
+build $builddir/aes_x86ni_ctr.c.o: cc aes_x86ni_ctr.c
+build $builddir/aes_x86ni_ctrcbc.c.o: cc aes_x86ni_ctrcbc.c
+build $builddir/aesctr_drbg.c.o: cc aesctr_drbg.c
+build $builddir/asn1enc.c.o: cc asn1enc.c
+build $builddir/ccm.c.o: cc ccm.c
+build $builddir/ccopy.c.o: cc ccopy.c
+build $builddir/chacha20_ct.c.o: cc chacha20_ct.c
+build $builddir/chacha20_sse2.c.o: cc chacha20_sse2.c
+build $builddir/dec32be.c.o: cc dec32be.c
+build $builddir/dec32le.c.o: cc dec32le.c
+build $builddir/dec64be.c.o: cc dec64be.c
+build $builddir/dec64le.c.o: cc dec64le.c
+build $builddir/dig_oid.c.o: cc dig_oid.c
+build $builddir/dig_size.c.o: cc dig_size.c
+build $builddir/ec_all_m31.c.o: cc ec_all_m31.c
+build $builddir/ec_c25519_i31.c.o: cc ec_c25519_i31.c
+build $builddir/ec_c25519_m31.c.o: cc ec_c25519_m31.c
+build $builddir/ec_c25519_m62.c.o: cc ec_c25519_m62.c
+build $builddir/ec_c25519_m64.c.o: cc ec_c25519_m64.c
+build $builddir/ec_curve25519.c.o: cc ec_curve25519.c
+build $builddir/ec_default.c.o: cc ec_default.c
+build $builddir/ec_p256_m31.c.o: cc ec_p256_m31.c
+build $builddir/ec_p256_m62.c.o: cc ec_p256_m62.c
+build $builddir/ec_p256_m64.c.o: cc ec_p256_m64.c
+build $builddir/ec_prime_i31.c.o: cc ec_prime_i31.c
+build $builddir/ec_secp256r1.c.o: cc ec_secp256r1.c
+build $builddir/ec_secp384r1.c.o: cc ec_secp384r1.c
+build $builddir/ec_secp521r1.c.o: cc ec_secp521r1.c
+build $builddir/ecdsa_atr.c.o: cc ecdsa_atr.c
+build $builddir/ecdsa_default_vrfy_asn1.c.o: cc ecdsa_default_vrfy_asn1.c
+build $builddir/ecdsa_default_vrfy_raw.c.o: cc ecdsa_default_vrfy_raw.c
+build $builddir/ecdsa_i31_bits.c.o: cc ecdsa_i31_bits.c
+build $builddir/ecdsa_i31_vrfy_asn1.c.o: cc ecdsa_i31_vrfy_asn1.c
+build $builddir/ecdsa_i31_vrfy_raw.c.o: cc ecdsa_i31_vrfy_raw.c
+build $builddir/enc32be.c.o: cc enc32be.c
+build $builddir/enc32le.c.o: cc enc32le.c
+build $builddir/enc64be.c.o: cc enc64be.c
+build $builddir/enc64le.c.o: cc enc64le.c
+build $builddir/gcm.c.o: cc gcm.c
+build $builddir/ghash_ctmul.c.o: cc ghash_ctmul.c
+build $builddir/ghash_ctmul64.c.o: cc ghash_ctmul64.c
+build $builddir/ghash_pclmul.c.o: cc ghash_pclmul.c
+build $builddir/hmac.c.o: cc hmac.c
+build $builddir/hmac_ct.c.o: cc hmac_ct.c
+build $builddir/hmac_drbg.c.o: cc hmac_drbg.c
+build $builddir/i31_add.c.o: cc i31_add.c
+build $builddir/i31_bitlen.c.o: cc i31_bitlen.c
+build $builddir/i31_decmod.c.o: cc i31_decmod.c
+build $builddir/i31_decode.c.o: cc i31_decode.c
+build $builddir/i31_decred.c.o: cc i31_decred.c
+build $builddir/i31_encode.c.o: cc i31_encode.c
+build $builddir/i31_fmont.c.o: cc i31_fmont.c
+build $builddir/i31_iszero.c.o: cc i31_iszero.c
+build $builddir/i31_moddiv.c.o: cc i31_moddiv.c
+build $builddir/i31_modpow.c.o: cc i31_modpow.c
+build $builddir/i31_modpow2.c.o: cc i31_modpow2.c
+build $builddir/i31_montmul.c.o: cc i31_montmul.c
+build $builddir/i31_mulacc.c.o: cc i31_mulacc.c
+build $builddir/i31_muladd.c.o: cc i31_muladd.c
+build $builddir/i31_ninv31.c.o: cc i31_ninv31.c
+build $builddir/i31_reduce.c.o: cc i31_reduce.c
+build $builddir/i31_rshift.c.o: cc i31_rshift.c
+build $builddir/i31_sub.c.o: cc i31_sub.c
+build $builddir/i31_tmont.c.o: cc i31_tmont.c
+build $builddir/i32_div32.c.o: cc i32_div32.c
+build $builddir/i62_modpow2.c.o: cc i62_modpow2.c
+build $builddir/md5.c.o: cc md5.c
+build $builddir/md5sha1.c.o: cc md5sha1.c
+build $builddir/multihash.c.o: cc multihash.c
+build $builddir/poly1305_ctmul.c.o: cc poly1305_ctmul.c
+build $builddir/poly1305_ctmulq.c.o: cc poly1305_ctmulq.c
+build $builddir/prf.c.o: cc prf.c
+build $builddir/prf_md5sha1.c.o: cc prf_md5sha1.c
+build $builddir/prf_sha256.c.o: cc prf_sha256.c
+build $builddir/prf_sha384.c.o: cc prf_sha384.c
+build $builddir/rsa_default_pkcs1_vrfy.c.o: cc rsa_default_pkcs1_vrfy.c
+build $builddir/rsa_default_priv.c.o: cc rsa_default_priv.c
+build $builddir/rsa_default_pub.c.o: cc rsa_default_pub.c
+build $builddir/rsa_i31_pkcs1_vrfy.c.o: cc rsa_i31_pkcs1_vrfy.c
+build $builddir/rsa_i31_priv.c.o: cc rsa_i31_priv.c
+build $builddir/rsa_i31_pub.c.o: cc rsa_i31_pub.c
+build $builddir/rsa_i62_pkcs1_vrfy.c.o: cc rsa_i62_pkcs1_vrfy.c
+build $builddir/rsa_i62_priv.c.o: cc rsa_i62_priv.c
+build $builddir/rsa_i62_pub.c.o: cc rsa_i62_pub.c
+build $builddir/rsa_pkcs1_sig_unpad.c.o: cc rsa_pkcs1_sig_unpad.c
+build $builddir/sha1.c.o: cc sha1.c
+build $builddir/sha2big.c.o: cc sha2big.c
+build $builddir/sha2small.c.o: cc sha2small.c
+build $builddir/ssl_client.c.o: cc ssl_client.c
+build $builddir/ssl_client_default_rsapub.c.o: cc ssl_client_default_rsapub.c
+build $builddir/ssl_client_full.c.o: cc ssl_client_full.c
+build $builddir/ssl_engine.c.o: cc ssl_engine.c
+build $builddir/ssl_engine_default_aescbc.c.o: cc ssl_engine_default_aescbc.c
+build $builddir/ssl_engine_default_aesccm.c.o: cc ssl_engine_default_aesccm.c
+build $builddir/ssl_engine_default_aesgcm.c.o: cc ssl_engine_default_aesgcm.c
+build $builddir/ssl_engine_default_chapol.c.o: cc ssl_engine_default_chapol.c
+build $builddir/ssl_engine_default_ec.c.o: cc ssl_engine_default_ec.c
+build $builddir/ssl_engine_default_ecdsa.c.o: cc ssl_engine_default_ecdsa.c
+build $builddir/ssl_engine_default_rsavrfy.c.o: cc ssl_engine_default_rsavrfy.c
+build $builddir/ssl_hashes.c.o: cc ssl_hashes.c
+build $builddir/ssl_hs_client.c.o: cc ssl_hs_client.c
+build $builddir/ssl_io.c.o: cc ssl_io.c
+build $builddir/ssl_rec_cbc.c.o: cc ssl_rec_cbc.c
+build $builddir/ssl_rec_ccm.c.o: cc ssl_rec_ccm.c
+build $builddir/ssl_rec_chapol.c.o: cc ssl_rec_chapol.c
+build $builddir/ssl_rec_gcm.c.o: cc ssl_rec_gcm.c
+build $builddir/x509_minimal.c.o: cc x509_minimal.c
+build $builddir/x509_minimal_full.c.o: cc x509_minimal_full.c
+
+build $builddir/bearssl.o: link $builddir/aes_big_cbcdec.c.o $
+    $builddir/aes_big_cbcenc.c.o $
+    $builddir/aes_big_ctr.c.o $
+    $builddir/aes_big_ctrcbc.c.o $
+    $builddir/aes_big_dec.c.o $
+    $builddir/aes_big_enc.c.o $
+    $builddir/aes_common.c.o $
+    $builddir/aes_x86ni.c.o $
+    $builddir/aes_x86ni_cbcdec.c.o $
+    $builddir/aes_x86ni_cbcenc.c.o $
+    $builddir/aes_x86ni_ctr.c.o $
+    $builddir/aes_x86ni_ctrcbc.c.o $
+    $builddir/aesctr_drbg.c.o $
+    $builddir/asn1enc.c.o $
+    $builddir/ccm.c.o $
+    $builddir/ccopy.c.o $
+    $builddir/chacha20_ct.c.o $
+    $builddir/chacha20_sse2.c.o $
+    $builddir/dec32be.c.o $
+    $builddir/dec32le.c.o $
+    $builddir/dec64be.c.o $
+    $builddir/dec64le.c.o $
+    $builddir/dig_oid.c.o $
+    $builddir/dig_size.c.o $
+    $builddir/ec_all_m31.c.o $
+    $builddir/ec_c25519_i31.c.o $
+    $builddir/ec_c25519_m31.c.o $
+    $builddir/ec_c25519_m62.c.o $
+    $builddir/ec_c25519_m64.c.o $
+    $builddir/ec_curve25519.c.o $
+    $builddir/ec_default.c.o $
+    $builddir/ec_p256_m31.c.o $
+    $builddir/ec_p256_m62.c.o $
+    $builddir/ec_p256_m64.c.o $
+    $builddir/ec_prime_i31.c.o $
+    $builddir/ec_secp256r1.c.o $
+    $builddir/ec_secp384r1.c.o $
+    $builddir/ec_secp521r1.c.o $
+    $builddir/ecdsa_atr.c.o $
+    $builddir/ecdsa_default_vrfy_asn1.c.o $
+    $builddir/ecdsa_default_vrfy_raw.c.o $
+    $builddir/ecdsa_i31_bits.c.o $
+    $builddir/ecdsa_i31_vrfy_asn1.c.o $
+    $builddir/ecdsa_i31_vrfy_raw.c.o $
+    $builddir/enc32be.c.o $
+    $builddir/enc32le.c.o $
+    $builddir/enc64be.c.o $
+    $builddir/enc64le.c.o $
+    $builddir/gcm.c.o $
+    $builddir/ghash_ctmul.c.o $
+    $builddir/ghash_ctmul64.c.o $
+    $builddir/ghash_pclmul.c.o $
+    $builddir/hmac.c.o $
+    $builddir/hmac_ct.c.o $
+    $builddir/hmac_drbg.c.o $
+    $builddir/i31_add.c.o $
+    $builddir/i31_bitlen.c.o $
+    $builddir/i31_decmod.c.o $
+    $builddir/i31_decode.c.o $
+    $builddir/i31_decred.c.o $
+    $builddir/i31_encode.c.o $
+    $builddir/i31_fmont.c.o $
+    $builddir/i31_iszero.c.o $
+    $builddir/i31_moddiv.c.o $
+    $builddir/i31_modpow.c.o $
+    $builddir/i31_modpow2.c.o $
+    $builddir/i31_montmul.c.o $
+    $builddir/i31_mulacc.c.o $
+    $builddir/i31_muladd.c.o $
+    $builddir/i31_ninv31.c.o $
+    $builddir/i31_reduce.c.o $
+    $builddir/i31_rshift.c.o $
+    $builddir/i31_sub.c.o $
+    $builddir/i31_tmont.c.o $
+    $builddir/i32_div32.c.o $
+    $builddir/i62_modpow2.c.o $
+    $builddir/md5.c.o $
+    $builddir/md5sha1.c.o $
+    $builddir/multihash.c.o $
+    $builddir/poly1305_ctmul.c.o $
+    $builddir/poly1305_ctmulq.c.o $
+    $builddir/prf.c.o $
+    $builddir/prf_md5sha1.c.o $
+    $builddir/prf_sha256.c.o $
+    $builddir/prf_sha384.c.o $
+    $builddir/rsa_default_pkcs1_vrfy.c.o $
+    $builddir/rsa_default_priv.c.o $
+    $builddir/rsa_default_pub.c.o $
+    $builddir/rsa_i31_pkcs1_vrfy.c.o $
+    $builddir/rsa_i31_priv.c.o $
+    $builddir/rsa_i31_pub.c.o $
+    $builddir/rsa_i62_pkcs1_vrfy.c.o $
+    $builddir/rsa_i62_priv.c.o $
+    $builddir/rsa_i62_pub.c.o $
+    $builddir/rsa_pkcs1_sig_unpad.c.o $
+    $builddir/sha1.c.o $
+    $builddir/sha2big.c.o $
+    $builddir/sha2small.c.o $
+    $builddir/ssl_client.c.o $
+    $builddir/ssl_client_default_rsapub.c.o $
+    $builddir/ssl_client_full.c.o $
+    $builddir/ssl_engine.c.o $
+    $builddir/ssl_engine_default_aescbc.c.o $
+    $builddir/ssl_engine_default_aesccm.c.o $
+    $builddir/ssl_engine_default_aesgcm.c.o $
+    $builddir/ssl_engine_default_chapol.c.o $
+    $builddir/ssl_engine_default_ec.c.o $
+    $builddir/ssl_engine_default_ecdsa.c.o $
+    $builddir/ssl_engine_default_rsavrfy.c.o $
+    $builddir/ssl_hashes.c.o $
+    $builddir/ssl_hs_client.c.o $
+    $builddir/ssl_io.c.o $
+    $builddir/ssl_rec_cbc.c.o $
+    $builddir/ssl_rec_ccm.c.o $
+    $builddir/ssl_rec_chapol.c.o $
+    $builddir/ssl_rec_gcm.c.o $
+    $builddir/x509_minimal.c.o $
+    $builddir/x509_minimal_full.c.o
+    ldflags = $ldflags -r

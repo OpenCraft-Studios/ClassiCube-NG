@@ -1,0 +1,9 @@
+include ../misc/logging.ninja
+
+rule cc
+    command = $cc $cflags -c $in -o $out
+    description = ${BOLD}${GREEN}Compiling${RESET} $in ${DIM}${version}${RESET}
+
+rule link
+    command = $cc -fuse-ld=$ld $ldflags $in -o $out
+    description = ${BOLD}${CYAN}Linking${RESET} $out ${DIM}(OpenCraft's advanced early Ninja access)${RESET}
