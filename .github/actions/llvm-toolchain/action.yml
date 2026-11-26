@@ -14,46 +14,27 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Configure apt for 32-bit packages
-      if: inputs.architecture == 'i386'
-      shell: bash
-      run: |
-        sudo tee /etc/apt/apt.conf.d/99-no_recommends <<< 'APT::Install-Suggests "false";'
-        sudo dpkg --add-architecture i386
-
-    - name: Update apt repositories
-      shell: bash
-      run: |
-        sudo apt-get update
-
-    - name: Install LLVM toolchain
+    - name: Install build dependencies
       if: always()
       shell: bash
       run: |
-        sudo apt-get install -y \
-          clang ccache \
-          llvm \
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          ccache \
           mold \
-          gcc-multilib \
-          libx11-dev \
-          libgl-dev \
-          libc6-dev \
           libxi-dev \
-          libglvnd-dev \
-          x11proto-core-dev \
-          x11proto-input-dev \
-          x11proto-kb-dev
+          libgl-dev
 
     - name: Install development libraries for i386
       if: inputs.architecture == 'i386'
       shell: bash
       run: |
-        sudo apt-get install -y \
-          libx11-dev:i386 \
-          libgl-dev:i386 \
-          libc6-dev:i386 \
+        sudo dpkg --add-architecture i386
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          gcc-multilib \
           libxi-dev:i386 \
-          libglvnd-dev:i386
+          libgl-dev:i386
 
     - name: Create compiler wrapper
       shell: bash
