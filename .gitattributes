@@ -1,2 +1,66 @@
-*.c linguist-language=C
-*.h linguist-language=C
+# Attribute macros
+[attr]lf       text eol=lf
+[attr]vendored linguist-vendored
+[attr]docs      linguist-documentation
+[attr]excluded  export-ignore
+
+# Default: automatic text/binary detection
+* text=auto
+
+# Source code, scripts and documentation (LF)
+*.[ch]          lf linguist-language=C
+*.cc            lf
+*.cpp           lf
+*.hpp           lf
+*.sh            lf
+*.yml           lf
+*.yaml          lf
+*.json          lf
+*.md            lf diff=markdown
+*.s             lf linguist-language=Assembly
+*.v.pica        lf linguist-language=Assembly
+Makefile        lf
+.editorconfig   lf excluded
+.gitattributes  lf merge=union excluded
+.gitignore      lf merge=union excluded
+
+# Windows scripts (CRLF)
+*.bat           text eol=crlf
+*.cmd           text eol=crlf
+
+# Binary files
+*.png           binary
+*.jpg           binary
+*.ico           binary
+*.icns          binary
+*.zip           binary
+*.gz            binary
+*.bz2           binary
+*.xz            binary
+*.zst           binary
+*.tar           binary
+*.o             binary
+*.obj           binary
+*.a             binary
+*.lib           binary
+*.so            binary
+*.dll           binary
+*.dylib         binary
+*.exe           binary
+*.bin           binary
+*.mp3           binary
+*.wav           binary
+*.ogg           binary
+
+# Merge strategies
+CHANGELOG.md    merge=union
+
+# GitHub Linguist
+third_party/**  vendored
+bearssl/**      vendored
+misc/**         vendored
+LICENSE         docs
+.github/README.md docs
+
+# Source archives
+.github/**      excluded
