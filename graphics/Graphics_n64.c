@@ -49,7 +49,6 @@ void Gfx_Create(void) {
 	Gfx_RestoreState();
 
 	Gfx_SetFaceCulling(false);
-	Gfx_SetViewport(0, 0, Game.Width, Game.Height);
 }
 
 cc_bool Gfx_TryRestoreContext(void) {
@@ -82,7 +81,9 @@ void Gfx_SetVSync(cc_bool vsync) {
 	gfx_vsync = vsync; // TODO update vsync
 }
 
-void Gfx_OnWindowResize(int width, int height) { }
+void Gfx_OnWindowResize(int width, int height) {
+	Gfx_SetViewport(0, 0, width, height);
+}
 
 void Gfx_SetViewport(int x, int y, int w, int h) {
 	gpuViewport(x, y, w, h);

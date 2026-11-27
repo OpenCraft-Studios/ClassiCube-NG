@@ -18,16 +18,15 @@
 // A lot of figuring out which GPU registers to use came from:
 // - comparing against pbgl and pbkit
 
-// Room for 136 vertex shader instructions
-// Only need 3, so give 40 instructions to each
-#define VS_COLOURED_OFFSET  0
-#define VS_TEXTURED_OFFSET 40
-#define VS_OFFSET_OFFSET   80
 
-static void LoadVertexShader(int offset, uint32_t* program, int programSize) {
+static int vs_coloured, vs_textured, vs_offset;
+
+#define VS_CONST_MVP  0
+#define VS_CONST_OFST 4
+
+static void LoadVertexShader(int* offset, uint32_t* program, int programSize) {
 	uint32_t* p = pb_begin();
-	p = NV2A_set_program_upload_offset(p, offset);
-	p = NV2A_upload_program(p, program, programSize);
+	p = NV2A_upload_VS(p, offset, program, programSize);
 	pb_end(p);
 }
 
@@ -63,7 +62,7 @@ static void SetupShaders(void) {
 	uint32_t *p;
 
 	p = pb_begin();
-	p = NV2A_set_program_run_offset(p, 0);
+	p = NV2A_set_active_VS(p, 0);
 	p = NV2A_set_execution_mode_shaders(p);
 
 	pb_end(p);
@@ -111,9 +110,9 @@ void Gfx_Create(void) {
 	ResetState();
 	Gfx.NonPowTwoTexturesSupport = GFX_NONPOW2_UPLOAD;
 
-	LoadVertexShader(VS_COLOURED_OFFSET, vs_coloured_program, sizeof(vs_coloured_program));
-	LoadVertexShader(VS_TEXTURED_OFFSET, vs_textured_program, sizeof(vs_textured_program));
-	LoadVertexShader(VS_OFFSET_OFFSET,   vs_offset_program,   sizeof(vs_offset_program));
+	LoadVertexShader(&vs_coloured, vs_coloured_program, sizeof(vs_coloured_program));
+	LoadVertexShader(&vs_textured, vs_textured_program, sizeof(vs_textured_program));
+	LoadVertexShader(&vs_offset,   vs_offset_program,   sizeof(vs_offset_program));
 
 	// 1x1 dummy white texture
 	struct Bitmap bmp;
@@ -509,8 +508,7 @@ void Gfx_LoadMatrix(MatrixType type, const struct Matrix* matrix) {
 
 	uint32_t* p;
 	p = pb_begin();
-	p = NV2A_set_constant_upload_offset(p, 0);
-	p = NV2A_upload_constants(p, &final, 16);
+	p = NV2A_upload_VS_constants(p, VS_CONST_MVP, &final, 16);
 	pb_end(p);
 }
 
@@ -524,11 +522,11 @@ static int tex_offset;
 
 static int CalcProgramOffset(void) {
 	if (tex_offset)
-		return VS_OFFSET_OFFSET;
+		return vs_offset;
 	if (gfx_format == VERTEX_FORMAT_TEXTURED)
-		return VS_TEXTURED_OFFSET;
+		return vs_textured;
 
-	return VS_COLOURED_OFFSET;
+	return vs_coloured;
 }
 
 void Gfx_EnableTextureOffset(float x, float y) {
@@ -536,9 +534,8 @@ void Gfx_EnableTextureOffset(float x, float y) {
 	uint32_t* p = pb_begin();
 	tex_offset  = true;
 
-	p = NV2A_set_constant_upload_offset(p, 4);
-	p = NV2A_upload_constants(p, &offset, 4);
-	p = NV2A_set_program_run_offset(p, CalcProgramOffset());
+	p = NV2A_upload_VS_constants(p, VS_CONST_OFST, &offset, 4);
+	p = NV2A_set_active_VS(p, CalcProgramOffset());
 	pb_end(p);
 }
 
@@ -546,7 +543,7 @@ void Gfx_DisableTextureOffset(void) {
 	uint32_t* p = pb_begin();
 	tex_offset  = false;
 
-	p = NV2A_set_program_run_offset(p, CalcProgramOffset());
+	p = NV2A_set_active_VS(p, CalcProgramOffset());
 	pb_end(p);
 }
 
@@ -593,7 +590,7 @@ void Gfx_SetVertexFormat(VertexFormat fmt) {
 					NV097_SET_VERTEX_DATA_ARRAY_FORMAT_TYPE_F,      0, 0);
 	}
 
-	p = NV2A_set_program_run_offset(p, CalcProgramOffset());
+	p = NV2A_set_active_VS(p, CalcProgramOffset());
 	pb_end(p);
 
 	if (fmt == VERTEX_FORMAT_TEXTURED) {
@@ -618,4 +615,3 @@ void Gfx_DrawVb_IndexedTris(int verticesCount) {
 void Gfx_DrawIndexedTris_T2fC4b(int verticesCount, int startVertex, DrawHints hints) {
 	NV2A_DrawArrays(NV097_SET_BEGIN_END_OP_QUADS, startVertex, verticesCount);
 }
-

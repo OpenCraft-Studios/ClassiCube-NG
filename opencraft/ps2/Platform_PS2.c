@@ -1,12 +1,13 @@
 #define CC_XTEA_ENCRYPTION
 #define CC_NO_UPDATER
 #define CC_NO_DYNLIB
+#define CC_NO_CRASHHANDLER
 #define DEFAULT_COMMANDLINE_FUNC
 
 #include "../Stream.h"
 #include "../ExtMath.h"
 #include "../Funcs.h"
-#include <Window.h>
+#include "../Window.h"
 #include "../Utils.h"
 #include "../Errors.h"
 #include "../PackedCol.h"
@@ -149,16 +150,6 @@ cc_uint64 Stopwatch_Measure(void) {
 cc_uint64 Stopwatch_ElapsedMicroseconds(cc_uint64 beg, cc_uint64 end) {
 	if (end < beg) return 0;
 	return (end - beg) * US_PER_SEC / kBUSCLK;
-}
-
-
-/*########################################################################################################################*
-*-------------------------------------------------------Crash handling----------------------------------------------------*
-*#########################################################################################################################*/
-void CrashHandler_Install(void) { }
-
-void Process_Abort2(cc_result result, const char* raw_msg) {
-	Logger_DoAbort(result, raw_msg, NULL);
 }
 
 
@@ -505,9 +496,9 @@ static void Networking_Setup(void) {
 static void Networking_LoadIOPModules(void) {
 	int ret;
 	
-	SifLoadBuffer(DEV9_irx);
-	SifLoadBuffer(NETMAN_irx);
-	SifLoadBuffer(SMAP_irx);
+	SifLoadBuffer(ps2dev9_irx);
+	SifLoadBuffer(netman_irx);
+	SifLoadBuffer(smap_irx);
 }
 
 /*########################################################################################################################*
@@ -656,15 +647,15 @@ static void USBStorage_LoadIOPModules(void) {
     // BDM, BDMFS_FATFS, USBMASS_BD - newer ?
     // USBHDFSD - older ?
     
-	SifLoadBuffer(USBD_irx);  
+	SifLoadBuffer(usbd_irx);  
 	//SifLoadBuffer(USBHDFSD_irx);
     
-	SifLoadBuffer(BDM_irx);
-	SifLoadBuffer(BDMFS_FATFS_irx);
+	SifLoadBuffer(bdm_irx);
+	SifLoadBuffer(bdmfs_fatfs_irx);
     
-	SifLoadBuffer(USBMASS_BD_irx);
-	SifLoadBuffer(USBMOUSE_irx);
-	SifLoadBuffer(USBKBD_irx);
+	SifLoadBuffer(usbmass_bd_irx);
+	SifLoadBuffer(ps2mouse_irx);
+	SifLoadBuffer(ps2kbd_irx);
 }
 
 // TODO Maybe needed ???

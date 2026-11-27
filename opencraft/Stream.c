@@ -1,6 +1,6 @@
 #include "Stream.h"
 #include "String_.h"
-#include <Platform.h>
+#include "Platform.h"
 #include "Funcs.h"
 #include "Errors.h"
 #include "Utils.h"
@@ -67,7 +67,7 @@ static cc_result Stream_DefaultSkip(struct Stream* s, cc_uint32 count) {
 static cc_result Stream_DefaultSeek(struct Stream* s, cc_uint32 pos) {
 	return ERR_NOT_SUPPORTED;
 }
-static cc_result Stream_DefaultGet(struct Stream* s, cc_uint32* value) {
+static cc_result Stream_DefaultGet(struct Stream* s, cc_uint32* value) { 
 	return ERR_NOT_SUPPORTED;
 }
 static cc_result Stream_DefaultClose(struct Stream* s) { return 0; }
@@ -217,12 +217,12 @@ static cc_result Stream_PortionSkip(struct Stream* s, cc_uint32 count) {
 }
 
 static cc_result Stream_PortionPosition(struct Stream* s, cc_uint32* position) {
-	*position = s->meta.portion.length - s->meta.portion.left;
+	*position = s->meta.portion.length - s->meta.portion.left; 
 	return 0;
 }
 
 static cc_result Stream_PortionLength(struct Stream* s, cc_uint32* length) {
-	*length = s->meta.portion.length;
+	*length = s->meta.portion.length; 
 	return 0;
 }
 
@@ -246,8 +246,8 @@ void Stream_ReadonlyPortion(struct Stream* s, struct Stream* source, cc_uint32 l
 static cc_result Stream_MemoryRead(struct Stream* s, cc_uint8* data, cc_uint32 count, cc_uint32* modified) {
 	count = min(count, s->meta.mem.left);
 	Mem_Copy(data, s->meta.mem.cur, count);
-
-	s->meta.mem.cur  += count;
+	
+	s->meta.mem.cur  += count; 
 	s->meta.mem.left -= count;
 	*modified = count;
 	return 0;
@@ -257,7 +257,7 @@ static cc_result Stream_MemoryReadU8(struct Stream* s, cc_uint8* data) {
 	if (!s->meta.mem.left) return ERR_END_OF_STREAM;
 
 	*data = *s->meta.mem.cur;
-	s->meta.mem.cur++;
+	s->meta.mem.cur++; 
 	s->meta.mem.left--;
 	return 0;
 }
@@ -265,7 +265,7 @@ static cc_result Stream_MemoryReadU8(struct Stream* s, cc_uint8* data) {
 static cc_result Stream_MemorySkip(struct Stream* s, cc_uint32 count) {
 	if (count > s->meta.mem.left) return ERR_INVALID_ARGUMENT;
 
-	s->meta.mem.cur  += count;
+	s->meta.mem.cur  += count; 
 	s->meta.mem.left -= count;
 	return 0;
 }
@@ -311,7 +311,7 @@ static cc_result Stream_BufferedRead(struct Stream* s, cc_uint8* data, cc_uint32
 
 	/* Refill buffer */
 	if (!s->meta.buffered.left) {
-		source               = s->meta.buffered.source;
+		source               = s->meta.buffered.source; 
 		s->meta.buffered.cur = s->meta.buffered.base;
 
 		res = source->Read(source, s->meta.buffered.cur, s->meta.buffered.length, &read);
@@ -319,11 +319,11 @@ static cc_result Stream_BufferedRead(struct Stream* s, cc_uint8* data, cc_uint32
 		s->meta.buffered.left  = read;
 		s->meta.buffered.end  += read;
 	}
-
+	
 	count = min(count, s->meta.buffered.left);
 	Mem_Copy(data, s->meta.buffered.cur, count);
 
-	s->meta.buffered.cur  += count;
+	s->meta.buffered.cur  += count; 
 	s->meta.buffered.left -= count;
 	*modified = count;
 	return 0;
@@ -333,7 +333,7 @@ static cc_result Stream_BufferedReadU8(struct Stream* s, cc_uint8* data) {
 	if (!s->meta.buffered.left) return Stream_DefaultReadU8(s, data);
 
 	*data = *s->meta.buffered.cur;
-	s->meta.buffered.cur++;
+	s->meta.buffered.cur++; 
 	s->meta.buffered.left--;
 	return 0;
 }
@@ -426,7 +426,7 @@ cc_result Stream_ReadU32_BE(struct Stream* s, cc_uint32* value) {
 *#########################################################################################################################*/
 cc_result Stream_ReadLine(struct Stream* s, cc_string* text) {
 	cc_bool readAny = false;
-	cc_codepoint cp;
+	cc_codepoint cp = 0;
 	cc_result res;
 
 	cc_uint8 tmp[8];
@@ -475,7 +475,7 @@ cc_result Stream_WriteLine(struct Stream* s, cc_string* text) {
 		cur = buffer + len;
 		len += Convert_CP437ToUtf8(text->buffer[i], cur);
 	}
-
+	
 	nl = _NL;
 	while (*nl) { buffer[len++] = *nl++; }
 	return Stream_Write(s, buffer, len);

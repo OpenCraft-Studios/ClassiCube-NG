@@ -2,18 +2,18 @@
 #define OVERRIDE_MEM_FUNCTIONS
 
 extern "C" {
-#include "Errors.h"
 #include <Platform.h>
-#include "Logger.h"
-#include "String_.h"
-#include "Stream.h"
-#include "ExtMath.h"
-#include "SystemFonts.h"
-#include "Funcs.h"
 #include <Window.h>
-#include "Utils.h"
-#include "Errors.h"
-#include "PackedCol.h"
+#include "../Errors.h"
+#include "../Logger.h"
+#include "../String_.h"
+#include "../Stream.h"
+#include "../ExtMath.h"
+#include "../SystemFonts.h"
+#include "../Funcs.h"
+#include "../Utils.h"
+#include "../Errors.h"
+#include "../PackedCol.h"
 
 #include <unistd.h>
 #include <errno.h>
@@ -86,12 +86,12 @@ void Mem_Free(void* mem) {
 void Platform_Log(const char* msg, int len) {
 	TPtrC8 ptr((const TUint8*)msg, len);
 	cc_string str;
-	
+
 	str = String_Init((char*)msg, len, len);
 	Logger_Log(&str);
 	str = String_FromReadonly("\r\n");
 	Logger_Log(&str);
-	
+
 	RDebug::RawPrint(ptr);
 }
 
@@ -104,7 +104,7 @@ TimeMS DateTime_CurrentUTC(void) {
 void DateTime_CurrentLocal(struct cc_datetime* t) {
 	TTime cur;
 	TDateTime dt;
-	
+
 	cur.HomeTime();
 	dt = cur.DateTime();
 
@@ -145,7 +145,7 @@ cc_bool crashed = false;
 
 static void ExceptionHandler(TExcType type) {
 	cc_string msg; char msgB[64];
-	
+
 	crashed = true;
 	String_InitArray(msg, msgB);
 	String_AppendConst(&msg, "Exception: ");
@@ -158,6 +158,10 @@ void CrashHandler_Install(void) {
 #if !defined _DEBUG
 	User::SetExceptionHandler(ExceptionHandler, 0xffffffff);
 #endif
+}
+
+void CrashHandler_DumpRegisters(void* ctx, cc_string* str) {
+	// TODO Register dumping not implemented
 }
 
 void Process_Abort2(cc_result result, const char* raw_msg) {
@@ -290,21 +294,21 @@ cc_result File_Length(cc_file file, cc_uint32* len) {
 *#########################################################################################################################*/
 #define NS_PER_SEC 1000000000ULL
 
-void Thread_Sleep(cc_uint32 milliseconds) { 
-	User::After(milliseconds * 1000); 
+void Thread_Sleep(cc_uint32 milliseconds) {
+	User::After(milliseconds * 1000);
 }
 
 static void* ExecThread(void* param) {
 	CTrapCleanup* cleanup = CTrapCleanup::New();
 	CActiveScheduler* scheduler = new (ELeave) CActiveScheduler();
 	CActiveScheduler::Install(scheduler);
-	
+
 	((Thread_StartFunc)param)();
-	
+
 	CActiveScheduler::Install(NULL);
 	delete scheduler;
 	delete cleanup;
-	
+
 	return NULL;
 }
 
@@ -312,17 +316,17 @@ void Thread_Run(void** handle, Thread_StartFunc func, int stackSize, const char*
 	pthread_t* ptr = (pthread_t*)Mem_Alloc(1, sizeof(pthread_t), "thread");
 	pthread_attr_t attrs;
 	int res;
-	
+
 	*handle = ptr;
 	pthread_attr_init(&attrs);
-	
+
 	/* Symbian only supports up to 80 KB stack size */
 	if (stackSize >= 80 * 1024) {
 		stackSize = 80 * 1024;
 	}
-	
+
 	pthread_attr_setstacksize(&attrs, stackSize);
-	
+
 	res = pthread_create(ptr, &attrs, ExecThread, (void*)func);
 	if (res) Process_Abort2(res, "Creating thread");
 	pthread_attr_destroy(&attrs);
@@ -349,14 +353,14 @@ void Thread_Join(void* handle) {
 void* Mutex_Create(const char* name) {
 	RMutex* mutex = new RMutex;
 	if (!mutex) Process_Abort("Creating mutex");
-	
+
 	mutex->CreateLocal();
 	return mutex;
 }
 
 void Mutex_Free(void* handle) {
 	RMutex* mutex = (RMutex*)handle;
-	
+
 	mutex->Close();
 	delete mutex;
 }
@@ -375,7 +379,7 @@ void* Waitable_Create(const char* name) {
 	RSemaphore* sem = new RSemaphore;
 	TInt res;
 	if (!sem) Process_Abort("Creating waitable");
-	
+
 	res = sem->CreateLocal(0);
 	if (res) Process_Abort2(res, "Creating waitable");
 	return sem;
@@ -383,7 +387,7 @@ void* Waitable_Create(const char* name) {
 
 void Waitable_Free(void* handle) {
 	RSemaphore* sem = (RSemaphore*)handle;
-	
+
 	sem->Close();
 	delete sem;
 }
@@ -421,8 +425,8 @@ void Platform_LoadSysFonts(void) {
 		String_FromConst("Z:\\resource\\fonts"),
 		String_FromConst("C:\\resource\\fonts")
 	};
-	
-	for (i = 0; i < Array_Elems(dirs); i++) 
+
+	for (i = 0; i < Array_Elems(dirs); i++)
 	{
 		Platform_Log1("Searching for fonts in %s", &dirs[i]);
 		Directory_Enum(&dirs[i], NULL, FontDirCallback);
@@ -437,7 +441,7 @@ void Platform_LoadSysFonts(void) {
 cc_bool SockAddr_ToString(const cc_sockaddr* addr, cc_string* dst) {
 	struct sockaddr_in* addr4 = (struct sockaddr_in*)addr->data;
 
-	if (addr4->sin_family == AF_INET) 
+	if (addr4->sin_family == AF_INET)
 		return IPv4_ToString(&addr4->sin_addr, &addr4->sin_port, dst);
 	return false;
 }
@@ -450,7 +454,7 @@ static cc_bool ParseIPv4(const cc_string* ip, int port, cc_sockaddr* dst) {
 	addr4->sin_addr.s_addr = ip_addr;
 	addr4->sin_family      = AF_INET;
 	addr4->sin_port        = SockAddr_EncodePort(port);
-		
+
 	dst->size = sizeof(*addr4);
 	return true;
 }
@@ -469,7 +473,7 @@ static cc_result ParseHost(const char* host, int port, cc_sockaddr* addrs, int* 
 
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol = IPPROTO_TCP;
-	
+
 	String_InitArray(portStr,  portRaw);
 	String_AppendInt(&portStr, port);
 	portRaw[portStr.length] = '\0';
@@ -484,7 +488,7 @@ static cc_result ParseHost(const char* host, int port, cc_sockaddr* addrs, int* 
 		if (cur->ai_family != AF_INET) continue;
 		SocketAddr_Set(&addrs[i], cur->ai_addr, cur->ai_addrlen); i++;
 	}
-	
+
 	for (cur = result; cur && i < SOCKET_MAX_ADDRS; cur = cur->ai_next)
 	{
 		if (cur->ai_family == AF_INET) continue;
@@ -501,12 +505,12 @@ static cc_result ParseHost(const char* host, int port, cc_sockaddr* addrs, int* 
 	struct sockaddr_in* addr4;
 	char* src_addr;
 	int i;
-	
+
 	// Must have at least one IPv4 address
 	if (res->h_addrtype != AF_INET) return ERR_INVALID_ARGUMENT;
 	if (!res->h_addr_list)          return ERR_INVALID_ARGUMENT;
 
-	for (i = 0; i < SOCKET_MAX_ADDRS; i++) 
+	for (i = 0; i < SOCKET_MAX_ADDRS; i++)
 	{
 		src_addr = res->h_addr_list[i];
 		if (!src_addr) break;
@@ -550,7 +554,7 @@ void Socket_Close(cc_socket s) {
 
 cc_result Socket_Connect(cc_socket s, cc_sockaddr* addr) {
 	struct sockaddr* raw = (struct sockaddr*)addr->data;
-	
+
 	int res = connect(s, raw, addr->size);
 	return res == -1 ? errno : 0;
 }
@@ -666,7 +670,7 @@ void Platform_Init(void) {
 	/* (on platforms with ASLR, function addresses change every time when run) */
 	addr = (cc_uintptr)Process_Exit;
 	Platform_Log1("Process_Exit addr: %x", &addr);
-	
+
 	Stopwatch_Init();
 }
 void Platform_Free(void) { }
@@ -693,7 +697,7 @@ cc_result Platform_SetDefaultCurrentDirectory(int argc, char **argv) {
 }
 
 void Platform_ShareScreenshot(const cc_string* filename) {
-	
+
 }
 
 

@@ -47,9 +47,15 @@ void Gfx_Create(void) {
 	Gfx_RestoreState();
 }
 
+static void FreeFramebuffer(void) {
+	Window_FreeFramebuffer(&fb_bmp);
+	fb_width  = 0;
+	fb_height = 0;
+}
+
 void Gfx_Free(void) {
 	Gfx_FreeState();
-	Window_FreeFramebuffer(&fb_bmp);
+	FreeFramebuffer();
 }
 
 
@@ -864,11 +870,10 @@ void Gfx_SetVSync(cc_bool vsync) {
 }
 
 void Gfx_OnWindowResize(int width, int height) {
-	// TODO ??????
-	//Window_FreeFramebuffer(&fb_bmp);
+	if (fb_width || fb_height) FreeFramebuffer();
 
-	fb_width   = width;
-	fb_height  = height;
+	fb_width  = width;
+	fb_height = height;
 
 	Window_AllocFramebuffer(&fb_bmp, width, height);
 	colorBuffer = fb_bmp.scan0;
